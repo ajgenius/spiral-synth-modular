@@ -43,7 +43,7 @@ public:
 protected:
 
 	ChannelHandler *m_GUICH;
-	virtual const string GetHelpText(const string &loc);
+	virtual const std::string GetHelpText(const std::string &loc);
 
 private:
 	Fl_Button*		 m_Hide;
@@ -53,7 +53,7 @@ private:
 	static Fl_Text_Display* m_HelpWin_text;
 	static SpiralPluginGUI* Help_owner;
 
-	string m_Title;
+	std::string m_Title;
 
 	//// Callbacks ////
 	inline void cb_Hide_i(Fl_Button* o, void* v);

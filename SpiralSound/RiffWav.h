@@ -65,7 +65,7 @@ public:
 	enum Mode{READ,WRITE};
 	enum Channels{MONO,STEREO};
 	
-	int  Open(string FileName, Mode mode, Channels channels=MONO);
+	int  Open(std::string FileName, Mode mode, Channels channels=MONO);
 	int  Close();
 	int  Save(Sample &data);
 	int  Load(Sample &data);

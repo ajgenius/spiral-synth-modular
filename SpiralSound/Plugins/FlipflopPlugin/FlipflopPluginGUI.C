@@ -20,6 +20,8 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 FlipflopPluginGUI::FlipflopPluginGUI(int w, int h,FlipflopPlugin *o,ChannelHandler *ch,const HostInfo *Info) :

@@ -34,13 +34,13 @@ static const float MAX_FREQ = 13000;
 
 struct PluginInfo
 {
-	string Name;
+	std::string Name;
 	int Width;
 	int Height;
 	int NumInputs;
 	int NumOutputs;
-	vector<string> PortTips;
-	vector<int> PortTypes;
+	std::vector<std::string> PortTips;
+	std::vector<int> PortTypes;
 	char BitMap[40][40][3];
 };
 
@@ -50,8 +50,8 @@ struct HostInfo
 	int    FRAGSIZE;
 	int    FRAGCOUNT;
 	int    SAMPLERATE;
-	string OUTPUTFILE;
-	string MIDIFILE;
+	std::string OUTPUTFILE;
+	std::string MIDIFILE;
 	int    POLY;
         unsigned GUI_COLOUR;
         unsigned SCOPE_BG_COLOUR;
@@ -83,19 +83,19 @@ public:
 	virtual SpiralGUIType*  CreateGUI()=0;
 
 	// stream the plugins state
-	virtual void	    StreamOut(ostream &s)=0;
-	virtual void	    StreamIn(istream &s)=0;
-	
+	virtual void	    StreamOut(std::ostream &s)=0;
+	virtual void	    StreamIn(std::istream &s)=0;
+
 	// stuff here gets saved in filename_files directory
 	// you must return true if this feature is used.
-	virtual bool	    SaveExternalFiles(const string &Dir) { return false; }
-	virtual void	    LoadExternalFiles(const string &Dir) {}	
+	virtual bool	    SaveExternalFiles(const std::string &Dir) { return false; }
+	virtual void	    LoadExternalFiles(const std::string &Dir) {}
 
 	const HostInfo*     GetHostInfo() { return m_HostInfo; }
 	bool                GetOutput(unsigned int n, Sample **s);
 	bool                SetInput(unsigned int n, const Sample *s);
 	const Sample*       GetInput(unsigned int n) { return m_Input[n]; }
-	string 				GetName() { return m_PluginInfo.Name; }
+	std::string 		GetName() { return m_PluginInfo.Name; }
 
 	void UpdatePluginInfoWithHost();
 	void SetInPortType(PluginInfo &pinfo, int port, Sample::SampleType type);
@@ -129,7 +129,7 @@ protected:
 	float GetInputPitch(int n,int p)
 		{ if (m_Input[n]) return ((*m_Input[n])[p]+1.0f)*MAX_FREQ/2; else return 0.0; }
 
-	void  MixOutput(int n,int p, float s) 
+	void  MixOutput(int n,int p, float s)
 		{ if (m_Output[n]) m_Output[n]->Set(p,s+(*m_Output[n])[p]); }
 	
 	bool InputExists(int n) { return m_Input[n]!=NULL; }
@@ -151,21 +151,21 @@ protected:
 	const HostInfo *m_HostInfo;
 	PluginInfo      m_PluginInfo;
 	int             m_Version;
-		
+
 	// needed for jack
 	void (*cb_Update)(void*o ,bool m);	
 	void  *m_Parent;
 
 	// tell the engine that we are taking control of the 
 	// timing for output.
-	void (*cb_Blocking)(void*o ,bool m);	
+	void (*cb_Blocking)(void*o ,bool m);
 
 	bool   m_IsTerminal;
 	
 private:
 
-	vector<const Sample*> m_Input;
-	vector<Sample*> m_Output;
+	std::vector<const Sample*> m_Input;
+	std::vector<Sample*> m_Output;
 
 	void (*UpdateInfo)(int n,void *);	
 	int    m_HostID;	

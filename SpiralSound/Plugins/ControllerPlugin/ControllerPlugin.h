@@ -34,10 +34,10 @@ public:
 	virtual SpiralGUIType *CreateGUI();
 	virtual void Execute();
 	virtual void ExecuteCommands();
-	virtual void StreamOut(ostream &s);
-	virtual void StreamIn(istream &s);
-			
-	string GetName(int n) { return m_Names[n]; }
+	virtual void StreamOut(std::ostream &s);
+	virtual void StreamIn(std::istream &s);
+
+	std::string GetName(int n) { return m_Names[n]; }
 	int    GetNum()       { return m_Num; }
 	float  GetVal(int n)  { return m_ChannelVal[n]; }
 	float  GetMin(int n)  { return m_MinVal[n]; }
@@ -52,7 +52,7 @@ public:
 		float Max;
 		char Name[256];
 	};
-	
+
 private:
 	GUIArgs m_GUIArgs;
 
@@ -71,7 +71,7 @@ private:
 
 	int m_Num;
 	float  m_ChannelVal[MAX_CHANNELS];
-	string m_Names[MAX_CHANNELS];
+	std::string m_Names[MAX_CHANNELS];
 	float  m_MinVal[MAX_CHANNELS];
 	float  m_MaxVal[MAX_CHANNELS];
 };

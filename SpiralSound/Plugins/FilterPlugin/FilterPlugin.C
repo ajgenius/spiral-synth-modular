@@ -20,6 +20,8 @@
 #include <FL/Fl_Button.h>
 #include "SpiralIcon.xpm"
 
+using namespace std;
+
 static const float MAX_RES = 10;
 static const float MIN_RES = 1;
 static const float MAX_CUTOFF = 3000;

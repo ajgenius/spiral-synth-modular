@@ -20,6 +20,8 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 EnvFollowerPluginGUI::EnvFollowerPluginGUI(int w, int h,EnvFollowerPlugin *o,ChannelHandler *ch,const HostInfo *Info) :

@@ -3,7 +3,7 @@
 #include "Fl_Knob.H"
 #include <FL/fl_draw.H>
 #include <math.h>
-#include <iostream.h>
+#include <iostream>
 
 Fl_Knob::Fl_Knob(int xx,int yy,int ww,int hh,const char *l): Fl_Valuator(xx,yy,ww,hh,l) {
   int side;

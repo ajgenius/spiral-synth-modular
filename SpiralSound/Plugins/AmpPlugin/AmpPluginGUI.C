@@ -20,6 +20,8 @@
 #include <FL/fl_draw.H>
 #include "AmpPluginGUI.h"
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 AmpPluginGUI::AmpPluginGUI(int w, int h,AmpPlugin *o,ChannelHandler *ch,const HostInfo *Info) :

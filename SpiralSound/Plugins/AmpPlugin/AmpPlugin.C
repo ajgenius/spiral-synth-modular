@@ -23,6 +23,8 @@
 
 #define PI 3.141592654
 
+using namespace std;
+
 extern "C" {
 SpiralPlugin* SpiralPlugin_CreateInstance()
 {

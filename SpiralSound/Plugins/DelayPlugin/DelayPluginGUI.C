@@ -20,6 +20,8 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 DelayPluginGUI::DelayPluginGUI(int w, int h, DelayPlugin *o, ChannelHandler *ch, const HostInfo *Info) :

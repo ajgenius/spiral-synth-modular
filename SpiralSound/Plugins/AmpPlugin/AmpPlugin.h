@@ -27,29 +27,29 @@ class AmpPlugin : public SpiralPlugin
 public:
  	AmpPlugin();
 	virtual ~AmpPlugin();
-	
+
 	virtual PluginInfo &Initialise(const HostInfo *Host);
 	virtual SpiralGUIType *CreateGUI();
 	virtual void Execute();
-	virtual void StreamOut(ostream &s);
-	virtual void StreamIn(istream &s);
-	
-	// has to be defined in the plugin	
+	virtual void StreamOut(std::ostream &s);
+	virtual void StreamIn(std::istream &s);
+
+	// has to be defined in the plugin
 	virtual void UpdateGUI() { Fl::check(); }
-		
+
 				float GetGain()       { return m_Gain; }
-	float GetDC()        { return m_DC;  } 
-	
+	float GetDC()        { return m_DC;  }
+
 	void Randomise();
 
-private:	
+private:
 	float m_Gain;
 	float m_DC;
-	
-	friend istream &operator>>(istream &s, AmpPlugin &o);
-	friend ostream &operator<<(ostream &s, AmpPlugin &o);
+
+	friend std::istream &operator>>(std::istream &s, AmpPlugin &o);
+	friend std::ostream &operator<<(std::ostream &s, AmpPlugin &o);
 };
-istream &operator>>(istream &s, AmpPlugin &o);
-ostream &operator<<(ostream &s, AmpPlugin &o);
+std::istream &operator>>(std::istream &s, AmpPlugin &o);
+std::ostream &operator<<(std::ostream &s, AmpPlugin &o);
 
 #endif

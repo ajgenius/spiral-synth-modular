@@ -20,6 +20,8 @@
 #include <FL/Fl_Button.h>
 #include "SpiralIcon.xpm"
 
+using namespace std;
+
 static const float MAX_DELAY=1.0f;
 
 extern "C" {

@@ -20,6 +20,8 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 AnotherFilterPluginGUI::AnotherFilterPluginGUI(int w, int h,AnotherFilterPlugin *o,ChannelHandler *ch,const HostInfo *Info) :

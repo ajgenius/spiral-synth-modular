@@ -22,6 +22,8 @@
 #include "../../RiffWav.h"
 #include "../../NoteTable.h"
 
+using namespace std;
+
 extern "C" {
 SpiralPlugin* SpiralPlugin_CreateInstance()
 {

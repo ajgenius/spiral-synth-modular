@@ -21,6 +21,8 @@
 #include <FL/Fl_Button.h>
 #include "SpiralIcon.xpm"
 
+using namespace std;
+
 /*
 Public source code by alex@smartelectronix.com
 Simple example of implementation of formant filter

@@ -34,8 +34,8 @@ public:
 	virtual PluginInfo &Initialise(const HostInfo *Host);
 	virtual SpiralGUIType *CreateGUI();
 	virtual void Execute();
-	virtual void StreamOut(ostream &s);
-	virtual void StreamIn(istream &s);
+	virtual void StreamOut(std::ostream &s);
+	virtual void StreamIn(std::istream &s);
 		
 	void Reset();
 	void SetupCoeffs();
@@ -61,10 +61,10 @@ private:
 	bool	 m_RevCutoffMod;
 	bool	 m_RevResonanceMod;
 
-	friend istream &operator>>(istream &s, FilterPlugin &o);
-	friend ostream &operator<<(ostream &s, FilterPlugin &o);
+	friend std::istream &operator>>(std::istream &s, FilterPlugin &o);
+	friend std::ostream &operator<<(std::ostream &s, FilterPlugin &o);
 };
-istream &operator>>(istream &s, FilterPlugin &o);
-ostream &operator<<(ostream &s, FilterPlugin &o);
+std::istream &operator>>(std::istream &s, FilterPlugin &o);
+std::ostream &operator<<(std::ostream &s, FilterPlugin &o);
 
 #endif

@@ -20,6 +20,8 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
+using namespace std;
+
 static const float TIMED_SLIDER_MAX = 3.0f;
 
 ////////////////////////////////////////////

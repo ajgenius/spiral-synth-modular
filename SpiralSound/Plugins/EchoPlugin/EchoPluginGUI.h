@@ -34,7 +34,7 @@ class EchoPluginGUI : public SpiralPluginGUI
       EchoPluginGUI (int w, int h, EchoPlugin *o, ChannelHandler *ch, const HostInfo *Info);
       virtual void UpdateValues (SpiralPlugin *o);
    protected:
-      const string GetHelpText (const string &loc);
+      const std::string GetHelpText (const std::string &loc);
    private:
       Fl_Tabs *m_TheTabs;
       Fl_Group *m_CtlGroup, *m_NumGroup;

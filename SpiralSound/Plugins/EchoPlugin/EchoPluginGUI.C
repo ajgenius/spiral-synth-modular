@@ -20,6 +20,8 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 EchoPluginGUI::EchoPluginGUI(int w, int h, EchoPlugin *o, ChannelHandler *ch, const HostInfo *Info) :

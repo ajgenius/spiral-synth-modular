@@ -31,8 +31,8 @@ public:
 	virtual PluginInfo &Initialise(const HostInfo *Host);
 	virtual SpiralGUIType *CreateGUI();
 	virtual void Execute();
-	virtual void StreamOut(ostream &s);
-	virtual void StreamIn(istream &s);
+	virtual void StreamOut(std::ostream &s);
+	virtual void StreamIn(std::istream &s);
 	
    	float GetDelay()    { return m_Delay;    }
 	float GetMix() { return m_Mix; }
@@ -48,10 +48,10 @@ private:
 	
 	Sample m_Buffer;
 
-	friend istream &operator>>(istream &s, DelayPlugin &o);
-	friend ostream &operator<<(ostream &s, DelayPlugin &o);
+	friend std::istream &operator>>(std::istream &s, DelayPlugin &o);
+	friend std::ostream &operator<<(std::ostream &s, DelayPlugin &o);
 };
-istream &operator>>(istream &s, DelayPlugin &o);
-ostream &operator<<(ostream &s, DelayPlugin &o);
+std::istream &operator>>(std::istream &s, DelayPlugin &o);
+std::ostream &operator<<(std::ostream &s, DelayPlugin &o);
 
 #endif

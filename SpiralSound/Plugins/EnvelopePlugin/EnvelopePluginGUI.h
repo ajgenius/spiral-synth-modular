@@ -32,7 +32,7 @@ class EnvelopePluginGUI : public SpiralPluginGUI {
       EnvelopePluginGUI(int w, int h, EnvelopePlugin *o,ChannelHandler *ch,const HostInfo *Info);
       virtual void UpdateValues(SpiralPlugin *o);
    protected:
-      const string GetHelpText(const string &loc);
+      const std::string GetHelpText(const std::string &loc);
    private:
       Fl_Tabs *m_Tabs;
       Fl_Group *m_CtlGroup, *m_NumGroup;

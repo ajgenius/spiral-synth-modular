@@ -20,6 +20,8 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 FormantFilterPluginGUI::FormantFilterPluginGUI(int w, int h,FormantFilterPlugin *o,ChannelHandler *ch,const HostInfo *Info) :

@@ -25,6 +25,8 @@
 #include <FL/Fl_Text_Display.h>
 #include <FL/Fl_Text_Buffer.h>
 
+using namespace std;
+
 Fl_Double_Window* SpiralPluginGUI::m_HelpWin=NULL;
 Fl_Text_Display* SpiralPluginGUI::m_HelpWin_text=NULL;
 SpiralPluginGUI* SpiralPluginGUI::Help_owner=NULL;

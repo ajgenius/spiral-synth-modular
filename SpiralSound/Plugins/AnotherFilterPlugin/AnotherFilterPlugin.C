@@ -23,6 +23,8 @@
 
 #define PI 3.141592654
 
+using namespace std;
+
 static const int GRANULARITY = 10;
 
 extern "C" {

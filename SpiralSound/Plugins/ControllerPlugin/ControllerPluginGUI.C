@@ -21,6 +21,8 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 ControllerPluginGUI::CVGUI::CVGUI(int n, ControllerPluginGUI *p, Fl_Color SelColour)

@@ -18,6 +18,8 @@
 
 #include "SpiralPlugin.h"
 
+using namespace std;
+
 SpiralPlugin::SpiralPlugin()
 {
 	m_Version=1;

@@ -21,6 +21,8 @@
 #include <FL/fl_draw.H>
 //#include <FL/fl_file_chooser.h>
 
+using namespace std;
+
 static const char NoteText[12][3] = {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};
 
 ////////////////////////////////////////////

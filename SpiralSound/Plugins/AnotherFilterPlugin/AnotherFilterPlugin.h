@@ -34,8 +34,8 @@ public:
 	virtual PluginInfo &Initialise(const HostInfo *Host);
 	virtual SpiralGUIType *CreateGUI();
 	virtual void Execute();
-	virtual void StreamOut(ostream &s);
-	virtual void StreamIn(istream &s);
+	virtual void StreamOut(std::ostream &s);
+	virtual void StreamIn(std::istream &s);
 	
 	float GetCutoff()    { return Cutoff; }
 	float GetResonance() { return Resonance;  } 
@@ -49,10 +49,10 @@ private:
 	// Calculation
 	double w,q,r,c,vibrapos,vibraspeed;
 	 	
-	friend istream &operator>>(istream &s, AnotherFilterPlugin &o);
-	friend ostream &operator<<(ostream &s, AnotherFilterPlugin &o);
+	friend std::istream &operator>>(std::istream &s, AnotherFilterPlugin &o);
+	friend std::ostream &operator<<(std::ostream &s, AnotherFilterPlugin &o);
 };
-istream &operator>>(istream &s, AnotherFilterPlugin &o);
-ostream &operator<<(ostream &s, AnotherFilterPlugin &o);
+std::istream &operator>>(std::istream &s, AnotherFilterPlugin &o);
+std::ostream &operator<<(std::ostream &s, AnotherFilterPlugin &o);
 
 #endif

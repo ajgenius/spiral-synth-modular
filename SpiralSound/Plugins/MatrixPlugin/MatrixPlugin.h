@@ -46,8 +46,8 @@ public:
 	virtual SpiralGUIType *CreateGUI();
 	virtual void Execute();
 	virtual void ExecuteCommands();
-	virtual void StreamOut(ostream &s);
-	virtual void StreamIn(istream &s);
+	virtual void StreamOut(std::ostream &s);
+	virtual void StreamIn(std::istream &s);
 		
 	bool  GetNoteCut()               { return m_NoteCut; }
 	int   GetCurrent()               { return m_Current; }

@@ -38,11 +38,11 @@ public:
 
 	virtual void UpdateValues(SpiralPlugin *o);
 
-	void StreamIn(istream &s);
-	void StreamOut(ostream &s);
+	void StreamIn(std::istream &s);
+	void StreamOut(std::ostream &s);
 
 protected:
-    const string GetHelpText(const string &loc);
+    const std::string GetHelpText(const std::string &loc);
 
 private:
 
@@ -66,7 +66,7 @@ private:
 	Fl_Pack *m_MainPack, *m_Buttons;
 	Fl_Button *m_Add, *m_Delete;
 
-	vector<CVGUI*> m_GUIVec;
+	std::vector<CVGUI*> m_GUIVec;
 	void AddCV();
 	void DeleteCV();
 	int m_CVCount;
@@ -85,9 +85,9 @@ private:
 	inline void cb_Delete_i(Fl_Button* o, void* v);
 	static void cb_Delete(Fl_Button* o, void* v);
 
-	friend istream &operator>>(istream &s, ControllerPluginGUI &o);
+	friend std::istream &operator>>(std::istream &s, ControllerPluginGUI &o);
 };
 
-istream &operator>>(istream &s, ControllerPluginGUI &o);
+std::istream &operator>>(std::istream &s, ControllerPluginGUI &o);
 
 #endif
