@@ -233,15 +233,15 @@ void MatrixPlugin::Execute()
 				m_Current=m_PatSeq[m_CurPatSeq];
 			}
 		}
-	
+
 		// An external clock pulse overrides the internal timing
 		if ((!ExternalClock && m_Time>=m_StepTime*(1/m_Matrix[m_Current].Speed)) ||
-			(ExternalClock && ExternalClockTriggered)) 
-		{		
+			(ExternalClock && ExternalClockTriggered))
+		{
 			m_Time=0;
 			m_Step++;
-			
-			if (m_Step >= m_Matrix[m_Current].Length) 
+
+			if (m_Step >= m_Matrix[m_Current].Length)
 			{
 				SetOutput(18, n, 1);
 				m_Step=0;
@@ -249,17 +249,17 @@ void MatrixPlugin::Execute()
 				if (m_PatSeq[m_CurPatSeq]==-1 || m_CurPatSeq==NUM_PATSEQ) m_CurPatSeq=0;
 				m_Current=m_PatSeq[m_CurPatSeq];
 			}
-						
+
 			// Reset the values
 			m_CurrentTriggerCV=0;
 			if (m_NoteCut) m_CurrentNoteCV=0;
-			for (int t=0; t<NUM_PATTERNS; t++) 
+			for (int t=0; t<NUM_PATTERNS; t++)
 			{
 				SetOutput(t+2,n,0);
 				m_TriggerLevel[t]=0;
 			}
-			
-			// Scan the matrix at current time 
+
+			// Scan the matrix at current time
 			for (int i=0; i<MATY; i++)
 			{
 				if (m_Matrix[m_Current].Matrix[m_Step][i])
@@ -269,7 +269,7 @@ void MatrixPlugin::Execute()
 					m_TriggerLevel[i]=m_Matrix[m_Current].Volume[m_Step][i];
 				}
 			}
-			
+
 			// reset the triggers between steps to clear them
 			// otherwise consecutive events wont get triggered
 			SetOutput(1,n,0);
@@ -285,45 +285,45 @@ void MatrixPlugin::ExecuteCommands()
 		switch (m_AudioCH->GetCommand())
 		{
 			case MAT_LENGTH   :
-				m_Matrix[m_GUICurrent].Length=m_GUIArgs.Length; 
+				m_Matrix[m_GUICurrent].Length=m_GUIArgs.Length;
 			break;
-			
-			case MAT_SPEED    : 
-				m_Matrix[m_GUICurrent].Speed=m_GUIArgs.Speed; 
-			break;		
-			
-			case MAT_ACTIVATE : 
-				m_Matrix[m_GUICurrent].Matrix[m_GUIArgs.X][m_GUIArgs.Y]=true; 
-			break;		
-			
-			case MAT_DEACTIVATE : 
-				m_Matrix[m_GUICurrent].Matrix[m_GUIArgs.X][m_GUIArgs.Y]=false; 
+
+			case MAT_SPEED    :
+				m_Matrix[m_GUICurrent].Speed=m_GUIArgs.Speed;
 			break;
-			case MAT_OCTAVE : 
-				m_Matrix[m_GUICurrent].Octave=m_GUIArgs.Octave; 
+
+			case MAT_ACTIVATE :
+				m_Matrix[m_GUICurrent].Matrix[m_GUIArgs.X][m_GUIArgs.Y]=true;
 			break;
-			case COPY : 
-				CopyPattern(); 
+
+			case MAT_DEACTIVATE :
+				m_Matrix[m_GUICurrent].Matrix[m_GUIArgs.X][m_GUIArgs.Y]=false;
 			break;
-			case PASTE : 
-				PastePattern(); 
+			case MAT_OCTAVE :
+				m_Matrix[m_GUICurrent].Octave=m_GUIArgs.Octave;
 			break;
-			case CLEAR : 
-				ClearPattern(); 
+			case COPY :
+                                m_CopyPattern = m_GUICurrent;
 			break;
-			case TUP : 
-				if (CanTransposeUp()) TransposeUp(); 
+			case PASTE :
+				PastePattern();
 			break;
-			case TDOWN : 
-				if (CanTransposeDown()) TransposeDown(); 
+			case CLEAR :
+				ClearPattern();
 			break;
-			case MAT_VOLUME : 
-				m_Matrix[m_GUICurrent].Volume[m_GUIArgs.X][m_GUIArgs.Y]=m_GUIArgs.Volume; 
+			case TUP :
+				if (CanTransposeUp()) TransposeUp();
 			break;
-			case SET_CURRENT : 
-				m_Current=m_GUIArgs.Num; 
+			case TDOWN :
+				if (CanTransposeDown()) TransposeDown();
 			break;
-			case SET_PATSEQ : 
+			case MAT_VOLUME :
+				m_Matrix[m_GUICurrent].Volume[m_GUIArgs.X][m_GUIArgs.Y]=m_GUIArgs.Volume;
+			break;
+			case SET_CURRENT :
+				m_Current=m_GUIArgs.Num;
+			break;
+			case SET_PATSEQ :
 				m_PatSeq[m_GUIArgs.Y]=m_GUIArgs.Num;
 			break;
 		}
@@ -361,17 +361,17 @@ void MatrixPlugin::TransposeUp() {
      }
 }
 
-void MatrixPlugin::TransposeDown() 
+void MatrixPlugin::TransposeDown()
 {
     int x, y;
-    for (y=0; y<MATY-1; y++) 
+    for (y=0; y<MATY-1; y++)
 	{
-        for (x=0; x<MATX; x++) 
+        for (x=0; x<MATX; x++)
 		{
             m_Matrix[m_GUICurrent].Matrix[x][y] = m_Matrix[m_GUICurrent].Matrix[x][y+1];
         }
     }
-    for (x=0; x<MATX; x++) 
+    for (x=0; x<MATX; x++)
 	{
     	m_Matrix[m_GUICurrent].Matrix[x][MATY-1] = 0;
     }
@@ -397,7 +397,7 @@ void MatrixPlugin::StreamOut(ostream &s)
 	for (int n=0; n<NUM_PATTERNS; n++)
 	{
 		s<<m_Matrix[n].Length<<" "<<m_Matrix[n].Speed<<" "<<m_Matrix[n].Octave<<endl;
-		
+
 		for (int y=0; y<MATY; y++)
 		{
 			for (int x=0; x<MATX; x++)
@@ -408,7 +408,7 @@ void MatrixPlugin::StreamOut(ostream &s)
 		s<<"-1 ";
 	}
 	s<<endl;
-	for (int n=0; n<NUM_PATSEQ; n++)	
+	for (int n=0; n<NUM_PATSEQ; n++)
 	{
 		s<<m_PatSeq[n]<<" ";
 	}
@@ -419,14 +419,14 @@ void MatrixPlugin::StreamIn(istream &s)
 {
 	int version;
 	s>>version;
-	
+
 	switch (version)
 	{
 		case 1:
 		{
 			s>>m_Current>>m_Time>>m_Step>>m_Loop>>m_NoteCut;
-	
-			for (int n=0; n<NUM_PATTERNS; n++)	
+
+			for (int n=0; n<NUM_PATTERNS; n++)
 			{	
 				s>>m_Matrix[n].Length>>m_Matrix[n].Speed>>m_Matrix[n].Octave;
 		

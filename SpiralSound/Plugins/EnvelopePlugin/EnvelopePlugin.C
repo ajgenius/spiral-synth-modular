@@ -56,7 +56,7 @@ m_TrigThresh(0.01)
 {
 	m_PluginInfo.Name="Envelope";
 	m_PluginInfo.Width=142;
-	m_PluginInfo.Height=110;
+	m_PluginInfo.Height=132;
 	m_PluginInfo.NumInputs=2;
 	m_PluginInfo.NumOutputs=2;
 	m_PluginInfo.PortTips.push_back("Trigger CV");	

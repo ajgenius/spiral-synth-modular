@@ -73,7 +73,6 @@ private:
 
 	GUIArgs m_GUIArgs;
 
-	void CopyPattern() { m_CopyPattern = m_Current; }
     void PastePattern();
     void ClearPattern();
     void TransposeUp();

@@ -56,12 +56,12 @@ private:
 	Fl_Slider *m_Volume;
 	float      m_VolVal;
         Fl_Color   m_SelCol;
-	
+
 	void (*cb_VolChange)(Fl_Widget*, void*);
 	void  *cb_context;
-	
+
 	inline void cb_Vol_i(Fl_Slider* o, void* v);
-	static void cb_Vol(Fl_Slider* o, void* v); 
+	static void cb_Vol(Fl_Slider* o, void* v);
 
 };
 
@@ -72,19 +72,19 @@ public:
 
 	virtual void UpdateValues(SpiralPlugin *o);
 	virtual void Update();
-	
+
 protected:
-    const string GetHelpText(const string &loc);	
-	
+    const string GetHelpText(const string &loc);
+
 private:
-	
+
 	void UpdateMatrix();
-	
+
 	int Numbers[MATX*MATY];
 	Pattern m_GUIMatrix[NUM_PATTERNS];
 	int m_LastLight;
 	int m_LastPatSeqLight;
-	
+
 	Fl_Button*  m_NoteCut;
 	Fl_Counter* m_Pattern;
 	Fl_Counter* m_PlayPattern;
@@ -98,43 +98,41 @@ private:
 	Fl_Button* m_PasteBtn;
 	Fl_Button* m_ClearBtn;
 	Fl_Box* m_TransLbl;
-    Fl_Button* m_TransUpBtn;
+        Fl_Button* m_TransUpBtn;
 	Fl_Button* m_TransDnBtn;
-
 	Fl_Counter* m_PatSeq[NUM_PATSEQ];
 	Fl_LED_Button* m_PatSeqFlash[NUM_PATSEQ];
-	
 	//// Callbacks ////
-	inline void cb_Matrix_i(Fl_Button* o, void* v);
-	static void cb_Matrix(Fl_Button* o, void* v); 
-	inline void cb_MatVol_i(Fl_Button* o, void* v);
-	static void cb_MatVol(Fl_Button* o, void* v); 
-	inline void cb_Pattern_i(Fl_Counter* o, void* v);
-	static void cb_Pattern(Fl_Counter* o, void* v); 
-	inline void cb_PlayPattern_i(Fl_Counter* o, void* v);
-	static void cb_PlayPattern(Fl_Counter* o, void* v); 
-	inline void cb_Length_i(Fl_Counter* o, void* v);
-	static void cb_Length(Fl_Counter* o, void* v); 
-	inline void cb_Speed_i(Fl_Knob* o, void* v);
-	static void cb_Speed(Fl_Knob* o, void* v); 
-	inline void cb_NoteCut_i(Fl_Button* o, void* v);
-	static void cb_NoteCut(Fl_Button* o, void* v); 
-	inline void cb_Octave_i(Fl_Counter* o, void* v);
-	static void cb_Octave(Fl_Counter* o, void* v); 
+	inline void cb_Matrix_i (Fl_Button* o, void* v);
+	static void cb_Matrix (Fl_Button* o, void* v);
+	inline void cb_MatVol_i (Fl_Button* o, void* v);
+	static void cb_MatVol (Fl_Button* o, void* v);
+	inline void cb_Pattern_i (Fl_Counter* o, void* v);
+	static void cb_Pattern (Fl_Counter* o, void* v);
+	inline void cb_PlayPattern_i (Fl_Counter* o, void* v);
+	static void cb_PlayPattern (Fl_Counter* o, void* v);
+	inline void cb_Length_i (Fl_Counter* o, void* v);
+	static void cb_Length (Fl_Counter* o, void* v);
+	inline void cb_Speed_i (Fl_Knob* o, void* v);
+	static void cb_Speed (Fl_Knob* o, void* v);
 	inline void cb_SpeedVal_i (Fl_Counter* o, void* v);
 	static void cb_SpeedVal (Fl_Counter* o, void* v);
-    inline void cb_CopyBtn_i (Fl_Button* o, void* v);
+	inline void cb_NoteCut_i (Fl_Button* o, void* v);
+	static void cb_NoteCut (Fl_Button* o, void* v);
+	inline void cb_Octave_i (Fl_Counter* o, void* v);
+	static void cb_Octave (Fl_Counter* o, void* v);
+        inline void cb_CopyBtn_i (Fl_Button* o, void* v);
 	static void cb_CopyBtn (Fl_Button* o, void* v);
-    inline void cb_PasteBtn_i (Fl_Button* o, void* v);
+        inline void cb_PasteBtn_i (Fl_Button* o, void* v);
 	static void cb_PasteBtn (Fl_Button* o, void* v);
-    inline void cb_ClearBtn_i (Fl_Button* o, void* v);
+        inline void cb_ClearBtn_i (Fl_Button* o, void* v);
 	static void cb_ClearBtn (Fl_Button* o, void* v);
-    inline void cb_TransUpBtn_i (Fl_Button* o, void* v);
+        inline void cb_TransUpBtn_i (Fl_Button* o, void* v);
 	static void cb_TransUpBtn (Fl_Button* o, void* v);
-    inline void cb_TransDnBtn_i (Fl_Button* o, void* v);
+        inline void cb_TransDnBtn_i (Fl_Button* o, void* v);
 	static void cb_TransDnBtn (Fl_Button* o, void* v);
-	inline void cb_PatSeq_i(Fl_Counter* o, void* v);
-	static void cb_PatSeq(Fl_Counter* o, void* v); 
+	inline void cb_PatSeq_i (Fl_Counter* o, void* v);
+	static void cb_PatSeq (Fl_Counter* o, void* v);
 };
 
 #endif

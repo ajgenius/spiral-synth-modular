@@ -14,65 +14,59 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Slider.H>
-#include <FL/Fl_Button.H>
+#include <FL/Fl_Tabs.H>
+#include <FL/Fl_Counter.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Output.H>
-
 #include "EnvelopePlugin.h"
 #include "../SpiralPluginGUI.h"
 
 #ifndef EnvelopeGUI
 #define EnvelopeGUI
 
-
-class EnvelopePluginGUI : public SpiralPluginGUI
-{
-public:
-	EnvelopePluginGUI(int w, int h, EnvelopePlugin *o,ChannelHandler *ch,const HostInfo *Info);
-	
-	virtual void UpdateValues(SpiralPlugin *o);
-
-protected:
-    const string GetHelpText(const string &loc);	
-	
-private:
-	
-	Fl_Slider 		*Thresh;
-	Fl_Slider 		*Attack;
-	Fl_Slider 		*Decay;
-	Fl_Slider 		*Sustain;
-	Fl_Slider 		*Release;
-	Fl_Slider 		*Volume;
-	Fl_Button		*m_pop;
-	Fl_Output 		*m_out_thresh;
-	Fl_Output 		*m_out_attack;
-	Fl_Output 		*m_out_decay;
-	Fl_Output 		*m_out_sustain;
-	Fl_Output 		*m_out_release;
-	Fl_Output 		*m_out_volume;
-	
-	//// Callbacks ////
-	inline void cb_Thresh_i(Fl_Slider* o, void* v);
-    static void cb_Thresh(Fl_Slider*, void*);
-	inline void cb_Attack_i(Fl_Slider* o, void* v);
-    static void cb_Attack(Fl_Slider*, void*);
-	inline void cb_Decay_i(Fl_Slider* o, void* v);
-	static void cb_Decay(Fl_Slider* o, void* v); 
-	inline void cb_Sustain_i(Fl_Slider* o, void* v);
-	static void cb_Sustain(Fl_Slider* o, void* v); 
-	inline void cb_Release_i(Fl_Slider* o, void* v);
-	static void cb_Release(Fl_Slider* o, void* v); 
-	inline void cb_Volume_i(Fl_Slider* o, void* v);
-	static void cb_Volume(Fl_Slider* o, void* v); 
-	inline void cb_pop_i(Fl_Button *o, void *v);
-	static void cb_pop(Fl_Button *o, void *v);
-
+class EnvelopePluginGUI : public SpiralPluginGUI {
+   public:
+      EnvelopePluginGUI(int w, int h, EnvelopePlugin *o,ChannelHandler *ch,const HostInfo *Info);
+      virtual void UpdateValues(SpiralPlugin *o);
+   protected:
+      const string GetHelpText(const string &loc);
+   private:
+      Fl_Tabs *m_Tabs;
+      Fl_Group *m_CtlGroup, *m_NumGroup;
+      Fl_Slider *m_Thresh, *m_Attack, *m_Decay, *m_Sustain, *m_Release, *m_Volume;
+      Fl_Counter *m_NumThresh, *m_NumAttack, *m_NumDecay, *m_NumSustain, *m_NumRelease, *m_NumVolume;
+      // Slider Callbacks
+      inline void cb_Thresh_i (Fl_Slider* o, void* v);
+      static void cb_Thresh (Fl_Slider* o, void* v);
+      inline void cb_Attack_i (Fl_Slider* o, void* v);
+      static void cb_Attack (Fl_Slider* o, void* v);
+      inline void cb_Decay_i (Fl_Slider* o, void* v);
+      static void cb_Decay (Fl_Slider* o, void* v);
+      inline void cb_Sustain_i (Fl_Slider* o, void* v);
+      static void cb_Sustain (Fl_Slider* o, void* v);
+      inline void cb_Release_i (Fl_Slider* o, void* v);
+      static void cb_Release (Fl_Slider* o, void* v);
+      inline void cb_Volume_i (Fl_Slider* o, void* v);
+      static void cb_Volume (Fl_Slider* o, void* v);
+      // Counter Callbacks
+      inline void cb_NumThresh_i (Fl_Counter* o, void* v);
+      static void cb_NumThresh (Fl_Counter* o, void* v);
+      inline void cb_NumAttack_i (Fl_Counter* o, void* v);
+      static void cb_NumAttack (Fl_Counter* o, void* v);
+      inline void cb_NumDecay_i (Fl_Counter* o, void* v);
+      static void cb_NumDecay (Fl_Counter* o, void* v);
+      inline void cb_NumSustain_i (Fl_Counter* o, void* v);
+      static void cb_NumSustain (Fl_Counter* o, void* v);
+      inline void cb_NumRelease_i (Fl_Counter* o, void* v);
+      static void cb_NumRelease (Fl_Counter* o, void* v);
+      inline void cb_NumVolume_i (Fl_Counter* o, void* v);
+      static void cb_NumVolume (Fl_Counter* o, void* v);
 };
 
 #endif

@@ -19,7 +19,7 @@
 #include "MatrixPluginGUI.h"
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
-#include <FL/fl_file_chooser.h>
+//#include <FL/fl_file_chooser.h>
 
 static const char NoteText[12][3] = {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};
 
@@ -101,88 +101,118 @@ MatrixPluginGUI::MatrixPluginGUI(int w, int h,MatrixPlugin *o,ChannelHandler *ch
 SpiralPluginGUI(w,h,o,ch),
 m_LastLight(0),
 m_LastPatSeqLight(0)
-{	
+{
 	//size_range(10,10);
-	m_NoteCut = new Fl_Button (5, h-30, 85, 20,"NoteCut");
-	m_NoteCut->type(1);
-	m_NoteCut->labelsize(10);
-	m_NoteCut->value(0);
-	m_NoteCut->callback((Fl_Callback*)cb_NoteCut);
-	add(m_NoteCut);
-	
-	m_Pattern = new Fl_Counter(5, 20, 40, 20, "View");
-    m_Pattern->labelsize(10);
-	m_Pattern->type(FL_SIMPLE_COUNTER);
-	m_Pattern->step(1);
-	m_Pattern->value(0);
-	m_Pattern->callback((Fl_Callback*)cb_Pattern);
-	add(m_Pattern);
-	
-	m_PlayPattern = new Fl_Counter(50, 20, 40, 20, "Play");
-    m_PlayPattern->labelsize(10);
-	m_PlayPattern->type(FL_SIMPLE_COUNTER);
-	m_PlayPattern->step(1);
-	m_PlayPattern->value(0);
-	m_PlayPattern->callback((Fl_Callback*)cb_PlayPattern);
-	add(m_PlayPattern);
-	
-	m_Length = new Fl_Counter(5, 55, 40, 20, "Length");
-    m_Length->labelsize(10);
-	m_Length->type(FL_SIMPLE_COUNTER);
-	m_Length->step(1);
-	m_Length->value(64);
-	m_Length->callback((Fl_Callback*)cb_Length);
-	add(m_Length);
-	
-	m_Speed = new Fl_Knob (50, 60, 40, 40, "Speed");
-    m_Speed->color(Info->GUI_COLOUR);
-	m_Speed->type(Fl_Knob::DOTLIN);
-    m_Speed->labelsize(10);
-    m_Speed->maximum(200);
-    m_Speed->step(0.01);
-    m_Speed->value(1.0);
-	m_Speed->callback((Fl_Callback*)cb_Speed);
-	add(m_Speed);
-	
-	m_SpeedVal = new Fl_Counter (5, 125, 85, 20, "");
-	m_SpeedVal->labelsize(10);
-	m_SpeedVal->value(10);
-	m_SpeedVal->type(FL_SIMPLE_COUNTER);
-	m_SpeedVal->step(1);
-	m_SpeedVal->callback((Fl_Callback*)cb_Speed);
-	add(m_SpeedVal);
-	
-	m_Octave = new Fl_Counter(5, 90, 40, 20, "Octave");
-    m_Octave->labelsize(10);
-	m_Octave->type(FL_SIMPLE_COUNTER);
-	m_Octave->step(1);
-	m_Octave->value(0);
-	m_Octave->callback((Fl_Callback*)cb_Octave);
-	add(m_Octave);
+	m_Pattern = new Fl_Counter (5, 20, 40, 20, "View");
+        m_Pattern->labelsize (10);
+	m_Pattern->type (FL_SIMPLE_COUNTER);
+        m_Pattern->box (FL_PLASTIC_UP_BOX);
+        m_Pattern->color (Info->GUI_COLOUR);
+        m_Pattern->step (1);
+        m_Pattern->minimum (0);
+        m_Pattern->maximum (NUM_PATTERNS-1);
+	m_Pattern->value (0);
+	m_Pattern->callback ((Fl_Callback*)cb_Pattern);
+	add (m_Pattern);
 
-	m_CopyBtn = new Fl_Button (5, 150, 40, 20, "Copy");
+	m_PlayPattern = new Fl_Counter (50, 20, 40, 20, "Play");
+        m_PlayPattern->labelsize (10);
+	m_PlayPattern->type (FL_SIMPLE_COUNTER);
+        m_PlayPattern->box (FL_PLASTIC_UP_BOX);
+        m_PlayPattern->color (Info->GUI_COLOUR);
+	m_PlayPattern->step (1);
+        m_PlayPattern->minimum (0);
+        m_PlayPattern->maximum (NUM_PATTERNS-1);
+	m_PlayPattern->value (0);
+	m_PlayPattern->callback ((Fl_Callback*)cb_PlayPattern);
+	add (m_PlayPattern);
+
+        m_Length = new Fl_Counter (5, 55, 40, 20, "Length");
+        m_Length->labelsize (10);
+	m_Length->type (FL_SIMPLE_COUNTER);
+        m_Length->box (FL_PLASTIC_UP_BOX);
+        m_Length->color (Info->GUI_COLOUR);
+	m_Length->step (1);
+	m_Length->value (64);
+	m_Length->minimum (1);
+	m_Length->maximum (64);
+	m_Length->callback ((Fl_Callback*)cb_Length);
+	add (m_Length);
+
+	m_Octave = new Fl_Counter(5, 90, 40, 20, "Octave");
+        m_Octave->labelsize(10);
+	m_Octave->type (FL_SIMPLE_COUNTER);
+        m_Octave->box (FL_PLASTIC_UP_BOX);
+        m_Octave->color (Info->GUI_COLOUR);
+        m_Octave->minimum (0);
+        m_Octave->maximum (6);
+	m_Octave->step (1);
+	m_Octave->value (0);
+	m_Octave->callback((Fl_Callback*)cb_Octave);
+	add (m_Octave);
+
+        m_Speed = new Fl_Knob (50, 60, 40, 40, "Speed");
+        m_Speed->color (Info->GUI_COLOUR);
+	m_Speed->type (Fl_Knob::DOTLIN);
+        m_Speed->labelsize (10);
+        m_Speed->minimum (0);
+        m_Speed->maximum (200);
+        m_Speed->step (0.01);
+        m_Speed->value (8);
+	m_Speed->callback ((Fl_Callback*)cb_Speed);
+	add (m_Speed);
+
+	m_SpeedVal = new Fl_Counter (5, 125, 85, 20, "");
+	m_SpeedVal->labelsize (10);
+	m_SpeedVal->value (10);
+	m_SpeedVal->type (FL_SIMPLE_COUNTER);
+        m_SpeedVal->box (FL_PLASTIC_UP_BOX);
+        m_SpeedVal->color (Info->GUI_COLOUR);
+	m_SpeedVal->step (1);
+	m_SpeedVal->maximum (200);
+	m_SpeedVal->minimum (0);
+        m_SpeedVal->value (8);
+	m_SpeedVal->callback ((Fl_Callback*)cb_SpeedVal);
+	add (m_SpeedVal);
+
+        m_CopyBtn = new Fl_Button (5, 150, 40, 20, "Copy");
 	m_CopyBtn->labelsize (10);
-	m_CopyBtn->callback ((Fl_Callback*)cb_CopyBtn);
+        m_CopyBtn->box (FL_PLASTIC_UP_BOX);
+        m_CopyBtn->color (Info->GUI_COLOUR);
+        m_CopyBtn->selection_color (Info->GUI_COLOUR);
+        m_CopyBtn->callback ((Fl_Callback*)cb_CopyBtn);
 	add (m_CopyBtn);
 
 	m_PasteBtn = new Fl_Button (50, 150, 40, 20, "Paste");
 	m_PasteBtn->labelsize (10);
+        m_PasteBtn->box (FL_PLASTIC_UP_BOX);
+        m_PasteBtn->color (Info->GUI_COLOUR);
+        m_PasteBtn->selection_color (Info->GUI_COLOUR);
 	m_PasteBtn->deactivate();
 	m_PasteBtn->callback ((Fl_Callback*)cb_PasteBtn);
 	add (m_PasteBtn);
 
 	m_ClearBtn = new Fl_Button (5, 175, 85, 20, "Clear");
 	m_ClearBtn->labelsize (10);
+        m_ClearBtn->box (FL_PLASTIC_UP_BOX);
+        m_ClearBtn->color (Info->GUI_COLOUR);
+        m_ClearBtn->selection_color (Info->GUI_COLOUR);
 	m_ClearBtn->callback ((Fl_Callback*)cb_ClearBtn);
 	add (m_ClearBtn);
 
 	m_TransUpBtn = new Fl_Button (5, 200, 40, 20, "Up");
 	m_TransUpBtn->labelsize (10);
+        m_TransUpBtn->box (FL_PLASTIC_UP_BOX);
+        m_TransUpBtn->color (Info->GUI_COLOUR);
+        m_TransUpBtn->selection_color (Info->GUI_COLOUR);
 	m_TransUpBtn->callback ((Fl_Callback*)cb_TransUpBtn);
 	add (m_TransUpBtn);
 
 	m_TransDnBtn = new Fl_Button (50, 200, 40, 20, "Down");
 	m_TransDnBtn->labelsize (10);
+        m_TransDnBtn->box (FL_PLASTIC_UP_BOX);
+        m_TransDnBtn->color (Info->GUI_COLOUR);
+        m_TransDnBtn->selection_color (Info->GUI_COLOUR);
 	m_TransDnBtn->callback ((Fl_Callback*)cb_TransDnBtn);
 	add (m_TransDnBtn);
 
@@ -190,7 +220,17 @@ m_LastPatSeqLight(0)
 	m_TransLbl->labelsize(10);
 	add (m_TransLbl);
 
-	int xoff=105;
+      	m_NoteCut = new Fl_Button (5, h-30, 85, 20, "NoteCut");
+	m_NoteCut->type (FL_TOGGLE_BUTTON);
+        m_NoteCut->box (FL_PLASTIC_UP_BOX);
+        m_NoteCut->color (Info->GUI_COLOUR);
+        m_NoteCut->selection_color (Info->GUI_COLOUR);
+	m_NoteCut->labelsize (10);
+	m_NoteCut->value (0);
+	m_NoteCut->callback ((Fl_Callback*)cb_NoteCut);
+	add (m_NoteCut);
+
+        int xoff=105;
 	int yoff=40;
 	int butsize=7;
 	int n=0;
@@ -227,7 +267,7 @@ m_LastPatSeqLight(0)
 		box->align(FL_ALIGN_INSIDE|FL_ALIGN_LEFT);
 		box->labelsize(8);
 	}
-		
+
 	xoff=103;
 	for(int x=0; x<MATX; x++)
 	{
@@ -235,34 +275,36 @@ m_LastPatSeqLight(0)
 		m_Flash[x]->selection_color(FL_WHITE);
 		add(m_Flash[x]);
 	}
-	
+
 	xoff=560;
 	yoff=40;
 	int height=12,gap=2;
-	
+
 	Fl_Box *patseqlabel = new Fl_Box(xoff,yoff-15,30,10,"Pat Seq");
 	patseqlabel->labelsize(10);
 	add(patseqlabel);
-	
+
 	for(int y=0; y<NUM_PATSEQ; y++)
 	{
 		m_PatSeq[y]= new Fl_Counter(xoff,yoff+y*(height+gap),25,height);
 		m_PatSeq[y]->type(FL_SIMPLE_COUNTER);
 		m_PatSeq[y]->step(1);
 		m_PatSeq[y]->textsize(8);
+                m_PatSeq[y]->minimum (-1);
+                m_PatSeq[y]->maximum (NUM_PATTERNS-1);
 		m_PatSeq[y]->callback((Fl_Callback*)cb_PatSeq,(void*)&Numbers[y]);
 		add(m_PatSeq[y]);
-		
+
 		m_PatSeqFlash[y] = new Fl_LED_Button(xoff+25,yoff+y*(height+gap),15,15,"");
 		m_PatSeqFlash[y]->selection_color(FL_WHITE);
 		add(m_PatSeqFlash[y]);
 	}
-	
+
 	end();
 }
 
 void MatrixPluginGUI::Update()
-{	
+{
 	int Light=m_GUICH->GetInt("Step");
 	if (Light!=m_LastLight)
 	{
@@ -327,167 +369,168 @@ void MatrixPluginGUI::UpdateMatrix()
 
 }
 
-inline void MatrixPluginGUI::cb_NoteCut_i(Fl_Button* o, void* v)
+// Callbacks - Side Panel - Top Section
+
+inline void MatrixPluginGUI::cb_Pattern_i (Fl_Counter* o, void* v) {
+       m_GUICH->Set ("Current", (int)o->value());
+       UpdateMatrix();
+}
+
+void MatrixPluginGUI::cb_Pattern (Fl_Counter* o, void* v) {
+     ((MatrixPluginGUI*)(o->parent()))->cb_Pattern_i (o, v);
+}
+
+inline void MatrixPluginGUI::cb_PlayPattern_i (Fl_Counter* o, void* v) {
+	m_GUICH->Set ("Num", (int)o->value());
+	m_GUICH->SetCommand (MatrixPlugin::SET_CURRENT);
+}
+
+void MatrixPluginGUI::cb_PlayPattern(Fl_Counter* o, void* v) {
+     ((MatrixPluginGUI*)(o->parent()))->cb_PlayPattern_i (o, v);
+}
+
+inline void MatrixPluginGUI::cb_Length_i (Fl_Counter* o, void* v)
 {
-	m_GUICH->Set("NoteCut",o->value());
+	m_GUICH->Set ("Length", (int)o->value());
+	m_GUICH->SetCommand (MatrixPlugin::MAT_LENGTH);
 }
-void MatrixPluginGUI::cb_NoteCut(Fl_Button* o, void* v)
-{ ((MatrixPluginGUI*)(o->parent()))->cb_NoteCut_i(o,v);}
 
-inline void  MatrixPluginGUI::cb_Matrix_i(Fl_Button* o, void* v)
+void MatrixPluginGUI::cb_Length (Fl_Counter* o, void* v) {
+     ((MatrixPluginGUI*)(o->parent()))->cb_Length_i (o, v);
+}
+
+inline void MatrixPluginGUI::cb_Octave_i (Fl_Counter* o, void* v) {
+	m_GUICH->Set ("Octave", (int)o->value());
+	m_GUICH->SetCommand (MatrixPlugin::MAT_OCTAVE);
+}
+
+void MatrixPluginGUI::cb_Octave (Fl_Counter* o, void* v) {
+     ((MatrixPluginGUI*)(o->parent()))->cb_Octave_i (o, v);
+}
+
+inline void MatrixPluginGUI::cb_Speed_i (Fl_Knob* o, void* v)
 {
-	m_GUICH->Set("X",*(int*)v/MATY);
-	m_GUICH->Set("Y",*(int*)v%MATY);
-
-	if (o->value())	m_GUICH->SetCommand(MatrixPlugin::MAT_ACTIVATE);
-	else m_GUICH->SetCommand(MatrixPlugin::MAT_DEACTIVATE);
-
-	m_GUICH->Wait();
-}
-void  MatrixPluginGUI::cb_Matrix(Fl_Button* o, void* v)
-{ ((MatrixPluginGUI*)(o->parent()))->cb_Matrix_i(o,v);}
-
-inline void  MatrixPluginGUI::cb_MatVol_i(Fl_Button* o, void* v)
-{ 
-	m_GUICH->Set("X",*(int*)v/MATY);
-	m_GUICH->Set("Y",*(int*)v%MATY);
-	m_GUICH->Set("Volume",((Fl_MatrixButton*)o)->GetVolume());
-	m_GUICH->SetCommand(MatrixPlugin::MAT_VOLUME);
-}
-void  MatrixPluginGUI::cb_MatVol(Fl_Button* o, void* v)
-{ ((MatrixPluginGUI*)(o->parent()))->cb_MatVol_i(o,v);}
-
-inline void MatrixPluginGUI::cb_Pattern_i(Fl_Counter* o, void* v)
-{ 	
-	if (o->value()<0) o->value(0);
-	if (o->value()>NUM_PATTERNS-1) o->value(NUM_PATTERNS-1);
-	m_GUICH->Set("Current",(int)o->value());
-	UpdateMatrix();
-}
-void MatrixPluginGUI::cb_Pattern(Fl_Counter* o, void* v)
-{ ((MatrixPluginGUI*)(o->parent()))->cb_Pattern_i(o,v);}
-
-inline void MatrixPluginGUI::cb_PlayPattern_i(Fl_Counter* o, void* v)
-{ 	
-	if (o->value()<0) o->value(0);
-	if (o->value()>NUM_PATTERNS-1) o->value(NUM_PATTERNS-1);
-	m_GUICH->Set("Num",(int)o->value());
-	m_GUICH->SetCommand(MatrixPlugin::SET_CURRENT);
-}
-void MatrixPluginGUI::cb_PlayPattern(Fl_Counter* o, void* v)
-{ ((MatrixPluginGUI*)(o->parent()))->cb_PlayPattern_i(o,v);}
-
-inline void MatrixPluginGUI::cb_Length_i(Fl_Counter* o, void* v)
-{
-	if (o->value()<1) o->value(1);
-	if (o->value()>64) o->value(64);
- 		
-	m_GUICH->Set("Length",(int)o->value());
-	m_GUICH->SetCommand(MatrixPlugin::MAT_LENGTH);
-
-}
-void MatrixPluginGUI::cb_Length(Fl_Counter* o, void* v)
-{ ((MatrixPluginGUI*)(o->parent()))->cb_Length_i(o,v);}
-
-inline void MatrixPluginGUI::cb_Speed_i(Fl_Knob* o, void* v)
-{ 	
 	// Round off value, but it should be a float for tweaking
-	float value=o->value()+((int)o->value()-o->value());
-	m_SpeedVal->value(value);
-		
-	m_GUICH->Set("Speed",(float)value/8.0f);
-	m_GUICH->SetCommand(MatrixPlugin::MAT_SPEED);
-}
-void MatrixPluginGUI::cb_Speed(Fl_Knob* o, void* v)
-{ ((MatrixPluginGUI*)(o->parent()))->cb_Speed_i(o,v);}
-
-inline void MatrixPluginGUI::cb_Octave_i(Fl_Counter* o, void* v)
-{
-	if (o->value()<0) o->value(0);
-	if (o->value()>6) o->value(6);	
-	
-	m_GUICH->Set("Octave",(int)o->value());
-	m_GUICH->SetCommand(MatrixPlugin::MAT_OCTAVE);
-}
-void MatrixPluginGUI::cb_Octave(Fl_Counter* o, void* v)
-{ ((MatrixPluginGUI*)(o->parent()))->cb_Octave_i(o,v);}
-
-inline void MatrixPluginGUI::cb_SpeedVal_i (Fl_Counter* o, void* v) 
-{
-       m_Speed->value(o->value());
+	float value = o->value() + ((int)o->value() - o->value());
+	m_SpeedVal->value (value);
+	m_GUICH->Set ("Speed", (float)value / 8.0f);
+	m_GUICH->SetCommand (MatrixPlugin::MAT_SPEED);
 }
 
-void MatrixPluginGUI::cb_SpeedVal (Fl_Counter* o, void* v) 
-{
-     ((MatrixPluginGUI*)(o->parent())) -> cb_SpeedVal_i (o, v);
+void MatrixPluginGUI::cb_Speed (Fl_Knob* o, void* v) {
+     ((MatrixPluginGUI*)(o->parent()))->cb_Speed_i (o, v);
 }
 
-inline void MatrixPluginGUI::cb_CopyBtn_i (Fl_Button* o, void* v) 
+inline void MatrixPluginGUI::cb_SpeedVal_i (Fl_Counter* o, void* v)
 {
+	float value = o->value();
+	m_Speed->value (value);
+	m_GUICH->Set ("Speed", (float)value / 8.0f);
+	m_GUICH->SetCommand (MatrixPlugin::MAT_SPEED);
+}
+
+void MatrixPluginGUI::cb_SpeedVal (Fl_Counter* o, void* v) {
+     ((MatrixPluginGUI*)(o->parent()))->cb_SpeedVal_i (o, v);
+}
+
+// Callbacks - Side Panel - Editing Section
+
+inline void MatrixPluginGUI::cb_CopyBtn_i (Fl_Button* o, void* v) {
        m_PasteBtn->activate();
-	   m_GUICH->SetCommand(MatrixPlugin::COPY);
-	   UpdateMatrix();
+       m_GUICH->SetCommand (MatrixPlugin::COPY);
+       UpdateMatrix();
 }
 
-void MatrixPluginGUI::cb_CopyBtn (Fl_Button* o, void* v) 
-{
+void MatrixPluginGUI::cb_CopyBtn (Fl_Button* o, void* v) {
      ((MatrixPluginGUI*)(o->parent())) -> cb_CopyBtn_i (o, v);
 }
 
-inline void MatrixPluginGUI::cb_PasteBtn_i (Fl_Button* o, void* v) 
-{
- 	   m_GUICH->SetCommand(MatrixPlugin::PASTE);
-	   UpdateMatrix();
+inline void MatrixPluginGUI::cb_PasteBtn_i (Fl_Button* o, void* v) {
+       m_GUICH->SetCommand (MatrixPlugin::PASTE);
+       UpdateMatrix();
 }
 
-void MatrixPluginGUI::cb_PasteBtn (Fl_Button* o, void* v) 
-{
+void MatrixPluginGUI::cb_PasteBtn (Fl_Button* o, void* v) {
      ((MatrixPluginGUI*)(o->parent())) -> cb_PasteBtn_i (o, v);
 }
 
-inline void MatrixPluginGUI::cb_ClearBtn_i (Fl_Button* o, void* v) 
-{
-  	   m_GUICH->SetCommand(MatrixPlugin::CLEAR);
-	   UpdateMatrix();
+inline void MatrixPluginGUI::cb_ClearBtn_i (Fl_Button* o, void* v) {
+       m_GUICH->SetCommand (MatrixPlugin::CLEAR);
+       UpdateMatrix();
 }
 
-void MatrixPluginGUI::cb_ClearBtn (Fl_Button* o, void* v) 
-{
+void MatrixPluginGUI::cb_ClearBtn (Fl_Button* o, void* v)  {
      ((MatrixPluginGUI*)(o->parent())) -> cb_ClearBtn_i (o, v);
 }
 
-inline void MatrixPluginGUI::cb_TransUpBtn_i (Fl_Button* o, void* v) 
-{
-  	   m_GUICH->SetCommand(MatrixPlugin::TUP);
-	   UpdateMatrix();
+// Callbacks - Side Panel - Transpose Section
+
+inline void MatrixPluginGUI::cb_TransUpBtn_i (Fl_Button* o, void* v) {
+       m_GUICH->SetCommand(MatrixPlugin::TUP);
+       UpdateMatrix();
 }
 
-void MatrixPluginGUI::cb_TransUpBtn (Fl_Button* o, void* v) 
-{
+void MatrixPluginGUI::cb_TransUpBtn (Fl_Button* o, void* v) {
      ((MatrixPluginGUI*)(o->parent())) -> cb_TransUpBtn_i (o, v);
 }
 
-inline void MatrixPluginGUI::cb_TransDnBtn_i (Fl_Button* o, void* v) 
-{
-  	   m_GUICH->SetCommand(MatrixPlugin::TDOWN);
-	   UpdateMatrix();
+inline void MatrixPluginGUI::cb_TransDnBtn_i (Fl_Button* o, void* v) {
+       m_GUICH->SetCommand(MatrixPlugin::TDOWN);
+       UpdateMatrix();
 }
 
-void MatrixPluginGUI::cb_TransDnBtn (Fl_Button* o, void* v) 
-{
+void MatrixPluginGUI::cb_TransDnBtn (Fl_Button* o, void* v) {
      ((MatrixPluginGUI*)(o->parent())) -> cb_TransDnBtn_i (o, v);
 }
 
-inline void MatrixPluginGUI::cb_PatSeq_i(Fl_Counter* o, void* v)
-{ 	
-	if (o->value()<-1) o->value(-1);
-	if (o->value()>NUM_PATTERNS-1) o->value(NUM_PATTERNS-1);
-	m_GUICH->Set("Num",(int)o->value());
-	m_GUICH->Set("Y",*(int*)v);
-	m_GUICH->SetCommand(MatrixPlugin::SET_PATSEQ);
+// Callbacks - Side Panel - Bottom Section
+
+inline void MatrixPluginGUI::cb_NoteCut_i (Fl_Button* o, void* v) {
+	m_GUICH->Set ("NoteCut",o->value());
 }
-void MatrixPluginGUI::cb_PatSeq(Fl_Counter* o, void* v)
-{ ((MatrixPluginGUI*)(o->parent()))->cb_PatSeq_i(o,v);}
+
+void MatrixPluginGUI::cb_NoteCut (Fl_Button* o, void* v) {
+     ((MatrixPluginGUI*)(o->parent()))->cb_NoteCut_i (o,v);
+}
+
+// Callbacks - Matrix
+
+inline void  MatrixPluginGUI::cb_Matrix_i (Fl_Button* o, void* v) {
+       m_GUICH->Set ("X", *(int*)v/MATY);
+       m_GUICH->Set ("Y", *(int*)v%MATY);
+       if (o->value()) m_GUICH->SetCommand (MatrixPlugin::MAT_ACTIVATE);
+       else m_GUICH->SetCommand (MatrixPlugin::MAT_DEACTIVATE);
+       m_GUICH->Wait();
+}
+
+void  MatrixPluginGUI::cb_Matrix (Fl_Button* o, void* v) {
+      ((MatrixPluginGUI*)(o->parent()))->cb_Matrix_i (o, v);
+}
+
+inline void  MatrixPluginGUI::cb_MatVol_i (Fl_Button* o, void* v) {
+       m_GUICH->Set ("X", *(int*)v/MATY);
+       m_GUICH->Set ("Y", *(int*)v%MATY);
+       m_GUICH->Set ("Volume", ((Fl_MatrixButton*)o)->GetVolume());
+       m_GUICH->SetCommand (MatrixPlugin::MAT_VOLUME);
+}
+
+void  MatrixPluginGUI::cb_MatVol (Fl_Button* o, void* v) {
+      ((MatrixPluginGUI*)(o->parent()))->cb_MatVol_i (o, v);
+}
+
+// Callbacks - Pattern Sequencer
+
+inline void MatrixPluginGUI::cb_PatSeq_i (Fl_Counter* o, void* v) {
+       m_GUICH->Set("Num", (int)o->value());
+       m_GUICH->Set("Y", *(int*)v);
+       m_GUICH->SetCommand (MatrixPlugin::SET_PATSEQ);
+}
+
+void MatrixPluginGUI::cb_PatSeq (Fl_Counter* o, void* v) {
+     ((MatrixPluginGUI*)(o->parent()))->cb_PatSeq_i (o, v);
+}
+
+// Help text
 
 const string MatrixPluginGUI::GetHelpText(const string &loc){
     return string("")
@@ -495,7 +538,7 @@ const string MatrixPluginGUI::GetHelpText(const string &loc){
 	+ "drum programming, but also capable of robotic bass and melodies.\n\n"
 	+ "Note events are turned on and off by activating the 64*32 grid of\n"
 	+ "toggle buttons on the GUI. The speed and octave of the notes can be\n" 
-	+ "set. The length of the pattern in notes and note cut are also\n" 
+	+ "set. The length of the pattern in notes and note cut are also\n"
 	+ "present. The current play position is indicated by the row of LED's\n" 
 	+ "along the top of the plugin window. You can copy and paste between\n"
 	+ "different patterns and transpose the notes\n\n"

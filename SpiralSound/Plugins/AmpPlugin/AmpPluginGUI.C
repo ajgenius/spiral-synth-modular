@@ -43,7 +43,7 @@ SpiralPluginGUI(w,h,o,ch)
 	m_Gain->maximum (4.0);
 	m_Gain->minimum (0.0);
         m_Gain->step (0.0001);
-        m_Gain->value (2.0);
+        m_Gain->value (1.0);
         m_Gain->callback((Fl_Callback*)cb_Gain);
         m_CtlGroup->add (m_Gain);
 
@@ -73,7 +73,7 @@ SpiralPluginGUI(w,h,o,ch)
 	m_NumGain->minimum (-2.0);
         m_NumGain->step (0.001);
         m_NumGain->lstep (0.1);
-        m_NumGain->value (0.0);
+        m_NumGain->value (1.0);
         m_NumGain->callback ((Fl_Callback*)cb_NumGain);
         m_NumGroup->add (m_NumGain);
 
@@ -162,11 +162,11 @@ void AmpPluginGUI::cb_NumDC (Fl_Counter* o, void* v) {
 // button callbacks
 
 inline void AmpPluginGUI::cb_Reset_i (Fl_Button* o, void* v) {
-        m_NumGain->value (0);
-        m_Gain->value (2.0f);
+        m_NumGain->value (1.0);
+        m_Gain->value (1.0);
         m_GUICH->Set ("Gain", 0);
-        m_NumDC->value (0);
-	m_DC->value (2.0f);
+        m_NumDC->value (0.0);
+	m_DC->value (2.0);
 	m_GUICH->Set ("DC", 0);
 }
 
@@ -182,5 +182,6 @@ const string AmpPluginGUI::GetHelpText(const string &loc){
     + "the signal's DC offset (the up or down in the range of values).\n\n"
     + "Handy for fine tuning CV's by hand, or modulating complex\n"
     + "controls.\n\n"
-    + "The reset button quickly resets both controls back to 0\n";
+    + "The reset button quickly resets the gain back to 1 and the\n"
+    + "offset back to 0\n";
 }
