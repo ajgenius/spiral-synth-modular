@@ -178,13 +178,16 @@ void SpiralSynthModularInfo::StreamInPrefs(istream &s)
 	s>>temp>>temp>>PLUGIN_PATH;
 	s>>temp>>temp;
 	string st;
+
+#ifdef SSM_EXPLICIT_PLUGIN_LIST
 	PLUGINVEC.clear();
-	
+
 	while(st!="end" && !s.eof())
-	{		
+	{
 		s>>st;
 		if (st!="end") PLUGINVEC.push_back(st);
 	}
+#endif
 #if __APPLE__
 	// ignore custom paths, plugins are encapsulated in the app anyway
 	// this prevents the program to fail if the user move the application icon
@@ -196,22 +199,22 @@ void SpiralSynthModularInfo::StreamOutPrefs(ostream &s)
 {
 	// call base class
 	SpiralInfo::StreamOutPrefs(s);
-	
+
 	s<<endl<<"SpiralSynthModular Info:"<<endl<<endl;
-	
-	s<<"ToolBoxColour     = "<<GUICOL_Tool<<endl;	
+
+	s<<"ToolBoxColour     = "<<GUICOL_Tool<<endl;
 	s<<"ButtonColour      = "<<GUICOL_Button<<endl;
 	s<<"CanvasColour      = "<<GUICOL_Canvas<<endl;
 	s<<"DeviceColour      = "<<GUICOL_Device<<endl;
 	s<<"BGImagePNG        = "<<BGIMG<<endl<<endl;
-	
+
 	s<<"PluginPath        = "<<PLUGIN_PATH<<endl<<endl;
-	
+
 	s<<"PluginList        = "<<endl;
 	for (vector<string>::iterator i=PLUGINVEC.begin();
 		 i!=PLUGINVEC.end(); i++)
 	{
 		s<<*i<<endl;
 	}
-	s<<"end"<<endl;
+    s<<"end"<<endl;
 }
