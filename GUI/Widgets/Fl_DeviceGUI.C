@@ -129,13 +129,13 @@ int Fl_DeviceGUI::handle (int event) {
     }
 
     if (m_PluginWindow && !m_DelMe) {
-       if (m_PluginWindow->needs_resize()) {
+       if (m_PluginWindow->needs_resize() && !m_Minimised) {
           Maximise();
           m_PluginWindow->needs_resize(false);
        }
     }
 
-    if (m_Minimised==false && !m_PluginWindow->visible()) {
+    if (!m_Minimised && !m_PluginWindow->visible()) {
        Minimise();
        if (m_IconButton) m_IconButton->show();
     }
