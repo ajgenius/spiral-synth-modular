@@ -18,6 +18,7 @@
 */ 
 
 #include "LADSPAPluginGUI.h"
+#include "LADSPAInfo.h"
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 #include "ladspa.h"
@@ -25,18 +26,19 @@
 #include <cmath>
 #include <dlfcn.h>
 #include <vector>
-#include "utils.h"
 
 static const int GUI_COLOUR = 179;
 static const int GUIBG_COLOUR = 144;
 static const int GUIBG2_COLOUR = 145;
 
-LADSPAPluginGUI::LADSPAPluginGUI(int w, int h,LADSPAPlugin *o, ChannelHandler *ch,const HostInfo *Info, const vector<LPluginInfo> &PVec) :
+LADSPAPluginGUI::LADSPAPluginGUI(int w, int h,
+                                 LADSPAPlugin *o,
+                                 ChannelHandler *ch,
+                                 const HostInfo *Info,
+                                 const vector<LADSPAInfo::PluginEntry> &PVec) :
 SpiralPluginGUI(w,h,o,ch)
 {
-	PluginList=PVec;
-
-	m_Filename="None";
+	PluginList = PVec;
 
 	int Width=20;
 	int Height=100;
@@ -44,10 +46,10 @@ SpiralPluginGUI(w,h,o,ch)
 	m_Browser= new Fl_Hold_Browser(5,20,290,260,"LADSPA Plugins");
 	m_Browser->callback((Fl_Callback*)cb_Select);
 
-	for (vector<LPluginInfo>::iterator i=PluginList.begin();
+	for (vector<LADSPAInfo::PluginEntry>::iterator i=PluginList.begin();
 		 i!=PluginList.end(); i++)
 	{
-		m_Browser->add((*i).Name.c_str());
+		m_Browser->add(i->Name.c_str());
 	}
 
 // Get maximum input port count
@@ -56,7 +58,7 @@ SpiralPluginGUI(w,h,o,ch)
 // Set up buffers for data transfer via ChannelHandler
 	m_InData.InputPortNames = (char *)malloc(256 * m_InData.MaxInputPortCount);
 	m_InData.InputPortRanges = (PortRange *)malloc(sizeof(PortRange) * m_InData.MaxInputPortCount);
-	m_InData.InputPortValues = (float *)malloc(sizeof(float) * m_InData.MaxInputPortCount);
+	m_InData.InputPortValues = (float *)calloc(m_InData.MaxInputPortCount, sizeof(float));
 
 	if (!(m_InData.InputPortNames && m_InData.InputPortRanges)) {
 		cerr<<"Memory allocation error\n"<<endl;
@@ -263,9 +265,6 @@ void LADSPAPluginGUI::cb_Gain(Fl_Knob* o, void* v)
 
 inline void LADSPAPluginGUI::cb_Select_i(Fl_Hold_Browser* o)
 {
-	m_Filename=PluginList[o->value()-1].Filename;
-	m_Label=PluginList[o->value()-1].Label;
-
 	m_GUICH->Set("SetPluginIndex",o->value()-1);
 	m_GUICH->SetCommand(LADSPAPlugin::SELECTPLUGIN);
 

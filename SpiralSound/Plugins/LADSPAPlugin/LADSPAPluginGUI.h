@@ -34,6 +34,7 @@
 #include <string>
 
 #include "LADSPAPlugin.h"
+#include "LADSPAInfo.h"
 #include "../SpiralPluginGUI.h"
 
 #ifndef LADSPAGUI
@@ -47,7 +48,11 @@
 class LADSPAPluginGUI : public SpiralPluginGUI
 {
 public:
-	LADSPAPluginGUI(int w, int h, LADSPAPlugin *o, ChannelHandler *ch, const HostInfo *Info, const vector<LPluginInfo> &PVec);
+	LADSPAPluginGUI(int w, int h,
+	                LADSPAPlugin *o,
+	                ChannelHandler *ch,
+	                const HostInfo *Info,
+	                const std::vector<LADSPAInfo::PluginEntry> &PVec);
 	~LADSPAPluginGUI();
 
 	virtual void UpdateValues(SpiralPlugin *o);
@@ -62,11 +67,6 @@ public:
 	void SetMinMax(int n, float min, float max, bool clamp);
 	void GetMinMax(int n, float &min, float &max, bool &clamp);
 
-	string GetFilename(void) { return m_Filename; }
-	string GetLabel(void) { return m_Label; }
-	void SetFilename(string s) { m_Filename=s; }
-	void SetLabel(string s) { m_Label=s; }
-
 private:
 	LPluginInfo m_CurrentPlugin;
 
@@ -79,21 +79,18 @@ private:
 	Fl_Button		*m_UpdateInputs;
 	Fl_Button		*m_UpdateMinMax;
 	Fl_Button		*m_PowerAmp;
-	vector<Fl_Output*>	 m_PortOutput;
-	vector<Fl_Input*>	 m_PortMin;
-	vector<Fl_Input*>	 m_PortMax;
-	vector<Fl_Check_Button*> m_PortClamp;
+	std::vector<Fl_Output*>	 m_PortOutput;
+	std::vector<Fl_Input*>	 m_PortMin;
+	std::vector<Fl_Input*>	 m_PortMax;
+	std::vector<Fl_Check_Button*> m_PortClamp;
 
-	vector<LPluginInfo> PluginList;
+	std::vector<LADSPAInfo::PluginEntry> PluginList;
 
 	// this is needed as fltk seems to crash if you delete
 	// the pack, is won't delete the children properly???
-	vector<Fl_Group*>   m_PackVec;
+	std::vector<Fl_Group*>   m_PackVec;
 
 	int inited;
-
-	string m_Filename;
-	string m_Label;
 
 	inline void cb_Select_i(Fl_Hold_Browser* o);
 	static void cb_Select(Fl_Hold_Browser* o);

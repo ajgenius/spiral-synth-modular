@@ -17,9 +17,9 @@
 */
 
 #include "../SpiralPlugin.h"
+#include "LADSPAInfo.h"
 #include <FL/Fl_Pixmap.H>
 #include "ladspa.h"
-#include "utils.h"
 
 #ifndef LADSPAPLUGIN
 #define LADSPAPLUGIN
@@ -28,6 +28,7 @@ static const unsigned int NUM_PORTS = 8;
 
 class LPluginInfo {
 public:
+	unsigned long UniqueID;
 	string Filename;
 	string Label;
 	string Name;
@@ -96,8 +97,7 @@ public:
 private:
 
 	void UpdatePortRange(void);
-	bool UpdatePlugin(int n);
-	bool UpdatePlugin(const char * filename, const char * label, bool PortClampReset=true);
+	bool UpdatePlugin(unsigned long UniqueID, bool PortClampReset=true);
 	void SetPortInfo(void);
 
 	friend void describePluginLibrary(const char * pcFullFilename, void * pvPluginHandle, LADSPA_Descriptor_Function pfDescriptorFunction);
@@ -114,7 +114,11 @@ private:
 	vector<float> m_PortMax;
 	vector<bool>  m_PortClamp;
 
+	int           m_Version;
+
 	// our database of ladspa plugins
+	LADSPAInfo    m_LADSPAInfo;
+
 	vector<LPluginInfo> m_LADSPAList;
 	LPluginInfo m_CurrentPlugin;
 
@@ -124,7 +128,6 @@ private:
 	unsigned long m_InputPortCount;
 	char          m_Name[256];
 	char          m_Maker[256];
-
 
 	// Data sent to GUI
 	struct OutputChannelData
