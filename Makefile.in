@@ -43,7 +43,6 @@ SpiralPlugins = $(libdir)/SpiralPlugins
 ####### Files
 
 HEADERS =	SpiralSynthModular.h \
-		SpiralSynthModularInfo.h \
 		GraphSort.h \
 		SettingsWindow.h \
 		SpiralSynthPluginLocation.h \
@@ -62,7 +61,6 @@ HEADERS =	SpiralSynthModular.h \
 		SpiralSound/Plugins/SpiralPluginGUI.h
 SOURCES =	main.cpp \
 		SpiralSynthModular.C \
-		SpiralSynthModularInfo.C \
 		GraphSort.C \
 		SettingsWindow.C \
                 GUI/Widgets/SpiralGUI.C \
@@ -80,7 +78,6 @@ SOURCES =	main.cpp \
 		SpiralSound/Plugins/SpiralPluginGUI.C
 OBJECTS =	main.o \
 		SpiralSynthModular.o \
-		SpiralSynthModularInfo.o \
 		GraphSort.o \
 		SettingsWindow.o \
                 GUI/Widgets/SpiralGUI.o \
@@ -181,7 +178,6 @@ main.o : 	main.cpp \
 
 SpiralSynthModular.o: SpiralSynthModular.C \
 		SpiralSynthModular.h \
-		SpiralSynthModularInfo.h \
 		SpiralSound/SpiralInfo.h \
 		SettingsWindow.h \
 		GUI/SSM.xpm \
@@ -199,11 +195,6 @@ SpiralSynthModular.o: SpiralSynthModular.C \
 		SpiralSound/PluginManager.h \
 		SpiralSound/Plugins/SpiralPlugin.h
 
-SpiralSynthModularInfo.o: SpiralSynthModularInfo.C \
-		SpiralSynthModularInfo.h \
-		SpiralSynthPluginLocation.h \
-		SpiralSound/SpiralInfo.h
-
 GraphSort.o: GraphSort.C \
 		GraphSort.h
 
@@ -216,7 +207,6 @@ GUI/Widgets/Fl_DeviceGUI.o: GUI/Widgets/Fl_DeviceGUI.C \
 		GUI/Widgets/Fl_DragBar.H \
 		GUI/Widgets/Fl_Canvas.h \
 		GraphSort.h \
-		SpiralSynthModularInfo.h \
 		SpiralSound/SpiralInfo.h
 
 GUI/Widgets/Fl_CommentGUI.o: GUI/Widgets/Fl_CommentGUI.C \
@@ -224,7 +214,6 @@ GUI/Widgets/Fl_CommentGUI.o: GUI/Widgets/Fl_CommentGUI.C \
 		GUI/Widgets/Fl_CommentGUI.h \
 		GUI/Widgets/Fl_DeviceGUI.h \
 		GUI/Widgets/Fl_DragBar.H \
-		SpiralSynthModularInfo.h \
 		SpiralSound/SpiralInfo.h
 
 GUI/Widgets/Fl_DragBar.o: GUI/Widgets/Fl_DragBar.cxx \
@@ -236,7 +225,6 @@ GUI/Widgets/Fl_Canvas.o: GUI/Widgets/Fl_Canvas.C \
 		GUI/Widgets/Fl_DeviceGUI.h \
 		GUI/Widgets/Fl_DragBar.H \
 		GraphSort.h \
-		SpiralSynthModularInfo.h \
 		SpiralSound/SpiralInfo.h
 
 GUI/Widgets/PawfalInput.o: GUI/Widgets/PawfalInput.C \
@@ -246,6 +234,7 @@ GUI/Widgets/PawfalYesNo.o: GUI/Widgets/PawfalYesNo.C \
 		GUI/Widgets/PawfalYesNo.h
 
 SpiralSound/SpiralInfo.o: SpiralSound/SpiralInfo.C \
+		SpiralSynthPluginLocation.h \
 		SpiralSound/SpiralInfo.h \
 		SpiralSound/Sample.h
 
@@ -276,10 +265,7 @@ SpiralSound/PluginManager.o: SpiralSound/PluginManager.C \
 SettingsWindow.o: SettingsWindow.C \
 		SettingsWindow.h \
 		SpiralSynthModular.h \
-		SpiralSynthModularInfo.h \
 		GraphSort.h \
-		SpiralSound/SpiralInfo.h \
-		SpiralSound/Sample.h \
 		SpiralSound/SpiralInfo.h \
 		SpiralSound/Sample.h \
 		SpiralSound/Plugins/SpiralPlugin.h \

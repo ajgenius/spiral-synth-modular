@@ -33,6 +33,7 @@
 
 #include "SpiralSynthModular.h"
 #include "SpiralSound/PluginManager.h"
+#include "SpiralSound/SpiralInfo.h"
 #include "SpiralSound/Plugins/SpiralPluginGUI.h"
 
 #include "GUI/SSM.xpm"
@@ -75,9 +76,6 @@ DeviceWin::~DeviceWin()
 
 SynthModular::SynthModular():
 m_NextID(0),
-//m_NextPluginButton(1),
-//m_NextPluginButtonXPos(5),
-//m_NextPluginButtonYPos(20),
 m_PauseAudio(false)
 {
 	m_Info.BUFSIZE    = SpiralInfo::BUFSIZE;
@@ -93,8 +91,7 @@ m_PauseAudio(false)
         m_Info.SCOPE_SEL_COLOUR = SpiralInfo::SCOPE_SEL_COLOUR;
         m_Info.SCOPE_IND_COLOUR = SpiralInfo::SCOPE_IND_COLOUR;
         m_Info.SCOPE_MRK_COLOUR = SpiralInfo::SCOPE_MRK_COLOUR;
-
-	//m_Info.SpiralSynthModularInfo::GUICOL_Button = SpiralInfo::SpiralSynthModularInfo::GUICOL_Button;
+	//m_Info.SpiralInfo::GUICOL_Button = SpiralInfo::SpiralInfo::GUICOL_Button;
 
 	for (int n=0; n<512; n++) Numbers[n]=n;
 
@@ -244,19 +241,19 @@ SpiralWindowType *SynthModular::CreateWindow()
         m_Topbar = new Fl_Pack (0, 0, MAIN_WIDTH, ToolbarHeight, "");
         m_Topbar->user_data((void*)(this));
        	m_Topbar->type(FL_HORIZONTAL);
-		m_Topbar->color(SpiralSynthModularInfo::GUICOL_Button);
+		m_Topbar->color(SpiralInfo::GUICOL_Button);
         m_TopWindow->add(m_Topbar);
 
         m_ToolbarPanel = new Fl_Pack (0, 0, but*5, ToolbarHeight, "");
         m_ToolbarPanel->user_data((void*)(this));
        	m_ToolbarPanel->type(FL_VERTICAL);
-		m_ToolbarPanel->color(SpiralSynthModularInfo::GUICOL_Button);
+		m_ToolbarPanel->color(SpiralInfo::GUICOL_Button);
         m_Topbar->add(m_ToolbarPanel);
 
         m_Toolbar = new Fl_Pack (0, 0, but*5, but, "");
         m_Toolbar->user_data((void*)(this));
        	m_Toolbar->type(FL_HORIZONTAL);
-		m_Toolbar->color(SpiralSynthModularInfo::GUICOL_Button);
+		m_Toolbar->color(SpiralInfo::GUICOL_Button);
         m_ToolbarPanel->add(m_Toolbar);
 
         m_Load = new Fl_Button(0, 0, but, but, "");
@@ -265,8 +262,8 @@ SpiralWindowType *SynthModular::CreateWindow()
 	delete tPix;
         m_Load->type(0);
 	m_Load->box(FL_PLASTIC_UP_BOX);
-	m_Load->color(SpiralSynthModularInfo::GUICOL_Button);
-	m_Load->selection_color(SpiralSynthModularInfo::GUICOL_Tool);
+	m_Load->color(SpiralInfo::GUICOL_Button);
+	m_Load->selection_color(SpiralInfo::GUICOL_Tool);
         m_Load->labelsize (1);
         m_Load->tooltip("Load a patch file");
 	m_Load->callback((Fl_Callback*)cb_Load);
@@ -278,8 +275,8 @@ SpiralWindowType *SynthModular::CreateWindow()
 	delete tPix;
         m_Save->type(0);
 	m_Save->box(FL_PLASTIC_UP_BOX);
-	m_Save->color(SpiralSynthModularInfo::GUICOL_Button);
-	m_Save->selection_color(SpiralSynthModularInfo::GUICOL_Tool);
+	m_Save->color(SpiralInfo::GUICOL_Button);
+	m_Save->selection_color(SpiralInfo::GUICOL_Tool);
         m_Save->labelsize (1);
  	m_Save->tooltip("Save a patch file");
 	m_Save->callback((Fl_Callback*)cb_Save);
@@ -291,8 +288,8 @@ SpiralWindowType *SynthModular::CreateWindow()
 	delete tPix;
         m_New->type(0);
 	m_New->box(FL_PLASTIC_UP_BOX);
-	m_New->color(SpiralSynthModularInfo::GUICOL_Button);
-	m_New->selection_color(SpiralSynthModularInfo::GUICOL_Tool);
+	m_New->color(SpiralInfo::GUICOL_Button);
+	m_New->selection_color(SpiralInfo::GUICOL_Tool);
   	m_New->labelsize (1);
         m_New->tooltip("New patch");
 	m_New->callback((Fl_Callback*)cb_New);
@@ -304,8 +301,8 @@ SpiralWindowType *SynthModular::CreateWindow()
 	delete tPix;
         m_Options->type(0);
 	m_Options->box(FL_PLASTIC_UP_BOX);
-	m_Options->color(SpiralSynthModularInfo::GUICOL_Button);
-	m_Options->selection_color(SpiralSynthModularInfo::GUICOL_Tool);
+	m_Options->color(SpiralInfo::GUICOL_Button);
+	m_Options->selection_color(SpiralInfo::GUICOL_Tool);
  	m_Options->labelsize (1);
         m_Options->tooltip("Options");
 	m_Options->callback((Fl_Callback*)cb_Rload);
@@ -317,21 +314,21 @@ SpiralWindowType *SynthModular::CreateWindow()
 	delete tPix;
         m_NewComment->type(0);
 	m_NewComment->box(FL_PLASTIC_UP_BOX);
-	m_NewComment->color(SpiralSynthModularInfo::GUICOL_Button);
-	m_NewComment->selection_color(SpiralSynthModularInfo::GUICOL_Tool);
+	m_NewComment->color(SpiralInfo::GUICOL_Button);
+	m_NewComment->selection_color(SpiralInfo::GUICOL_Tool);
         m_NewComment->labelsize (1);
         m_NewComment->tooltip("New comment");
 	m_NewComment->callback((Fl_Callback*)cb_NewComment);
 	m_Toolbar->add(m_NewComment);
 
         m_GroupFiller = new Fl_Group (0, 0, 0, ToolbarHeight, "");
-		m_GroupFiller->color(SpiralSynthModularInfo::GUICOL_Button);
+		m_GroupFiller->color(SpiralInfo::GUICOL_Button);
 	m_Topbar->add (m_GroupFiller);
 
        	m_GroupTab = new Fl_Tabs (0, 0, MAIN_WIDTH-m_GroupFiller->w()-but*5, ToolbarHeight, "");
         m_GroupTab->user_data ((void*)(this));
 		m_GroupTab->box(FL_PLASTIC_DOWN_BOX);
-		m_GroupTab->color(SpiralSynthModularInfo::GUICOL_Button);
+		m_GroupTab->color(SpiralInfo::GUICOL_Button);
         m_GroupTab->callback((Fl_Callback*)cb_GroupTab);
 	m_Topbar->add (m_GroupTab);
 
@@ -348,7 +345,7 @@ SpiralWindowType *SynthModular::CreateWindow()
 	m_Canvas->box(FL_FLAT_BOX);
         m_Canvas->labeltype(FL_ENGRAVED_LABEL);
         m_Canvas->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
-	m_Canvas->color(SpiralSynthModularInfo::GUICOL_Canvas);
+	m_Canvas->color(SpiralInfo::GUICOL_Canvas);
 	m_Canvas->user_data((void*)(this));
 	m_Canvas->SetConnectionCallback((Fl_Callback*)cb_Connection);
 	m_Canvas->SetUnconnectCallback((Fl_Callback*)cb_Unconnect);
@@ -449,14 +446,14 @@ void SynthModular::LoadPlugins(string pluginPath)
 
 	vector<string> PluginVector;
 
-	if (SpiralSynthModularInfo::USEPLUGINLIST)
+	if (SpiralInfo::USEPLUGINLIST)
 	{
-		PluginVector=SpiralSynthModularInfo::PLUGINVEC;
+		PluginVector=SpiralInfo::PLUGINVEC;
 	}
 	else
 	{
                 if (pluginPath.empty())
-                        PluginVector=BuildPluginList(SpiralSynthModularInfo::PLUGIN_PATH);
+                        PluginVector=BuildPluginList(SpiralInfo::PLUGIN_PATH);
                 else {
                         string::iterator i = pluginPath.end() - 1;
                         if (*i != '/') pluginPath += '/';
@@ -470,7 +467,7 @@ void SynthModular::LoadPlugins(string pluginPath)
 		string Fullpath;
 		if (pluginPath=="")
 		{
-			Fullpath=SpiralSynthModularInfo::PLUGIN_PATH+*i;
+			Fullpath=SpiralInfo::PLUGIN_PATH+*i;
 		}
 		else
 		{
@@ -501,7 +498,7 @@ void SynthModular::LoadPlugins(string pluginPath)
                                 the_group = new Fl_Pack (m_GroupTab->x(), 16, m_GroupTab->w(), m_GroupTab->h()-15, GroupName.c_str());
 	                        the_group->type(FL_HORIZONTAL);
                                 the_group->labelsize(8);
-								the_group->color(SpiralSynthModularInfo::GUICOL_Button);
+								the_group->color(SpiralInfo::GUICOL_Button);
                                 the_group->user_data((void*)(this));
 	                        //m_GroupTab->add(the_group);
                                 m_GroupTab->value(the_group);
@@ -514,8 +511,8 @@ void SynthModular::LoadPlugins(string pluginPath)
                         NewButton->type(0);
 			NewButton->box(FL_NO_BOX);
 			NewButton->down_box(FL_NO_BOX);
-			//NewButton->color(SpiralSynthModularInfo::GUICOL_Button);
-			//NewButton->selection_color(SpiralSynthModularInfo::GUICOL_Button);
+			//NewButton->color(SpiralInfo::GUICOL_Button);
+			//NewButton->selection_color(SpiralInfo::GUICOL_Button);
 			the_group->add(NewButton);
 
 			string tooltip=*i;
@@ -664,18 +661,18 @@ DeviceWin* SynthModular::NewComment(int n, int x=-1, int y=-1)
 	DeviceWin *nlw = new DeviceWin;
 
 	if (x==-1)
-	{	
-		x = m_CanvasScroll->x()+50; 
-		y = m_CanvasScroll->y()+50; 
+	{
+		x = m_CanvasScroll->x()+50;
+		y = m_CanvasScroll->y()+50;
 	}
-		
+
 	nlw->m_Device=NULL;
 	nlw->m_PluginID  = COMMENT_ID;
-	
-	DeviceGUIInfo Info;	
-	
-	Info.XPos       = x; 
-	Info.YPos       = y; 
+
+	DeviceGUIInfo Info;
+
+	Info.XPos       = x;
+	Info.YPos       = y;
 	Info.Width      = 50;
 	Info.Height     = 20;
 	Info.NumInputs  = 0;
@@ -683,10 +680,10 @@ DeviceWin* SynthModular::NewComment(int n, int x=-1, int y=-1)
 	Info.Name = "";
 
 	nlw->m_DeviceGUI = new Fl_CommentGUI(Info, NULL, NULL);
-			
+
 	m_Canvas->add(nlw->m_DeviceGUI);
 	m_Canvas->redraw();
-	
+
 	return nlw;
 }
 
@@ -755,13 +752,13 @@ void SynthModular::cb_Blocking(void* o, bool mode)
 //////////////////////////////////////////////////////////
 
 istream &operator>>(istream &s, SynthModular &o)
-{	
+{
 	o.PauseAudio();
 
 	string dummy,dummy2;
 	int ver;
 	s>>dummy>>dummy>>dummy>>ver;
-	
+
 	if (ver>FILE_VERSION)
 	{
 		SpiralInfo::Alert("Bad file, or more recent version.");
@@ -772,14 +769,14 @@ istream &operator>>(istream &s, SynthModular &o)
 	{
 		int MainWinX,MainWinY,MainWinW,MainWinH;
 		int EditWinX,EditWinY,EditWinW,EditWinH;
-	
+
 		s>>MainWinX>>MainWinY>>MainWinW>>MainWinH;
 		s>>EditWinX>>EditWinY>>EditWinW>>EditWinH;
-	
+
 		//o.m_MainWindow->resize(MainWinX,MainWinY,MainWinW,MainWinH);
 		//o.m_EditorWindow->resize(EditWinX,EditWinY,EditWinW,EditWinH);
 	}
-	
+
 	int Num, ID, PluginID, x,y,ps,px,py;
 	s>>dummy>>Num;
 
@@ -826,13 +823,13 @@ istream &operator>>(istream &s, SynthModular &o)
 		}
 
 		if (PluginID==COMMENT_ID)
-		{		
+		{
 			DeviceWin* temp = o.NewComment(PluginID, x, y);
 			if (temp)
 			{
 				temp->m_DeviceGUI->SetID(ID);
 				o.m_DeviceWinMap[ID]=temp;
-				((Fl_CommentGUI*)(o.m_DeviceWinMap[ID]->m_DeviceGUI))->StreamIn(s); // load the plugin	
+				((Fl_CommentGUI*)(o.m_DeviceWinMap[ID]->m_DeviceGUI))->StreamIn(s); // load the plugin
 				if (o.m_NextID<=ID) o.m_NextID=ID+1;
 			}
 		}
@@ -847,15 +844,15 @@ istream &operator>>(istream &s, SynthModular &o)
 					// set the titlebars
 					temp->m_DeviceGUI->SetName(Name);
 				}
-				
-				temp->m_Device->SetUpdateInfoCallback(ID,o.cb_UpdatePluginInfo);					
+
+				temp->m_Device->SetUpdateInfoCallback(ID,o.cb_UpdatePluginInfo);
 				o.m_DeviceWinMap[ID]=temp;
 				o.m_DeviceWinMap[ID]->m_Device->StreamIn(s); // load the plugin
 				// load external files
 				o.m_DeviceWinMap[ID]->m_Device->LoadExternalFiles(o.m_FilePath+"_files/");
- 				
-				if (ver>1 && o.m_DeviceWinMap[ID]->m_DeviceGUI->GetPluginWindow()) 
-				{					
+
+				if (ver>1 && o.m_DeviceWinMap[ID]->m_DeviceGUI->GetPluginWindow())
+				{
 					// set the GUI up with the loaded values
 					// looks messy, but if we do it here, the plugin and it's gui can remain
 					// totally seperated.
@@ -868,8 +865,8 @@ istream &operator>>(istream &s, SynthModular &o)
 
 					// position the plugin window in the main window
 					//o.m_DeviceWinMap[ID]->m_DeviceGUI->GetPluginWindow()->position(px,py);
-						
-					if (ps) 
+
+					if (ps)
 					{
 						o.m_DeviceWinMap[ID]->m_DeviceGUI->Maximise();
 						// reposition after maximise
@@ -880,14 +877,14 @@ istream &operator>>(istream &s, SynthModular &o)
 
 				if (o.m_NextID<=ID) o.m_NextID=ID+1;
 			}
-			else 
+			else
 			{
 				// can't really recover if the plugin ID doesn't match a plugin, as
 			    // we have no idea how much data in the stream belongs to this plugin
 				SpiralInfo::Alert("Error in stream, can't really recover data from here on.");
 				return s;
 			}
-		}	
+		}
 	}
 
 	s>>*o.m_Canvas;
@@ -908,7 +905,7 @@ ostream &operator<<(ostream &s, SynthModular &o)
 	bool ExternalDirUsed=false;
 	string command("mkdir "+o.m_FilePath+"_files");
 	system(command.c_str());
-	
+
 	if (FILE_VERSION>2)
 	{
 		s<<o.m_TopWindow->x()<<" "<<o.m_TopWindow->y()<<" ";
@@ -916,14 +913,14 @@ ostream &operator<<(ostream &s, SynthModular &o)
 		s<<0<<" "<<0<<" ";
 		s<<0<<" "<<0<<endl;
 	}
-	
+
 	// save out the SynthModular
 	s<<"SectionList"<<endl;
 	s<<o.m_DeviceWinMap.size()<<endl;
-	
+
 	for(map<int,DeviceWin*>::iterator i=o.m_DeviceWinMap.begin();
 		i!=o.m_DeviceWinMap.end(); i++)
-	{		
+	{
 		s<<endl;
 		s<<"Device ";
 		s<<i->first<<" "; // save the id
@@ -944,30 +941,30 @@ ostream &operator<<(ostream &s, SynthModular &o)
 		{
 			s<<0<<" "<<0<<" "<<0;
 		}
-		
+
 		s<<endl;
-		
+
 		if (i->second->m_PluginID==COMMENT_ID)
 		{
 			// save the comment gui
 			((Fl_CommentGUI*)(i->second->m_DeviceGUI))->StreamOut(s);
 		}
 		else
-		{		
+		{
 			// save the plugin
-			i->second->m_Device->StreamOut(s); 
+			i->second->m_Device->StreamOut(s);
 		}
 		s<<endl;
-		
+
 		// save external files
 		if (i->second->m_Device && i->second->m_Device->SaveExternalFiles(o.m_FilePath+"_files/"))
 		{
 			ExternalDirUsed=true;
 		}
 	}
-	
+
 	s<<endl<<*o.m_Canvas<<endl;
-	
+
 	// remove it if it wasn't used
 	if (!ExternalDirUsed)
 	{
@@ -976,7 +973,7 @@ ostream &operator<<(ostream &s, SynthModular &o)
 		string command("rmdir "+o.m_FilePath+"_files");
 		system(command.c_str());
 	}
-	
+
 	o.ResumeAudio();
 
 	return s;
@@ -1003,21 +1000,21 @@ inline void SynthModular::cb_Load_i(Fl_Button* o, void* v)
 	if (m_DeviceWinMap.size()>0 && !Pawfal_YesNo("Load - Lose changes to current patch?"))
 	{
 		return;
-	}	
-	
+	}
+
 	char *fn=fl_file_chooser("Load a patch", "*.ssm", NULL);
-	
+
 	if (fn && fn!='\0')
 	{
 		ifstream inf(fn);
-		
+
 		if (inf)
-		{	
-			m_FilePath=fn;	
-			
+		{
+			m_FilePath=fn;
+
 			ClearUp();
 			inf>>*this;
-						
+
 			TITLEBAR=LABEL+" "+fn;
 			m_TopWindow->label(TITLEBAR.c_str());
 		}
@@ -1032,9 +1029,9 @@ void SynthModular::cb_Load(Fl_Button* o, void* v)
 inline void SynthModular::cb_Save_i(Fl_Button* o, void* v)
 {
 	char *fn=fl_file_chooser("Save a patch", "*.ssm", NULL);
-	
+
 	if (fn && fn!='\0')
-	{	
+	{
 		ifstream ifl(fn);
 		if (ifl)
 		{
@@ -1043,15 +1040,15 @@ inline void SynthModular::cb_Save_i(Fl_Button* o, void* v)
 				return;
 			}
 		}
-	
+
 		ofstream of(fn);
 
 		if (of)
 		{
 			m_FilePath=fn;
-			
+
 			of<<*this;
-					
+
 			TITLEBAR=LABEL+" "+fn;
 			m_TopWindow->label(TITLEBAR.c_str());
 		}
@@ -1131,7 +1128,7 @@ inline void SynthModular::cb_Rload_i(Fl_Button* o, void* v)
 	m_ToolPack = new Fl_Pack(5,20,TOOLBOX_WIDTH-10, TOOLBOX_HEIGHT-40,"");
     m_ToolPack->type(FL_VERTICAL);
 	m_ToolPack->box(FL_NO_BOX);
-	m_ToolPack->color(SpiralSynthModularInfo::GUICOL_Tool);
+	m_ToolPack->color(SpiralInfo::GUICOL_Tool);
     m_ToolPack->user_data((void*)(this));
 	m_ToolBox->add(m_ToolPack);
 	m_ToolBox->redraw();

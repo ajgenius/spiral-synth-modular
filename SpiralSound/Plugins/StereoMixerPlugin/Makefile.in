@@ -38,30 +38,33 @@ mandir = @mandir@
 
 ####### Files
 
-HEADERS =	../SpiralPlugin.h \
+HEADERS =	StereoMixerPlugin.h \
+		StereoMixerPluginGUI.h \
+		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
+		../../SpiralInfo.h \
 		../../ChannelHandler.h \
-		../Widgets/Fl_Knob.H \
-		../../../GUI/Widgets/SpiralGUI.H \
 		../../Sample.h \
-		StereoMixerPlugin.h \
-		StereoMixerPluginGUI.h
-SOURCES =	../SpiralPlugin.C \
+		../Widgets/Fl_Knob.H \
+		../../../GUI/Widgets/SpiralGUI.H
+SOURCES =	StereoMixerPlugin.C \
+		StereoMixerPluginGUI.C \
+		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
+		../../SpiralInfo.C \
 		../../ChannelHandler.C \
-		../Widgets/Fl_Knob.cxx \
-		../../../GUI/Widgets/SpiralGUI.C \
 		../../Sample.C \
-		StereoMixerPlugin.C \
-		StereoMixerPluginGUI.C
-OBJECTS =	../SpiralPlugin.o \
+		../Widgets/Fl_Knob.cxx \
+		../../../GUI/Widgets/SpiralGUI.C
+OBJECTS =	StereoMixerPlugin.o \
+		StereoMixerPluginGUI.o \
+		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
+		../../SpiralInfo.o \
 		../../ChannelHandler.o \
-		../Widgets/Fl_Knob.o \
-		../../../GUI/Widgets/SpiralGUI.o \
 		../../Sample.o \
-		StereoMixerPlugin.o \
-		StereoMixerPluginGUI.o
+		../Widgets/Fl_Knob.o \
+		../../../GUI/Widgets/SpiralGUI.o
 INTERFACES =
 UICDECLS =
 UICIMPLS =
@@ -125,13 +128,14 @@ install:
 
 ../SpiralPlugin.o: ../SpiralPlugin.C \
 		../SpiralPlugin.h \
+		../../ChannelHandler.h \
 		../../Sample.h
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
-		../../../GUI/Widgets/SpiralGUI.H \
 		../SpiralPlugin.h \
-		../../Sample.h
+		../../ChannelHandler.h \
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../Widgets/Fl_Knob.o: ../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_Knob.H
@@ -140,8 +144,7 @@ install:
 		../../../GUI/Widgets/SpiralGUI.H
 
 ../../Sample.o: ../../Sample.C \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 StereoMixerPlugin.o: StereoMixerPlugin.C \
 		StereoMixerPlugin.h \

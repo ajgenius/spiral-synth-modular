@@ -20,7 +20,7 @@
 #include "Fl_Canvas.h"
 #include "Fl_Canvas.h"
 #include "PawfalInput.h"
-#include "../../SpiralSynthModularInfo.h"
+#include "../../SpiralSound/SpiralInfo.h"
 
 int Fl_DeviceGUI::Numbers[512];
 
@@ -66,10 +66,10 @@ m_Minimised(true)
 	for (int n=0; n<512; n++) Numbers[n]=n;
 
 	type(1);
-	box((Fl_Boxtype)SpiralSynthModularInfo::GUIDEVICE_Box);
+	box((Fl_Boxtype)SpiralInfo::GUIDEVICE_Box);
     labeltype(FL_ENGRAVED_LABEL);
     align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
-	color(SpiralSynthModularInfo::GUICOL_Device);
+	color(SpiralInfo::GUICOL_Device);
 
 	m_Icon=Icon;
 	m_MiniWidth=w();
@@ -78,7 +78,7 @@ m_Minimised(true)
 	m_DragBar = new Fl_DragBar(Info.XPos, Info.YPos, Info.Width+PortGroupWidth*2, TitleBarHeight, m_Name.c_str());
 	m_DragBar->labelsize(10);
 	m_DragBar->type(Fl_DragBar::FLDRAG);
-	m_DragBar->color(SpiralSynthModularInfo::GUICOL_Device);
+	m_DragBar->color(SpiralInfo::GUICOL_Device);
 
 	m_Menu = new Fl_Menu_Button(x(),y(),w(),h(),"");
 	m_Menu->type(Fl_Menu_Button::POPUP3);

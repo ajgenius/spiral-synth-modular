@@ -40,36 +40,39 @@ mandir = @mandir@
 
 ####### Files
 
-HEADERS =	../SpiralPlugin.h \
+HEADERS =	JackPlugin.h \
+		JackPluginGUI.h \
+		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
+		../../SpiralInfo.h \
 		../../ChannelHandler.h \
-		../Widgets/Fl_Knob.H \
-		../../../GUI/Widgets/SpiralGUI.H \
-		../Widgets/Fl_LED_Button.H \
 		../../Sample.h \
 		../../RiffWav.h \
-		JackPlugin.h \
-		JackPluginGUI.h
-SOURCES =	../SpiralPlugin.C \
+		../Widgets/Fl_Knob.H \
+		../Widgets/Fl_LED_Button.H \
+		../../../GUI/Widgets/SpiralGUI.H
+SOURCES =	JackPlugin.C \
+		JackPluginGUI.C \
+		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
+		../../SpiralInfo.C \
 		../../ChannelHandler.C \
-		../Widgets/Fl_Knob.cxx \
-		../../../GUI/Widgets/SpiralGUI.C \
-		../Widgets/Fl_LED_Button.cxx \
 		../../Sample.C \
 		../../RiffWav.C \
-		JackPlugin.C \
-		JackPluginGUI.C
-OBJECTS =	../SpiralPlugin.o \
+		../Widgets/Fl_Knob.cxx \
+		../Widgets/Fl_LED_Button.cxx \
+		../../../GUI/Widgets/SpiralGUI.C
+OBJECTS =	JackPlugin.o \
+		JackPluginGUI.o \
+		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
+		../../SpiralInfo.o \
 		../../ChannelHandler.o \
-		../Widgets/Fl_Knob.o \
-		../../../GUI/Widgets/SpiralGUI.o \
-		../Widgets/Fl_LED_Button.o \
 		../../Sample.o \
 		../../RiffWav.o \
-		JackPlugin.o \
-		JackPluginGUI.o
+		../Widgets/Fl_Knob.o \
+		../Widgets/Fl_LED_Button.o \
+		../../../GUI/Widgets/SpiralGUI.o
 INTERFACES =
 UICDECLS =
 UICIMPLS =
@@ -131,14 +134,14 @@ install:
 
 ../SpiralPlugin.o: ../SpiralPlugin.C \
 		../SpiralPlugin.h \
+		../../ChannelHandler.h \
 		../../Sample.h
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
-		../../../GUI/Widgets/SpiralGUI.H \
-		../Widgets/Fl_LED_Button.H \
 		../SpiralPlugin.h \
-		../../Sample.h
+		../../ChannelHandler.h \
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../Widgets/Fl_Knob.o: ../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_Knob.H
@@ -150,8 +153,7 @@ install:
 		../Widgets/Fl_LED_Button.H
 
 ../../Sample.o: ../../Sample.C \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 ../../RiffWav.o: ../../RiffWav.C \
 		../../RiffWav.h \

@@ -33,7 +33,6 @@
 #include <sstream>
 #include <iostream>
 #include <map>
-#include "SpiralSynthModularInfo.h"
 #include "GUI/Widgets/Fl_DeviceGUI.h"
 #include "GUI/Widgets/Fl_CommentGUI.h"
 #include "GUI/Widgets/Fl_Canvas.h"

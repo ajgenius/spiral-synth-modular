@@ -38,37 +38,40 @@ mandir = @mandir@
 
 ####### Files
 
-HEADERS =	../SpiralPlugin.h \
+HEADERS =	LFOPlugin.h \
+		LFOPluginGUI.h \
+		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
+		../../SpiralInfo.h \
+		../../ChannelHandler.h \
+                ../../Sample.h \
 		../Widgets/Fl_Knob.H \
 		../Widgets/Fl_LED_Button.H \
-		../../../GUI/Widgets/SpiralGUI.H \
                 ../GUI/WS_Sine.h \
                 ../GUI/WS_Tri.h \
                 ../GUI/WS_Square.h \
                 ../GUI/WS_Saw.h \
-                ../../Sample.h \
-		../../ChannelHandler.h \
-		LFOPlugin.h \
-		LFOPluginGUI.h
-SOURCES =	../SpiralPlugin.C \
+		../../../GUI/Widgets/SpiralGUI.H
+SOURCES =	LFOPlugin.C \
+		LFOPluginGUI.C \
+		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../Widgets/Fl_Knob.cxx \
-		../Widgets/Fl_LED_Button.cxx \
-		../../../GUI/Widgets/SpiralGUI.C \
+		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
-		LFOPlugin.C \
-		LFOPluginGUI.C
-OBJECTS =	../SpiralPlugin.o \
+		../Widgets/Fl_Knob.cxx \
+		../Widgets/Fl_LED_Button.cxx \
+		../../../GUI/Widgets/SpiralGUI.C
+OBJECTS =	LFOPlugin.o \
+		LFOPluginGUI.o \
+		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../Widgets/Fl_Knob.o \
-		../Widgets/Fl_LED_Button.o \
-		../../../GUI/Widgets/SpiralGUI.o \
+		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
-		LFOPlugin.o \
-		LFOPluginGUI.o
+		../Widgets/Fl_Knob.o \
+		../Widgets/Fl_LED_Button.o \
+		../../../GUI/Widgets/SpiralGUI.o
 INTERFACES =
 UICDECLS =
 UICIMPLS =
@@ -130,13 +133,14 @@ install:
 
 ../SpiralPlugin.o: ../SpiralPlugin.C \
 		../SpiralPlugin.h \
+		../../ChannelHandler.h \
 		../../Sample.h
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../../GUI/Widgets/SpiralGUI.H \
-		../../Sample.h
+		../../ChannelHandler.h \
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../Widgets/Fl_Knob.o: ../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_Knob.H
@@ -148,8 +152,7 @@ install:
 		../../../GUI/Widgets/SpiralGUI.H
 
 ../../Sample.o: ../../Sample.C \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 LFOPlugin.o: LFOPlugin.C \
 		LFOPlugin.h \

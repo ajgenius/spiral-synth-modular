@@ -38,27 +38,30 @@ mandir = @mandir@
 
 ####### Files
 
-HEADERS =	../SpiralPlugin.h \
+HEADERS =	SampleHoldPlugin.h \
+		SampleHoldPluginGUI.h \
+		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
+		../../SpiralInfo.h \
 		../../ChannelHandler.h \
-		../../../GUI/Widgets/SpiralGUI.H \
 		../../Sample.h \
-		SampleHoldPlugin.h \
-		SampleHoldPluginGUI.h
-SOURCES =	../SpiralPlugin.C \
+		../../../GUI/Widgets/SpiralGUI.H
+SOURCES =	SampleHoldPlugin.C \
+		SampleHoldPluginGUI.C \
+		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
+		../../SpiralInfo.C \
 		../../ChannelHandler.C \
-		../../../GUI/Widgets/SpiralGUI.C \
 		../../Sample.C \
-		SampleHoldPlugin.C \
-		SampleHoldPluginGUI.C
-OBJECTS =	../SpiralPlugin.o \
+		../../../GUI/Widgets/SpiralGUI.C
+OBJECTS =	SampleHoldPlugin.o \
+		SampleHoldPluginGUI.o \
+		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
+		../../SpiralInfo.o \
 		../../ChannelHandler.o \
-		../../../GUI/Widgets/SpiralGUI.o \
 		../../Sample.o \
-		SampleHoldPlugin.o \
-		SampleHoldPluginGUI.o
+		../../../GUI/Widgets/SpiralGUI.o
 INTERFACES =
 UICDECLS =
 UICIMPLS =
@@ -120,20 +123,20 @@ install:
 
 ../SpiralPlugin.o: ../SpiralPlugin.C \
 		../SpiralPlugin.h \
+		../../ChannelHandler.h \
 		../../Sample.h
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
-		../../../GUI/Widgets/SpiralGUI.H \
 		../SpiralPlugin.h \
-		../../Sample.h
+		../../ChannelHandler.h \
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../../../GUI/Widgets/SpiralGUI.o: ../../../GUI/Widgets/SpiralGUI.C \
 		../../../GUI/Widgets/SpiralGUI.H
 
 ../../Sample.o: ../../Sample.C \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 SampleHoldPlugin.o: SampleHoldPlugin.C \
 		SampleHoldPlugin.h \

@@ -39,16 +39,18 @@ mandir = @mandir@
 ####### Files
 
 HEADERS =	AmpPlugin.h \
-		AmpPluginGUI.h
-                ../SpiralPlugin.h \
+		AmpPluginGUI.h \
+		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
+		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
-		../../../GUI/Widgets/SpiralGUI.H \
+		../../../GUI/Widgets/SpiralGUI.H
 SOURCES =	AmpPlugin.C \
 		AmpPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
+		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../../../GUI/Widgets/SpiralGUI.C
@@ -56,6 +58,7 @@ OBJECTS =	AmpPlugin.o \
 		AmpPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
+		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../../../GUI/Widgets/SpiralGUI.o
@@ -120,20 +123,20 @@ install:
 
 ../SpiralPlugin.o: ../SpiralPlugin.C \
 		../SpiralPlugin.h \
+		../../ChannelHandler.h \
 		../../Sample.h
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../Sample.h \
+		../../ChannelHandler.h \
 		../../../GUI/Widgets/SpiralGUI.H
 
 ../../../GUI/Widgets/SpiralGUI.o: ../../../GUI/Widgets/SpiralGUI.C \
 		../../../GUI/Widgets/SpiralGUI.H
 
 ../../Sample.o: ../../Sample.C \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 AmpPlugin.o: AmpPlugin.C \
 		AmpPlugin.h \
@@ -149,7 +152,6 @@ AmpPluginGUI.o: AmpPluginGUI.C \
 		AmpPlugin.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../Sample.h \
 		../../SpiralInfo.h \
 		../../Sample.h \
 		../../../GUI/Widgets/SpiralGUI.H

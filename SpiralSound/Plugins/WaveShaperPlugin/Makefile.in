@@ -38,33 +38,36 @@ mandir = @mandir@
 
 ####### Files
 
-HEADERS =	../SpiralPlugin.h \
+HEADERS =	WaveShaperPlugin.h \
+		WaveShaperPluginGUI.h \
+		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
+		../../SpiralInfo.h \
 		../../ChannelHandler.h \
-		../Widgets/Fl_Knob.H \
-		../../../GUI/Widgets/SpiralGUI.H \
-		../Widgets/Fl_LED_Button.H \
 		../../Sample.h \
-		WaveShaperPlugin.h \
-		WaveShaperPluginGUI.h
-SOURCES =	../SpiralPlugin.C \
+		../Widgets/Fl_Knob.H \
+		../Widgets/Fl_LED_Button.H \
+		../../../GUI/Widgets/SpiralGUI.H
+SOURCES =	WaveShaperPlugin.C \
+		WaveShaperPluginGUI.C \
+		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
+		../../SpiralInfo.h \
 		../../ChannelHandler.C \
-		../Widgets/Fl_Knob.cxx \
-		../../../GUI/Widgets/SpiralGUI.C \
-		../Widgets/Fl_LED_Button.cxx \
 		../../Sample.C \
-		WaveShaperPlugin.C \
-		WaveShaperPluginGUI.C
-OBJECTS =	../SpiralPlugin.o \
+		../Widgets/Fl_Knob.cxx \
+		../Widgets/Fl_LED_Button.cxx \
+		../../../GUI/Widgets/SpiralGUI.C
+OBJECTS =	WaveShaperPlugin.o \
+		WaveShaperPluginGUI.o \
+		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
+		../../SpiralInfo.o \
 		../../ChannelHandler.o \
-		../Widgets/Fl_Knob.o \
-		../../../GUI/Widgets/SpiralGUI.o \
-		../Widgets/Fl_LED_Button.o \
 		../../Sample.o \
-		WaveShaperPlugin.o \
-		WaveShaperPluginGUI.o
+		../Widgets/Fl_Knob.o \
+		../Widgets/Fl_LED_Button.o \
+		../../../GUI/Widgets/SpiralGUI.o
 INTERFACES =
 UICDECLS =
 UICIMPLS =
@@ -126,15 +129,14 @@ install:
 
 ../SpiralPlugin.o: ../SpiralPlugin.C \
 		../SpiralPlugin.h \
+		../../ChannelHandler.h \
 		../../Sample.h
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
-		../../../GUI/Widgets/SpiralGUI.H \
-		../Widgets/Fl_Knob.H \
-		../Widgets/Fl_LED_Button.H \
 		../SpiralPlugin.h \
-		../../Sample.h
+		../../ChannelHandler.h \
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../Widgets/Fl_Knob.o: ../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_Knob.H
@@ -146,8 +148,7 @@ install:
 		../../../GUI/Widgets/SpiralGUI.H
 
 ../../Sample.o: ../../Sample.C \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 WaveShaperPlugin.o: WaveShaperPlugin.C \
 		WaveShaperPlugin.h \

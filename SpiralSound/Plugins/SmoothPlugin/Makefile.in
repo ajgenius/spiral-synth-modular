@@ -38,30 +38,33 @@ mandir = @mandir@
 
 ####### Files
 
-HEADERS =	../SpiralPlugin.h \
+HEADERS =	SmoothPlugin.h \
+		SmoothPluginGUI.h \
+		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
+		../../SpiralInfo.h \
 		../../ChannelHandler.h \
-		../Widgets/Fl_Knob.H \
-		../../../GUI/Widgets/SpiralGUI.H \
 		../../Sample.h \
-		SmoothPlugin.h \
-		SmoothPluginGUI.h
-SOURCES =	../SpiralPlugin.C \
+		../Widgets/Fl_Knob.H \
+		../../../GUI/Widgets/SpiralGUI.H
+SOURCES =	SmoothPlugin.C \
+		SmoothPluginGUI.C \
+		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
+		../../SpiralInfo.C \
 		../../ChannelHandler.C \
-		../Widgets/Fl_Knob.cxx \
-		../../../GUI/Widgets/SpiralGUI.C \
 		../../Sample.C \
-		SmoothPlugin.C \
-		SmoothPluginGUI.C
-OBJECTS =	../SpiralPlugin.o \
+		../Widgets/Fl_Knob.cxx \
+		../../../GUI/Widgets/SpiralGUI.C
+OBJECTS =	SmoothPlugin.o \
+		SmoothPluginGUI.o \
+		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
+		../../SpiralInfo.o \
 		../../ChannelHandler.o \
-		../Widgets/Fl_Knob.o \
-		../../../GUI/Widgets/SpiralGUI.o \
 		../../Sample.o \
-		SmoothPlugin.o \
-		SmoothPluginGUI.o
+		../Widgets/Fl_Knob.o \
+		../../../GUI/Widgets/SpiralGUI.o
 INTERFACES =
 UICDECLS =
 UICIMPLS =
@@ -123,13 +126,14 @@ install:
 
 ../SpiralPlugin.o: ../SpiralPlugin.C \
 		../SpiralPlugin.h \
+		../../ChannelHandler.h \
 		../../Sample.h
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
-		../../../GUI/Widgets/SpiralGUI.H \
 		../SpiralPlugin.h \
-		../../Sample.h
+		../../ChannelHandler.h \
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../Widgets/Fl_Knob.o: ../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_Knob.H
@@ -138,8 +142,7 @@ install:
 		../../../GUI/Widgets/SpiralGUI.H
 
 ../../Sample.o: ../../Sample.C \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 SmoothPlugin.o: SmoothPlugin.C \
 		SmoothPlugin.h \

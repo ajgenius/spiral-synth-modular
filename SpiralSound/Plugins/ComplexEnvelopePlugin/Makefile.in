@@ -10,10 +10,10 @@ CFLAGS	=	@CFLAGS@ @FLTK_CFLAGS@
 CXXFLAGS=	@CXXFLAGS@ @FLTK_CXXFLAGS@
 INCPATH	=
 LINK	=	g++ -shared
-LFLAGS	=	
+LFLAGS	=
 LIBS	=   @FLTK_LIBS@  -ldl
 MOC     = moc
-UIC	=	
+UIC	=
 
 TAR	=	tar -cf
 GZIP	=	gzip -9f
@@ -38,33 +38,36 @@ mandir = @mandir@
 
 ####### Files
 
-HEADERS =	../SpiralPlugin.h \
+HEADERS =	ComplexEnvelopePlugin.h \
+		ComplexEnvelopePluginGUI.h \
+		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
 		../../ChannelHandler.h \
-		../Widgets/Fl_Knob.H \
-		../../../GUI/Widgets/SpiralGUI.H \
+		../../SpiralInfo.h \
 		../../Sample.h \
 		Bezier.h \
-		ComplexEnvelopePlugin.h \
-		ComplexEnvelopePluginGUI.h
-SOURCES =	../SpiralPlugin.C \
+		../Widgets/Fl_Knob.H \
+		../../../GUI/Widgets/SpiralGUI.H
+SOURCES =	ComplexEnvelopePlugin.C \
+		ComplexEnvelopePluginGUI.C \
+		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
 		../../ChannelHandler.C \
-		../Widgets/Fl_Knob.cxx \
-		../../../GUI/Widgets/SpiralGUI.C \
+		../../SpiralInfo.C \
 		../../Sample.C \
 		Bezier.C \
-		ComplexEnvelopePlugin.C \
-		ComplexEnvelopePluginGUI.C
-OBJECTS =	../SpiralPlugin.o \
+		../Widgets/Fl_Knob.cxx \
+		../../../GUI/Widgets/SpiralGUI.C
+OBJECTS =	ComplexEnvelopePlugin.o \
+		ComplexEnvelopePluginGUI.o \
+		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
+		../../SpiralInfo.o \
 		../../ChannelHandler.o \
-		../Widgets/Fl_Knob.o \
-		../../../GUI/Widgets/SpiralGUI.o \
 		../../Sample.o \
 		Bezier.o \
-		ComplexEnvelopePlugin.o \
-		ComplexEnvelopePluginGUI.o
+		../Widgets/Fl_Knob.o \
+		../../../GUI/Widgets/SpiralGUI.o
 INTERFACES =	
 UICDECLS =	
 UICIMPLS =	
@@ -126,13 +129,14 @@ install:
 
 ../SpiralPlugin.o: ../SpiralPlugin.C \
 		../SpiralPlugin.h \
+		../../ChannelHandler.h \
 		../../Sample.h
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
-		../../../GUI/Widgets/SpiralGUI.H \
 		../SpiralPlugin.h \
-		../../Sample.h
+		../../ChannelHandler.h \
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../Widgets/Fl_Knob.o: ../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_Knob.H
@@ -141,8 +145,7 @@ install:
 		../../../GUI/Widgets/SpiralGUI.H
 
 ../../Sample.o: ../../Sample.C \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 Bezier.o: Bezier.C \
 		Bezier.h \
@@ -150,7 +153,6 @@ Bezier.o: Bezier.C \
 ComplexEnvelopePlugin.o: ComplexEnvelopePlugin.C \
 		ComplexEnvelopePlugin.h \
 		../SpiralPlugin.h \
-		../../Sample.h \
 		../../SpiralInfo.h \
 		../../Sample.h \
 		ComplexEnvelopePluginGUI.h \
@@ -163,7 +165,6 @@ ComplexEnvelopePluginGUI.o: ComplexEnvelopePluginGUI.C \
 		ComplexEnvelopePluginGUI.h \
 		ComplexEnvelopePlugin.h \
 		../SpiralPlugin.h \
-		../../Sample.h \
 		../../SpiralInfo.h \
 		../../Sample.h \
 		../SpiralPluginGUI.h \

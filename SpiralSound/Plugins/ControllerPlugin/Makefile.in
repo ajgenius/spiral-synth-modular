@@ -38,33 +38,36 @@ mandir = @mandir@
 
 ####### Files
 
-HEADERS =	../SpiralPlugin.h \
+HEADERS =	ControllerPlugin.h \
+		ControllerPluginGUI.h \
+		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
+		../../SpiralInfo.h \
 		../../ChannelHandler.h \
-		../../../GUI/Widgets/SpiralGUI.H \
 		../../Sample.h \
-		ControllerPlugin.h \
-		ControllerPluginGUI.h
-SOURCES =	../SpiralPlugin.C \
+		../../../GUI/Widgets/SpiralGUI.H
+SOURCES =	ControllerPlugin.C \
+		ControllerPluginGUI.C \
+		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
+		../../SpiralInfo.C \
 		../../ChannelHandler.C \
-		../../../GUI/Widgets/SpiralGUI.C \
 		../../Sample.C \
-		ControllerPlugin.C \
-		ControllerPluginGUI.C
-OBJECTS =	../SpiralPlugin.o \
+		../../../GUI/Widgets/SpiralGUI.C
+OBJECTS =	ControllerPlugin.o \
+		ControllerPluginGUI.o \
+		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
+		../../SpiralInfo.o \
 		../../ChannelHandler.o \
-		../../../GUI/Widgets/SpiralGUI.o \
 		../../Sample.o \
-		ControllerPlugin.o \
-		ControllerPluginGUI.o
+		../../../GUI/Widgets/SpiralGUI.o
 INTERFACES =
 UICDECLS =
 UICIMPLS =
-SRCMOC	=	
-OBJMOC	=	
-DIST	=	
+SRCMOC	=
+OBJMOC	=
+DIST	=
 TARGET	=	ControllerPlugin.so
 
 ####### Implicit rules
@@ -91,7 +94,7 @@ TARGET	=	ControllerPlugin.so
 
 all: $(TARGET)
 
-$(TARGET): $(UICDECLS) $(OBJECTS) $(OBJMOC) 
+$(TARGET): $(UICDECLS) $(OBJECTS) $(OBJMOC)
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(OBJMOC) $(LIBS)
 
 moc: $(SRCMOC)
@@ -106,7 +109,7 @@ dist:
 clean:
 	-rm -f $(OBJECTS) $(OBJMOC) $(SRCMOC) $(UICIMPLS) $(UICDECLS) $(TARGET)
 	-rm -f *~ core
-	
+
 install:
 	$(INSTALL) $(TARGET) $(libdir)/SpiralPlugins
 
@@ -120,27 +123,27 @@ install:
 
 ../SpiralPlugin.o: ../SpiralPlugin.C \
 		../SpiralPlugin.h \
+		../../ChannelHandler.h \
 		../../Sample.h
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
-		../../../GUI/Widgets/SpiralGUI.H \
 		../SpiralPlugin.h \
-		../../Sample.h
+		../../ChannelHandler.h \
+		../../../GUI/Widgets/SpiralGUI.H
+
 
 ../../../GUI/Widgets/SpiralGUI.o: ../../../GUI/Widgets/SpiralGUI.C \
 		../../../GUI/Widgets/SpiralGUI.H
 
 ../../Sample.o: ../../Sample.C \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 ControllerPlugin.o: ControllerPlugin.C \
 		ControllerPlugin.h \
 		ControllerPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../Sample.h \
 		../../SpiralInfo.h \
 		../../Sample.h \
 		SpiralIcon.xpm
@@ -150,7 +153,6 @@ ControllerPluginGUI.o: ControllerPluginGUI.C \
 		ControllerPlugin.h \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../Sample.h \
 		../../SpiralInfo.h \
 		../../Sample.h \
 		../../../GUI/Widgets/SpiralGUI.H

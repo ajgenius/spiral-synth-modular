@@ -38,36 +38,39 @@ mandir = @mandir@
 
 ####### Files
 
-HEADERS =	../SpiralPlugin.h \
+HEADERS =	OscillatorPlugin.h \
+		OscillatorPluginGUI.h \
+		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../Widgets/Fl_Knob.H \
-		../../../GUI/Widgets/SpiralGUI.H \
-		../Widgets/Fl_LED_Button.H \
+		../../SpiralInfo.h \
+		../../ChannelHandler.h \
+                ../../Sample.h \
                 ../GUI/WS_Square.h \
                 ../GUI/WS_Noise.h \
                 ../GUI/WS_Saw.h \
-                ../../Sample.h \
-		../../ChannelHandler.h \
-		OscillatorPlugin.h \
-		OscillatorPluginGUI.h
-SOURCES =	../SpiralPlugin.C \
+		../Widgets/Fl_Knob.H \
+		../Widgets/Fl_LED_Button.H \
+		../../../GUI/Widgets/SpiralGUI.H
+SOURCES =	OscillatorPlugin.C \
+		OscillatorPluginGUI.C \
+		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
+		../../SpiralInfo.C \
+		../../ChannelHandler.C \
+		../../Sample.C \
 		../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_LED_Button.cxx \
-		../../../GUI/Widgets/SpiralGUI.C \
-		../../Sample.C \
-		../../ChannelHandler.C \
-		OscillatorPlugin.C \
-		OscillatorPluginGUI.C
-OBJECTS =	../SpiralPlugin.o \
+		../../../GUI/Widgets/SpiralGUI.C
+OBJECTS =	OscillatorPlugin.o \
+		OscillatorPluginGUI.o \
+		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../Widgets/Fl_Knob.o \
-		../../../GUI/Widgets/SpiralGUI.o \
-		../Widgets/Fl_LED_Button.o \
-		../../Sample.o \
+		../../SpiralInfo.o \
 		../../ChannelHandler.o \
-		OscillatorPlugin.o \
-		OscillatorPluginGUI.o
+		../../Sample.o \
+		../Widgets/Fl_Knob.o \
+		../Widgets/Fl_LED_Button.o \
+		../../../GUI/Widgets/SpiralGUI.o
 INTERFACES =
 UICDECLS =
 UICIMPLS =
@@ -129,13 +132,14 @@ install:
 
 ../SpiralPlugin.o: ../SpiralPlugin.C \
 		../SpiralPlugin.h \
+		../../ChannelHandler.h \
 		../../Sample.h
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
-		../../../GUI/Widgets/SpiralGUI.H \
 		../SpiralPlugin.h \
-		../../Sample.h
+		../../ChannelHandler.h \
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../Widgets/Fl_Knob.o: ../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_Knob.H
@@ -147,8 +151,7 @@ install:
 		../../../GUI/Widgets/SpiralGUI.H
 
 ../../Sample.o: ../../Sample.C \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 OscillatorPlugin.o: OscillatorPlugin.C \
 		OscillatorPlugin.h \

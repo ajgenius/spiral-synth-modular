@@ -6,14 +6,14 @@
 
 CC	=	gcc
 CXX	=	g++
-CFLAGS	=	@CFLAGS@ 
-CXXFLAGS=	@CXXFLAGS@ 
+CFLAGS	=	@CFLAGS@
+CXXFLAGS=	@CXXFLAGS@
 INCPATH	=	-I/usr/X11R6/include
 LINK	=	g++ -shared
-LFLAGS	=	
+LFLAGS	=
 LIBS	=   -L/usr/X11R6/lib @FLTK_LIBS@ -lGL -lXext -lX11  -ldl
 MOC     = moc
-UIC	=	
+UIC	=
 
 TAR	=	tar -cf
 GZIP	=	gzip -9f
@@ -38,30 +38,33 @@ mandir = @mandir@
 
 ####### Files
 
-HEADERS =	../SpiralPlugin.h \
+HEADERS =	BeatMatchPlugin.h \
+		BeatMatchPluginGUI.h \
+		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../Widgets/Fl_Knob.H \
+		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
-		../../../GUI/Widgets/SpiralGUI.H \
-		BeatMatchPlugin.h \
-		BeatMatchPluginGUI.h
-SOURCES =	../SpiralPlugin.C \
+		../Widgets/Fl_Knob.H \
+		../../../GUI/Widgets/SpiralGUI.H
+SOURCES =	BeatMatchPlugin.C \
+		BeatMatchPluginGUI.C \
+		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../Widgets/Fl_Knob.cxx \
+		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
-		../../../GUI/Widgets/SpiralGUI.C \
-		BeatMatchPlugin.C \
-		BeatMatchPluginGUI.C
-OBJECTS =	../SpiralPlugin.o \
+		../Widgets/Fl_Knob.cxx \
+		../../../GUI/Widgets/SpiralGUI.C
+OBJECTS =	BeatMatchPlugin.o \
+		BeatMatchPluginGUI.o \
+		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../Widgets/Fl_Knob.o \
+		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
-		../../../GUI/Widgets/SpiralGUI.o \
-		BeatMatchPlugin.o \
-		BeatMatchPluginGUI.o
+		../Widgets/Fl_Knob.o \
+		../../../GUI/Widgets/SpiralGUI.o
 INTERFACES =
 UICDECLS =
 UICIMPLS =
@@ -116,12 +119,13 @@ install:
 
 ../SpiralPlugin.o: ../SpiralPlugin.C \
 		../SpiralPlugin.h \
+		../../ChannelHandler.h \
 		../../Sample.h
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../Sample.h \
+		../../ChannelHandler.h \
 		../../../GUI/Widgets/SpiralGUI.H
 
 ../Widgets/Fl_Knob.o: ../Widgets/Fl_Knob.cxx \
@@ -131,13 +135,13 @@ install:
 		../../../GUI/Widgets/SpiralGUI.H
 
 ../../Sample.o: ../../Sample.C \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 BeatMatchPlugin.o: BeatMatchPlugin.C \
 		BeatMatchPlugin.h \
 		BeatMatchPluginGUI.h \
 		../../NoteTable.h \
+		../../SpiralInfo.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
 		SpiralIcon.xpm
@@ -147,6 +151,7 @@ BeatMatchPluginGUI.o: BeatMatchPluginGUI.C \
 		BeatMatchPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
+		../../SpiralInfo.h \
                 ../../../GUI/Widgets/SpiralGUI.H
 
 ../../ChannelHandler.o: ../../ChannelHandler.C \

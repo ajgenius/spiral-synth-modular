@@ -18,6 +18,7 @@
 
 #include "SpiralPluginGUI.h"
 #include "SpiralPlugin.h"
+#include "../SpiralInfo.h"
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Multiline_Output.h>

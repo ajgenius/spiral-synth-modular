@@ -38,27 +38,30 @@ mandir = @mandir@
 
 ####### Files
 
-HEADERS =	../SpiralPlugin.h \
+HEADERS =	TrigPlugin.h \
+		TrigPluginGUI.h \
+		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
+                ../../SpiralInfo.h \
 		../../ChannelHandler.h \
-		../../../GUI/Widgets/SpiralGUI.H \
 		../../Sample.h \
-		TrigPlugin.h \
-		TrigPluginGUI.h
-SOURCES =	../SpiralPlugin.C \
+		../../../GUI/Widgets/SpiralGUI.H
+SOURCES =	TrigPlugin.C \
+		TrigPluginGUI.C \
+		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
+                ../../SpiralInfo.C \
 		../../ChannelHandler.C \
-		../../../GUI/Widgets/SpiralGUI.C \
 		../../Sample.C \
-		TrigPlugin.C \
-		TrigPluginGUI.C
-OBJECTS =	../SpiralPlugin.o \
+		../../../GUI/Widgets/SpiralGUI.C
+OBJECTS =	TrigPlugin.o \
+		TrigPluginGUI.o \
+		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
+                ../../SpiralInfo.o \
 		../../ChannelHandler.o \
-		../../../GUI/Widgets/SpiralGUI.o \
 		../../Sample.o \
-		TrigPlugin.o \
-		TrigPluginGUI.o
+		../../../GUI/Widgets/SpiralGUI.o
 INTERFACES =
 UICDECLS =
 UICIMPLS =
@@ -113,20 +116,20 @@ install:
 
 ../SpiralPlugin.o: ../SpiralPlugin.C \
 		../SpiralPlugin.h \
+		../../ChannelHandler.h \
 		../../Sample.h
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
-		../../../GUI/Widgets/SpiralGUI.H \
 		../SpiralPlugin.h \
-		../../Sample.h
+		../../ChannelHandler.h \
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../../../GUI/Widgets/SpiralGUI.o: ../../../GUI/Widgets/SpiralGUI.C \
 		../../../GUI/Widgets/SpiralGUI.H
 
 ../../Sample.o: ../../Sample.C \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 TrigPlugin.o: TrigPlugin.C \
 		TrigPlugin.h \
@@ -139,6 +142,7 @@ TrigPlugin.o: TrigPlugin.C \
 TrigPluginGUI.o: TrigPluginGUI.C \
 		TrigPlugin.h \
 		TrigPluginGUI.h \
+                ../../SpiralInfo.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
 		../../../GUI/Widgets/SpiralGUI.H

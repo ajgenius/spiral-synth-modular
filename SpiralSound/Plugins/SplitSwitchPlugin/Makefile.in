@@ -38,27 +38,30 @@ mandir = @mandir@
 
 ####### Files
 
-HEADERS =	../SpiralPlugin.h \
+HEADERS =	SplitSwitchPlugin.h \
+		SplitSwitchPluginGUI.h \
+		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
+		../../SpiralInfo.h \
 		../../ChannelHandler.h \
-		../../../GUI/Widgets/SpiralGUI.H \
 		../../Sample.h \
-		SplitSwitchPlugin.h \
-		SplitSwitchPluginGUI.h
-SOURCES =	../SpiralPlugin.C \
+		../../../GUI/Widgets/SpiralGUI.H
+SOURCES =	SplitSwitchPlugin.C \
+		SplitSwitchPluginGUI.C \
+		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
+		../../SpiralInfo.C \
 		../../ChannelHandler.C \
-		../../../GUI/Widgets/SpiralGUI.C \
 		../../Sample.C \
-		SplitSwitchPlugin.C \
-		SplitSwitchPluginGUI.C
-OBJECTS =	../SpiralPlugin.o \
+		../../../GUI/Widgets/SpiralGUI.C
+OBJECTS =	SplitSwitchPlugin.o \
+		SplitSwitchPluginGUI.o \
+		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
+		../../SpiralInfo.o \
 		../../ChannelHandler.o \
-		../../../GUI/Widgets/SpiralGUI.o \
 		../../Sample.o \
-		SplitSwitchPlugin.o \
-		SplitSwitchPluginGUI.o
+		../../../GUI/Widgets/SpiralGUI.o
 INTERFACES =
 UICDECLS =
 UICIMPLS =
@@ -120,20 +123,20 @@ install:
 
 ../SpiralPlugin.o: ../SpiralPlugin.C \
 		../SpiralPlugin.h \
+		../../ChannelHandler.h \
 		../../Sample.h
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
-		../../../GUI/Widgets/SpiralGUI.H \
 		../SpiralPlugin.h \
-		../../Sample.h
+		../../ChannelHandler.h \
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../../../GUI/Widgets/SpiralGUI.o: ../../../GUI/Widgets/SpiralGUI.C \
 		../../../GUI/Widgets/SpiralGUI.H
 
 ../../Sample.o: ../../Sample.C \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 SplitSwitchPlugin.o: SplitSwitchPlugin.C \
 		SplitSwitchPlugin.h \

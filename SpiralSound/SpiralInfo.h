@@ -16,66 +16,65 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <iostream>
-#include <string>
-#include <stdlib.h>
-#include "Sample.h"
-
 #ifndef SpiralINFO
 #define SpiralINFO
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <stdlib.h>
+#include "Sample.h"
 
 using namespace std;
 
 // todo: better place for these util funcs
-float RandFloat(float s=0.0f, float e=1.0f);
+float RandFloat (float s=0.0f, float e=1.0f);
 
-// Loads info from the resource file, overload and implement
-// as singleton for each app. App specifc info may be added
-// after the standard items.
+// Loads info from the resource file
 
-class SpiralInfo
-{
-public:
-
-    void LoadPrefs();
-	void SavePrefs();
-	
-	static void Alert(string Text);
-	static void Log(string Text);
-	
-	static int    BUFSIZE;
-	static int    FRAGSIZE;
-	static int    FRAGCOUNT;
-	static int    SAMPLERATE;
-	static long   MAXSAMPLE;
-	static float  VALUECONV;
-	static bool   WANTMIDI;
-	static int    FILTERGRAN;
-	static string OUTPUTFILE;
-	static string MIDIFILE;
-	static bool   USEPLUGINLIST;
-	static int    POLY;
-	static string LOCALE;
-        static unsigned GUI_COLOUR;
-        static unsigned SCOPE_BG_COLOUR;
-        static unsigned SCOPE_FG_COLOUR;
-        static unsigned SCOPE_SEL_COLOUR;
-        static unsigned SCOPE_IND_COLOUR;
-        static unsigned SCOPE_MRK_COLOUR;
-
-        string GetHomeDir() {return m_HomeDir;}
-
-protected:
-	SpiralInfo() : m_HomeDir(getenv("HOME")), m_Version(1) {}
-	virtual ~SpiralInfo() {}
-
-	virtual string GetResFileName() { return "Spiralrc"; }
-	
-	virtual void StreamInPrefs(istream &s);
-	virtual void StreamOutPrefs(ostream &s);
-	
-	string m_HomeDir;
-	int m_Version;
+class SpiralInfo {
+   public:
+      SpiralInfo();
+      ~SpiralInfo() {}
+      void LoadPrefs();
+      void SavePrefs();
+      static void Alert (string Text);
+      static void Log (string Text);
+      static int    BUFSIZE;
+      static int    FRAGSIZE;
+      static int    FRAGCOUNT;
+      static int    SAMPLERATE;
+      static long   MAXSAMPLE;
+      static float  VALUECONV;
+      static bool   WANTMIDI;
+      static int    FILTERGRAN;
+      static string OUTPUTFILE;
+      static string MIDIFILE;
+      static bool   USEPLUGINLIST;
+      static int    POLY;
+      static string LOCALE;
+      static unsigned GUI_COLOUR;
+      static unsigned SCOPE_BG_COLOUR;
+      static unsigned SCOPE_FG_COLOUR;
+      static unsigned SCOPE_SEL_COLOUR;
+      static unsigned SCOPE_IND_COLOUR;
+      static unsigned SCOPE_MRK_COLOUR;
+      static SpiralInfo* Get();
+      void SetColours();
+      static string PLUGIN_PATH;
+      static vector<string> PLUGINVEC;
+      static int GUICOL_Tool;
+      static int GUICOL_Button;
+      static int GUICOL_Canvas;
+      static int GUICOL_Device;
+      static int GUIDEVICE_Box;
+   private:
+      string m_ResFileName;
+      int m_Version;
+      static SpiralInfo *m_SpiralInfo;
+      void StreamInPrefs (istream &s);
+      void StreamOutPrefs (ostream &s);
 };
 
 #endif
+

@@ -32,8 +32,6 @@
 
 static const float MAX_FREQ = 13000;
 
-class ChannelHander;
-
 struct PluginInfo
 {
 	string Name;
@@ -98,9 +96,9 @@ public:
 	string 				GetName() { return m_PluginInfo.Name; }
 
 	void UpdatePluginInfoWithHost();
-	void SetInPortType(PluginInfo &pinfo, int port, Sample::SampleType type);    
+	void SetInPortType(PluginInfo &pinfo, int port, Sample::SampleType type);
     void SetOutPortType(PluginInfo &pinfo, int port, Sample::SampleType type);
-	
+
 	// Callbacks to main engine. Should only called by plugin hosts.
 	void SetUpdateInfoCallback(int ID, void(*s)(int, void *));
 	void SetUpdateCallback(void (*s)(void*,bool m)) { cb_Update=s; }

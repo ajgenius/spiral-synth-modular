@@ -38,39 +38,42 @@ mandir = @mandir@
 
 ####### Files
 
-HEADERS =	../SpiralPlugin.h \
+HEADERS =	SequencerPlugin.h \
+		SequencerPluginGUI.h \
+		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
+		../../SpiralInfo.h \
 		../../ChannelHandler.h \
-		../Widgets/Fl_Knob.H \
-		../../../GUI/Widgets/SpiralGUI.H \
-		../Widgets/Fl_EventMap.h \
-		../Widgets/Fl_SEvent.h \
 		../../Sample.h \
 		../../RiffWav.h \
-		SequencerPlugin.h \
-		SequencerPluginGUI.h
-SOURCES =	../SpiralPlugin.C \
+		../Widgets/Fl_Knob.H \
+		../Widgets/Fl_EventMap.h \
+		../Widgets/Fl_SEvent.h \
+		../../../GUI/Widgets/SpiralGUI.H
+SOURCES =	SequencerPlugin.C \
+		SequencerPluginGUI.C \
+		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
+		../../SpiralInfo.C \
 		../../ChannelHandler.C \
-		../Widgets/Fl_Knob.cxx \
-		../../../GUI/Widgets/SpiralGUI.C \
-		../Widgets/Fl_EventMap.C \
-		../Widgets/Fl_SEvent.C \
 		../../Sample.C \
 		../../RiffWav.C \
-		SequencerPlugin.C \
-		SequencerPluginGUI.C
-OBJECTS =	../SpiralPlugin.o \
+		../Widgets/Fl_Knob.cxx \
+		../Widgets/Fl_EventMap.C \
+		../Widgets/Fl_SEvent.C \
+		../../../GUI/Widgets/SpiralGUI.C
+OBJECTS =	SequencerPlugin.o \
+		SequencerPluginGUI.o \
+		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
+		../../SpiralInfo.o \
 		../../ChannelHandler.o \
-		../Widgets/Fl_Knob.o \
-		../../../GUI/Widgets/SpiralGUI.o \
-		../Widgets/Fl_EventMap.o \
-		../Widgets/Fl_SEvent.o \
 		../../Sample.o \
 		../../RiffWav.o \
-		SequencerPlugin.o \
-		SequencerPluginGUI.o
+		../Widgets/Fl_Knob.o \
+		../Widgets/Fl_EventMap.o \
+		../Widgets/Fl_SEvent.o \
+		../../../GUI/Widgets/SpiralGUI.o
 INTERFACES =
 UICDECLS =
 UICIMPLS =
@@ -132,13 +135,14 @@ install:
 
 ../SpiralPlugin.o: ../SpiralPlugin.C \
 		../SpiralPlugin.h \
+		../../ChannelHandler.h \
 		../../Sample.h
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
-		../../../GUI/Widgets/SpiralGUI.H \
 		../SpiralPlugin.h \
-		../../Sample.h
+		../../ChannelHandler.h \
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../Widgets/Fl_Knob.o: ../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_Knob.H
@@ -155,8 +159,7 @@ install:
 		../Widgets/Fl_EventMap.h
 
 ../../Sample.o: ../../Sample.C \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 ../../RiffWav.o: ../../RiffWav.C \
 		../../RiffWav.h \

@@ -20,7 +20,7 @@
 #include "Fl_Canvas.h"
 #include "Fl_DeviceGUI.h"
 #include <iostream>
-#include "../../SpiralSynthModularInfo.h"
+#include "../../SpiralSound/SpiralInfo.h"
 
 // no of calls to handle when dragged, before the widget is redrawn
 // to allow the wire (connection currently being made) to be redrawn

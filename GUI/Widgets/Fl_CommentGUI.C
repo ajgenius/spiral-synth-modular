@@ -18,7 +18,7 @@
 
 #include "Fl_CommentGUI.h"
 #include <FL/fl_draw.H>
-#include "../../SpiralSynthModularInfo.h"
+#include "../../SpiralSound/SpiralInfo.h"
 #include "../../GUI/Widgets/PawfalInput.h"
 
 Fl_CommentGUI::Fl_CommentGUI(const DeviceGUIInfo& Info, SpiralGUIType *PW, Fl_Pixmap *Icon) :
@@ -28,14 +28,14 @@ m_Comment("double click to edit.")
 	box(FL_NO_BOX);
 	m_DragBar->box(FL_NO_BOX);
 	m_DragBar->label(m_Comment.c_str());
-	m_DragBar->color(SpiralSynthModularInfo::GUICOL_Device);
+	m_DragBar->color(SpiralInfo::GUICOL_Device);
 //	m_DragBar->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
 }
 
 int Fl_CommentGUI::handle(int event)
 {
-	if (Fl::event_button()==1 && event==FL_PUSH && Fl::event_clicks()==1) 
-	{		
+	if (Fl::event_button()==1 && event==FL_PUSH && Fl::event_clicks()==1)
+	{
 		char t[1024];
 		if (Pawfal_Input("and your comment is:", m_Comment.c_str(), t))
 		{

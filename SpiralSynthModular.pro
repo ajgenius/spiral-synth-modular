@@ -1,20 +1,18 @@
 HEADERS     = SpiralSynthModular.h \
-			  SpiralSynthModularInfo.h \
 			  GraphSort.h \
 		      GUI/Widgets/Fl_DeviceGUI.h \
-			  GUI/Widgets/Fl_CommentGUI.h \			  
+			  GUI/Widgets/Fl_CommentGUI.h \
 			  GUI/Widgets/Fl_DragBar.H \
-			  GUI/Widgets/Fl_Canvas.h \		
+			  GUI/Widgets/Fl_Canvas.h \
   			  SpiralSound/SpiralInfo.h \
 			  SpiralSound/Sample.h \
 			  SpiralSound/Plugins/SpiralPlugin.h \
 			  SpiralSound/Plugins/SpiralPluginGUI.h \
 			  SpiralSound/PluginManager.h \
 			  SettingsWindow.h \
-			  SpiralSynthPluginLocation.h 
-			  
+			  SpiralSynthPluginLocation.h
+
 SOURCES     = SpiralSynthModular.C \
-			  SpiralSynthModularInfo.C \
 			  GraphSort.C \
 		      GUI/Widgets/Fl_DeviceGUI.C \
 			  GUI/Widgets/Fl_CommentGUI.C \				  

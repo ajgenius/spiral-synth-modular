@@ -38,30 +38,33 @@ mandir = @mandir@
 
 ####### Files
 
-HEADERS =	../SpiralPlugin.h \
-		../SpiralPluginGUI.h \
-		MousePlugin.h \
+HEADERS =	MousePlugin.h \
 		MousePluginGUI.h \
-		../../Sample.h \
+		../SpiralPlugin.h \
+		../SpiralPluginGUI.h \
+		../../SpiralInfo.h \
 		../../ChannelHandler.h \
-		../../../GUI/Widgets/SpiralGUI.H \
-		scratch.h
-SOURCES =	../SpiralPlugin.C \
-		../SpiralPluginGUI.C \
-		MousePlugin.C \
+		../../Sample.h \
+		scratch.h \
+		../../../GUI/Widgets/SpiralGUI.H
+SOURCES =	MousePlugin.C \
 		MousePluginGUI.C \
-		../../Sample.C \
+		../SpiralPlugin.C \
+		../SpiralPluginGUI.C \
+		../../SpiralInfo.C \
 		../../ChannelHandler.C \
-		../../../GUI/Widgets/SpiralGUI.C \
-		scratch.C
-OBJECTS =	../SpiralPlugin.o \
-		../SpiralPluginGUI.o \
-		MousePlugin.o \
+		../../Sample.C \
+		scratch.C \
+		../../../GUI/Widgets/SpiralGUI.C
+OBJECTS =	MousePlugin.o \
 		MousePluginGUI.o \
-		../../Sample.o \
+		../SpiralPlugin.o \
+		../SpiralPluginGUI.o \
+		../../SpiralInfo.o \
 		../../ChannelHandler.o \
-		../../../GUI/Widgets/SpiralGUI.o \
-		scratch.o
+		../../Sample.o \
+		scratch.o \
+		../../../GUI/Widgets/SpiralGUI.o
 INTERFACES =
 UICDECLS =
 UICIMPLS =
@@ -119,20 +122,20 @@ install:
 
 ../SpiralPlugin.o: ../SpiralPlugin.C \
 		../SpiralPlugin.h \
+		../../ChannelHandler.h \
 		../../Sample.h
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
-		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../../GUI/Widgets/SpiralGUI.H \
-		../../Sample.h
+		../SpiralPlugin.h \
+		../../ChannelHandler.h \
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../../../GUI/Widgets/SpiralGUI.o: ../../../GUI/Widgets/SpiralGUI.C \
 		../../../GUI/Widgets/SpiralGUI.H
 
 ../../Sample.o: ../../Sample.C \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 MousePlugin.o: MousePlugin.C \
 		MousePlugin.h \

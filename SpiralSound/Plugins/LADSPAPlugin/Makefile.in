@@ -38,39 +38,42 @@ mandir = @mandir@
 
 ####### Files
 
-HEADERS =	../SpiralPlugin.h \
+HEADERS =	LADSPAPlugin.h \
+		LADSPAPluginGUI.h \
+		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
+		../../SpiralInfo.h \
 		../../ChannelHandler.h \
+		../../Sample.h \
+		LADSPAInfo.h \
 		../Widgets/Fl_Knob.H \
 		../Widgets/Fl_LED_Button.H \
 		../Widgets/Fl_DragBar.H \
-		../../../GUI/Widgets/SpiralGUI.H \
-		../../Sample.h \
-		LADSPAPlugin.h \
-		LADSPAPluginGUI.h \
-		LADSPAInfo.h
-SOURCES =	../SpiralPlugin.C \
+		../../../GUI/Widgets/SpiralGUI.H
+SOURCES =	LADSPAPlugin.C \
+		LADSPAPluginGUI.C \
+		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
+		../../SpiralInfo.C \
 		../../ChannelHandler.C \
+		../../Sample.C \
+		LADSPAInfo.C \
 		../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_LED_Button.cxx \
 		../Widgets/Fl_DragBar.cxx \
-		../../../GUI/Widgets/SpiralGUI.C \
-		../../Sample.C \
-		LADSPAPlugin.C \
-		LADSPAPluginGUI.C \
-		LADSPAInfo.C
-OBJECTS =	../SpiralPlugin.o \
+		../../../GUI/Widgets/SpiralGUI.C
+OBJECTS =	LADSPAPlugin.o \
+		LADSPAPluginGUI.o \
+		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
+		../../SpiralInfo.o \
 		../../ChannelHandler.o \
+		../../Sample.o \
+		LADSPAInfo.o \
 		../Widgets/Fl_Knob.o \
 		../Widgets/Fl_LED_Button.o \
 		../Widgets/Fl_DragBar.o \
-		../../../GUI/Widgets/SpiralGUI.o \
-		../../Sample.o \
-		LADSPAPlugin.o \
-		LADSPAPluginGUI.o \
-		LADSPAInfo.o
+		../../../GUI/Widgets/SpiralGUI.o
 INTERFACES =
 UICDECLS =
 UICIMPLS =
@@ -134,16 +137,14 @@ install:
 
 ../SpiralPlugin.o: ../SpiralPlugin.C \
 		../SpiralPlugin.h \
-		../../Sample.h \
-		LADSPAInfo.h
+		../../ChannelHandler.h \
+		../../Sample.h
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
-		../Widgets/Fl_DragBar.H \
-		../Widgets/Fl_LED_Button.H \
-		../Widgets/Fl_Knob.H \
 		../SpiralPlugin.h \
-		../../Sample.h
+		../../ChannelHandler.h \
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../Widgets/Fl_Knob.o: ../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_Knob.H
@@ -151,24 +152,19 @@ install:
 ../Widgets/Fl_LED_Button.o: ../Widgets/Fl_LED_Button.cxx \
 		../Widgets/Fl_LED_Button.H
 
-../Widgets/Fl_DragBar.o: ../Widgets/Fl_DragBar.cxx \
-		../Widgets/Fl_DragBar.H
+../../../GUI/Widgets/SpiralGUI.o: ../../../GUI/Widgets/SpiralGUI.C \
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../../Sample.o: ../../Sample.C \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 LADSPAPlugin.o: LADSPAPlugin.C \
 		LADSPAPlugin.h \
 		../SpiralPlugin.h \
-		../../Sample.h \
 		../../SpiralInfo.h \
 		../../Sample.h \
 		LADSPAPluginGUI.h \
 		../SpiralPluginGUI.h \
-		../Widgets/Fl_Knob.H \
-		../Widgets/Fl_LED_Button.H \
-		../Widgets/Fl_DragBar.H \
 		LADSPAInfo.h \
 		SpiralIcon.xpm
 
@@ -177,7 +173,6 @@ LADSPAPluginGUI.o: LADSPAPluginGUI.C \
 		../Widgets/Fl_Knob.H \
 		LADSPAPlugin.h \
 		../SpiralPlugin.h \
-		../../Sample.h \
 		../../SpiralInfo.h \
 		../../Sample.h \
 		../SpiralPluginGUI.h \

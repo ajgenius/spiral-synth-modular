@@ -38,11 +38,13 @@ mandir = @mandir@
 
 ####### Files
 
-HEADERS =	../SpiralPlugin.h \
+HEADERS =	WaveTablePlugin.h \
+		WaveTablePluginGUI.h \
+		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../Widgets/Fl_Knob.H \
-		../Widgets/Fl_LED_Button.H \
-		../../../GUI/Widgets/SpiralGUI.H \
+		../../SpiralInfo.h \
+		../../ChannelHandler.h \
+                ../../Sample.h \
                 ../GUI/WS_Square.h \
                 ../GUI/WS_Saw.h \
                 ../GUI/WS_RevSaw.h \
@@ -51,28 +53,29 @@ HEADERS =	../SpiralPlugin.h \
                 ../GUI/WS_Pulse1.h \
                 ../GUI/WS_Pulse2.h \
                 ../GUI/WS_InvSine.h \
-                ../../Sample.h \
-		../../ChannelHandler.h \
-		WaveTablePlugin.h \
-		WaveTablePluginGUI.h
-SOURCES =	../SpiralPlugin.C \
+                ../Widgets/Fl_Knob.H \
+		../Widgets/Fl_LED_Button.H \
+		../../../GUI/Widgets/SpiralGUI.H
+SOURCES =	WaveTablePlugin.C \
+		WaveTablePluginGUI.C \
+		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
+		../../SpiralInfo.C \
 		../../ChannelHandler.C \
+		../../Sample.C \
 		../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_LED_Button.cxx \
-		../../../GUI/Widgets/SpiralGUI.C \
-		../../Sample.C \
-		WaveTablePlugin.C \
-		WaveTablePluginGUI.C
-OBJECTS =	../SpiralPlugin.o \
+		../../../GUI/Widgets/SpiralGUI.C
+OBJECTS =	WaveTablePlugin.o \
+		WaveTablePluginGUI.o \
+		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
+		../../SpiralInfo.o \
 		../../ChannelHandler.o \
+		../../Sample.o \
 		../Widgets/Fl_Knob.o \
 		../Widgets/Fl_LED_Button.o \
-		../../../GUI/Widgets/SpiralGUI.o \
-		../../Sample.o \
-		WaveTablePlugin.o \
-		WaveTablePluginGUI.o
+		../../../GUI/Widgets/SpiralGUI.o
 INTERFACES =
 UICDECLS =
 UICIMPLS =
@@ -134,13 +137,14 @@ install:
 
 ../SpiralPlugin.o: ../SpiralPlugin.C \
 		../SpiralPlugin.h \
+		../../ChannelHandler.h \
 		../../Sample.h
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
-		../../../GUI/Widgets/SpiralGUI.H \
 		../SpiralPlugin.h \
-		../../Sample.h
+		../../ChannelHandler.h \
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../Widgets/Fl_Knob.o: ../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_Knob.H
@@ -152,8 +156,7 @@ install:
 		../../../GUI/Widgets/SpiralGUI.H
 
 ../../Sample.o: ../../Sample.C \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 WaveTablePlugin.o: WaveTablePlugin.C \
 		WaveTablePlugin.h \

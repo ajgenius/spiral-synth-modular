@@ -38,42 +38,45 @@ mandir = @mandir@
 
 ####### Files
 
-HEADERS =	../SpiralPlugin.h \
+HEADERS =	SpiralLoopPlugin.h \
+		SpiralLoopPluginGUI.h \
+		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
+		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../../RiffWav.h \
 		Fl_Loop.h \
 		Fl_Trigger.h \
-		SpiralLoopPlugin.h \
-		SpiralLoopPluginGUI.h \
-		../../../GUI/Widgets/SpiralGUI.H \
 		../Widgets/Fl_Knob.H \
-		../Widgets/Fl_LED_Button.H
-SOURCES =	../SpiralPlugin.C \
+		../Widgets/Fl_LED_Button.H \
+		../../../GUI/Widgets/SpiralGUI.H
+SOURCES =	SpiralLoopPlugin.C \
+		SpiralLoopPluginGUI.C \
+		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
+		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../../RiffWav.C \
 		Fl_Loop.C \
 		Fl_Trigger.C \
-		SpiralLoopPlugin.C \
-		SpiralLoopPluginGUI.C \
-		../../../GUI/Widgets/SpiralGUI.C \
 		../Widgets/Fl_Knob.cxx \
-		../Widgets/Fl_LED_Button.cxx
-OBJECTS =	../SpiralPlugin.o \
+		../Widgets/Fl_LED_Button.cxx \
+		../../../GUI/Widgets/SpiralGUI.C
+OBJECTS =	SpiralLoopPlugin.o \
+		SpiralLoopPluginGUI.o \
+		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
+		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../../RiffWav.o \
 		Fl_Loop.o \
 		Fl_Trigger.o \
-		SpiralLoopPlugin.o \
-		SpiralLoopPluginGUI.o \
-		../../../GUI/Widgets/SpiralGUI.o \
 		../Widgets/Fl_Knob.o \
-		../Widgets/Fl_LED_Button.o
+		../Widgets/Fl_LED_Button.o \
+		../../../GUI/Widgets/SpiralGUI.o
 INTERFACES =
 UICDECLS =
 UICIMPLS =
@@ -134,20 +137,20 @@ install:
 
 ../SpiralPlugin.o: ../SpiralPlugin.C \
 		../SpiralPlugin.h \
+		../../ChannelHandler.h \
 		../../Sample.h
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
-		../../../GUI/Widgets/SpiralGUI.H \
 		../SpiralPlugin.h \
-		../../Sample.h
+		../../ChannelHandler.h \
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../../../GUI/Widgets/SpiralGUI.o: ../../../GUI/Widgets/SpiralGUI.C \
 		../../../GUI/Widgets/SpiralGUI.H
 
 ../../Sample.o: ../../Sample.C \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 ../../RiffWav.o: ../../RiffWav.C \
 		../../RiffWav.h \

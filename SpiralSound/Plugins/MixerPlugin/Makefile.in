@@ -38,30 +38,33 @@ mandir = @mandir@
 
 ####### Files
 
-HEADERS =	../SpiralPlugin.h \
+HEADERS =	MixerPlugin.h \
+		MixerPluginGUI.h \
+		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../Sample.h \
+		../../SpiralInfo.h \
 		../../ChannelHandler.h \
+		../../Sample.h \
 		../Widgets/Fl_LED_Button.H \
-		../../../GUI/Widgets/SpiralGUI.H \
-		MixerPlugin.h \
-		MixerPluginGUI.h
-SOURCES =	../SpiralPlugin.C \
+		../../../GUI/Widgets/SpiralGUI.H
+SOURCES =	MixerPlugin.C \
+		MixerPluginGUI.C \
+		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../Sample.C \
+		../../SpiralInfo.C \
 		../../ChannelHandler.C \
+		../../Sample.C \
 		../Widgets/Fl_LED_Button.cxx \
-		../../../GUI/Widgets/SpiralGUI.C \
-		MixerPlugin.C \
-		MixerPluginGUI.C
-OBJECTS =	../SpiralPlugin.o \
+		../../../GUI/Widgets/SpiralGUI.C
+OBJECTS =	MixerPlugin.o \
+		MixerPluginGUI.o \
+		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../Sample.o \
+		../../SpiralInfo.o \
 		../../ChannelHandler.o \
+		../../Sample.o \
 		../Widgets/Fl_LED_Button.o \
-		../../../GUI/Widgets/SpiralGUI.o \
-		MixerPlugin.o \
-		MixerPluginGUI.o
+		../../../GUI/Widgets/SpiralGUI.o
 INTERFACES =
 UICDECLS =
 UICIMPLS =
@@ -123,17 +126,17 @@ install:
 
 ../SpiralPlugin.o: ../SpiralPlugin.C \
 		../SpiralPlugin.h \
+		../../ChannelHandler.h \
 		../../Sample.h
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
-		../../../GUI/Widgets/SpiralGUI.H \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../Sample.h
+		../../ChannelHandler.h \
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../../Sample.o: ../../Sample.C \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 ../Widgets/Fl_LED_Button.o: ../Widgets/Fl_LED_Button.cxx \
 		../Widgets/Fl_LED_Button.H

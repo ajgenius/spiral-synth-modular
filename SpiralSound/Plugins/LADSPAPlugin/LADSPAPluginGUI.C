@@ -30,7 +30,8 @@
 
 #include "LADSPAPluginGUI.h"
 #include "LADSPAInfo.h"
-#include "../../../SpiralSynthModularInfo.h"
+
+#include "../../SpiralInfo.h"
 
 LADSPAPluginGUI::LADSPAPluginGUI(int w, int h,
                                  LADSPAPlugin *o,
@@ -64,7 +65,7 @@ SpiralPluginGUI(w,h,o,ch)
 	m_BKnob = new Fl_Button(5,15,50,20,"Knobs");
 	m_BKnob->labelsize (10);
 	m_BKnob->type(FL_TOGGLE_BUTTON);
-	m_BKnob->box((Fl_Boxtype)SpiralSynthModularInfo::GUIDEVICE_Box);
+	m_BKnob->box((Fl_Boxtype)SpiralInfo::GUIDEVICE_Box);
 	m_BKnob->color(Info->GUI_COLOUR);
 	m_BKnob->selection_color(m_GUIColour);
 	m_BKnob->callback((Fl_Callback *)cb_BKnob);
@@ -73,7 +74,7 @@ SpiralPluginGUI(w,h,o,ch)
 	m_BSlider = new Fl_Button(60,15,50,20,"Sliders");
 	m_BSlider->labelsize (10);
 	m_BSlider->type(FL_TOGGLE_BUTTON);
-	m_BSlider->box((Fl_Boxtype)SpiralSynthModularInfo::GUIDEVICE_Box);
+	m_BSlider->box((Fl_Boxtype)SpiralInfo::GUIDEVICE_Box);
 	m_BSlider->color(m_GUIColour);
 	m_BSlider->selection_color(m_GUIColour);
 	m_BSlider->callback((Fl_Callback *)cb_BSlider);
@@ -82,7 +83,7 @@ SpiralPluginGUI(w,h,o,ch)
 	m_BSetup = new Fl_Button(w - 55,15,50,20,"Setup...");
 	m_BSetup->labelsize (10);
 	m_BSetup->type(FL_TOGGLE_BUTTON);
-	m_BSetup->box((Fl_Boxtype)SpiralSynthModularInfo::GUIDEVICE_Box);
+	m_BSetup->box((Fl_Boxtype)SpiralInfo::GUIDEVICE_Box);
 	m_BSetup->color(m_GUIColour);
 	m_BSetup->selection_color(m_GUIColour);
 	m_BSetup->callback((Fl_Callback *)cb_BSetup);
@@ -107,7 +108,7 @@ SpiralPluginGUI(w,h,o,ch)
 	m_SetupGroup->add(m_MakerLabel);
 
 	m_Browser = new Fl_Choice(50, 90, 440, 22,"Plugin:");
-	m_Browser->box((Fl_Boxtype)SpiralSynthModularInfo::GUIDEVICE_Box);
+	m_Browser->box((Fl_Boxtype)SpiralInfo::GUIDEVICE_Box);
 	m_Browser->labelsize(12);
 	m_Browser->textsize(12);
 	m_Browser->callback((Fl_Callback *)cb_Select);
@@ -144,14 +145,14 @@ SpiralPluginGUI(w,h,o,ch)
 	m_SetupGroup->add(m_Browser);
 
 	m_InputScroll = new Fl_Scroll(10,135,480,145);
-	m_InputScroll->box((Fl_Boxtype)SpiralSynthModularInfo::GUIDEVICE_Box);
-	m_InputScroll->color((Fl_Color)SpiralSynthModularInfo::GUICOL_Device);
+	m_InputScroll->box((Fl_Boxtype)SpiralInfo::GUIDEVICE_Box);
+	m_InputScroll->color((Fl_Color)SpiralInfo::GUICOL_Device);
 	m_InputScroll->labelsize(12);
 	m_InputScroll->align(FL_ALIGN_TOP_LEFT);
 	m_InputScroll->type(Fl_Scroll::VERTICAL);
 
 	m_InputPack = new Fl_Pack(15,140,470,135,"");
-	m_InputPack->color((Fl_Color)SpiralSynthModularInfo::GUICOL_Device);
+	m_InputPack->color((Fl_Color)SpiralInfo::GUICOL_Device);
 	m_InputScroll->add(m_InputPack);
 
 	m_SetupGroup->add(m_InputScroll);
@@ -590,7 +591,7 @@ void LADSPAPluginGUI::AddPortInfo(unsigned long p)
 
 // Value
 	Fl_Output* NewOutput = new Fl_Output(0,0,60,18,"");
-	NewOutput->box((Fl_Boxtype)SpiralSynthModularInfo::GUIDEVICE_Box);
+	NewOutput->box((Fl_Boxtype)SpiralInfo::GUIDEVICE_Box);
 	NewOutput->value(0);
 	NewOutput->textsize(10);
 	NewOutput->color(FL_BACKGROUND_COLOR);
@@ -600,7 +601,7 @@ void LADSPAPluginGUI::AddPortInfo(unsigned long p)
 
 // Fixed Value/Default
 	Fl_Input* NewInput = new Fl_Input(62,0,60,18,"");
-	NewInput->box((Fl_Boxtype)SpiralSynthModularInfo::GUIDEVICE_Box);
+	NewInput->box((Fl_Boxtype)SpiralInfo::GUIDEVICE_Box);
 	NewInput->value(0);
 	NewInput->textsize(10);
 	NewInput->callback((Fl_Callback *)cb_Default);
@@ -609,7 +610,7 @@ void LADSPAPluginGUI::AddPortInfo(unsigned long p)
 
 // Min
 	NewInput = new Fl_Input(124,0,60,18,"");
-	NewInput->box((Fl_Boxtype)SpiralSynthModularInfo::GUIDEVICE_Box);
+	NewInput->box((Fl_Boxtype)SpiralInfo::GUIDEVICE_Box);
 	NewInput->value(0);
 	NewInput->textsize(10);
 	NewInput->callback((Fl_Callback *)cb_Min);
@@ -618,7 +619,7 @@ void LADSPAPluginGUI::AddPortInfo(unsigned long p)
 
 // Max
 	NewInput = new Fl_Input(186,0,60,18,"");
-	NewInput->box((Fl_Boxtype)SpiralSynthModularInfo::GUIDEVICE_Box);
+	NewInput->box((Fl_Boxtype)SpiralInfo::GUIDEVICE_Box);
 	NewInput->value(0);
 	NewInput->textsize(10);
 	NewInput->callback((Fl_Callback *)cb_Max);
@@ -657,7 +658,7 @@ void LADSPAPluginGUI::AddPortInfo(unsigned long p)
 
 // Direct input box for knob
 	NewInput = new Fl_Input(0,0,60,16);
-	NewInput->box((Fl_Boxtype)SpiralSynthModularInfo::GUIDEVICE_Box);
+	NewInput->box((Fl_Boxtype)SpiralInfo::GUIDEVICE_Box);
 	NewInput->value(0);
 	NewInput->textsize(10);
 	NewInput->callback((Fl_Callback *)cb_KnobValue);
@@ -685,7 +686,7 @@ void LADSPAPluginGUI::AddPortInfo(unsigned long p)
 
 // Slider
 	Fl_Slider* NewSlider = new Fl_Slider(0,0,20,100,"");
-	NewSlider->box((Fl_Boxtype)SpiralSynthModularInfo::GUIDEVICE_Box);
+	NewSlider->box((Fl_Boxtype)SpiralInfo::GUIDEVICE_Box);
 	NewSlider->type(FL_VERT_NICE_SLIDER);
 	NewSlider->selection_color(m_GUIColour);
 	NewSlider->callback((Fl_Callback *)cb_Slider);
@@ -695,7 +696,7 @@ void LADSPAPluginGUI::AddPortInfo(unsigned long p)
 
 // Direct input box for slider
 	NewInput = new Fl_Input(0,0,56,16);
-	NewInput->box((Fl_Boxtype)SpiralSynthModularInfo::GUIDEVICE_Box);
+	NewInput->box((Fl_Boxtype)SpiralInfo::GUIDEVICE_Box);
 	NewInput->value(0);
 	NewInput->textsize(10);
 	NewInput->callback((Fl_Callback *)cb_SliderValue);

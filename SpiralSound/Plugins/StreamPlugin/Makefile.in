@@ -38,36 +38,39 @@ mandir = @mandir@
 
 ####### Files
 
-HEADERS =	../SpiralPlugin.h \
+HEADERS =	StreamPlugin.h \
+		StreamPluginGUI.h \
+		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
+		../../SpiralInfo.h \
 		../../ChannelHandler.h \
-		../Widgets/Fl_Knob.H \
-		../../../GUI/Widgets/SpiralGUI.H \
-		../Widgets/Fl_SevenSeg.H \
 		../../Sample.h \
 		../../RiffWav.h \
-		StreamPlugin.h \
-		StreamPluginGUI.h
-SOURCES =	../SpiralPlugin.C \
+		../Widgets/Fl_Knob.H \
+		../Widgets/Fl_SevenSeg.H \
+		../../../GUI/Widgets/SpiralGUI.H
+SOURCES =	StreamPlugin.C \
+		StreamPluginGUI.C \
+		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
+		../../SpiralInfo.C \
 		../../ChannelHandler.C \
-		../Widgets/Fl_Knob.cxx \
-		../../../GUI/Widgets/SpiralGUI.C \
-		../Widgets/Fl_SevenSeg.cxx \
 		../../Sample.C \
 		../../RiffWav.C \
-		StreamPlugin.C \
-		StreamPluginGUI.C
-OBJECTS =	../SpiralPlugin.o \
+                ../Widgets/Fl_Knob.cxx \
+		../Widgets/Fl_SevenSeg.cxx \
+		../../../GUI/Widgets/SpiralGUI.C
+OBJECTS =	StreamPlugin.o \
+		StreamPluginGUI.o \
+		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
+		../../SpiralInfo.o \
 		../../ChannelHandler.o \
-		../Widgets/Fl_Knob.o \
-		../../../GUI/Widgets/SpiralGUI.o \
-		../Widgets/Fl_SevenSeg.o \
 		../../Sample.o \
 		../../RiffWav.o \
-		StreamPlugin.o \
-		StreamPluginGUI.o
+		../Widgets/Fl_Knob.o \
+		../Widgets/Fl_SevenSeg.o \
+		../../../GUI/Widgets/SpiralGUI.o
 INTERFACES =
 UICDECLS =
 UICIMPLS =
@@ -128,13 +131,14 @@ install:
 
 ../SpiralPlugin.o: ../SpiralPlugin.C \
 		../SpiralPlugin.h \
+		../../ChannelHandler.h \
 		../../Sample.h
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
-		../../../GUI/Widgets/SpiralGUI.H \
 		../SpiralPlugin.h \
-		../../Sample.h
+		../../ChannelHandler.h \
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../Widgets/Fl_Knob.o: ../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_Knob.H
@@ -146,8 +150,7 @@ install:
 		../Widgets/Fl_SevenSeg.H
 
 ../../Sample.o: ../../Sample.C \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 ../../RiffWav.o: ../../RiffWav.C \
 		../../RiffWav.h \

@@ -34,27 +34,30 @@ mandir = @mandir@
 
 ####### Files
 
-HEADERS =	../SpiralPlugin.h \
+HEADERS =	TransposePlugin.h \
+		TransposePluginGUI.h \
+		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
+                ../../SpiralInfo.h \
 		../../ChannelHandler.h \
-		../../../GUI/Widgets/SpiralGUI.H \
 		../../Sample.h \
-		TransposePlugin.h \
-		TransposePluginGUI.h
-SOURCES =	../SpiralPlugin.C \
+		../../../GUI/Widgets/SpiralGUI.H
+SOURCES =	TransposePlugin.C \
+		TransposePluginGUI.C \
+		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
+                ../../SpiralInfo.C \
 		../../ChannelHandler.C \
-		../../../GUI/Widgets/SpiralGUI.C \
 		../../Sample.C \
-		TransposePlugin.C \
-		TransposePluginGUI.C
-OBJECTS =	../SpiralPlugin.o \
+		../../../GUI/Widgets/SpiralGUI.C
+OBJECTS =	TransposePlugin.o \
+		TransposePluginGUI.o \
+		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
+                ../../SpiralInfo.o \
 		../../ChannelHandler.o \
-		../../../GUI/Widgets/SpiralGUI.o \
 		../../Sample.o \
-		TransposePlugin.o \
-		TransposePluginGUI.o
+		../../../GUI/Widgets/SpiralGUI.o
 INTERFACES =
 UICDECLS =
 UICIMPLS =
@@ -113,20 +116,20 @@ install:
 
 ../SpiralPlugin.o: ../SpiralPlugin.C \
 		../SpiralPlugin.h \
+		../../ChannelHandler.h \
 		../../Sample.h
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
-		../../../GUI/Widgets/SpiralGUI.H \
 		../SpiralPlugin.h \
-		../../Sample.h
+		../../ChannelHandler.h \
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../../../GUI/Widgets/SpiralGUI.o: ../../../GUI/Widgets/SpiralGUI.C \
 		../../../GUI/Widgets/SpiralGUI.H
 
 ../../Sample.o: ../../Sample.C \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 TransposePlugin.o: TransposePlugin.C \
 		TransposePlugin.h \
@@ -139,7 +142,8 @@ TransposePlugin.o: TransposePlugin.C \
 TransposePluginGUI.o: TransposePluginGUI.C \
 		TransposePlugin.h \
 		TransposePluginGUI.h \
-		../SpiralPlugin.h \
+                ../../SpiralInfo.h \
+                ../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
 		../../../GUI/Widgets/SpiralGUI.H
 

@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -29,6 +29,7 @@
 #include <sys/resource.h>
 
 #include "SpiralSynthModular.h"
+#include "SpiralSound/SpiralInfo.h"
 
 pthread_t loopthread,watchdogthread;
 SynthModular *synth;
@@ -53,7 +54,7 @@ void watchdog (void *arg)
 	watchdog_check = 0;
 	gui_watchdog_check = 0;
 	
-	while (1) 
+	while (1)
 	{
 		usleep (10000000);
 		// gui watchdog goes off with modal dialog boxes
@@ -115,7 +116,7 @@ int main(int argc, char **argv)
 	CFURLRef	url		= main ? CFBundleCopyExecutableURL(main) : NULL;
 	CFStringRef path	= url ? CFURLCopyFileSystemPath(url, kCFURLPOSIXPathStyle) : NULL;
 	char *		dst		= (char*)CFStringGetCStringPtr(path, 0);
-	
+
 	printf("main %p url %p path %p dst %p", main, url, path, dst);
 	if (dst) {
 		printf("Have a valid name '%s'\n", dst);
@@ -125,22 +126,22 @@ int main(int argc, char **argv)
 		printf("No base pathname\n");
 #endif
 	srand(time(NULL));
-	SpiralSynthModularInfo::Get()->LoadPrefs();
-	
+	SpiralInfo::Get()->LoadPrefs();
+
 	// get args
     string cmd_filename="";
     bool cmd_specd = false;
 	string cmd_pluginPath="";
-	
+
 	// parse the args
-    if (argc>1) 
+    if (argc>1)
 	{
 		for (int a=1; a<argc; a++)
 		{
 			if (!strcmp(argv[a],"--NoGUI")) GUI = false;
 			else if (!strcmp(argv[a],"--Realtime")) FIFO = true;
-			else if (!strcmp(argv[a],"-h")) 
-			{	
+			else if (!strcmp(argv[a],"-h"))
+			{
 				cout<<"usage: spiralsynthmodular [patch.ssm] [options]"<<endl<<endl
 				<<"options list"<<endl
 				<<"-h : help"<<endl
