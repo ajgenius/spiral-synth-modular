@@ -53,3 +53,22 @@ inline void XFadePluginGUI::cb_Mix_i(Fl_Slider* o, void* v)
 }
 void XFadePluginGUI::cb_Mix(Fl_Slider* o, void* v) 
 { ((XFadePluginGUI*)(o->parent()))->cb_Mix_i(o,v); }
+
+const string XFadePluginGUI::GetHelpText(const string &loc)
+{
+	if (loc=="EN")
+	{
+		return "For mixing stereo inputs like a superstar DJ would.";
+	}
+	else if (loc=="FR")
+	{
+		return "FR: For mixing stereo inputs like a superstar DJ would.";
+	}
+	else if (loc=="DE")
+	{
+		return "DE: For mixing stereo inputs like a superstar DJ would.";
+	}
+	
+	// default to english?
+	return "DE: For mixing stereo inputs like a superstar DJ would.";
+}

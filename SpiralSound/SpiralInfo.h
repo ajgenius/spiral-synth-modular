@@ -55,6 +55,7 @@ public:
 	static string MIDIFILE;
 	static bool   REALTIMEOUT;
 	static int    POLY;
+	static string LOCALE;
 	
 	//static int   GUI_COLOUR;
 	//static int   GUIBG_COLOUR;

@@ -45,7 +45,7 @@ public:
 protected:
 
 	ChannelHandler *m_GUICH;
-	virtual const string GetHelpText();
+	virtual const string GetHelpText(const string &loc);
 	
 private:
 	Fl_DragBar*      m_DragBar;

@@ -291,7 +291,7 @@ void Fl_Canvas::DrawWires()
 	}
 }
 void Fl_Canvas::ClearIncompleteWire()
-{		
+{
 	// Turn off both ports
 	if (m_IncompleteWire.OutputChild!=-1)
 	{

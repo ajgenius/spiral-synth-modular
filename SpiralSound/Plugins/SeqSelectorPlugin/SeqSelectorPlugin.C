@@ -43,8 +43,8 @@ int GetID()
 SeqSelectorPlugin::SeqSelectorPlugin()
 {
 	m_PluginInfo.Name="SeqSelector";
-	m_PluginInfo.Width=400;
-	m_PluginInfo.Height=300;
+	m_PluginInfo.Width=300;
+	m_PluginInfo.Height=200;
 	m_PluginInfo.NumInputs=1;
 	m_PluginInfo.NumOutputs=8;
 	m_PluginInfo.PortTips.push_back("Trigger");	
@@ -60,11 +60,11 @@ SeqSelectorPlugin::SeqSelectorPlugin()
 	m_Pos=0;
 	m_Triggered=false;
 	m_UseRange=false;	
-
-	for(int i=0; i<8; i++)
-	{	
-		m_OutTemp[i]=0;
-	}
+	
+	m_AudioCH->Register("Num",&m_GUIArgs.Num);
+	m_AudioCH->Register("Line",&m_GUIArgs.Line);
+	m_AudioCH->Register("Val",&m_GUIArgs.Val);
+	m_AudioCH->Register("Pos",(int*)&m_Pos,ChannelHandler::OUTPUT);
 }
 
 SeqSelectorPlugin::~SeqSelectorPlugin()
@@ -78,18 +78,13 @@ PluginInfo &SeqSelectorPlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *SeqSelectorPlugin::CreateGUI()
 {
-	m_GUI = new SeqSelectorPluginGUI(m_PluginInfo.Width,
+	return new SeqSelectorPluginGUI(m_PluginInfo.Width,
 								  	    m_PluginInfo.Height,
-										this,m_HostInfo);
-	m_GUI->hide();
-	return m_GUI;
+										this,m_AudioCH,m_HostInfo);
 }
 
 void SeqSelectorPlugin::Execute()
 {
-	
-	SeqSelectorPluginGUI *ssp=(SeqSelectorPluginGUI*)m_GUI;
-	
 	for (int n=0; n<m_HostInfo->BUFSIZE; n++)
 	{
 		// Sends momentary spike of value when triggered, 
@@ -101,7 +96,7 @@ void SeqSelectorPlugin::Execute()
 		}
 		else
 		{			
-			if (m_Triggered==true && ssp->GetNumLines()>0)			
+			if (m_Triggered==true && m_Lines.size()>0)			
 			{								
 				m_Pos++;
 				
@@ -114,7 +109,7 @@ void SeqSelectorPlugin::Execute()
 				}
 				else
 				{
-					if (m_Pos>=ssp->GetNumLines())
+					if (m_Pos>=m_Lines.size())
 					{
 						m_Pos=0;
 					}
@@ -122,9 +117,8 @@ void SeqSelectorPlugin::Execute()
 								
 				for(int i=0; i<8; i++)
 				{			
-					SetOutputPitch(i,n,NoteTable[(int)ssp->GetVal(m_Pos,i)]);
+					SetOutputPitch(i,n,NoteTable[(int)m_Lines[m_Pos].Value[i]]);
 				}														
-				ssp->SetLED(m_Pos);
 			}					
 			else
 			{
@@ -140,15 +134,68 @@ void SeqSelectorPlugin::Execute()
 	}
 }
 
+void SeqSelectorPlugin::ExecuteCommands()
+{
+	if (m_AudioCH->IsCommandWaiting())
+	{
+		switch (m_AudioCH->GetCommand())
+		{
+			case SET_BEGIN : m_Begin=m_GUIArgs.Line; break;
+			case SET_END   : m_End=m_GUIArgs.Line; break;
+			case RANGE     : m_UseRange=m_GUIArgs.Val; break;
+			case ADD_LINE  : 
+				{
+					Line NewLine;
+					if (m_Lines.size()) 
+					{
+						for (int n=0; n<NUM_VALUES; n++) NewLine.Value[n]=m_Lines[m_Lines.size()-1].Value[n];
+					}
+					else 
+					{
+						for (int n=0; n<NUM_VALUES; n++) NewLine.Value[n]=0;
+					}
+					m_Lines.push_back(NewLine);
+				} break;
+			case REM_LINE  : m_Lines.pop_back(); break;
+			case SET_VAL   : m_Lines[m_GUIArgs.Line].Value[m_GUIArgs.Num]=m_GUIArgs.Val; break;
+			default: break;
+		}
+	}
+}
+
 void SeqSelectorPlugin::StreamOut(ostream &s)
 {
 	s<<m_Version<<" ";
-	((SeqSelectorPluginGUI*)m_GUI)->StreamOut(s);
+	s<<m_Lines.size()<<" ";
+	
+	if (m_Lines.size()>0)
+	{
+		for (vector<Line>::iterator i = m_Lines.begin();
+			 i!=m_Lines.end(); i++)
+		{
+			for (int n=0; n<NUM_VALUES; n++)
+			{
+				s<<i->Value[n]<<" ";
+			}
+		}
+	}
 }
 
 void SeqSelectorPlugin::StreamIn(istream &s)
 {	
 	int version;
 	s>>version;
-	((SeqSelectorPluginGUI*)m_GUI)->StreamIn(s);
+	
+	int Num;
+	s>>Num;
+	
+	for (int i=0; i<Num; i++)
+	{
+		Line NewLine;
+		for (int n=0; n<NUM_VALUES; n++)
+		{
+			s>>NewLine.Value[n];
+		}
+		m_Lines.push_back(NewLine);
+	}	
 }

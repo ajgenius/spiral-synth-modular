@@ -52,7 +52,7 @@ public:
 	virtual int handle(int event);	
 	
 	void Add()      { m_ConnectionCount++; }
-	void Remove()   { m_ConnectionCount--; }
+	void Remove()   { if (m_ConnectionCount>0) m_ConnectionCount--; }
 	int  GetCount() { return m_ConnectionCount; }
 	int  GetLastButton() { return m_LastButton; }
 	

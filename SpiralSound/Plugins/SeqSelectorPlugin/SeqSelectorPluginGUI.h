@@ -34,8 +34,6 @@
 #ifndef MixerGUI
 #define MixerGUI
 
-static const int NUM_VALUES = 8;
-
 class CountLine : public Fl_Group
 {
 public:
@@ -46,22 +44,24 @@ public:
 	float GetVal(int n);
 	void  SetLED(bool s) { m_Flasher->value(s); }
 	
+	virtual int handle(int event);
+	
+	ChannelHandler *m_GUICH;
+	
 private:
 	Fl_LED_Button *m_Flasher;
 	Fl_Counter    *m_Counter[NUM_VALUES];
-	
+	int m_Num;
 	char m_Count[32];
 };
 
 class SeqSelectorPluginGUI : public SpiralPluginGUI
 {
 public:
-	SeqSelectorPluginGUI(int w, int h, SeqSelectorPlugin *o,const HostInfo *Info);
+	SeqSelectorPluginGUI(int w, int h, SeqSelectorPlugin *o,ChannelHandler *ch,const HostInfo *Info);
 	
-	virtual void UpdateValues();
-	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }
-	
-	SeqSelectorPlugin *m_Plugin;
+	virtual void UpdateValues(SpiralPlugin *o);
+	virtual void Update();
 		
 	void  AddLine(int* Val=NULL);
 	void  RemoveLine();
@@ -73,6 +73,8 @@ public:
 	void StreamIn(istream &s);
 	
 private:
+	
+	int m_LastLight;
 	
 	Fl_Pack    *m_Main;
 	Fl_Scroll  *m_Scroll;

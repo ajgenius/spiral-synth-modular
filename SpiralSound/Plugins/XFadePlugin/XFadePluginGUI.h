@@ -36,6 +36,9 @@ public:
 	XFadePluginGUI(int w, int h, XFadePlugin *o,ChannelHandler *ch,const HostInfo *Info);
 	
 	virtual void UpdateValues(SpiralPlugin *o);
+
+protected:
+	virtual const string GetHelpText(const string &loc);
 	
 private:
 	

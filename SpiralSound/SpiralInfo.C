@@ -57,6 +57,7 @@ void SpiralInfo::StreamInPrefs(istream &s)
 	char temp[256];
 	s>>temp>>temp>>temp;
 	s>>temp>>temp>>m_Version;
+	s>>temp>>temp>>LOCALE;
 	s>>temp>>temp>>BUFSIZE;
 	s>>temp>>temp>>FRAGSIZE;
 	s>>temp>>temp>>FRAGCOUNT;
@@ -76,6 +77,7 @@ void SpiralInfo::StreamOutPrefs(ostream &s)
 {
 	s<<"SpiralSound resource file"<<endl<<endl;
 	s<<"Version           = "<<m_Version<<endl;	
+	s<<"Locale            = "<<LOCALE<<endl;	
 	s<<"BufferSize        = "<<BUFSIZE<<endl;	
 	s<<"FragmentSize      = "<<FRAGSIZE<<endl;	
 	s<<"FragmentCount     = "<<FRAGCOUNT<<endl;	

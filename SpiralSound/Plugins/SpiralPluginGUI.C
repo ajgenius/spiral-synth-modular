@@ -65,7 +65,7 @@ void SpiralPluginGUI::Update()
 {
 }
 
-const string SpiralPluginGUI::GetHelpText()
+const string SpiralPluginGUI::GetHelpText(const string &loc)
 {
 	return "Help! I need some helptext!!!";
 }
@@ -85,7 +85,7 @@ inline void SpiralPluginGUI::cb_Help_i(Fl_Button* o, void* v)
 		m_HelpWin = new Fl_Double_Window(w,h,"Help");
 				
 		Fl_Multiline_Output* text= new Fl_Multiline_Output(0,0,w,h);
-		text->value(GetHelpText().c_str());
+		text->value(GetHelpText(SpiralInfo::LOCALE).c_str());
 		text->textsize(10);
 		text->set_output();
 		m_HelpWin->add(text);
@@ -96,6 +96,7 @@ inline void SpiralPluginGUI::cb_Help_i(Fl_Button* o, void* v)
 	{
 		m_HelpWin->hide();
 		delete m_HelpWin;
+		m_HelpWin=NULL;
 	}
 }
 void SpiralPluginGUI::cb_Help(Fl_Button* o, void* v) 

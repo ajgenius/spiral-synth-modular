@@ -20,6 +20,7 @@
 #include "SpiralSynthPluginLocation.h"
 #include "FL/fl_draw.h"
 
+string SpiralInfo::LOCALE      = "EN";
 int    SpiralInfo::BUFSIZE     = 512;	
 int    SpiralInfo::FRAGSIZE    = 256;	
 int    SpiralInfo::FRAGCOUNT   = -1;	
@@ -76,7 +77,8 @@ SpiralSynthModularInfo::SpiralSynthModularInfo()
 	PLUGINVEC.push_back("KeyboardPlugin.so");	
 	PLUGINVEC.push_back("ControllerPlugin.so");	
 	PLUGINVEC.push_back("MatrixPlugin.so");	
-	PLUGINVEC.push_back("PoshSampler.so");
+	PLUGINVEC.push_back("SeqSelectorPlugin.so");	
+	PLUGINVEC.push_back("PoshSamplerPlugin.so");
 	PLUGINVEC.push_back("WaveTablePlugin.so");	
 	PLUGINVEC.push_back("OscillatorPlugin.so");	
 	PLUGINVEC.push_back("LFOPlugin.so");

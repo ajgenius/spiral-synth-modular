@@ -394,8 +394,8 @@ void SynthModular::LoadPlugins(string pluginPath)
 	int Width  = 40;
 	int Height = 40;
 	
-	int SWidth  = 392;
-	int SHeight = 187;
+	int SWidth  = 256;
+	int SHeight = 256;
 		
 	Fl_Pixmap pic(SSM_xpm);
 	

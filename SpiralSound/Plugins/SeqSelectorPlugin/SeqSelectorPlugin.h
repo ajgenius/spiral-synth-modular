@@ -22,6 +22,8 @@
 #ifndef SEQSELECTORPlugin
 #define SEQSELECTORPlugin
 
+static const int NUM_VALUES = 8;
+
 class SeqSelectorPlugin : public SpiralPlugin
 {
 public:
@@ -31,24 +33,36 @@ public:
 	virtual PluginInfo &Initialise(const HostInfo *Host);
 	virtual SpiralGUIType *CreateGUI();
 	virtual void Execute();
+	virtual void ExecuteCommands();
 	virtual void StreamOut(ostream &s);
 	virtual void StreamIn(istream &s);
-	
-	// has to be defined in the plugin	
-	virtual void UpdateGUI() { Fl::check(); }
-	
-	void SetBegin(int s) { m_Begin=s; }
-	void SetEnd(int s)   { m_End=s; }
+		
 	int  GetBegin()      { return m_Begin; }
 	int  GetEnd()        { return m_End; }
-	void UseRange(bool s) { m_UseRange=s; }
 			
-private:
-	int m_Pos;
-	short m_OutTemp[8];
+	enum GUICommands{NONE,SET_BEGIN,SET_END,RANGE,ADD_LINE,REM_LINE,SET_VAL};
 	
-	int m_Begin;
-	int m_End;
+	struct GUIArgs
+	{
+		int Num;
+		int Line;
+		int Val;
+	};
+	
+	struct Line
+	{
+		int Value[NUM_VALUES];
+	};
+	
+	vector<Line> m_Lines;
+	
+private:
+
+	GUIArgs m_GUIArgs;
+	
+	unsigned int m_Pos;
+	unsigned int m_Begin;
+	unsigned int m_End;
 	bool m_UseRange;
 	bool m_Triggered;
 };
