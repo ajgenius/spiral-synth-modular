@@ -95,7 +95,7 @@ public:
 	
 	// aesthitic, to keep track of number of connections to know whether to 
 	// draw the port as occupied or not.
-	void          AddConnection(int n);
+	bool          AddConnection(int n);
 	void          RemoveConnection(int n);
 	
 	bool          GetPortValue(int n)            { return m_PortVec[n]->value(); }	

@@ -220,11 +220,16 @@ void Fl_DeviceGUI::Setup(const DeviceGUIInfo& Info, bool FirstTime)
 	}
 }
 
-void Fl_DeviceGUI::AddConnection(int n)  		 
+bool Fl_DeviceGUI::AddConnection(int n)  		 
 { 
-	m_PortVec[n]->Add();
-	m_PortVec[n]->value(1);
-	redraw();
+	if ( n < m_PortVec.size() ) 
+	{
+		m_PortVec[n]->Add();
+		m_PortVec[n]->value(1);
+		redraw();
+		return true;
+	}
+	return false;
 }
 	
 void Fl_DeviceGUI::RemoveConnection(int n)  		 

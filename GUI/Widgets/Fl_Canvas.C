@@ -582,17 +582,18 @@ istream &operator>>(istream &s, Fl_Canvas &o)
 			s>>NewWire.InputChild;
 			s>>NewWire.InputPort;	
 			s>>NewWire.InputTerminal;
-	
-			o.m_WireVec.push_back(NewWire);	
+			
+			// if we can turn on both ports
+			if (((Fl_DeviceGUI*)(o.child(NewWire.OutputChild)))->AddConnection(NewWire.OutputPort+
+					((Fl_DeviceGUI*)(o.child(NewWire.OutputChild)))->GetInfo()->NumInputs) &&
+				((Fl_DeviceGUI*)(o.child(NewWire.InputChild)))->AddConnection(NewWire.InputPort))
+			{
+				o.m_WireVec.push_back(NewWire);	
 
-			// Notify connection by callback
-			o.cb_Connection(&o,(void*)&NewWire);
-			o.m_Graph.AddConnection(NewWire.OutputID,NewWire.OutputTerminal,NewWire.InputID,NewWire.InputTerminal);
-				
-			// Turn on both ports
-			((Fl_DeviceGUI*)(o.child(NewWire.OutputChild)))->AddConnection(NewWire.OutputPort+
-				((Fl_DeviceGUI*)(o.child(NewWire.OutputChild)))->GetInfo()->NumInputs);
-			((Fl_DeviceGUI*)(o.child(NewWire.InputChild)))->AddConnection(NewWire.InputPort);
+				// Notify connection by callback
+				o.cb_Connection(&o,(void*)&NewWire);
+				o.m_Graph.AddConnection(NewWire.OutputID,NewWire.OutputTerminal,NewWire.InputID,NewWire.InputTerminal);
+			}				
 		}
 		
 	}
@@ -609,16 +610,17 @@ istream &operator>>(istream &s, Fl_Canvas &o)
 			s>>NewWire.InputChild;
 			s>>NewWire.InputPort;	
 	
-			o.m_WireVec.push_back(NewWire);	
+			// if we can turn on both ports
+			if (((Fl_DeviceGUI*)(o.child(NewWire.OutputChild)))->AddConnection(NewWire.OutputPort+
+					((Fl_DeviceGUI*)(o.child(NewWire.OutputChild)))->GetInfo()->NumInputs) &&
+				((Fl_DeviceGUI*)(o.child(NewWire.InputChild)))->AddConnection(NewWire.InputPort))
+			{
+				o.m_WireVec.push_back(NewWire);	
 
-			// Notify connection by callback
-			o.cb_Connection(&o,(void*)&NewWire);
-			o.m_Graph.AddConnection(NewWire.OutputID,false,NewWire.InputID,false);
-				
-			// Turn on both ports
-			((Fl_DeviceGUI*)(o.child(NewWire.OutputChild)))->AddConnection(NewWire.OutputPort+
-				((Fl_DeviceGUI*)(o.child(NewWire.OutputChild)))->GetInfo()->NumInputs);
-			((Fl_DeviceGUI*)(o.child(NewWire.InputChild)))->AddConnection(NewWire.InputPort);
+				// Notify connection by callback
+				o.cb_Connection(&o,(void*)&NewWire);
+				o.m_Graph.AddConnection(NewWire.OutputID,false,NewWire.InputID,false);
+			}					
 		}
 	}	
 	return s;
