@@ -185,7 +185,8 @@ void SynthModular::UpdatePluginGUIs()
 	{	
 		if (i->second->m_DeviceGUI->GetPluginWindow())
 		{
-			i->second->m_DeviceGUI->GetPluginWindow()->redraw();
+			SpiralPluginGUI *GUI=(SpiralPluginGUI *)i->second->m_DeviceGUI->GetPluginWindow();
+			GUI->Update();
 		}
 		
 		if (i->second->m_DeviceGUI->Killed())
@@ -632,7 +633,7 @@ void SynthModular::UpdateHostInfo()
 	m_Info.OUTPUTFILE = SpiralInfo::OUTPUTFILE;
 	m_Info.MIDIFILE   = SpiralInfo::MIDIFILE; 
 	m_Info.POLY       = SpiralInfo::POLY;
-		
+
 	str>>*this;
 }
 
@@ -674,7 +675,7 @@ istream &operator>>(istream &s, SynthModular &o)
 	
 	int Num, ID, PluginID, x,y,ps,px,py;
 	s>>dummy>>Num;
-	
+
 	for(int n=0; n<Num; n++)
 	{	
 		//cerr<<"Loading Device "<<n<<endl;

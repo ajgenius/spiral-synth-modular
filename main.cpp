@@ -35,16 +35,25 @@ int pthread_create_realtime (pthread_t *new_thread,
 			 void *(*start)(void *), void *arg,
 			 int priority);
 
+bool CallbackOnly = false;
+
 void audioloop(void* o)
 {
 	while(1)
 	{
 		if (!synth->CallbackMode()) 
 		{
+			// do funky stuff
 			synth->Update();
+			
+			// slow down this thread if we are not going to be using the
+			// oss plugin. prevents maxing the CPU out for no reason.
+			if (CallbackOnly) usleep(100);
 		}
 		else
 		{
+			// the engine is currently in callback mode, so we don't
+			// need to do anything unless we are switched back 
 			usleep(1000000);
 		}
 	}
@@ -69,6 +78,7 @@ int main(int argc, char **argv)
 		{
 			if (!strcmp(argv[a],"--NoGUI")) GUI = false;
 			else if (!strcmp(argv[a],"--SHED_FIFO")) FIFO = true;
+			else if (!strcmp(argv[a],"--CallbackOnly")) CallbackOnly = true;			
 			else 
 			{
 				cmd_filename = argv[1];
@@ -85,17 +95,19 @@ int main(int argc, char **argv)
 	Fl_Window* win = synth->CreateWindow();
 	synth->LoadPlugins();
 	win->xclass("");
-	if (GUI) win->show(argc, argv); // prevents stuff happening before the plugins have loaded
+	if (GUI) win->show(1, argv); // prevents stuff happening before the plugins have loaded
 	
 	// set some fltk defaults
 	Fl_Tooltip::size(10);	
 	Fl::visible_focus(false);
-			
+	
 	// spawn the audio thread
 	int ret;
 	if (FIFO) ret=pthread_create_realtime(&loopthread,(void*(*)(void*))audioloop,NULL,10);
 	else ret=pthread_create(&loopthread,NULL,(void*(*)(void*))audioloop,NULL);
-
+	
+	pthread_t GUIThread = pthread_self();
+	
 	// do we need to load a patch on startup? 
     if (cmd_specd) synth->LoadPatch(cmd_filename.c_str());        
 	

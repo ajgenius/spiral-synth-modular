@@ -37,8 +37,9 @@ class MatrixPluginGUI : public SpiralPluginGUI
 {
 public:
 	MatrixPluginGUI(int w, int h, MatrixPlugin *o,ChannelHandler *ch,const HostInfo *Info);
-	virtual void draw();
+
 	virtual void UpdateValues(SpiralPlugin *o);
+	virtual void Update();
 	
 private:
 	

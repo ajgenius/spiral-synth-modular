@@ -406,10 +406,10 @@ void PoshSamplerPluginGUI::UpdateSampleDisplay(int num)
 	}
 }
 
-void PoshSamplerPluginGUI::draw()
+void PoshSamplerPluginGUI::Update()
 {
-	SpiralPluginGUI::draw();
 	SetPlayPos(m_GUICH->GetLong("PlayPos"));
+	redraw();
 }
 
 void PoshSamplerPluginGUI::UpdateValues(SpiralPlugin *o)

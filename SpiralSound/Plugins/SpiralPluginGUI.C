@@ -49,7 +49,11 @@ SpiralPluginGUI::~SpiralPluginGUI()
 	// Needed to properly remove the window.
 	Fl::check();
 }
-		
+
+void SpiralPluginGUI::Update()
+{
+}
+
 //// Callbacks ////
 
 inline void SpiralPluginGUI::cb_Hide_i(Fl_Button* o, void* v) 

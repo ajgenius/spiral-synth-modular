@@ -141,16 +141,16 @@ SpiralPluginGUI(w,h,o,ch)
 	end();
 }
 
-void MatrixPluginGUI::draw()
+void MatrixPluginGUI::Update()
 {	
-	SpiralPluginGUI::draw();
-	
 	for(int x=0; x<MATX; x++)
 	{
 		m_Flash[x]->value(0);
 	}
 
 	m_Flash[m_GUICH->GetInt("Step")]->value(1);
+	
+	redraw();
 }
 
 void MatrixPluginGUI::UpdateValues(SpiralPlugin *o)

@@ -36,6 +36,8 @@ public:
 	SpiralPluginGUI(int w, int h, SpiralPlugin* o, ChannelHandler *ch);
 	~SpiralPluginGUI();
 	
+	virtual void Update();
+	
 	// called while audio thread is suspended, so direct access to the
 	// spiralplugin is acceptable
 	virtual void UpdateValues(SpiralPlugin *o)=0;

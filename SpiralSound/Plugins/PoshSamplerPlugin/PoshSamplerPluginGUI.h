@@ -74,7 +74,7 @@ public:
 	PoshSamplerPluginGUI(int w, int h, PoshSamplerPlugin *o,ChannelHandler *ch, const HostInfo *Info);
 	
 	virtual void UpdateValues(SpiralPlugin *o);
-	virtual void draw();
+	virtual void Update();
 	
 	void SetPlayPos(long s) { m_Display->SetPlayPos(s); }
 	int  GetCurrentSample() { return (int)m_SampleNum->value(); }

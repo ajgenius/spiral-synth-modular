@@ -88,6 +88,10 @@ else
   FLTK_CXXFLAGS=`$FLTK_CONFIG $fltk_config_args --cxxflags`
   FLTK_CFLAGS=`$FLTK_CONFIG $fltk_config_args --cxxflags`
   FLTK_LIBS=`$FLTK_CONFIG $fltk_config_args --ldflags`
+  if test "${FLTK_LIBS/*-rpath*/yes}" != "yes"; then
+    echo "*** FLTK needs to be configured with --enable-shared"
+    exit 1
+  fi
 fi
 AC_SUBST(FLTK_CXXFLAGS)
 AC_SUBST(FLTK_CFLAGS)

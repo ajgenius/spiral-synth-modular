@@ -14,7 +14,7 @@ CXXFLAGS=	@CXXFLAGS@  @FLTK_CXXFLAGS@
 INCPATH	=
 LINK	=	g++ -shared
 LFLAGS	=	
-LIBS	=   @FLTK_LIBS@ -lm -ldl
+LIBS	=   @FLTK_LIBS@
 MOC     = moc
 UIC	=	
 
