@@ -106,71 +106,58 @@ m_CVCount(0)
 
 }
 
-void ControllerPluginGUI::AddCV()
-{
-        CVGUI *NewCV = new CVGUI (m_CVCount, this, m_GUIColour);
-	m_GUIVec.push_back(NewCV);
-	m_MainPack->add(NewCV->m_SliderGroup);
-	m_CVCount++;
+void ControllerPluginGUI::AddCV() {
+     CVGUI *NewCV = new CVGUI (m_CVCount, this, m_GUIColour);
+     m_GUIVec.push_back (NewCV);
+     m_MainPack->add (NewCV->m_SliderGroup);
+     m_CVCount++;
 }
 
-void ControllerPluginGUI::DeleteCV()
-{
-	vector<CVGUI*>::iterator i=m_GUIVec.end();
-	i--;
-	m_MainPack->remove((*i)->m_SliderGroup);
-	delete *i;
-	m_GUIVec.erase(i);
-	m_CVCount--;
+void ControllerPluginGUI::DeleteCV() {
+     vector<CVGUI*>::iterator i=m_GUIVec.end();
+     i--;
+     m_MainPack->remove ((*i)->m_SliderGroup);
+     delete *i;
+     m_GUIVec.erase (i);
+     m_CVCount--;
 }
 
-void ControllerPluginGUI::Clear()
-{
-	for (vector<ControllerPluginGUI::CVGUI*>::iterator i=m_GUIVec.begin();
-		 i!=m_GUIVec.end(); i++)
-	{
-		m_MainPack->remove((*i)->m_SliderGroup);
-		delete *i;
-	}
-	m_GUIVec.clear();
-	m_CVCount=0;
+void ControllerPluginGUI::Clear() {
+     for (vector<ControllerPluginGUI::CVGUI*>::iterator i=m_GUIVec.begin(); i!=m_GUIVec.end(); i++) {
+         m_MainPack->remove ((*i)->m_SliderGroup);
+         delete *i;
+     }
+     m_GUIVec.clear();
+     m_CVCount = 0;
 }
 
-void ControllerPluginGUI::UpdateValues(SpiralPlugin *o)
-{
-	ControllerPlugin *Plugin = (ControllerPlugin *)o;
-
-	int c;
-	float min, max, val;
-	string Title,Min,Max;
-	char temp[64];
-
-	Clear();
-
-	c=Plugin->GetNum();
-	for (int n=0; n<c; n++) {
-		AddCV();
-		m_GUIVec[n]->m_Title->value(Plugin->GetName(n).c_str());
-
-		min = Plugin->GetMin(n);
-		max = Plugin->GetMax(n);
-		sprintf(temp,"%.6f",min);
-		m_GUIVec[n]->m_Min->value(temp);
-		sprintf(temp,"%.6f",max);
-		m_GUIVec[n]->m_Max->value(temp);
-
-	        // Scale and invert value to match slider range (0->1)
-		float val = 1.0f - (Plugin->GetVal(n) - min) / (max - min);
-		m_GUIVec[n]->m_Chan->value(val);
-	}
-
-	resize(x(), y(), c*60, h());
+void ControllerPluginGUI::UpdateValues (SpiralPlugin *o) {
+     ControllerPlugin *Plugin = (ControllerPlugin *)o;
+     int c;
+     float min, max, val;
+     string Title, Min, Max;
+     char temp[64];
+     Clear();
+     c=Plugin->GetNum();
+     for (int n=0; n<c; n++) {
+         AddCV();
+         m_GUIVec[n]->m_Title->value (Plugin->GetName (n).c_str());
+         min = Plugin->GetMin (n);
+         sprintf(temp, "%.6f", min);
+         m_GUIVec[n]->m_Min->value (temp);
+         max = Plugin->GetMax (n);
+         sprintf (temp, "%.6f", max);
+         m_GUIVec[n]->m_Max->value (temp);
+         // Scale and/or invert value to match slider range (0->1)
+         float val = 1.0f - (Plugin->GetVal(n) - min) / (max - min);
+         m_GUIVec[n]->m_Chan->value (val);
+     }
+     Resize (c*60, h());
 }
 
 inline void ControllerPluginGUI::cb_Title_i(Fl_Input* o, void* v)
 {
 	int num=*(int*)(v);
-
 	char temp[256];
 	sprintf(temp,"%s",m_GUIVec[num]->m_Title->value());
 	m_GUICH->Set("Number",num);
@@ -249,44 +236,58 @@ inline void ControllerPluginGUI::cb_Min_i(Fl_Input* o, void* v)
 void ControllerPluginGUI::cb_Min(Fl_Input* o, void* v)
 { ((ControllerPluginGUI*)(o->parent()->user_data()))->cb_Min_i(o,v);}
 
-inline void ControllerPluginGUI::cb_Add_i(Fl_Button* o, void* v) {
-        if (m_CVCount<MAX_CHANNELS) {
-		AddCV();
-		int num   = (int)m_GUIVec.size();
-		float min = atof(m_GUIVec[num - 1]->m_Min->value());
-		float max = atof(m_GUIVec[num - 1]->m_Max->value());
-		float val = (1.0f-o->value())*(max-min)+min;
-		char temp[256];
-		sprintf(temp,"%s",m_GUIVec[num - 1]->m_Title->value());
-
-		m_GUICH->Set("Number", num);
-		m_GUICH->SetCommand(ControllerPlugin::SETNUM);
-		m_GUICH->Wait();
-		m_GUICH->Set("Number", num);
-		m_GUICH->SetData("Name",(void*)temp);
-		m_GUICH->Set("Max",max);
-		m_GUICH->Set("Value",val);
-		m_GUICH->Set("Min",min);
-		m_GUICH->SetCommand(ControllerPlugin::SETALL);
-		m_GUICH->Wait();
-                resize(x(),y(),w()+60,h());
-	}
+inline void ControllerPluginGUI::cb_Add_i (Fl_Button* o, void* v) {
+   if (m_CVCount < MAX_CHANNELS) {
+      AddCV();
+      int num = (int)m_GUIVec.size();
+      float min = atof (m_GUIVec[num - 1]->m_Min->value());
+      float max = atof (m_GUIVec[num - 1]->m_Max->value());
+      float val = (1.0f-o->value()) * (max-min) + min;
+      char temp[256];
+      sprintf (temp,"%s",m_GUIVec[num - 1]->m_Title->value());
+      m_GUICH->Set ("Number", num);
+      m_GUICH->SetCommand (ControllerPlugin::SETNUM);
+      m_GUICH->Wait ();
+      m_GUICH->Set ("Number", num);
+      m_GUICH->SetData ("Name", (void*)temp);
+      m_GUICH->Set ("Max", max);
+      m_GUICH->Set ("Value", val);
+      m_GUICH->Set ("Min", min);
+      m_GUICH->SetCommand (ControllerPlugin::SETALL);
+      m_GUICH->Wait();
+      Resize (w()+60, h());
+   }
 }
-void ControllerPluginGUI::cb_Add(Fl_Button* o, void* v)
-{ ((ControllerPluginGUI*)(o->parent()->parent()))->cb_Add_i(o,v);}
 
-inline void ControllerPluginGUI::cb_Delete_i(Fl_Button* o, void* v) {
-	if (m_GUIVec.size()>1) 	{
-		DeleteCV();
-		m_GUICH->Set("Number",(int)m_GUIVec.size());
-		m_GUICH->SetCommand(ControllerPlugin::SETNUM);
-		m_GUICH->Wait();
-		resize(x(),y(),w()-60,h());
-	}
+void ControllerPluginGUI::cb_Add (Fl_Button* o, void* v) {
+     ((ControllerPluginGUI*)(o->parent()->parent()))->cb_Add_i (o, v);
 }
-void ControllerPluginGUI::cb_Delete(Fl_Button* o, void* v)
-{ ((ControllerPluginGUI*)(o->parent()->parent()))->cb_Delete_i(o,v);}
 
+inline void ControllerPluginGUI::cb_Delete_i (Fl_Button* o, void* v) {
+   if (m_GUIVec.size()>1) {
+      DeleteCV();
+      m_GUICH->Set ("Number", (int)m_GUIVec.size());
+      m_GUICH->SetCommand (ControllerPlugin::SETNUM);
+      m_GUICH->Wait();
+      Resize (w()-60, h());
+   }
+}
+
+void ControllerPluginGUI::cb_Delete (Fl_Button* o, void* v) {
+     ((ControllerPluginGUI*)(o->parent()->parent()))->cb_Delete_i (o, v);
+}
+
+const string ControllerPluginGUI::GetHelpText(const string &loc){
+    return string("")
+    + "This is a simple plugin to allow you to generate CV values\n"
+    + "interatively with sliders in the plugin window. Useful if you\n"
+    + "can't use Midi, or for controlling LADSPA plugins. The slider\n"
+    + "ranges can be set, and titles can be given to each slider.\n"
+    + "You can add or delete sliders from the plugin using the\n"
+    + "+ or - buttons.\n";
+}
+
+/*
 // call for version <3
 istream &operator>>(istream &s, ControllerPluginGUI &o)
 {
@@ -307,10 +308,10 @@ istream &operator>>(istream &s, ControllerPluginGUI &o)
 		o.m_GUIVec[n]->m_Chan->value(Val);
 	}
 
-	o.resize(o.x(),o.y(),c*60,o.h());
-
+	o.resize (o.x(), o.y(), c*60, o.h());
 	return s;
 }
+
 
 // call for version >=3
 // another version of the stream to fix the old style string streaming problem
@@ -358,13 +359,4 @@ void ControllerPluginGUI::StreamOut(ostream &s)
 		s<<(*i)->m_Chan->value()<<endl;
 	}
 }
-
-const string ControllerPluginGUI::GetHelpText(const string &loc){
-    return string("")
-    + "This is a simple plugin to allow you to generate CV values\n"
-    + "interatively with sliders in the plugin window. Useful if you\n"
-    + "can't use Midi, or for controlling LADSPA plugins. The slider\n"
-    + "ranges can be set, and titles can be given to each slider.\n"
-    + "You can add or delete sliders from the plugin using the\n"
-    + "+ or - buttons.\n";
-}
+*/

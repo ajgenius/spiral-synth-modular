@@ -284,8 +284,6 @@ void LADSPAPluginGUI::Update(void)
 		m_BSlider->resize(x()+60, y()+15, 50, 20);
 		m_BSetup->resize(x() + w() - 55, y()+15, 50, 20);
 	}
-        // Andy Preston bodged this bit in - might be better somewhere else
-        DoResizeCallback ();
 }
 
 // This lot is only done on patch load
@@ -513,7 +511,7 @@ void LADSPAPluginGUI::SetPage(int index)
 			m_SliderGroup->hide();
 			m_SetupGroup->show();
 
-			resize(x(), y(), 500, 320);
+			Resize(500, 320);
 
 			m_KnobGroup->resize(x()+5, y()+35, w()-10, h()-40);
 			m_SliderGroup->resize(x()+5, y()+35, w()-10, h()-40);
@@ -524,8 +522,6 @@ void LADSPAPluginGUI::SetPage(int index)
 	m_BKnob->resize(x()+5, y()+15, 50, 20);
 	m_BSlider->resize(x()+60, y()+15, 50, 20);
 	m_BSetup->resize(x() + w() - 55, y()+15, 50, 20);
-        // Andy Preston bodged this bit in - might be better somewhere else
-        DoResizeCallback ();
 }
 
 void LADSPAPluginGUI::SetUniqueID(unsigned long n)
@@ -769,7 +765,7 @@ void LADSPAPluginGUI::UpdateKnobs(void)
 			height = 45+rows*80;
 			width = width < 170 ? 170 : width;
 		}
-		resize(x(), y(), width, height);
+		Resize (width, height);
 
 	// Resize all groups to fit
 		m_KnobGroup->resize(x()+5, y()+35, w()-10, h()-40);
@@ -817,8 +813,6 @@ void LADSPAPluginGUI::UpdateKnobs(void)
 			m_KnobLabels[p]->hide();
 		}
 	}
-        // Andy Preston bodged this bit in - might be better somewhere else
-        DoResizeCallback ();
 }
 
 // Rearrange sliders depending on connections
@@ -882,7 +876,7 @@ void LADSPAPluginGUI::UpdateSliders(void)
 			height = 45+rows*140;
 			width = width < 170 ? 170 : width;
 		}
-		resize(x(), y(), width, height);
+		Resize (width, height);
 
 	// Resize all groups to fit
 		m_KnobGroup->resize(x()+5, y()+35, w()-10, h()-40);
@@ -925,8 +919,6 @@ void LADSPAPluginGUI::UpdateSliders(void)
 			m_SliderLabels[p]->hide();
 		}
 	}
-        // Andy Preston bodged this bit in - might be better somewhere else
-        DoResizeCallback ();
 }
 
 // Set value of slider and/or knob (both use the same settings)
@@ -1152,7 +1144,8 @@ inline void LADSPAPluginGUI::cb_Select_i(Fl_Choice* o)
 		m_GUICH->Wait();
 	}
 	SelectPlugin();
-        DoResizeCallback ();
+        // Make sure GUI frame can fit all the ports
+        Resize (w(), h());
 }
 void LADSPAPluginGUI::cb_Select(Fl_Choice* o)
 {   //                     Group     GUI

@@ -83,9 +83,7 @@ void MixerPluginGUI::AddChan (bool SendData, bool ResizeIt) {
         m_GUICH->SetCommand(MixerPlugin::SETCH);
         m_GUICH->Wait ();
      }
-     if (ResizeIt && num > 3) {
-        resize (x(), y(), w()+20, h());
-     }
+     if (ResizeIt && num > 3) Resize (w()+20, h());
 }
 
 void MixerPluginGUI::DeleteChan (bool SendData) {
@@ -100,9 +98,7 @@ void MixerPluginGUI::DeleteChan (bool SendData) {
         m_GUICH->SetCommand (MixerPlugin::SETNUM);
         m_GUICH->Wait ();
      }
-     if (num > 2) {
-        resize (x(), y(), w()-20, h());
-     }
+     if (num > 2) Resize (w()-20, h());
 }
 
 void MixerPluginGUI::UpdateValues(SpiralPlugin *o) {

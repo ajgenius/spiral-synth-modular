@@ -31,63 +31,47 @@
 
 static int Numbers[MAX_CHANNELS];
 
-class ControllerPluginGUI : public SpiralPluginGUI
-{
-public:
-	ControllerPluginGUI(int w, int h, ControllerPlugin *o,ChannelHandler *ch,const HostInfo *Info);
-
-	virtual void UpdateValues(SpiralPlugin *o);
-
-	void StreamIn(std::istream &s);
-	void StreamOut(std::ostream &s);
-
-protected:
-    const std::string GetHelpText(const std::string &loc);
-
-private:
-
-	void Clear();
-        Fl_Color m_GUIColour;
-
-	class CVGUI
-	{
-	public:
-		CVGUI::CVGUI(int n, ControllerPluginGUI *p, Fl_Color SelColour);
-
-		Fl_Group     *m_SliderGroup;
-		Fl_Input     *m_Title;
-		Fl_Input     *m_Min;
-		Fl_Input     *m_Max;
-		Fl_Slider    *m_Chan;
-	};
-
-	friend class CVGUI;
-
-	Fl_Pack *m_MainPack, *m_Buttons;
-	Fl_Button *m_Add, *m_Delete;
-
-	std::vector<CVGUI*> m_GUIVec;
-	void AddCV();
-	void DeleteCV();
-	int m_CVCount;
-
-	//// Callbacks ////
-	inline void cb_Title_i(Fl_Input* o, void* v);
-	static void cb_Title(Fl_Input* o, void* v);
-	inline void cb_Max_i(Fl_Input* o, void* v);
-	static void cb_Max(Fl_Input* o, void* v);
-	inline void cb_Chan_i(Fl_Slider* o, void* v);
-	static void cb_Chan(Fl_Slider* o, void* v);
-	inline void cb_Min_i(Fl_Input* o, void* v);
-	static void cb_Min(Fl_Input* o, void* v);
-	inline void cb_Add_i(Fl_Button* o, void* v);
-	static void cb_Add(Fl_Button* o, void* v);
-	inline void cb_Delete_i(Fl_Button* o, void* v);
-	static void cb_Delete(Fl_Button* o, void* v);
-
-	friend std::istream &operator>>(std::istream &s, ControllerPluginGUI &o);
+class ControllerPluginGUI : public SpiralPluginGUI {
+   public:
+      ControllerPluginGUI(int w, int h, ControllerPlugin *o,ChannelHandler *ch,const HostInfo *Info);
+      virtual void UpdateValues(SpiralPlugin *o);
+      // void StreamIn(std::istream &s);
+      // void StreamOut(std::ostream &s);
+   protected:
+      const std::string GetHelpText(const std::string &loc);
+   private:
+      void Clear();
+      Fl_Color m_GUIColour;
+      class CVGUI {
+         public:
+            CVGUI::CVGUI(int n, ControllerPluginGUI *p, Fl_Color SelColour);
+            Fl_Group *m_SliderGroup;
+            Fl_Input *m_Title, *m_Min, *m_Max;
+            Fl_Slider *m_Chan;
+      };
+      friend class CVGUI;
+      Fl_Pack *m_MainPack, *m_Buttons;
+      Fl_Button *m_Add, *m_Delete;
+      std::vector<CVGUI*> m_GUIVec;
+      void AddCV();
+      void DeleteCV();
+      int m_CVCount;
+      //// Callbacks ////
+      inline void cb_Title_i(Fl_Input* o, void* v);
+      static void cb_Title(Fl_Input* o, void* v);
+      inline void cb_Max_i(Fl_Input* o, void* v);
+      static void cb_Max(Fl_Input* o, void* v);
+      inline void cb_Chan_i(Fl_Slider* o, void* v);
+      static void cb_Chan(Fl_Slider* o, void* v);
+      inline void cb_Min_i(Fl_Input* o, void* v);
+      static void cb_Min(Fl_Input* o, void* v);
+      inline void cb_Add_i(Fl_Button* o, void* v);
+      static void cb_Add(Fl_Button* o, void* v);
+      inline void cb_Delete_i(Fl_Button* o, void* v);
+      static void cb_Delete(Fl_Button* o, void* v);
+      // friend std::istream &operator>>(std::istream &s, ControllerPluginGUI &o);
 };
 
-std::istream &operator>>(std::istream &s, ControllerPluginGUI &o);
+// std::istream &operator>>(std::istream &s, ControllerPluginGUI &o);
 
 #endif

@@ -105,7 +105,7 @@ m_Minimised (true)
 	if (m_PluginWindow) {
            m_PluginWindow->hide();
            add (m_PluginWindow);
-           m_PluginWindow->ResizeCallback (&cb_Resize, this);
+           m_PluginWindow->SetResizeCallback (&cb_Resize, this);
 	}
 	resizable(NULL);
 	//Add the input/output ports
@@ -154,15 +154,13 @@ void Fl_DeviceGUI::ResizeToPluginWindow (void) {
 void Fl_DeviceGUI::Minimise() {
      m_Minimised = true;
      Resize (m_MiniWidth, m_MiniHeight);
-     parent()->redraw();
 }
 
 void Fl_DeviceGUI::Maximise() {
      m_Minimised=false;
-     ResizeToPluginWindow();
      m_PluginWindow->show();
      m_IconButton->hide();
-     parent()->redraw();
+     ResizeToPluginWindow();
      ((Fl_Canvas*)parent())->ToTop(this);
 }
 
@@ -178,6 +176,7 @@ void Fl_DeviceGUI::Resize (int width, int height) {
      int Centx = x()+w()/2;
      int Centy = y()+h()/2;
      m_IconButton->position (Centx-m_Icon->w()/2, Centy-m_Icon->h()/2);
+     parent()->redraw();
 }
 
 void Fl_DeviceGUI::Setup(const DeviceGUIInfo& Info, bool FirstTime)

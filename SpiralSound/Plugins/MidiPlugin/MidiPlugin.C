@@ -96,7 +96,7 @@ m_CurrentNote(0)
 
 MidiPlugin::~MidiPlugin()
 {
-	m_RefCount--;
+        m_RefCount--;
 	if (m_RefCount==0) MidiDevice::PackUpAndGoHome();
 }
 

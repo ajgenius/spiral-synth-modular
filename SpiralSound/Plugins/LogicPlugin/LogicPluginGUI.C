@@ -136,7 +136,7 @@ inline void LogicPluginGUI::cb_Inputs_i (Fl_Counter* o, void* v) {
     m_GUICH->Set ("Inputs", int (o->value ()));
     m_GUICH->SetCommand (LogicPlugin::SETINPUTS);
     m_GUICH->Wait ();
-    DoResizeCallback ();
+    Resize (w(), h());
   }
 }
 

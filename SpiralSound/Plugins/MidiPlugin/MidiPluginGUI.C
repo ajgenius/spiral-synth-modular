@@ -128,17 +128,17 @@ inline void MidiPluginGUI::cb_DeviceNum_i(Fl_Counter* o, void* v)
 	
 	m_GUICH->Set("DeviceNum",(int)o->value()-1); 
 }
-void MidiPluginGUI::cb_DeviceNum(Fl_Counter* o, void* v) 
+void MidiPluginGUI::cb_DeviceNum(Fl_Counter* o, void* v)
 { ((MidiPluginGUI*)(o->parent()))->cb_DeviceNum_i(o,v);}
 
-inline void MidiPluginGUI::cb_NoteCut_i(Fl_Button* o, void* v) 
+inline void MidiPluginGUI::cb_NoteCut_i(Fl_Button* o, void* v)
 { m_GUICH->Set("NoteCut",o->value()); }
-void MidiPluginGUI::cb_NoteCut(Fl_Button* o, void* v) 
+void MidiPluginGUI::cb_NoteCut(Fl_Button* o, void* v)
 { ((MidiPluginGUI*)(o->parent()))->cb_NoteCut_i(o,v);}
 
-inline void MidiPluginGUI::cb_ContinuousNotes_i(Fl_Button* o, void* v) 
+inline void MidiPluginGUI::cb_ContinuousNotes_i(Fl_Button* o, void* v)
 { m_GUICH->Set("ContinuousNotes",o->value()); }
-void MidiPluginGUI::cb_ContinuousNotes(Fl_Button* o, void* v) 
+void MidiPluginGUI::cb_ContinuousNotes(Fl_Button* o, void* v)
 { ((MidiPluginGUI*)(o->parent()))->cb_ContinuousNotes_i(o,v);}
 
 inline void MidiPluginGUI::cb_AddControl_i(Fl_Button* o, void* v)
@@ -148,67 +148,67 @@ inline void MidiPluginGUI::cb_AddControl_i(Fl_Button* o, void* v)
 	List.push_back("0   Bank Select");
 	List.push_back("1   Modulation Wheel (coarse)");
 	List.push_back("2   Breath controller (coarse)");
-	List.push_back("3   None");	
+	List.push_back("3   None");
 	List.push_back("4   Foot Pedal (coarse)");
 	List.push_back("5   Portamento Time (coarse)");
 	List.push_back("6   Data Entry (coarse)");
 	List.push_back("7   Volume (coarse)");
 	List.push_back("8   Balance (coarse)");
-	List.push_back("9   None");	
+	List.push_back("9   None");
 	List.push_back("10  Pan position (coarse)");
 	List.push_back("11  Expression (coarse)");
 	List.push_back("12  Effect Control 1 (coarse)");
 	List.push_back("13  Effect Control 2 (coarse)");
-	List.push_back("14  None");	
-	List.push_back("15  None");	
+	List.push_back("14  None");
+	List.push_back("15  None");
 	List.push_back("16  General Purpose Slider 1");
 	List.push_back("17  General Purpose Slider 2");
 	List.push_back("18  General Purpose Slider 3");
 	List.push_back("19  General Purpose Slider 4");
-	List.push_back("20  None");	
-	List.push_back("21  None");	
-	List.push_back("22  None");	
-	List.push_back("23  None");	
-	List.push_back("24  None");	
-	List.push_back("25  None");	
-	List.push_back("26  None");	
-	List.push_back("27  None");	
-	List.push_back("28  None");	
-	List.push_back("29  None");	
-	List.push_back("30  None");	
-	List.push_back("31  None");		
+	List.push_back("20  None");
+	List.push_back("21  None");
+	List.push_back("22  None");
+	List.push_back("23  None");
+	List.push_back("24  None");
+	List.push_back("25  None");
+	List.push_back("26  None");
+	List.push_back("27  None");
+	List.push_back("28  None");
+	List.push_back("29  None");
+	List.push_back("30  None");
+	List.push_back("31  None");
 	List.push_back("32  Bank Select (fine)");
 	List.push_back("33  Modulation Wheel (fine)");
 	List.push_back("34  Breath controller (fine)");
-	List.push_back("35  None");	
+	List.push_back("35  None");
 	List.push_back("36  Foot Pedal (fine)");
 	List.push_back("37  Portamento Time (fine)");
 	List.push_back("38  Data Entry (fine)");
 	List.push_back("39  Volume (fine)");
 	List.push_back("40  Balance (fine)");
-	List.push_back("41  None");		
+	List.push_back("41  None");
 	List.push_back("42  Pan position (fine)");
 	List.push_back("43  Expression (fine)");
 	List.push_back("44  Effect Control 1 (fine)");
 	List.push_back("45  Effect Control 2 (fine)");
-	List.push_back("46  None");	
-	List.push_back("47  None");	
-	List.push_back("48  None");	
-	List.push_back("49  None");	
-	List.push_back("50  None");	
-	List.push_back("51  None");	
-	List.push_back("52  None");	
-	List.push_back("53  None");	
-	List.push_back("54  None");	
-	List.push_back("55  None");	
-	List.push_back("56  None");	
-	List.push_back("57  None");	
-	List.push_back("58  None");	
-	List.push_back("59  None");	
-	List.push_back("60  None");	
-	List.push_back("61  None");	
-	List.push_back("62  None");	
-	List.push_back("63  None");		
+	List.push_back("46  None");
+	List.push_back("47  None");
+	List.push_back("48  None");
+	List.push_back("49  None");
+	List.push_back("50  None");
+	List.push_back("51  None");
+	List.push_back("52  None");
+	List.push_back("53  None");
+	List.push_back("54  None");
+	List.push_back("55  None");
+	List.push_back("56  None");
+	List.push_back("57  None");
+	List.push_back("58  None");
+	List.push_back("59  None");
+	List.push_back("60  None");
+	List.push_back("61  None");
+	List.push_back("62  None");
+	List.push_back("63  None");
 	List.push_back("64  Hold Pedal (on/off)");
 	List.push_back("65  Portamento (on/off)");
 	List.push_back("66  Sustenuto Pedal (on/off)");
@@ -229,13 +229,13 @@ inline void MidiPluginGUI::cb_AddControl_i(Fl_Button* o, void* v)
 	List.push_back("81  General Purpose Button 2 (on/off)");
 	List.push_back("82  General Purpose Button 3 (on/off)");
 	List.push_back("83  General Purpose Button 4 (on/off)");
-	List.push_back("84  None");		
-	List.push_back("85  None");		
-	List.push_back("86  None");		
-	List.push_back("87  None");		
-	List.push_back("88  None");		
-	List.push_back("89  None");		
-	List.push_back("90  None");		
+	List.push_back("84  None");
+	List.push_back("85  None");
+	List.push_back("86  None");
+	List.push_back("87  None");
+	List.push_back("88  None");
+	List.push_back("89  None");
+	List.push_back("90  None");
 	List.push_back("91  Effects Level");
 	List.push_back("92  Tremulo Level");
 	List.push_back("93  Chorus Level");
@@ -247,11 +247,11 @@ inline void MidiPluginGUI::cb_AddControl_i(Fl_Button* o, void* v)
 	List.push_back("99  Non-registered Parameter (coarse)");
 	List.push_back("100 Registered Parameter (fine)");
 	List.push_back("101 Registered Parameter (coarse)");
-	List.push_back("102 None");		
-	List.push_back("103 None");		
-	List.push_back("104 None");		
-	List.push_back("105 None");		
-	List.push_back("106 None");		
+	List.push_back("102 None");
+	List.push_back("103 None");
+	List.push_back("104 None");
+	List.push_back("105 None");
+	List.push_back("106 None");
 	List.push_back("107 None");
 	List.push_back("108 None");
 	List.push_back("109 None");
@@ -283,21 +283,26 @@ inline void MidiPluginGUI::cb_AddControl_i(Fl_Button* o, void* v)
 		m_GUICH->SetData("Name",Temp);
 		m_GUICH->SetCommand(MidiPlugin::ADDCONTROL);
                 m_GUICH->Wait ();
-                DoResizeCallback ();
+                // Make sure GUI frame can show all the ports
+                Resize (w(), h());
 		//m_Plugin->AddControl(c,List[c]);
 	}
 }
-void MidiPluginGUI::cb_AddControl(Fl_Button* o, void* v)
-{ ((MidiPluginGUI*)(o->parent()))->cb_AddControl_i(o,v);}
 
-inline void MidiPluginGUI::cb_RemoveControl_i(Fl_Button* o, void* v)
-{
-	m_GUICH->SetCommand(MidiPlugin::DELCONTROL);
-        m_GUICH->Wait ();
-        DoResizeCallback ();
+void MidiPluginGUI::cb_AddControl (Fl_Button* o, void* v) {
+   ((MidiPluginGUI*)(o->parent()))->cb_AddControl_i (o, v);
 }
-void MidiPluginGUI::cb_RemoveControl(Fl_Button* o, void* v)
-{ ((MidiPluginGUI*)(o->parent()))->cb_RemoveControl_i(o,v);}
+
+inline void MidiPluginGUI::cb_RemoveControl_i (Fl_Button* o, void* v) {
+   m_GUICH->SetCommand(MidiPlugin::DELCONTROL);
+   m_GUICH->Wait ();
+   // Make sure GUI frame can show all the ports
+   Resize (w(), h());
+}
+
+void MidiPluginGUI::cb_RemoveControl (Fl_Button* o, void* v) {
+   ((MidiPluginGUI*)(o->parent()))->cb_RemoveControl_i (o, v);
+}
 
 const string MidiPluginGUI::GetHelpText(const string &loc){
     return string("")

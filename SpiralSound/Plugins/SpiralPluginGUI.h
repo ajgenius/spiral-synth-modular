@@ -32,10 +32,9 @@ class SpiralPluginGUI : public SpiralGUIType {
    public:
       SpiralPluginGUI (int w, int h, SpiralPlugin* o, ChannelHandler *ch);
       ~SpiralPluginGUI ();
-      virtual void resize (int x, int y, int w, int h);
+      void Resize (int neww, int newh);
       virtual void Update ();
-      // called while audio thread is suspended, so direct access to the
-      // spiralplugin is acceptable
+      // called while audio thread is suspended, so direct access to the spiralplugin is acceptable
       virtual void UpdateValues (SpiralPlugin *o) = 0;
    protected:
       ChannelHandler *m_GUICH;

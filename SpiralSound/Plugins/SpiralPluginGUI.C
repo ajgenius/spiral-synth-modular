@@ -63,10 +63,10 @@ SpiralPluginGUI::~SpiralPluginGUI()
 	Fl::check();
 }
 
-void SpiralPluginGUI::resize (int newx, int newy, int neww, int newh) {
+void SpiralPluginGUI::Resize (int neww, int newh) {
+     resize (x(), y(), neww, newh);
      m_Help->position (x()+neww-11, y()+2);
-     SpiralGUIType::resize (newx, newy, neww, newh);
-     //DoResizeCallback ();
+     DoResizeCallback ();
 }
 
 void SpiralPluginGUI::Update()

@@ -59,7 +59,7 @@ inline void MixSwitchPluginGUI::cb_Chans_i (Fl_Counter* o, void* v) {
     m_GUICH->Set ("Chans", int (o->value ()));
     m_GUICH->SetCommand (MixSwitchPlugin::SETCHANS);
     m_GUICH->Wait ();
-    DoResizeCallback ();
+    Resize (w(), h());
   }
 }
 
