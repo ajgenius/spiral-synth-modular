@@ -157,13 +157,16 @@ inline void ControllerPluginGUI::cb_Chan_i(Fl_Slider* o, void* v)
 	long max=strtol(m_GuiVec[num]->m_Min->value(),NULL,10);
 	long min=strtol(m_GuiVec[num]->m_Max->value(),NULL,10);
 	float val=o->value()*(max-min)+min;				
-	m_GUICH->Set("Number",num);
-	m_GUICH->Set("Value",val);
-	m_GUICH->Set("Min",(int)min);
-	m_GUICH->Set("Max",(int)max);
+	m_GUICH->Set("Number",(int)num);
+	m_GUICH->Set("Value",(float)val);
+	m_GUICH->Set("Min",(float)min);
+	m_GUICH->Set("Max",(float)max);
 	char temp[256];
 	sprintf(temp,"%s",m_GuiVec[num]->m_Title->value());
-	m_GUICH->Set("Name",temp);	
+	
+	cerr<<"sending "<<temp<<endl;
+	
+	m_GUICH->SetData("Name",(void*)temp);	
 	m_GUICH->SetCommand(ControllerPlugin::SETCHANNEL);
 }
 void ControllerPluginGUI::cb_Chan(Fl_Slider* o, void* v) 

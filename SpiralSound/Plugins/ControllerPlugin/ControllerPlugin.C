@@ -58,14 +58,17 @@ m_Num(4)
 	
 	for (int n=0; n<MAX_CHANNELS; n++)
 	{
-		m_ChannelVal[n]=0.0f;		
+		m_ChannelVal[n]=0.0f;	
+		m_MinVal[n]=-1.0f;
+		m_MaxVal[n]=1.0f;
+		m_Names[n]="Name";
 	}
 	
 	m_AudioCH->Register("Number",&m_GUIArgs.Number);
 	m_AudioCH->Register("Value",&m_GUIArgs.Value);
 	m_AudioCH->Register("Min",&m_GUIArgs.Min);
 	m_AudioCH->Register("Max",&m_GUIArgs.Max);
-	m_AudioCH->RegisterData("Name",ChannelHandler::INPUT,m_GUIArgs.Name,sizeof(m_GUIArgs.Name));
+	m_AudioCH->RegisterData("Name",ChannelHandler::INPUT,m_GUIArgs.Name,256);
 }
 
 ControllerPlugin::~ControllerPlugin()
@@ -102,6 +105,7 @@ void ControllerPlugin::ExecuteCommands()
 		switch (m_AudioCH->GetCommand())
 		{
 			case (SETCHANNEL) : 
+				cerr<<m_GUIArgs.Name<<endl;
 				SetChannel(m_GUIArgs.Number,m_GUIArgs.Value,m_GUIArgs.Min,m_GUIArgs.Max,m_GUIArgs.Name);
 			break;
 			case (SETNUM)     : 
@@ -164,7 +168,7 @@ void ControllerPlugin::StreamOut(ostream &s)
 			s<<m_Num<<" ";			
 			for (int n=0; n<m_Num; n++)
 			{		
-				s<<m_Names[n].size()<<endl;
+				s<<m_Names[n].size()<<" ";
 				s<<m_Names[n]<<" ";
 				s<<m_MinVal[n]<<" ";
 				s<<m_MaxVal[n]<<" ";
