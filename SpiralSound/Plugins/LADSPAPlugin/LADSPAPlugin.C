@@ -373,22 +373,26 @@ void LADSPAPlugin::StreamOut(ostream &s)
 			for (vector<float>::iterator i=m_InputPortMin.begin();
 			     i!=m_InputPortMin.end(); i++)
 			{
-				s<<*i<<" ";
+				float f = finite(*i)?(*i):0.0f;
+				s<< f <<" ";
 			}
 			for (vector<float>::iterator i=m_InputPortMax.begin();
 			     i!=m_InputPortMax.end(); i++)
 			{
-				s<<*i<<" ";
+				float f = finite(*i)?(*i):0.0f;
+				s<< f <<" ";
 			}
 			for (vector<bool>::iterator i=m_InputPortClamp.begin();
 			     i!=m_InputPortClamp.end(); i++)
 			{
-				s<<*i<<" ";
+				float f = finite(*i)?(*i):0.0f;
+				s<< f <<" ";
 			}
 			for (vector<float>::iterator i=m_InputPortDefault.begin();
 			     i!=m_InputPortDefault.end(); i++)
 			{
-				s<<*i<<" ";
+				float f = finite(*i)?(*i):0.0f;
+				s<< f <<" ";
 			}
 		}
 		break;
