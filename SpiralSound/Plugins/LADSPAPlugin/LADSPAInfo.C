@@ -214,6 +214,7 @@ void
 LADSPAInfo::CleanUp(void)
 {
 	m_IDLookup.clear();
+	m_FilenameLookup.clear();
 	m_Plugins.clear();
 
 // Unload loaded dlls
