@@ -133,3 +133,10 @@ inline void EchoPluginGUI::cb_pop_i(Fl_Button *o, void*) {
 void EchoPluginGUI::cb_pop(Fl_Button* o, void* v) {
   ((EchoPluginGUI*)(o->parent()))->cb_pop_i(o,v);
 }
+
+const string EchoPluginGUI::GetHelpText(const string &loc){
+    return string("")
+    + "This plugin is a fully operational delay with feedback\n"
+    + "- providing a no-frills echo effect. The delay and\n"
+    + "feedback controls can be modulated via CV inputs.\n";
+}

@@ -35,7 +35,10 @@ public:
 	DelayPluginGUI(int w, int h, DelayPlugin *o,ChannelHandler *ch,const HostInfo *Info);
 	
 	virtual void UpdateValues(SpiralPlugin *o);
-		
+
+protected:
+    const string GetHelpText(const string &loc);	
+			
 private:
 	
 	Fl_Slider 		*m_Delay;

@@ -73,3 +73,18 @@ inline void SmoothPluginGUI::cb_Up_i(Fl_Knob* o, void* v)
 
 void SmoothPluginGUI::cb_Up(Fl_Knob* o, void* v)
 { ((SmoothPluginGUI*)(o->parent()))->cb_Up_i(o,v);}
+
+const string SmoothPluginGUI::GetHelpText(const string &loc){
+    return string("")
+    + "This device is used for smoothing out the signal fed\n"
+    + "through it. It's primary use is for smoothing out the\n"
+    + "frequency CV sent to the oscillator to achieve portmento\n"
+    + "or sliding between notes.\n"
+    + "It can also be used as a primitive filter for audio\n"
+    + "signals, but its mainly used on CVs.\n"
+    + "\n"
+    + "The controls on the plugin window allow you to alter\n"
+    + "the speed of the sliding, up and down are seperated,\n"
+    + "so going up the keyboard can have a different effect\n"
+    + "to going down :) \n";
+    }

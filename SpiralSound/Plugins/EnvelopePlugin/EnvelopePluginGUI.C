@@ -273,3 +273,19 @@ void EnvelopePluginGUI::cb_pop(Fl_Button* o, void* v) {
   ((EnvelopePluginGUI*)(o->parent()))->cb_pop_i(o,v);
 }
 
+const string EnvelopePluginGUI::GetHelpText(const string &loc){
+    return string("")
+    + "An ADSR envelope. This plugin also has a built in\n"
+    + "amplifier for signals, so data fed through the Input\n"
+    + "and Output are amplified according to the envelope value.\n"
+    + "The envelope is triggered with an input CV, and the output\n"
+    + "CV is the value of the envelope at that time. The signal\n"
+    + "level needed to trigger the envelope can be set using\n"
+    + "the \"T\" slider, also the volume level of the output can\n"
+    + "be set with the \"V\" slider.\n\n"
+    + "This envelope can be used to mimic audio triggered effects\n"
+    + "units, by feeding the audio signal into the trigger CV.\n"
+    + "In fact, the envelope plugin itself can be made into a\n"
+    + "compressor, by feeding the audio signal into both inputs,\n"
+    + "and tweaking the ADSR values. \n";
+}

@@ -38,3 +38,9 @@ void SplitterPluginGUI::UpdateValues(SpiralPlugin *o)
 {
 }
 	
+const string SplitterPluginGUI::GetHelpText(const string &loc){
+    return string("")
+    + "The simplest plugin - the splitter simply takes the input,\n"
+    + "and duplicates it into it's outputs. Simple, but difficult\n"
+    + "to do without.\n";
+}

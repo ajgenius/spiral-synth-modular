@@ -35,6 +35,9 @@ public:
 	StereoMixerPluginGUI(int w, int h, StereoMixerPlugin *o,ChannelHandler *ch,const HostInfo *Info);
 	virtual void UpdateValues(SpiralPlugin *o);
 	
+protected:
+    const string GetHelpText(const string &loc);	
+
 private:
 	
 	int Numbers[NUM_CHANNELS];

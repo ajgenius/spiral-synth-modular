@@ -58,6 +58,9 @@ public:
 	virtual void draw();
 	void Display(const float *data);
 	
+protected:
+    const string GetHelpText(const string &loc);	
+
 private:
 
 	bool m_Bypass;

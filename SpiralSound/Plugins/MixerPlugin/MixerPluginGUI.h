@@ -35,6 +35,9 @@ public:
 	
 	virtual void UpdateValues(SpiralPlugin *o);
 
+protected:
+    const string GetHelpText(const string &loc);	
+	
 private:
 	
 	int Numbers[NUM_CHANNELS];

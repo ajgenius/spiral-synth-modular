@@ -38,6 +38,9 @@ public:
 	EchoPluginGUI(int w, int h, EchoPlugin *o,ChannelHandler *ch,const HostInfo *Info);
 	
 	virtual void UpdateValues(SpiralPlugin *o);
+
+protected:
+    const string GetHelpText(const string &loc);	
 	
 private:
 	

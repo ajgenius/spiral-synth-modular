@@ -37,6 +37,9 @@ public:
 	
 	virtual void UpdateValues(SpiralPlugin *o);
 
+protected:
+    const string GetHelpText(const string &loc);	
+
 private:
 
 	Fl_Knob* m_Up;

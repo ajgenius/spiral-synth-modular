@@ -39,6 +39,9 @@ public:
 	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }		
 	AmpPlugin *m_Plugin;	
 	
+protected:
+    const string GetHelpText(const string &loc);	
+	
 private:
 	
 	Fl_Group 		*GUIFilterGroup;

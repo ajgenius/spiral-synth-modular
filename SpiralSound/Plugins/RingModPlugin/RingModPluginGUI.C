@@ -53,3 +53,13 @@ inline void RingModPluginGUI::cb_Amount_i(Fl_Knob* o, void* v)
 }
 void RingModPluginGUI::cb_Amount(Fl_Knob* o, void* v) 
 { ((RingModPluginGUI*)(o->parent()))->cb_Amount_i(o,v); }
+
+const string RingModPluginGUI::GetHelpText(const string &loc){
+    return string("")
+    + "A ring modulator, multiplies two inputs together.\n"
+    + "An extra dial sets the amount of modulation. The\n"
+    + "ring modulation effect creates an extra harmonic\n"
+    + "in the signal, although this is often out of tune\n"
+    + "with the other signals, its useful for creating bell\n"
+    + "or struck metallic sounds.\n";
+}

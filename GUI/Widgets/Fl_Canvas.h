@@ -82,7 +82,9 @@ private:
 
 	void DrawWires();
 	void ClearIncompleteWire();
-
+	void DrawIncompleteWire();
+	bool UserMakingConnection();
+	
 	Fl_Image  *m_BG;
 	char      *m_BGData;
 	
@@ -98,6 +100,7 @@ private:
 	vector< pair<string,int> > m_PluginNameList;
 
 	GraphSort m_Graph;
+	int m_UpdateTimer;
 
 	friend istream &operator>>(istream &s, Fl_Canvas &o);
 	friend ostream &operator<<(ostream &s, Fl_Canvas &o);	

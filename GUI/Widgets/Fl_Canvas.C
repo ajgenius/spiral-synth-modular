@@ -22,11 +22,9 @@
 #include <iostream>
 #include "../../SpiralSynthModularInfo.h"
 
-//#define IMG_BACKGROUND
-
-#ifdef IMG_BACKGROUND
-#include <png.h>
-#endif
+// no of calls to handle when dragged, before the widget is redrawn
+// to allow the wire (connection currently being made) to be redrawn
+static const int UPDATE_TICKS = 5;
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -35,7 +33,8 @@ Fl_Group(x,y,w,h,name),
 cb_Connection(NULL),
 cb_Unconnect(NULL),
 cb_AddDevice(NULL),
-m_ToolMenu(false)
+m_ToolMenu(false),
+m_UpdateTimer(0)
 {
 	m_IncompleteWire.OutputChild=-1;
 	m_IncompleteWire.OutputPort=-1;
@@ -44,54 +43,15 @@ m_ToolMenu(false)
 	
 	m_BG=NULL;
 	m_BGData=NULL;
-	
-#ifdef IMG_BACKGROUND
-	if (SpiralSynthModularInfo::BGIMG=="None") return;
-	FILE *fp=fopen(SpiralSynthModularInfo::BGIMG.c_str(),"rb");
-	if (!fp) 
-	{
-		SpiralInfo::Alert("Couldn't open image ["+SpiralSynthModularInfo::BGIMG+"]");
-	}
-	else
-	{
-		png_structp png_ptr;
-		png_infop info_ptr;
-		
-		png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-   	 	info_ptr = png_create_info_struct(png_ptr);
-   		png_init_io(png_ptr, fp);
-		png_read_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);		
-		fclose(fp);
-		
-		m_BGData = new char[png_ptr->rowbytes*png_ptr->height];
-		int p=0;
-		for (unsigned int row = 0; row < png_ptr->height; row++)
-		{
-			for (unsigned int i=0; i<png_ptr->rowbytes; i++)
-			{
-				m_BGData[p]=(char)info_ptr->row_pointers[row][i];
-				p++;
-			}
-		}
-#if FL_MAJOR_VERSION == 1 && FL_MINOR_VERSION == 0
-		m_BG = new Fl_Image((unsigned char*)m_BGData,
-			(int)png_ptr->width,
-			(int)png_ptr->height,(int)png_ptr->rowbytes/(int)png_ptr->width); 
-#else
-		m_BG = new Fl_RGB_Image((unsigned char*)m_BGData,(int)png_ptr->width,(int)png_ptr->height);
-#endif
-		png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);	
-	}
-#endif 
-	
 }
+
+////////////////////////////////////////////////////////////////////////
 
 Fl_Canvas::~Fl_Canvas()
 {
-#ifdef IMG_BACKGROUND
-	if (m_BGData) delete[] m_BGData;
-#endif 	
 }
+
+////////////////////////////////////////////////////////////////////////
 
 void Fl_Canvas::draw()
 {			
@@ -185,14 +145,21 @@ void Fl_Canvas::draw()
 	}
 }
 
+////////////////////////////////////////////////////////////////////////
+
 void Fl_Canvas::Poll()
 {
-	// bit of a workaround...
-	if(m_IncompleteWire.InputChild!=-1 || m_IncompleteWire.OutputChild!=-1)
+	// bit of a workaround...	
+	if (UserMakingConnection()) m_UpdateTimer++;
+		
+	if (m_UpdateTimer>UPDATE_TICKS) 
 	{
+		m_UpdateTimer=0;
 		redraw();
 	}
 }
+
+////////////////////////////////////////////////////////////////////////
 
 void Fl_Canvas::DrawWires()
 {
@@ -233,6 +200,20 @@ void Fl_Canvas::DrawWires()
 				DestDevice->GetPortY(i->InputPort));	
 	}
 	
+	DrawIncompleteWire();
+}
+
+////////////////////////////////////////////////////////////////////////
+
+bool Fl_Canvas::UserMakingConnection()
+{
+	return 	(m_IncompleteWire.InputChild!=-1 || m_IncompleteWire.OutputChild!=-1);
+}
+
+////////////////////////////////////////////////////////////////////////
+
+void Fl_Canvas::DrawIncompleteWire()
+{	
 	// draw the wire we are currently connecting
 	if(m_IncompleteWire.InputChild!=-1)
 	{
@@ -290,6 +271,9 @@ void Fl_Canvas::DrawWires()
 				Fl::event_y());	
 	}
 }
+
+////////////////////////////////////////////////////////////////////////
+
 void Fl_Canvas::ClearIncompleteWire()
 {
 	// Turn off both ports
@@ -306,6 +290,8 @@ void Fl_Canvas::ClearIncompleteWire()
 	m_IncompleteWire.Clear();
 }
 
+////////////////////////////////////////////////////////////////////////
+
 int Fl_Canvas::handle(int event)
 {
 	if (Fl_Group::handle(event)) return 1;
@@ -313,6 +299,7 @@ int Fl_Canvas::handle(int event)
 	if (event==FL_PUSH) 
 	{
 		ClearIncompleteWire();
+		redraw();
 	}
 	
 	if (Fl::event_button()==3)
@@ -325,7 +312,7 @@ int Fl_Canvas::handle(int event)
 			redraw();
 		}
 		
-		if (event==FL_DRAG) redraw();
+		if (event==FL_DRAG)	redraw();
 		
 		if (event==FL_RELEASE && Fl::event_button()==3) 
 		{
@@ -345,6 +332,8 @@ int Fl_Canvas::handle(int event)
 	return 1;
 }
 	
+////////////////////////////////////////////////////////////////////////
+
 void Fl_Canvas::PortClicked(Fl_DeviceGUI* Device, int Type, int Port, bool Value)
 {
 	// find out which child this comes from.
@@ -461,6 +450,8 @@ void Fl_Canvas::PortClicked(Fl_DeviceGUI* Device, int Type, int Port, bool Value
 	}
 }
 
+////////////////////////////////////////////////////////////////////////
+
 void Fl_Canvas::ClearConnections(Fl_DeviceGUI* Device)
 {
 	// find out which child this comes from.
@@ -507,6 +498,8 @@ void Fl_Canvas::ClearConnections(Fl_DeviceGUI* Device)
 		}
 	}
 }
+
+////////////////////////////////////////////////////////////////////////
 	
 void Fl_Canvas::RemoveDevice(Fl_DeviceGUI* Device)
 {
@@ -538,6 +531,8 @@ void Fl_Canvas::RemoveDevice(Fl_DeviceGUI* Device)
 	remove(child(ChildNum));
 	redraw(); 
 }
+
+////////////////////////////////////////////////////////////////////////
 	
 void Fl_Canvas::Clear() 
 { 
@@ -554,6 +549,8 @@ void Fl_Canvas::Clear()
 	redraw(); 
 }
 
+
+////////////////////////////////////////////////////////////////////////
 	
 	
 istream &operator>>(istream &s, Fl_Canvas &o)
@@ -586,6 +583,8 @@ istream &operator>>(istream &s, Fl_Canvas &o)
 		
 	return s;
 }
+
+////////////////////////////////////////////////////////////////////////
 
 ostream &operator<<(ostream &s, Fl_Canvas &o)
 {

@@ -69,3 +69,10 @@ inline void MixerPluginGUI::cb_Chan_i(Fl_Slider* o, void* v)
 
 void MixerPluginGUI::cb_Chan(Fl_Slider* o, void* v) 
 { ((MixerPluginGUI*)(o->parent()))->cb_Chan_i(o,v);}
+
+const string MixerPluginGUI::GetHelpText(const string &loc){
+    return string("")
+    + "A general purpose 4 channel mixer, not much else to say\n"
+    + "really. Useful for mixing CV values as well as mono audio\n"
+    + "signals.    \n";
+}

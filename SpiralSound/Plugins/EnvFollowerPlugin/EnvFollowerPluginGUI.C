@@ -70,3 +70,14 @@ inline void EnvFollowerPluginGUI::cb_Attack_i(Fl_Knob* o, void* v)
 { m_GUICH->Set("Attack",o->value()); }
 void EnvFollowerPluginGUI::cb_Attack(Fl_Knob* o, void* v)
 { ((EnvFollowerPluginGUI*)(o->parent()))->cb_Attack_i(o,v);}
+
+const string EnvFollowerPluginGUI::GetHelpText(const string &loc){
+    return string("")
+    + "The Envelope Follower takes an audio signal input and\n"
+    + "attempts to recreate the envelope that shaped it. This\n"
+    + "is particually useful for extracting information from\n"
+    + "samples, for use in a vocoder for example.\n"
+    + "\n"
+    + "The sensitivity of the EnvFollower can be set with the\n"
+    + "Attack and Decay controls on the plugin window.\n";
+}

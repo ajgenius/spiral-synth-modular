@@ -91,3 +91,12 @@ inline void StereoMixerPluginGUI::cb_Pan_i(Fl_Knob* o, void* v) {
 void StereoMixerPluginGUI::cb_Pan(Fl_Knob* o, void* v) {
   ((StereoMixerPluginGUI*)(o->parent()))->cb_Pan_i(o,v);
 }
+
+const string StereoMixerPluginGUI::GetHelpText(const string &loc){
+    return string("")
+    + "A more advanced version of the 4 channel mixer,\n"
+    + "this one has a stereo output. CV's are provided\n"
+    + "for control of the panning of each of the inputs.\n"
+    + "The panning can also be set with the knobs on the\n"
+    + "plugin window.    \n";
+}

@@ -42,7 +42,10 @@ public:
 	
 	void StreamIn(istream &s);
 	void StreamOut(ostream &s);
-	
+
+protected:
+    const string GetHelpText(const string &loc);	
+		
 private:
 
 	void Clear();

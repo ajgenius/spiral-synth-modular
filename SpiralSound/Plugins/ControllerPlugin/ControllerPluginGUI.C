@@ -270,3 +270,13 @@ void ControllerPluginGUI::StreamOut(ostream &s)
 		s<<(*i)->m_Chan->value()<<endl;		
 	}
 }
+
+const string ControllerPluginGUI::GetHelpText(const string &loc){
+    return string("")
+    + "This is a simple plugin to allow you to generate CV values\n"
+    + "interatively with sliders in the plugin window. Useful if you\n"
+    + "can't use Midi, or for controlling LADSPA plugins. The slider\n"
+    + "ranges can be set, and titles can be given to each slider.\n"
+    + "You can add or delete sliders from the plugin using the\n"
+    + "+ or - buttons.\n";
+}

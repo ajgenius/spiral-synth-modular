@@ -104,3 +104,11 @@ void ScopePluginGUI::cb_Bypass_i(Fl_Button* o, void* v)
 {m_Bypass=o->value();}
 void ScopePluginGUI::cb_Bypass(Fl_Button* o, void* v)
 {((ScopePluginGUI*)(o->parent()))->cb_Bypass_i(o,v);}
+
+const string ScopePluginGUI::GetHelpText(const string &loc){
+    return string("")
+    + "The Scope lets you see a visual representation of the\n"
+    + "data flowing through it. It does nothing to the signal,\n"
+    + "but its very useful for checking the layouts, looking at\n"
+    + "CV value etc.\n";
+}

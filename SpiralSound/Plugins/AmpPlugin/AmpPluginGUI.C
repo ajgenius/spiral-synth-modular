@@ -136,3 +136,10 @@ void AmpPluginGUI::cb_pop(Fl_Button* o, void* v) {
   ((AmpPluginGUI*)(o->parent()))->cb_pop_i(o,v);
 }
 
+const string AmpPluginGUI::GetHelpText(const string &loc){
+    return string("")
+    + "A CV controlled amplifer. You also can use this device to modify\n"
+    + "the signal's DC offset (the up or down in the range of values).\n\n"
+    + "Handy for fine tuning CV's by hand, or modulating complex\n"
+    + "controls.";
+}

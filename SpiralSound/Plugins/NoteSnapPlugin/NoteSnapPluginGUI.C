@@ -38,3 +38,8 @@ void NoteSnapPluginGUI::UpdateValues(SpiralPlugin *o)
 {
 }
 	
+const string NoteSnapPluginGUI::GetHelpText(const string &loc){
+    return string("")
+    + "Quantises the input value into a note frequency\n"
+    + "(using the midi note data).\n";
+}

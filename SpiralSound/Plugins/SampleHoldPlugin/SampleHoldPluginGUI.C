@@ -37,4 +37,11 @@ SpiralPluginGUI(w,h,o,ch)
 void SampleHoldPluginGUI::UpdateValues(SpiralPlugin *o)
 {
 }
-	
+
+const string SampleHoldPluginGUI::GetHelpText(const string &loc){
+    return string("")
+    + "Holds the input value until the clock input is triggered.\n"
+    + "Useful for wacky 60's computer sounds...\n"
+    + "\n"
+    + "Author: Yves Usson\n";
+}	

@@ -70,3 +70,21 @@ inline void DelayPluginGUI::cb_Mix_i(Fl_Knob* o, void* v)
 { m_GUICH->Set("Mix",(float)o->value()); }
 void DelayPluginGUI::cb_Mix(Fl_Knob* o, void* v) 
 { ((DelayPluginGUI*)(o->parent()))->cb_Mix_i(o,v); }
+
+const string DelayPluginGUI::GetHelpText(const string &loc){
+    return string("")
+    + "The delay plugins delays the input signal, and can\n"
+    + "mix the current signal into the output, the amount\n"
+    + "is set by the dial in the plugin window.\n"
+    + "\n"
+    + "The delay time and read head position can be modified\n"
+    + "by input CV's. The read head is the place in the buffer\n"
+    + "the output sample is taken from, relative to the write\n"
+    + "head.\n"
+    + "\n"
+    + "This plugin can be used as the base of a number of effects,\n"
+    + "such as phasers, flangers and complex echos. If the output\n"
+    + "is fed back into the input, you get a similar effect\n"
+    + "to the echo, but you can add cool effects by routing\n"
+    + "the signal back through a lowpass filter (for example).\n";
+}
