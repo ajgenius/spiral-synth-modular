@@ -30,8 +30,11 @@
 
 using namespace std;
 
-//#define KEYBOARD_SUPPORT
+//#define ALSA_MIDI
 
+#ifdef ALSA_MIDI
+#include <alsa/asoundlib.h>
+#endif
 
 class MidiEvent
 {
@@ -88,12 +91,11 @@ private:
 
 	pthread_t        m_MidiReader;
 	pthread_mutex_t* m_Mutex;	
-
-#ifdef KEYBOARD_SUPPORT
-	void CheckKeyboard();
-	char m_KeyVoice[256];
-	int m_Oct;
-	int m_CurrentVoice;
+	
+#ifdef ALSA_MIDI
+	int AlsaCallback();
+	snd_seq_t *seq_handle;
+	snd_seq_t *AlsaOpen();
 #endif
 };
 
