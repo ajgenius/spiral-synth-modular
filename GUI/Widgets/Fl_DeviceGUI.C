@@ -222,7 +222,7 @@ void Fl_DeviceGUI::Setup(const DeviceGUIInfo& Info, bool FirstTime)
 
 bool Fl_DeviceGUI::AddConnection(int n)  		 
 { 
-	if ( n < m_PortVec.size() ) 
+	if ( n < (int)m_PortVec.size() ) 
 	{
 		m_PortVec[n]->Add();
 		m_PortVec[n]->value(1);

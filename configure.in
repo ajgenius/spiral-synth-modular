@@ -118,7 +118,6 @@ dnl Modify the output files.
 
 AC_OUTPUT(
 SpiralSound/Plugins/AmpPlugin/Makefile 
-SpiralSound/Plugins/ComplexEnvelopePlugin/Makefile
 SpiralSound/Plugins/ControllerPlugin/Makefile 
 SpiralSound/Plugins/DelayPlugin/Makefile 
 SpiralSound/Plugins/DiskWriterPlugin/Makefile
@@ -128,12 +127,10 @@ SpiralSound/Plugins/EnvFollowerPlugin/Makefile
 SpiralSound/Plugins/EnvelopePlugin/Makefile
 SpiralSound/Plugins/FilterPlugin/Makefile
 SpiralSound/Plugins/JackPlugin/Makefile
-SpiralSound/Plugins/JoystickPlugin/Makefile
 SpiralSound/Plugins/KeyboardPlugin/Makefile
 SpiralSound/Plugins/LADSPAPlugin/Makefile
 SpiralSound/Plugins/LFOPlugin/Makefile
 SpiralSound/Plugins/MatrixPlugin/Makefile
-SpiralSound/Plugins/MeterPlugin/Makefile
 SpiralSound/Plugins/MidiPlugin/Makefile
 SpiralSound/Plugins/MixerPlugin/Makefile
 SpiralSound/Plugins/MoogFilterPlugin/Makefile
@@ -144,7 +141,6 @@ SpiralSound/Plugins/PoshSamplerPlugin/Makefile
 SpiralSound/Plugins/RingModPlugin/Makefile
 SpiralSound/Plugins/SVFilterPlugin/Makefile
 SpiralSound/Plugins/SampleHoldPlugin/Makefile
-SpiralSound/Plugins/SeqPlugin/Makefile
 SpiralSound/Plugins/SeqSelectorPlugin/Makefile
 SpiralSound/Plugins/SmoothPlugin/Makefile
 SpiralSound/Plugins/SpiralLoopPlugin/Makefile

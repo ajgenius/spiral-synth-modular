@@ -328,7 +328,7 @@ void LADSPAPluginGUI::SetMaker(const char *s)
 {
         // If this has got an "@" in it FLTK thinks it's a special character not an E.mail address
         int t=0;
-        for (int f=0; f<strlen (s); f++) {
+        for (unsigned int f=0; f<strlen (s); f++) {
           if (t==255) break;
           if (s[f]=='@') MakerLabelText[t++]='@';
           MakerLabelText[t++]=s[f];
