@@ -184,7 +184,7 @@ SequencerPlugin.o: SequencerPlugin.C \
 
 SequencerPluginGUI.o: SequencerPluginGUI.C \
 		SequencerPluginGUI.h \
-		SequencerPluginss.h \
+		SequencerPlugin.h \
 		../SpiralPlugin.h \
 		../../Sample.h \
 		../../SpiralInfo.h \

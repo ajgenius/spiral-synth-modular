@@ -24,35 +24,126 @@
 #ifndef SequencerPLUGIN
 #define SequencerPLUGIN
 
-const int NUM_PATTERNS = 16;
+const int NUM_PATTERNS = 8;
+const int NUM_CHANNELS = 8;
+
+//////////////////////////////////////////////////////////////////////////
+// base sequencing stuff
+
+class Note
+{
+public:
+	Note(float t, float l, int n, float v);
+	virtual ~Note();
+	
+	float Time;
+	float Length;
+	int   MidiNote;
+	float Vol;	
+
+	friend istream &operator>>(istream &s, Note &o);
+	friend ostream &operator<<(ostream &s, Note &o);	
+};
+
+istream &operator>>(istream &s, Note &o);
+ostream &operator<<(ostream &s, Note &o);	
+
+class Pattern
+{
+public:
+	Pattern();
+	virtual ~Pattern();
+	
+	void  Copy(const Pattern *o);
+	void  AddNote(int ID, float t, float l, int n, float v);
+	void  RemoveNote(int ID);
+	Note *GetNote(int ID);
+	int   GetNoteCount() { return m_NoteMap.size(); }
+	
+	map<int,Note> m_NoteMap;
+	
+	friend istream &operator>>(istream &s, Pattern &o);
+	friend ostream &operator<<(ostream &s, Pattern &o);	
+};
+
+istream &operator>>(istream &s, Pattern &o);
+ostream &operator<<(ostream &s, Pattern &o);	
+	
+class Sequence
+{
+public:	
+	Sequence(float st=0, int pat=0);
+	virtual ~Sequence();
+
+	void   SetStartTime(float t) { m_StartTime=t; }
+	float  GetStartTime()        { return m_StartTime; }
+	void   SetPatternID(int p)   { m_Pattern=p; }
+	int    GetPatternID()        { return m_Pattern; }
+	void   SetName(string s)     { m_Name=s; }
+	string GetName()             { return m_Name; }
+	void   SetColour(int s)      { m_Colour=s; }
+	int    GetColour()           { return m_Colour; }
+	void   SetYPos(int s)        { m_YPos=s; }
+	int    GetYPos()             { return m_YPos; }
+	void   SetLength(float t)    { m_Length=t; }
+	float  GetLength()           { return m_Length; }
+	void   SetChannel(int s)     { m_Channel=s; }
+	int    GetChannel()          { return m_Channel; }
+
+private:
+	float m_StartTime;
+	int   m_Pattern;
+	string m_Name;
+	int    m_Colour;
+	int    m_YPos;
+	float  m_Length;
+	int    m_Channel;	
+
+	friend istream &operator>>(istream &s, Sequence &o);
+	friend ostream &operator<<(ostream &s, Sequence &o);	
+};
+	
+istream &operator>>(istream &s, Sequence &o);
+ostream &operator<<(ostream &s, Sequence &o);	
 
 class Track
 {
 public:
-	class Sequence
-	{
-	public:
-		class Pattern
-		{
-		public:
-			class Note
-			{
-			public:
-				float time;
-				int   note;
-				float vol;
-			};
-		
-			map<int,Note> m_NoteMap;
-		};
+	Track();
+	virtual  ~Track();
+
+	void      AddSequence(int ID);
+	void      CloneSequence(int ID, int nID);
+	void      CopySequence(int ID, int nID);
+	void      InstanceSequence(int ID);
+	void      RemoveSequence(int ID);
+	Sequence *GetSequence(int ID);
 	
-		float m_StartTime;
-		int   m_Pattern;
-	};
+	void      AddNote(int ID, int Sequence, float t, float l, int n, float v);
+	void      RemoveNote(int ID, int Sequence);
+	void      ChangeNote(int ID, int Sequence, float t, float l, int n, float v);
+	void      ReadTrack(float t, int channel, vector<Note> &NoteVec);	
+	Pattern  *GetPattern(int ID);
 	
-	map<int,Sequence::Pattern> m_PatternMap;
-	list<Sequence>   m_SequenceList;
+	map<int,Sequence>  *GetSequenceMap() { return &m_SequenceMap; }
+	
+private:
+	void      AddPattern(int ID);
+	void      RemovePattern(int ID);
+	
+	map<int,Pattern>  m_PatternMap;
+	map<int,Sequence> m_SequenceMap;
+	
+	int m_NextPatternID;
+	
+	friend istream &operator>>(istream &s, Track &o);
+	friend ostream &operator<<(ostream &s, Track &o);	
 };
+
+istream &operator>>(istream &s, Track &o);
+ostream &operator<<(ostream &s, Track &o);	
+
+///////////////////////////////////////////////////////////////////////////
 
 class SequencerPlugin : public SpiralPlugin
 {
@@ -70,26 +161,56 @@ public:
 	bool  GetNoteCut()               { return m_NoteCut; }	
 	void  ClearAll()				 { /*m_Eventmap[m_CurrentPattern]->RemoveAllEvents();*/ }
 	int   GetCurrentPattern()		 { return m_CurrentPattern; }
+	Track *GetTrack()                { return &m_Track; }
+	
+	enum GUICommands {NONE,NEW_NOTE,REM_NOTE,CHG_NOTE,NEW_SEQ,CHG_SEQ,COPY_SEQ,
+					  INST_SEQ,CLONE_SEQ,REM_SEQ,GET_PATTERN};
+	
+	struct GUIArgs
+	{
+		int Num,Num2;
+		int Sequence;
+		float t,l,v;
+		int n;
+		char Name[256];
+		int  Channel;
+	};
 	
 private:
 
+	GUIArgs m_GUIArgs;
+
 	Track m_Track;
 
+	int m_TransferPattern;
+	//int m_TransferNote;
+	map<int,Note>::iterator m_TransferNote;
+	int m_TransferCount;
+	Note m_Transfer;
+	
 	void  SetEventMap(int n, Fl_EventMap* s) { /*m_Eventmap[n]=s;*/ }
 	void  SetUpdate(bool s)          { /*m_Eventmap[m_CurrentPattern]->SetUpdate(s);*/ }
 	void  SetZoom(float s)           { /*m_Eventmap[m_CurrentPattern]->SetZoomLevel(s);*/ }
 	void  SetNoteCut(bool s)         { m_NoteCut=s; }
-	void  SetEndTime(float s)        { /*m_Eventmap[m_CurrentPattern]->SetEndTime(s);*/ m_Length=s; }
+	//void  SetEndTime(float s)        { /*m_Eventmap[m_CurrentPattern]->SetEndTime(s);*/ m_Length=s; }
 	void  SetSpeed(float s)          { m_SpeedMod=s; }
 	void  SetPattern(int s);
 	
 	float m_Time;
-	float m_Length;
+	int   m_Length; // in bars
+	float m_BarLength;
+	int   m_BeatsPerBar;
+	float m_NextBeatTime;
+	float m_BeatLevel;
+	int   m_BeatCount;	
+	int   m_BarCount;	
 	bool  m_Loop;
 	bool  m_NoteCut;
 	float m_SpeedMod;		
-	float m_CurrentNoteCV;
-	float m_CurrentTriggerCV;
+
+	float m_CurrentNoteCV[NUM_CHANNELS];
+	float m_CurrentTriggerCV[NUM_CHANNELS];
+
 	bool  m_InNoteDown;
 	int   m_InNoteID;
 	float m_InNoteTime;
