@@ -41,17 +41,15 @@ if test $ac_arg_jack = "Y" ; then
 	PLUGINLIST="AmpPlugin ControllerPlugin DelayPlugin EchoPlugin EnvFollowerPlugin \
 	EnvelopePlugin FilterPlugin MatrixPlugin MidiPlugin MixerPlugin MoogFilterPlugin \
 	NoteSnapPlugin OscillatorPlugin OutputPlugin RingModPlugin SVFilterPlugin \
-	SampleHoldPlugin ScopePlugin SmoothPlugin SplitterPlugin \
-	StereoMixerPlugin WaveTablePlugin LADSPAPlugin \
-	XFadePlugin JackPlugin PoshSamplerPlugin SeqSelectorPlugin \
-	DistributorPlugin LFOPlugin KeyboardPlugin DiskWriterPlugin"
+	SampleHoldPlugin ScopePlugin SmoothPlugin SplitterPlugin StereoMixerPlugin\
+	WaveTablePlugin LADSPAPlugin XFadePlugin PoshSamplerPlugin SeqSelectorPlugin\
+	DistributorPlugin LFOPlugin KeyboardPlugin DiskWriterPlugin JackPlugin"
 else
 	PLUGINLIST="AmpPlugin ControllerPlugin DelayPlugin EchoPlugin EnvFollowerPlugin \
 	EnvelopePlugin FilterPlugin MatrixPlugin MidiPlugin MixerPlugin MoogFilterPlugin \
 	NoteSnapPlugin OscillatorPlugin OutputPlugin RingModPlugin SVFilterPlugin \
-	SampleHoldPlugin ScopePlugin SmoothPlugin SplitterPlugin \
-	StereoMixerPlugin WaveTablePlugin LADSPAPlugin \
-	XFadePlugin PoshSamplerPlugin SeqSelectorPlugin \
+	SampleHoldPlugin ScopePlugin SmoothPlugin SplitterPlugin StereoMixerPlugin\
+	WaveTablePlugin LADSPAPlugin XFadePlugin PoshSamplerPlugin SeqSelectorPlugin\
 	DistributorPlugin LFOPlugin KeyboardPlugin DiskWriterPlugin"
 	fi
 echo "$PLUGINLIST" > SpiralSound/PluginList.txt
@@ -99,11 +97,6 @@ AC_SUBST(FLTK_CXXFLAGS)
 AC_SUBST(FLTK_CFLAGS)
 AC_SUBST(FLTK_LIBS)
 
-dnl I can't get this to work ?
-dnl if test $ac_arg_jack = "Y" ; then
-dnl   AM_PATH_GLIB(1.2.0,,AC_MSG_ERROR([*** GLIB >= 1.2.0 not installed]))
-dnl fi
-
 AC_CHECK_HEADERS(dlfcn.h)
 AC_CHECK_LIB(dl, dlopen)
 
@@ -124,47 +117,44 @@ AC_SUBST(PLUGINLIST)
 dnl Modify the output files.
 
 AC_OUTPUT(
-SpiralSynthPluginLocation.h
 SpiralSound/Plugins/AmpPlugin/Makefile 
+SpiralSound/Plugins/ComplexEnvelopePlugin/Makefile
 SpiralSound/Plugins/ControllerPlugin/Makefile 
 SpiralSound/Plugins/DelayPlugin/Makefile 
+SpiralSound/Plugins/DiskWriterPlugin/Makefile
+SpiralSound/Plugins/DistributorPlugin/Makefile
 SpiralSound/Plugins/EchoPlugin/Makefile 
 SpiralSound/Plugins/EnvFollowerPlugin/Makefile 
 SpiralSound/Plugins/EnvelopePlugin/Makefile
 SpiralSound/Plugins/FilterPlugin/Makefile
+SpiralSound/Plugins/JackPlugin/Makefile
+SpiralSound/Plugins/JoystickPlugin/Makefile
+SpiralSound/Plugins/KeyboardPlugin/Makefile
+SpiralSound/Plugins/LADSPAPlugin/Makefile
+SpiralSound/Plugins/LFOPlugin/Makefile
 SpiralSound/Plugins/MatrixPlugin/Makefile
+SpiralSound/Plugins/MeterPlugin/Makefile
 SpiralSound/Plugins/MidiPlugin/Makefile
 SpiralSound/Plugins/MixerPlugin/Makefile
 SpiralSound/Plugins/MoogFilterPlugin/Makefile
 SpiralSound/Plugins/NoteSnapPlugin/Makefile
 SpiralSound/Plugins/OscillatorPlugin/Makefile
 SpiralSound/Plugins/OutputPlugin/Makefile
+SpiralSound/Plugins/PoshSamplerPlugin/Makefile
 SpiralSound/Plugins/RingModPlugin/Makefile
 SpiralSound/Plugins/SVFilterPlugin/Makefile
 SpiralSound/Plugins/SampleHoldPlugin/Makefile
-SpiralSound/Plugins/SamplerPlugin/Makefile
-SpiralSound/Plugins/ScopePlugin/Makefile
 SpiralSound/Plugins/SeqPlugin/Makefile
 SpiralSound/Plugins/SeqSelectorPlugin/Makefile
 SpiralSound/Plugins/SmoothPlugin/Makefile
+SpiralSound/Plugins/SpiralLoopPlugin/Makefile
 SpiralSound/Plugins/SplitterPlugin/Makefile
 SpiralSound/Plugins/StereoMixerPlugin/Makefile
-SpiralSound/Plugins/WaveTablePlugin/Makefile
-SpiralSound/Plugins/LADSPAPlugin/Makefile
-SpiralSound/Plugins/WaveShaperPlugin/Makefile
 SpiralSound/Plugins/StreamPlugin/Makefile
+SpiralSound/Plugins/WaveShaperPlugin/Makefile
+SpiralSound/Plugins/WaveTablePlugin/Makefile
 SpiralSound/Plugins/XFadePlugin/Makefile
-SpiralSound/Plugins/SpiralLoopPlugin/Makefile
-SpiralSound/Plugins/JackPlugin/Makefile
-SpiralSound/Plugins/ComplexEnvelopePlugin/Makefile
-SpiralSound/Plugins/PoshSamplerPlugin/Makefile
-SpiralSound/Plugins/DistributorPlugin/Makefile
-SpiralSound/Plugins/JoystickPlugin/Makefile
-SpiralSound/Plugins/LFOPlugin/Makefile
-SpiralSound/Plugins/MeterPlugin/Makefile
-SpiralSound/Plugins/KeyboardPlugin/Makefile
-SpiralSound/Plugins/DiskWriterPlugin/Makefile
-SpiralSound/Plugins/SeqSelectorPlugin/Makefile
-Makefile 
+SpiralSynthPluginLocation.h
+Makefile
 )
 
