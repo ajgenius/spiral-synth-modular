@@ -32,18 +32,19 @@
 #ifndef MixerGUI
 #define MixerGUI
 
+class StreamPluginGUI;
 
 class StreamPluginGUI : public SpiralPluginGUI
 {
 public:
-	StreamPluginGUI(int w, int h, StreamPlugin *o,const HostInfo *Info);
+	StreamPluginGUI(int w, int h, StreamPlugin *o,ChannelHandler *ch,const HostInfo *Info);
+	virtual ~StreamPluginGUI();
 	
-	virtual void UpdateValues();
-	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }
-	void    SetTime(float t);
+	virtual void Update();
+	virtual void UpdateValues(SpiralPlugin *o);
+	//void    SetTime();
 	void    SetMaxTime(float t) { m_Pos->maximum(t); }
 
-	StreamPlugin *m_Plugin;	
 private:
 	
 	Fl_Button* m_Load;
@@ -62,6 +63,10 @@ private:
 	Fl_SevenSeg* m_Display[6];
 	
 	Fl_Slider* m_Pos;
+
+	char m_TextBuf[256];
+
+	float m_PitchValue;
 	
 	//// Callbacks ////
 	inline void cb_Load_i(Fl_Button* o, void* v);

@@ -49,7 +49,7 @@ m_SampleSize(256),
 m_Pos(0),
 m_StreamPos(0),
 m_GlobalPos(0),
-m_Mode(PLAYM)
+m_Mode(STOPM)
 {
 	m_PluginInfo.Name="Stream";
 	m_PluginInfo.Width=245;
@@ -70,10 +70,17 @@ m_Mode(PLAYM)
 	m_StreamDesc.TriggerUp  = true;
 	m_StreamDesc.SampleRate = 44100;
 	m_StreamDesc.Stereo     = false;
+
+	m_AudioCH->Register("Volume",&m_StreamDesc.Volume);
+	m_AudioCH->Register("Pitch",&m_StreamDesc.PitchMod,ChannelHandler::INPUT);
+	m_AudioCH->RegisterData("FileName",ChannelHandler::INPUT,&m_FileNameArg,sizeof(m_FileNameArg));
+	m_AudioCH->Register("Time",&m_TimeArg);
+	m_AudioCH->Register("TimeOut",&m_TimeOut,ChannelHandler::OUTPUT);
 }
 
 StreamPlugin::~StreamPlugin()
 {
+	cerr << "I'm deleted" << endl;
 }
 
 PluginInfo &StreamPlugin::Initialise(const HostInfo *Host)
@@ -84,11 +91,9 @@ PluginInfo &StreamPlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *StreamPlugin::CreateGUI()
 {
-	m_GUI = new StreamPluginGUI(m_PluginInfo.Width,
-								  	    m_PluginInfo.Height,
-										this,m_HostInfo);
-	m_GUI->hide();
-	return m_GUI;
+	return new StreamPluginGUI(m_PluginInfo.Width,
+						m_PluginInfo.Height,
+						this,m_AudioCH,m_HostInfo);
 }
 
 void StreamPlugin::Execute()
@@ -137,8 +142,29 @@ void StreamPlugin::Execute()
 			m_GlobalPos+=m_StreamDesc.PitchMod+CVPitch;
 		}
 		
-		if (((StreamPluginGUI*)m_GUI)->visible()) 
-			((StreamPluginGUI*)m_GUI)->SetTime(GetTime());
+		//if (((StreamPluginGUI*)m_GUI)->visible()) 
+		//	((StreamPluginGUI*)m_GUI)->SetTime(GetTime());
+		//Joe must fix this.
+		m_TimeOut=GetTime();
+	}
+}
+
+void StreamPlugin::ExecuteCommands()
+{
+	if (m_AudioCH->IsCommandWaiting())
+	{
+		switch(m_AudioCH->GetCommand())
+		{
+			case (LOAD)	: OpenStream(m_FileNameArg); break;
+	                case (RESTART)	: Restart(); break;
+	                case (STOP)     : Stop(); break;
+        	        case (PLAY)	: Play(); break;
+        	        case (HALF)     : m_StreamDesc.PitchMod/=2; break;
+        	        case (RESET)    : m_StreamDesc.PitchMod=1; break;
+        	        case (DOUBLE)   : m_StreamDesc.PitchMod*=2; break;
+        	        case (NUDGE)    : Nudge(); break;
+			case (SET_TIME) : SetTime(m_TimeArg); break;
+		}
 	}
 }
 
@@ -195,9 +221,10 @@ void StreamPlugin::OpenStream(const string &Name)
 	if (m_StreamDesc.Stereo) 
 	{
 		m_StreamDesc.Pitch*=2;	
-		((StreamPluginGUI*)m_GUI)->SetMaxTime(GetLength());
+		//((StreamPluginGUI*)m_GUI)->SetMaxTime(GetLength());
 	}
-	else ((StreamPluginGUI*)m_GUI)->SetMaxTime(GetLength()/2);
+	//else ((StreamPluginGUI*)m_GUI)->SetMaxTime(GetLength()/2);
+	//Joe this must use the chanel handler
 	
 }
 
