@@ -65,8 +65,8 @@ void describePluginLibrary(const char * pcFullFilename, void * pvPluginHandle,
 			pi.Filename = pcFullFilename;
 			pi.Label = psDescriptor->Label;
 			pi.Name = psDescriptor->Name;
-			pi.InputPortCount = getPortCountByType(psDescriptor, LADSPA_PORT_INPUT);
-		
+			pi.InputPorts = getPortCountByType(psDescriptor, LADSPA_PORT_INPUT);
+
 		// ARGH! I really can't stand this ugly hack
 			lg->m_LADSPAList.push_back(pi);
 		} else {
@@ -128,59 +128,50 @@ m_Amped(false)
 	m_PluginInfo.NumOutputs=1;
 	m_PluginInfo.PortTips.push_back("Nuffink yet");
 
-	m_InputPortCountMax = 0;
-	m_InputPortCount = 0;
-
-// For receiving from GUI
-	m_AudioCH->Register("Gain",&m_Gain);
-	m_AudioCH->Register("Amped",&m_Amped);
-	m_AudioCH->RegisterData("PluginIndex", ChannelHandler::INPUT,&m_PluginIndex,sizeof(m_PluginIndex));
+	m_ChannelData.MaxInputPorts = 0;
+	m_ChannelData.InputPorts = 0;
 
 	LoadPluginList();
 
 // Examine plugin list and find highest input port count
 	for (vector<LPluginInfo>::iterator i = m_LADSPAList.begin();
 	     i != m_LADSPAList.end(); i++) {
-		if ((*i).InputPortCount > m_InputPortCountMax)
-			m_InputPortCountMax = (*i).InputPortCount;
+		if ((*i).InputPorts > m_ChannelData.MaxInputPorts)
+			m_ChannelData.MaxInputPorts = (*i).InputPorts;
 	}
 
-// Now we have a maximum input port count, so we can allocate and register our
-// port info arrays
-	m_AudioCH->RegisterData("InputPortCountMax",ChannelHandler::OUTPUT,&m_InputPortCountMax,sizeof(m_InputPortCountMax));
-	m_AudioCH->RegisterData("InputPortCount",ChannelHandler::OUTPUT,&m_InputPortCount,sizeof(m_InputPortCount));
+// For receiving from GUI
+	m_AudioCH->Register("Gain",&(m_Gain));
+	m_AudioCH->Register("Amped",&(m_Amped));
+	m_AudioCH->RegisterData("PluginIndex", ChannelHandler::INPUT,&(m_ChannelData.PluginIndex),sizeof(m_ChannelData.PluginIndex));
 
-	m_InputPortMin   = (float *)malloc(sizeof(float) * m_InputPortCountMax);
-	m_InputPortMax   = (float *)malloc(sizeof(float) * m_InputPortCountMax);
-	m_InputPortClamp = (bool  *)malloc(sizeof(bool) * m_InputPortCountMax);
-	m_InputPortNames = (char  *)malloc(256 * m_InputPortCountMax);
+// For sending to GUI
+	m_AudioCH->RegisterData("Name",ChannelHandler::OUTPUT,m_ChannelData.Name,256);
+	m_AudioCH->RegisterData("Maker",ChannelHandler::OUTPUT,m_ChannelData.Maker,256);
+	m_AudioCH->RegisterData("MaxInputPorts",ChannelHandler::OUTPUT,&(m_ChannelData.MaxInputPorts),sizeof(m_ChannelData.MaxInputPorts));
+	m_AudioCH->RegisterData("InputPorts",ChannelHandler::OUTPUT,&(m_ChannelData.InputPorts),sizeof(m_ChannelData.InputPorts));
 
-	m_Name  = (char *)malloc(256);
-	m_Maker = (char *)malloc(256);
+	m_ChannelData.InputPortNames = (char *)malloc(256 * m_ChannelData.MaxInputPorts);
+	m_ChannelData.SetInputPortRanges = (PortRange *)malloc(sizeof(PortRange) * m_ChannelData.MaxInputPorts);
+	m_ChannelData.GetInputPortRanges = (PortRange *)malloc(sizeof(PortRange) * m_ChannelData.MaxInputPorts);
 
-	if (m_InputPortMin && m_InputPortMax && m_InputPortClamp && m_InputPortNames &&
-	    m_Name && m_Maker) {
-		m_AudioCH->RegisterData("InputPortMin",   ChannelHandler::OUTPUT, m_InputPortMin,   sizeof(float) * m_InputPortCountMax);
-		m_AudioCH->RegisterData("InputPortMax",   ChannelHandler::OUTPUT, m_InputPortMax,   sizeof(float) * m_InputPortCountMax);
-		m_AudioCH->RegisterData("InputPortClamp", ChannelHandler::OUTPUT, m_InputPortClamp, sizeof(bool)  * m_InputPortCountMax);
-		m_AudioCH->RegisterData("InputPortNames", ChannelHandler::OUTPUT, m_InputPortNames, 256 * m_InputPortCountMax);
-
-		m_AudioCH->RegisterData("Name",ChannelHandler::OUTPUT,m_Name,256);
-		m_AudioCH->RegisterData("Maker",ChannelHandler::OUTPUT,m_Maker,256);
+	if (m_ChannelData.InputPortNames &&
+	    m_ChannelData.SetInputPortRanges &&
+	    m_ChannelData.GetInputPortRanges) {
+		m_AudioCH->RegisterData("InputPortNames", ChannelHandler::OUTPUT, m_ChannelData.InputPortNames, 256 * m_ChannelData.MaxInputPorts);
+		m_AudioCH->RegisterData("GetInputPortRanges", ChannelHandler::OUTPUT, m_ChannelData.GetInputPortRanges, sizeof(PortRange) * m_ChannelData.MaxInputPorts);
+		m_AudioCH->RegisterData("SetInputPortRanges", ChannelHandler::INPUT, m_ChannelData.SetInputPortRanges, sizeof(PortRange) * m_ChannelData.MaxInputPorts);
 	} else {
-		cerr<<"Memory allocation error\n"<<endl;
+		cerr<<"Memory allocation error"<<endl;
 	}
 }
 
 LADSPAPlugin::~LADSPAPlugin()
 {
 // Free allocated buffers
-	if (m_InputPortMin)   free(m_InputPortMin);
-	if (m_InputPortMax)   free(m_InputPortMax);
-	if (m_InputPortClamp) free(m_InputPortClamp);
-	if (m_InputPortNames) free(m_InputPortNames);
-	if (m_Name)           free(m_Name);
-	if (m_Maker)          free(m_Maker);
+	if (m_ChannelData.InputPortNames) free(m_ChannelData.InputPortNames);
+	if (m_ChannelData.SetInputPortRanges)  free(m_ChannelData.SetInputPortRanges);
+	if (m_ChannelData.GetInputPortRanges)  free(m_ChannelData.GetInputPortRanges);
 }
 
 PluginInfo &LADSPAPlugin::Initialise(const HostInfo *Host)
@@ -242,14 +233,14 @@ void LADSPAPlugin::Execute()
 		{
 			/*if (m_Amped)
 			{
-				for (int i=0; i<m_HostInfo->BUFSIZE; i++) 
+				for (int i=0; i<m_HostInfo->BUFSIZE; i++)
 				{
 					SetOutput(n,i,m_LADSPABufVec[n+m_PluginInfo.NumInputs][i]*m_Gain*10);
 				}
 			}
 			else*/
 			{
-				for (int i=0; i<m_HostInfo->BUFSIZE; i++) 
+				for (int i=0; i<m_HostInfo->BUFSIZE; i++)
 				{
 					SetOutput(n,i,m_LADSPABufVec[n+m_PluginInfo.NumInputs][i]*m_Gain);
 				}
@@ -264,8 +255,8 @@ void LADSPAPlugin::ExecuteCommands()
 	{
 		switch(m_AudioCH->GetCommand())
 		{
-			case (UPDATERANGES) : break;
-			case (UPDATEPLUGIN) : UpdatePlugin(m_PluginIndex); break;
+			case (UPDATERANGES) : UpdatePortRanges(); break;
+			case (UPDATEPLUGIN) : UpdatePlugin(m_ChannelData.PluginIndex); break;
 		};
 	}
 }
@@ -415,7 +406,7 @@ void LADSPAPlugin::StreamIn(istream &s)
 			{
 				UpdatePlugin(Filename.c_str(), Label.c_str(), false);
 			}
-			
+
 			m_CurrentPlugin.Ports.reserve(PortCount);
 			
 			for (int n=0; n<PortCount; n++)
@@ -459,7 +450,7 @@ bool LADSPAPlugin::UpdatePlugin(const char * filename, const char * label, bool 
 		unloadLADSPAPluginLibrary(PlugHandle);
 		PlugHandle = 0;
 	}
-	
+
 	if ((PlugHandle = loadLADSPAPluginLibrary(filename))) {
 		if (!(PlugDesc = findLADSPAPluginDescriptor(PlugHandle, filename, label))) {
 			unloadLADSPAPluginLibrary(PlugHandle);
@@ -612,31 +603,31 @@ bool LADSPAPlugin::UpdatePlugin(const char * filename, const char * label, bool 
 
 // Finally, we need to supply the GUI with information via
 // ChannelHandler.
-			m_InputPortCount = m_PluginInfo.NumInputs;
+			m_ChannelData.InputPorts = m_PluginInfo.NumInputs;
 			int lbl_length;
 			char *lbl_start;
 
 			lbl_length = m_CurrentPlugin.Name.size();
 			lbl_length = lbl_length > 255 ? 255 : lbl_length;
-			strncpy(m_Name, m_CurrentPlugin.Name.substr(0, lbl_length).c_str(), lbl_length);
-			m_Name[lbl_length] = '\0';
+			strncpy(m_ChannelData.Name, m_CurrentPlugin.Name.substr(0, lbl_length).c_str(), lbl_length);
+			m_ChannelData.Name[lbl_length] = '\0';
 
 			lbl_length = m_CurrentPlugin.Maker.size();
 			lbl_length = lbl_length > 255 ? 255 : lbl_length;
-			strncpy(m_Maker, m_CurrentPlugin.Maker.substr(0, lbl_length).c_str(), lbl_length);
-			m_Maker[lbl_length] = '\0';
+			strncpy(m_ChannelData.Maker, m_CurrentPlugin.Maker.substr(0, lbl_length).c_str(), lbl_length);
+			m_ChannelData.Maker[lbl_length] = '\0';
 
-			lbl_start = m_InputPortNames;
-			for (unsigned long n = 0; n < m_InputPortCount; n++) {
-				m_InputPortMin[n]    = m_CurrentPlugin.Ports[n].Min;
-				m_InputPortMax[n]    = m_CurrentPlugin.Ports[n].Max;
-				m_InputPortClamp[n]  = m_CurrentPlugin.Ports[n].Clamped;
-
+			lbl_start = m_ChannelData.InputPortNames;
+			for (unsigned long n = 0; n < m_ChannelData.InputPorts; n++) {
 				lbl_length = m_CurrentPlugin.Ports[n].Name.size();
 				lbl_length = lbl_length > 255 ? 255 : lbl_length;
 				strncpy(lbl_start, m_CurrentPlugin.Ports[n].Name.substr(0, lbl_length).c_str(), lbl_length);
 				lbl_start[lbl_length] = '\0';
 				lbl_start += 256;
+
+				m_ChannelData.GetInputPortRanges[n].Min = m_CurrentPlugin.Ports[n].Min;
+				m_ChannelData.GetInputPortRanges[n].Max = m_CurrentPlugin.Ports[n].Max;
+				m_ChannelData.GetInputPortRanges[n].Clamp = m_CurrentPlugin.Ports[n].Clamped;
 			}
 
 			return true;
@@ -648,3 +639,11 @@ bool LADSPAPlugin::UpdatePlugin(const char * filename, const char * label, bool 
 	return false;
 }
 
+void LADSPAPlugin::UpdatePortRanges(void)
+{
+	for (unsigned long n = 0; n < m_ChannelData.InputPorts; n++) {
+		m_PortMin[n] = m_ChannelData.SetInputPortRanges[n].Min;
+		m_PortMax[n] = m_ChannelData.SetInputPortRanges[n].Max;
+		m_PortClamp[n] = m_ChannelData.SetInputPortRanges[n].Clamp;
+	}
+}

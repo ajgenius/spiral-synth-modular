@@ -51,19 +51,13 @@ SpiralPluginGUI(w,h,o,ch)
 	}
 
 // Get maximum input port count
-	m_GUICH->GetData("InputPortCountMax",&m_InputPortCountMax);
+	m_GUICH->GetData("MaxInputPorts",&(m_ChannelData.MaxInputPorts));
 
 // Set up buffers for data transfer via ChannelHandler
-	m_InputPortMin   = (float *)malloc(sizeof(float) * m_InputPortCountMax);
-	m_InputPortMax   = (float *)malloc(sizeof(float) * m_InputPortCountMax);
-	m_InputPortClamp = (bool  *)malloc(sizeof(bool)  * m_InputPortCountMax);
-	m_InputPortNames = (char  *)malloc(256 * m_InputPortCountMax);
-	
-	m_NameString  = (char *)malloc(256);
-	m_MakerString = (char *)malloc(256);
+	m_ChannelData.InputPortNames = (char *)malloc(256 * m_ChannelData.MaxInputPorts);
+	m_ChannelData.InputPortRanges = (PortRange *)malloc(sizeof(PortRange) * m_ChannelData.MaxInputPorts);
 
-	if (!(m_InputPortMin && m_InputPortMax && m_InputPortClamp && m_InputPortNames &&
-	      m_NameString && m_MakerString)) {
+	if (!(m_ChannelData.InputPortNames && m_ChannelData.InputPortRanges)) {
 		cerr<<"Memory allocation error\n"<<endl;
 	}
 
@@ -120,12 +114,8 @@ SpiralPluginGUI(w,h,o,ch)
 
 LADSPAPluginGUI::~LADSPAPluginGUI(void)
 {
-	if (m_InputPortMin)   free(m_InputPortMin);
-	if (m_InputPortMax)   free(m_InputPortMax);
-	if (m_InputPortClamp) free(m_InputPortClamp);
-	if (m_InputPortNames) free(m_InputPortNames);
-	if (m_NameString)     free(m_NameString);
-	if (m_MakerString)    free(m_MakerString);
+	if (m_ChannelData.InputPortNames)  free(m_ChannelData.InputPortNames);
+	if (m_ChannelData.InputPortRanges) free(m_ChannelData.InputPortRanges);
 	Fl::check();
 }
 
@@ -134,17 +124,17 @@ void LADSPAPluginGUI::UpdatePortDisplay(int n, float v)
 	if (!m_UpdateInputs->value()) return;
 
 	char temp[256];
-	sprintf(temp,"%f",v);
+	sprintf(temp,"%.4f",v);
 	m_PortOutput[n]->value(temp);
 }
 
 void LADSPAPluginGUI::SetMinMax(int n, float min, float max, bool clamp)
 {
 	char temp[256];
-	sprintf(temp,"%f",min);
+	sprintf(temp,"%.4f",min);
 	m_PortMin[n]->value(temp);
 
-	sprintf(temp,"%f",max);
+	sprintf(temp,"%.4f",max);
 	m_PortMax[n]->value(temp);
 
 	sprintf(temp, "%d",clamp);
@@ -258,23 +248,23 @@ inline void LADSPAPluginGUI::cb_Select_i(Fl_Hold_Browser* o)
 	m_GUICH->Wait();
 
 // Now get the new values to populate GUI controls
-	m_GUICH->GetData("Name", m_NameString);
-	m_GUICH->GetData("Maker", m_MakerString);
-	m_GUICH->GetData("InputPortCount", &m_InputPortCount);
-	m_GUICH->GetData("InputPortMin",   m_InputPortMin);
-	m_GUICH->GetData("InputPortMax",   m_InputPortMax);
-	m_GUICH->GetData("InputPortClamp", m_InputPortClamp);
-	m_GUICH->GetData("InputPortNames", m_InputPortNames);
+	m_GUICH->GetData("Name", m_ChannelData.Name);
+	m_GUICH->GetData("Maker", m_ChannelData.Maker);
+	m_GUICH->GetData("InputPorts", &(m_ChannelData.InputPorts));
+	m_GUICH->GetData("InputPortNames", m_ChannelData.InputPortNames);
+	m_GUICH->GetData("GetInputPortRanges", m_ChannelData.InputPortRanges);
 
-	SetName((const char *)m_NameString);
-	SetMaker((const char *)m_MakerString);
+	SetName((const char *)m_ChannelData.Name);
+	SetMaker((const char *)m_ChannelData.Maker);
 
 // Clear out port info, and refresh
 	ClearPortInfo();
 
-	for (unsigned long n = 0; n < m_InputPortCount; n++) {
-		AddPortInfo((const char *)(m_InputPortNames + n * 256));
-		SetMinMax(n, m_InputPortMin[n], m_InputPortMax[n], m_InputPortClamp[n]);
+	for (unsigned long n = 0; n < m_ChannelData.InputPorts; n++) {
+		AddPortInfo((const char *)(m_ChannelData.InputPortNames + n * 256));
+		SetMinMax(n, m_ChannelData.InputPortRanges[n].Min,
+		             m_ChannelData.InputPortRanges[n].Max,
+			     m_ChannelData.InputPortRanges[n].Clamp);
 	}
 }
 void LADSPAPluginGUI::cb_Select(Fl_Hold_Browser* o)
@@ -284,24 +274,30 @@ void LADSPAPluginGUI::cb_Select(Fl_Hold_Browser* o)
 
 inline void LADSPAPluginGUI::cb_MinMax_i(Fl_Button* o, void* v)
 {
-	int n=0;
+	unsigned long n=0;
 	for (vector<Fl_Input*>::iterator i=m_PortMin.begin();
 		 i!=m_PortMin.end(); i++)
 	{
+		m_ChannelData.InputPortRanges[n].Min = atof((*i)->value());
 		n++;
 	}
 	n=0;
 	for (vector<Fl_Input*>::iterator i=m_PortMax.begin();
 		 i!=m_PortMax.end(); i++)
 	{
+		m_ChannelData.InputPortRanges[n].Max = atof((*i)->value());
 		n++;
 	}
 	n=0;
 	for (vector<Fl_Check_Button*>::iterator i=m_PortClamp.begin();
 		 i!=m_PortClamp.end(); i++)
 	{
+		m_ChannelData.InputPortRanges[n].Clamp = (bool)((*i)->value());
 		n++;
 	}
+
+	m_GUICH->SetData("SetInputPortRanges", m_ChannelData.InputPortRanges);
+	m_GUICH->SetCommand(LADSPAPlugin::UPDATERANGES);
 }
 void LADSPAPluginGUI::cb_MinMax(Fl_Button* o, void* v)
 {

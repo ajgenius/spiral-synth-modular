@@ -32,7 +32,7 @@ public:
 	string Label;
 	string Name;
 	string Maker;
-	unsigned long InputPortCount;
+	unsigned long InputPorts;
 
 	struct LPortDetails
 	{
@@ -54,6 +54,13 @@ struct LPluginInfoSortAsc
 	{
 		return begin.Name < end.Name;
 	}
+};
+
+struct PortRange
+{
+	float   Min;
+	float   Max;
+	bool    Clamp;
 };
 
 class LADSPAPlugin : public SpiralPlugin
@@ -79,6 +86,7 @@ private:
 	void UpdatePortRange(void);
 	bool UpdatePlugin(int n);
 	bool UpdatePlugin(const char * filename, const char * label, bool PortClampReset=true);
+	void UpdatePortRanges(void);
 
 	friend void describePluginLibrary(const char * pcFullFilename, void * pvPluginHandle, LADSPA_Descriptor_Function pfDescriptorFunction);
 	void LoadPluginList(void);
@@ -98,20 +106,22 @@ private:
 	vector<LPluginInfo> m_LADSPAList;
 	LPluginInfo m_CurrentPlugin;
 
-	float           m_Gain;
-	bool            m_Amped;
-	unsigned long   m_PluginIndex;
-	char           *m_Name;
-	char           *m_Maker;
+	float         m_Gain;
+	bool          m_Amped;
 
-	unsigned long m_InputPortCountMax;	// Maximum number of input ports
-						// Corresponds to input port count of one
-						// (or more) plugins found
-	unsigned long m_InputPortCount; 	// Number of input ports in current plugin
-	float        *m_InputPortMin;		// Input port range minima
-	float        *m_InputPortMax;		// Input port range maxima
-	bool         *m_InputPortClamp;		// Input port clamp state
-	char         *m_InputPortNames;		// Input port names
+	struct ChannelData
+	{
+		unsigned long PluginIndex;
+		char          Name[256];
+		char          Maker[256];
+		unsigned long MaxInputPorts;
+		unsigned long InputPorts;
+		char         *InputPortNames;
+		PortRange    *SetInputPortRanges;
+		PortRange    *GetInputPortRanges;
+	};
+
+	ChannelData     m_ChannelData;
 };
 
 #endif

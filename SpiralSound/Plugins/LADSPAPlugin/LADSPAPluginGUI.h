@@ -103,19 +103,17 @@ private:
 	inline void cb_PowerAmp_i(Fl_Button* o, void* v);
 	static void cb_PowerAmp(Fl_Button* o, void* v);
 
-	// This lot is for copying plugin info from the audio thread
-	// to the GUI thread, via ChannelHandler
-
-	char         *m_NameString;		// Plugin Name
-	char         *m_MakerString;		// Plugin Maker;
-	unsigned long m_InputPortCountMax;	// Maximum number of input ports
-						// Corresponds to input port count of one
-						// (or more) plugins found
-	unsigned long m_InputPortCount;		// Number of input ports in current plugin
-	float        *m_InputPortMin;		// Input port range minima
-	float        *m_InputPortMax;		// Input port range maxima
-	bool         *m_InputPortClamp;		// Input port clamp state
-	char         *m_InputPortNames;		// Input port names
+	struct ChannelData
+	{
+		char            Name[256];
+		char            Maker[256];
+		unsigned long   MaxInputPorts;
+		unsigned long   InputPorts;
+		char           *InputPortNames;
+		PortRange      *InputPortRanges;
+	};
+	
+	ChannelData     m_ChannelData;
 };
 
 
