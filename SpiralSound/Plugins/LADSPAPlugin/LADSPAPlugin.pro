@@ -4,8 +4,7 @@ HEADERS     = ../SpiralPlugin.h \
 			  ../Widgets/Fl_DragBar.H \
 			  ../../Sample.h \
 			  LADSPAPlugin.h \
-			  LADSPAPluginGUI.h \
-			  String.h 
+			  LADSPAPluginGUI.h 
 
 SOURCES     = ../SpiralPlugin.C \
 			  ../SpiralPluginGUI.C \
@@ -13,7 +12,6 @@ SOURCES     = ../SpiralPlugin.C \
 			  ../Widgets/Fl_DragBar.cxx \
 			  ../../Sample.C \
 			  LADSPAPlugin.C \
-			  LADSPAPluginGUI.C \
-			  String.cc
+			  LADSPAPluginGUI.C
 
 TARGET      = LADSPAPlugin.so

@@ -49,8 +49,7 @@ HEADERS =	../SpiralPlugin.h \
 		../../Sample.h \
 		LADSPAPlugin.h \
 		LADSPAPluginGUI.h \
-		LADSPAInfo.h \
-		String.h
+		LADSPAInfo.h
 SOURCES =	../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
 		../../ChannelHandler.C \
@@ -59,8 +58,7 @@ SOURCES =	../SpiralPlugin.C \
 		../../Sample.C \
 		LADSPAPlugin.C \
 		LADSPAPluginGUI.C \
-		LADSPAInfo.C \
-		String.cc
+		LADSPAInfo.C
 OBJECTS =	../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
 		../../ChannelHandler.o \
@@ -69,8 +67,7 @@ OBJECTS =	../SpiralPlugin.o \
 		../../Sample.o \
 		LADSPAPlugin.o \
 		LADSPAPluginGUI.o \
-		LADSPAInfo.o \
-		String.o
+		LADSPAInfo.o
 INTERFACES =
 UICDECLS =
 UICIMPLS =
@@ -175,10 +172,7 @@ LADSPAPluginGUI.o: LADSPAPluginGUI.C \
 		../../SpiralInfo.h \
 		../../Sample.h \
 		../SpiralPluginGUI.h \
-		../Widgets/Fl_DragBar.H 
-
-String.o: String.cc \
-		String.h
+		../Widgets/Fl_DragBar.H
 
 ../../ChannelHandler.o: ../../ChannelHandler.C \
 		../../ChannelHandler.h
