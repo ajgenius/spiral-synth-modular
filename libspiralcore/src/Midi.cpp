@@ -23,10 +23,6 @@
 #include "signal.h"
 #include "pthread.h"
 
-#ifdef KEYBOARD_SUPPORT
-#include <FL/Fl.h>
-#endif
-
 static const int MIDI_SCANBUFSIZE=256;
 static const int MIDI_KEYOFFSET=0;
 
@@ -45,9 +41,6 @@ static const unsigned char MIDI_CLOCK              = 0xf8;
 static const unsigned char ACTIVE_SENSE            = 0xfe;
 
 static int NKEYS = 30;
-static char KEYMAP[30]={'z','s','x','d','c','v','g','b','h','n','j','m','q',
-						'2','w','3','e','r','5','t','6','y','7','u','i','9',
-						'o','0','p','['};
 							
 MidiDevice *MidiDevice::m_Singleton;
 string MidiDevice::m_DeviceName;
@@ -55,7 +48,13 @@ string MidiDevice::m_DeviceName;
 MidiDevice::MidiDevice() :
 m_Poly(1)
 {
+#ifdef ALSA_MIDI
+	seq_handle=AlsaOpen();
+#else
 	Open();
+#endif
+
+	
 
 #ifdef KEYBOARD_SUPPORT
 	m_Oct=4;
@@ -70,7 +69,11 @@ m_Poly(1)
 
 MidiDevice::~MidiDevice() 
 {
+#ifdef ALSA_MIDI
+	snd_seq_close (seq_handle);
+#else
 	Close();
+#endif
 }
 
 void MidiDevice::Close()
@@ -122,9 +125,17 @@ MidiEvent MidiDevice::GetEvent(int Device)
 		return MidiEvent(MidiEvent::NONE,0,0);
 	}
 
-#ifdef KEYBOARD_SUPPORT
-	CheckKeyboard();
-#endif
+#ifdef ALSA_MIDI
+	AlsaCallback();
+	
+	if (m_EventVec[Device].size()==0)
+	{
+		return MidiEvent(MidiEvent::NONE,0,0);
+	}
+	
+	MidiEvent event(m_EventVec[Device].front());
+	m_EventVec[Device].pop();
+#else
 
 	pthread_mutex_lock(m_Mutex);
 	if (m_EventVec[Device].size()==0)
@@ -136,12 +147,13 @@ MidiEvent MidiDevice::GetEvent(int Device)
 	MidiEvent event(m_EventVec[Device].front());
 	m_EventVec[Device].pop();
 	pthread_mutex_unlock(m_Mutex);
-		
+#endif
 	return event;
 }
 
 void MidiDevice::SendEvent(int Device,const MidiEvent &Event)
 {
+#ifndef ALSA_MIDI
 	if (Device<0 || Device>15)
 	{
 		cerr<<"SendEvent: Invalid Midi device "<<Device<<endl;		
@@ -165,6 +177,7 @@ void MidiDevice::SendEvent(int Device,const MidiEvent &Event)
 		write(m_MidiWrFd,message,3);	
 		//cerr<<"sending "<<message<<endl;
 	}
+#endif
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -320,87 +333,72 @@ void MidiDevice::AddEvent(unsigned char* midi)
 
 ///////////////////////////////////////////////////////////////////////////////
 
-// Parse the keyboard to generate midi messages
-#ifdef KEYBOARD_SUPPORT
-void MidiDevice::CheckKeyboard()
+#ifdef ALSA_MIDI
+// code taken and modified from jack_miniFMsynth
+
+int MidiDevice::AlsaCallback() 
 {
-	Fl::check();
+    snd_seq_event_t *ev;
+    int l1;
+	
 	MidiEvent::type MessageType=MidiEvent::NONE;
-	int Volume=0,Note=0,EventDevice=0;
+	int Volume=0,Note=0,EventDevice=0;	
 
-	if (Fl::event_key(FL_F+1)) m_Oct=0; 
-	if (Fl::event_key(FL_F+2)) m_Oct=1; 
-	if (Fl::event_key(FL_F+3)) m_Oct=2; 
-	if (Fl::event_key(FL_F+4)) m_Oct=3; 
-	if (Fl::event_key(FL_F+5)) m_Oct=4; 
-	if (Fl::event_key(FL_F+6)) m_Oct=5; 
-	if (Fl::event_key(FL_F+7)) m_Oct=6; 
-	if (Fl::event_key(FL_F+8)) m_Oct=7; 
-	if (Fl::event_key(FL_F+9)) m_Oct=8; 
-	if (Fl::event_key(FL_F+10)) m_Oct=9; 
-	if (Fl::event_key(FL_F+11)) m_Oct=10; 
-
-	int  note=0;
-	char KeyChar=0;
-	bool KeyPressed=false;
-
-	for (int key=0; key<NKEYS; key++)
-	{	
-		KeyChar=KEYMAP[key];
-		
-		// check if a key's been pressed
-		if (Fl::event_key(KeyChar)) 
-		{
-			KeyPressed=true;
-	
-			// check it was pressed last time
-			bool Found=false;
-			for (int n=0; n<m_Poly; n++)
-			{
-				if (m_KeyVoice[n]==KeyChar)
-				{
-					Found=true;
-				}				
-			}
-			if (!Found)
-			{
-				Volume = 127;
+    do {
+        snd_seq_event_input(seq_handle, &ev);
+        if ((ev->type == SND_SEQ_EVENT_NOTEON) && (ev->data.note.velocity == 0)) 
+        {
+			ev->type = SND_SEQ_EVENT_NOTEOFF;      
+		}
+		    
+        switch (ev->type) {
+            case SND_SEQ_EVENT_PITCHBEND:
+                MessageType=MidiEvent::CHANNELPRESSURE;		
+				Volume = (char)((ev->data.control.value / 8192.0)*256);
+                break;
+            case SND_SEQ_EVENT_CONTROLLER:
+				MessageType=MidiEvent::PARAMETER;
+				Note = ev->data.control.param;
+				Volume = ev->data.control.value;
+                break;
+            case SND_SEQ_EVENT_NOTEON:
 				MessageType=MidiEvent::ON;
-				Note=(m_Oct*12)+note;
-				
-				// Move to the next voice
-				m_CurrentVoice++;
-	
-				if (m_CurrentVoice>=m_Poly)
-				{
-					m_CurrentVoice=0;
-				}
-				
-				// this should be the current voice we are using
-				m_KeyVoice[m_CurrentVoice]=KeyChar;
-			}
-		}
-		else // it's not pressed down 
-		{
-			//see if the note was pressed down last time			
-			for (int n=0; n<m_Poly; n++)
-			{
-				if (m_KeyVoice[n]==KeyChar)
-				{				
-					MessageType=MidiEvent::OFF;
-					Note=(m_Oct*12)+note;
-					m_KeyVoice[n]=' ';
-				}				
-			}
-		}
-		note++;
-	}
-	
-	if (MessageType!=MidiEvent::NONE)
-	{
-		pthread_mutex_lock(m_Mutex);
+                EventDevice = ev->data.control.channel;
+                Note = ev->data.note.note;
+                Volume = ev->data.note.velocity;
+                break;        
+            case SND_SEQ_EVENT_NOTEOFF:
+				MessageType=MidiEvent::ON;
+                EventDevice = ev->data.control.channel;
+                Note = ev->data.note.note;
+                break;        
+        }
+		
 		m_EventVec[EventDevice].push(MidiEvent(MessageType,Note,Volume));
-		pthread_mutex_unlock(m_Mutex);
-	}
+        
+		snd_seq_free_event(ev);
+    } while (snd_seq_event_input_pending(seq_handle, 0) > 0);
+    return (0);
 }
+
+snd_seq_t *MidiDevice::AlsaOpen() 
+{
+    snd_seq_t *seq_handle;
+    int client_id, port_id;
+    
+    if (snd_seq_open(&seq_handle, "default", SND_SEQ_OPEN_INPUT, 0) < 0) {
+        fprintf(stderr, "Error opening ALSA sequencer.\n");
+        exit(1);
+    }
+    snd_seq_set_client_name(seq_handle, "spiralmodular");
+    client_id = snd_seq_client_id(seq_handle);
+    if ((port_id = snd_seq_create_simple_port(seq_handle, "spiralmodular",
+        SND_SEQ_PORT_CAP_WRITE|SND_SEQ_PORT_CAP_SUBS_WRITE,
+        SND_SEQ_PORT_TYPE_APPLICATION) < 0)) {
+        fprintf(stderr, "Error creating sequencer port.\n");
+    }
+    return(seq_handle);
+}
+
 #endif
+
