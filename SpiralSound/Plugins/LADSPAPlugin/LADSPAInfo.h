@@ -119,12 +119,6 @@ private:
         const LADSPA_Descriptor    *Descriptor;     // Descriptor, NULL
     };
 
-    struct RDFFileInfo
-    {
-        unsigned long           RDFPathIndex; // Index of path in m_RDFPaths
-        std::string             Basename;     // Filename
-    };
-
     typedef std::map<unsigned long,
                      unsigned long,
                      std::less<unsigned long> >  IDMap;
@@ -148,9 +142,6 @@ private:
     std::vector<std::string>        m_Paths;
     std::vector<LibraryInfo>        m_Libraries;
     std::vector<PluginInfo>         m_Plugins;
-
-    std::vector<std::string>        m_RDFPaths;
-    std::vector<RDFFileInfo>        m_RDFFiles;
 
     IDMap                           m_IDLookup;
     StringMap                       m_FilenameLookup;

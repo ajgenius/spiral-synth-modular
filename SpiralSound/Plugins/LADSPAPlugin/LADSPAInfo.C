@@ -78,16 +78,6 @@ LADSPAInfo::PrintInfo(void)
              << m_Libraries[p->LibraryIndex].Basename
              << ": " << p->Index << endl;
     }
-    cout << endl;
-    cout << "    RDF paths:" << endl;
-    for (vector<string>::iterator p = m_RDFPaths.begin(); p != m_RDFPaths.end(); p++) {
-        cout << "        " << *p << endl;
-    }
-    cout << endl;
-    cout << "    RDF files:" << endl;
-    for (vector<RDFFileInfo>::iterator f = m_RDFFiles.begin(); f != m_RDFFiles.end(); f++) {
-        cout << "        " << m_RDFPaths[f->RDFPathIndex] << f->Basename << endl;
-    }
 }
 
 void
@@ -307,9 +297,6 @@ LADSPAInfo::CleanUp(void)
 
     m_Libraries.clear();
     m_Paths.clear();
-
-    m_RDFFiles.clear();
-    m_RDFPaths.clear();
 
     lrdf_cleanup();
 
