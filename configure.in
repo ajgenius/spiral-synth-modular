@@ -46,7 +46,7 @@ if test $ac_arg_jack = "Y" ; then
 	DistributorPlugin LFOPlugin KeyboardPlugin DiskWriterPlugin FormantFilterPlugin \
 	AnotherFilterPlugin OperatorPlugin CounterPlugin FlipflopPlugin SwitchPlugin \
 	BeatMatchPlugin NoisePlugin SequencerPlugin LogicPlugin SplitSwitchPlugin \
-	MixSwitchPlugin JackPlugin"
+	MixSwitchPlugin MeterPlugin WaveShaperPlugin JackPlugin"
 else
 	PLUGINLIST="AmpPlugin ControllerPlugin DelayPlugin EchoPlugin EnvFollowerPlugin \
 	EnvelopePlugin FilterPlugin MatrixPlugin MidiPlugin MixerPlugin MoogFilterPlugin \
@@ -55,7 +55,8 @@ else
 	WaveTablePlugin LADSPAPlugin XFadePlugin PoshSamplerPlugin SeqSelectorPlugin\
 	DistributorPlugin LFOPlugin KeyboardPlugin DiskWriterPlugin FormantFilterPlugin \
 	AnotherFilterPlugin OperatorPlugin CounterPlugin FlipflopPlugin SwitchPlugin \
-	BeatMatchPlugin NoisePlugin SequencerPlugin LogicPlugin SplitSwitchPlugin MixSwitchPlugin"
+	BeatMatchPlugin NoisePlugin SequencerPlugin LogicPlugin SplitSwitchPlugin \
+	MixSwitchPlugin MeterPlugin WaveShaperPlugin "
 	
 	fi
 echo "$PLUGINLIST" > SpiralSound/PluginList.txt

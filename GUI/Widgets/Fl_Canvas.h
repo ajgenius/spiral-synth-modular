@@ -68,10 +68,12 @@ public:
 	virtual void draw();
 	virtual int handle(int event);
 	void PortClicked(Fl_DeviceGUI* Device, int Type, int Port, bool Value);
+	void Rename(Fl_DeviceGUI* Device);
 
 	void SetConnectionCallback(Fl_Callback* s) { cb_Connection=s; }
 	void SetUnconnectCallback(Fl_Callback* s) { cb_Unconnect=s; }
 	void SetAddDeviceCallback(Fl_Callback* s) { cb_AddDevice=s; }
+	void SetRenameCallback(Fl_Callback* s) { cb_Rename=s; }
 	
 	void ClearConnections(Fl_DeviceGUI* Device);
 	void RemoveDevice(Fl_DeviceGUI* Device);
@@ -95,6 +97,7 @@ private:
 	void (*cb_Connection)(Fl_Widget*, void*);
 	void (*cb_Unconnect)(Fl_Widget*, void*);
 	void (*cb_AddDevice)(Fl_Widget*, void*);
+	void (*cb_Rename)(Fl_Widget*, void*);
 	
 	vector<CanvasWire> m_WireVec;
 	CanvasWire         m_IncompleteWire;

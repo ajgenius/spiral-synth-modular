@@ -20,6 +20,11 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <dlfcn.h>
+
 #include <FL/Fl.H>
 #include <FL/Enumerations.H>
 #include <FL/fl_file_chooser.h>
@@ -45,7 +50,7 @@
 const static string LABEL = "SpiralSynthModular "+VER_STRING;
 static string TITLEBAR;
 
-static const int FILE_VERSION = 3;
+static const int FILE_VERSION = 4;
 static int Numbers[512];
 
 static const int MAIN_WIDTH     = 700;
@@ -364,6 +369,7 @@ SpiralWindowType *SynthModular::CreateWindow()
 	m_Canvas->SetConnectionCallback((Fl_Callback*)cb_Connection);
 	m_Canvas->SetUnconnectCallback((Fl_Callback*)cb_Unconnect);
 	m_Canvas->SetAddDeviceCallback((Fl_Callback*)cb_NewDeviceFromMenu);
+	m_Canvas->SetRenameCallback((Fl_Callback*)cb_RenameDevice);
 	m_CanvasScroll->add(m_Canvas);   
 
 	m_NewComment = new Fl_Button(TOOLBOX_WIDTH/2-16, MAIN_HEIGHT*2-25, 40, 40, "");
@@ -428,6 +434,61 @@ void SynthModular::ToolBox::AddIcon(Fl_Button *Icon)
 	m_Icon++;
 }
 
+vector<string> SynthModular::BuildPluginList(const string &Path)
+{
+	// Scan plugin path for plugins.
+	DIR *dp;
+	struct dirent *ep;
+	struct stat sb;
+	void *handle;
+	string fullpath;
+	const char *path = Path.c_str();
+	vector<string> ret;
+
+	dp = opendir(path);
+	if (!dp) 
+	{
+		cerr << "WARNING: Could not open path " << path << endl;
+	} 
+	else 
+	{
+		while ((ep = readdir(dp))) 
+		{
+
+			// Need full path
+			fullpath = path;
+			fullpath.append(ep->d_name);
+
+			// Stat file to get type
+			if (!stat(fullpath.c_str(), &sb)) 
+			{
+				// We only want regular files
+				if (S_ISREG(sb.st_mode)) 
+				{
+
+					// We're not fussed about resolving symbols yet, since we are just
+					// checking if it's a DLL.
+					handle = dlopen(fullpath.c_str(), RTLD_LAZY);
+					if (!handle) 
+					{
+						cerr << "WARNING: File " << path << ep->d_name
+							<< " could not be examined" << endl;
+						cerr << "dlerror() output:" << endl;
+						cerr << dlerror() << endl;
+					} 
+					else 
+					{
+						// It's a DLL. Add name to list
+						ret.push_back(ep->d_name);
+					}
+				}
+			}
+		}
+	}
+	
+	return ret;
+}
+
 void SynthModular::LoadPlugins(string pluginPath)
 {
 
@@ -457,8 +518,20 @@ void SynthModular::LoadPlugins(string pluginPath)
 
 	int ID=-1;
 
-	for (vector<string>::iterator i=SpiralSynthModularInfo::PLUGINVEC.begin();
-		 i!=SpiralSynthModularInfo::PLUGINVEC.end(); i++)
+	vector<string> PluginVector;
+	
+	if (SpiralSynthModularInfo::USEPLUGINLIST)
+	{
+		PluginVector=SpiralSynthModularInfo::PLUGINVEC;
+	}
+	else
+	{
+		if (!pluginPath.empty()) PluginVector=BuildPluginList(pluginPath);
+		else PluginVector=BuildPluginList(SpiralSynthModularInfo::PLUGIN_PATH);
+	}
+
+	for (vector<string>::iterator i=PluginVector.begin();
+		 i!=PluginVector.end(); i++)
 	{
 		string Fullpath;
 		if (pluginPath=="")
@@ -606,6 +679,7 @@ DeviceWin* SynthModular::NewDeviceWin(int n, int x, int y)
 	Fl_Pixmap *Pix      = new Fl_Pixmap(Plugin->GetIcon());
 	nlw->m_PluginID     = n;
 
+	#ifndef PLUGINGUI_IN_MODULE_TEST
 	if (temp) 
 	{	
 		temp->hide();
@@ -613,9 +687,22 @@ DeviceWin* SynthModular::NewDeviceWin(int n, int x, int y)
 		m_AppGroup->add(temp);		
 		m_MainWindow->redraw();
 	}
+	#else
+	if (temp) 
+	{	
+		temp->position(x+10,y+5);
+	}
+	#endif
+	
 	DeviceGUIInfo Info=BuildDeviceGUIInfo(PInfo);
+	
 	Info.XPos       = x; //TOOLBOX_WIDTH+(rand()%400);
 	Info.YPos       = y; //rand()%400;
+	
+	#ifdef PLUGINGUI_IN_MODULE_TEST
+		Info.Width      = PInfo.Width;
+		Info.Height     = PInfo.Height;
+	#endif
 	
 	nlw->m_DeviceGUI = new Fl_DeviceGUI(Info, temp, Pix, nlw->m_Device->IsTerminal());
 	m_Canvas->add(nlw->m_DeviceGUI);
@@ -785,6 +872,19 @@ istream &operator>>(istream &s, SynthModular &o)
 		s>>PluginID; 
 		s>>x>>y;
 		
+		string Name;
+		
+		if (ver>3)
+		{
+			// load the device name
+			int size;
+			char Buf[1024];
+			s>>size;
+			s.ignore(1);
+			s.get(Buf,size+1);
+			Name=Buf;
+		}
+
 		#ifdef DEBUG_STREAM
 		cerr<<dummy<<" "<<ID<<" "<<dummy2<<" "<<PluginID<<" "<<x<<" "<<y<<endl;
 		#endif
@@ -815,6 +915,16 @@ istream &operator>>(istream &s, SynthModular &o)
 			if (temp)
 			{
 				temp->m_DeviceGUI->SetID(ID);
+				if (ver>3) 
+				{
+					// set the titlebars 
+					temp->m_DeviceGUI->SetName(Name);
+					if (temp->m_DeviceGUI->GetPluginWindow())
+					{
+						((SpiralPluginGUI*)(temp->m_DeviceGUI->GetPluginWindow()))->RenameTitleBar(Name);
+					}
+				}
+				
 				temp->m_Device->SetUpdateInfoCallback(ID,o.cb_UpdatePluginInfo);					
 				o.m_DeviceWinMap[ID]=temp;
 				o.m_DeviceWinMap[ID]->m_Device->StreamIn(s); // load the plugin
@@ -894,6 +1004,8 @@ ostream &operator<<(ostream &s, SynthModular &o)
 		s<<i->second->m_PluginID<<endl;
 		s<<i->second->m_DeviceGUI->x()<<" ";
 		s<<i->second->m_DeviceGUI->y()<<" ";
+		s<<i->second->m_DeviceGUI->GetName().size()<<" ";
+		s<<i->second->m_DeviceGUI->GetName()<<" ";
 		
 		if (i->second->m_DeviceGUI->GetPluginWindow())
 		{
@@ -1182,6 +1294,16 @@ inline void SynthModular::cb_Unconnect_i(Fl_Canvas* o, void* v)
 }
 void SynthModular::cb_Unconnect(Fl_Canvas* o, void* v)
 {((SynthModular*)(o->user_data()))->cb_Unconnect_i(o,v);}
+
+//////////////////////////////////////////////////////////
+
+inline void SynthModular::cb_RenameDevice_i(Fl_Canvas* o, void* v)
+{
+	Fl_DeviceGUI* device = (Fl_DeviceGUI*)v;
+	((SpiralPluginGUI*)(device->GetPluginWindow()))->RenameTitleBar(device->GetName());
+}
+void SynthModular::cb_RenameDevice(Fl_Canvas* o, void* v)
+{((SynthModular*)(o->user_data()))->cb_RenameDevice_i(o,v);}
 
 //////////////////////////////////////////////////////////
 

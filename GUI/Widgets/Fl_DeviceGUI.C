@@ -18,6 +18,8 @@
 
 #include "Fl_DeviceGUI.h"
 #include "Fl_Canvas.h"
+#include "Fl_Canvas.h"
+#include "PawfalInput.h"
 #include "../../SpiralSynthModularInfo.h"
 
 int Fl_DeviceGUI::Numbers[512];
@@ -75,7 +77,19 @@ m_IsTerminal(Terminal)
 	m_DragBar->type(Fl_DragBar::FLDRAG);
 	m_DragBar->color(SpiralSynthModularInfo::GUICOL_Device);
 	
+	m_Menu = new Fl_Menu_Button(x(),y(),w(),h(),"");
+	m_Menu->type(Fl_Menu_Button::POPUP3);
+	m_Menu->textsize(8);
+	
+	m_Menu->add("rename", 0, (Fl_Callback*)cb_Rename,this);
+	m_Menu->add("delete", 0, (Fl_Callback*)cb_Delete,this);
+	
 	m_PluginWindow = PW;
+	
+	#ifdef PLUGINGUI_IN_MODULE_TEST
+	m_PluginWindow->show();
+	add(m_PluginWindow);
+	#endif
 	
 	//Add the input/output ports
 	Setup(Info, true);
@@ -106,10 +120,6 @@ int  Fl_DeviceGUI::handle(int event)
 				}*/			
 			}
 		}	
-		if (event==FL_RELEASE && Fl::event_button()==2) 
-		{		
-			m_DelMe = true;
-		}
 	}
 	
 	return t;
@@ -118,12 +128,14 @@ int  Fl_DeviceGUI::handle(int event)
 void  Fl_DeviceGUI::draw()
 {	
 	Fl_Group::draw();
+	#ifndef PLUGINGUI_IN_MODULE_TEST
 	if (m_Icon)
 	{
 		int Centx=x()+w()/2;
 		int Centy=y()+h()/2;
 		m_Icon->draw(Centx-m_Icon->w()/2,Centy-m_Icon->h()/2);
 	}
+	#endif
 }
 
 void Fl_DeviceGUI::Setup(const DeviceGUIInfo& Info, bool FirstTime)
@@ -273,3 +285,24 @@ inline void Fl_DeviceGUI::cb_Port_i(Fl_Button* o, void* v)
 }
 void Fl_DeviceGUI::cb_Port(Fl_Button* o, void* v)
 {((Fl_DeviceGUI*)(o->parent()))->cb_Port_i(o,v);}
+
+inline void Fl_DeviceGUI::cb_Rename_i(Fl_Menu_Button* o, void* v)
+{
+	char name[256];
+	if (Pawfal_Input("Rename the module:",m_DragBar->label(),name))
+	{
+		m_Name=name;
+		m_DragBar->label(m_Name.c_str());
+		((Fl_Canvas*)(parent()))->Rename(this);
+	}
+	
+}
+void Fl_DeviceGUI::cb_Rename(Fl_Menu_Button* o, void* v)
+{((Fl_DeviceGUI*)(o->parent()))->cb_Rename_i(o,v);}
+
+inline void Fl_DeviceGUI::cb_Delete_i(Fl_Menu_Button* o, void* v)
+{
+	m_DelMe=true;
+}
+void Fl_DeviceGUI::cb_Delete(Fl_Menu_Button* o, void* v)
+{((Fl_DeviceGUI*)(o->parent()))->cb_Delete_i(o,v);}

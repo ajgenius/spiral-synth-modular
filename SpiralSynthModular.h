@@ -92,6 +92,8 @@ public:
 	
 private:
 
+	vector<string> BuildPluginList(const string &Path);
+
 	DeviceWin* NewDeviceWin(int n, int x, int y);
 	DeviceWin* NewComment(int n, int x, int y);
 
@@ -188,7 +190,9 @@ private:
     static void cb_PluginGroupLeft(Fl_Button* o, void* v);
 	inline void cb_PluginGroupRight_i(Fl_Button* o, void* v);
     static void cb_PluginGroupRight(Fl_Button* o, void* v);
-	
+	inline void cb_RenameDevice_i(Fl_Canvas* o, void* v);
+	static void cb_RenameDevice(Fl_Canvas* o, void* v);
+
 	inline void cb_Rload_i(Fl_Button* o, void* v);
     static void cb_Rload(Fl_Button* o, void* v);
 	

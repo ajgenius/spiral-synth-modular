@@ -36,18 +36,22 @@ m_HelpWin(NULL)
 	
 	m_GUICH = ch;
 	
+	#ifndef PLUGINGUI_IN_MODULE_TEST
 	box(FL_THIN_UP_BOX);
 	m_DragBar = new Fl_DragBar(0,0,w,15,o->GetName().c_str());
 	m_DragBar->labelsize(10);
 	m_DragBar->type(Fl_DragBar::FLDRAG);
 	add(m_DragBar);
-  	
+	
   	m_Hide = new Fl_Button(2,2,10,10,"X");
 	m_Hide->labeltype(FL_ENGRAVED_LABEL);
 	m_Hide->labelsize(10);	
 	m_Hide->box(FL_NO_BOX);
 	m_Hide->callback((Fl_Callback*)cb_Hide);
 	add(m_Hide);
+	#else
+	box(FL_NO_BOX);
+	#endif
 	
   	m_Help = new Fl_Button(w-11,2,10,10,"?");
 	m_Help->labeltype(FL_ENGRAVED_LABEL);

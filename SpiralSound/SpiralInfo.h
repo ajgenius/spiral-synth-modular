@@ -53,7 +53,7 @@ public:
 	static int    FILTERGRAN;
 	static string OUTPUTFILE;
 	static string MIDIFILE;
-	static bool   REALTIMEOUT;
+	static bool   USEPLUGINLIST;
 	static int    POLY;
 	static string LOCALE;
 	
@@ -68,7 +68,7 @@ protected:
 	SpiralInfo() : m_HomeDir(getenv("HOME")), m_Version(0) {}
 	virtual ~SpiralInfo() {}
 
-	virtual string GetResFileName() { return "ballsSpiralrc"; }
+	virtual string GetResFileName() { return "Spiralrc"; }
 	
 	virtual void StreamInPrefs(istream &s);
 	virtual void StreamOutPrefs(ostream &s);

@@ -66,7 +66,7 @@ void SpiralInfo::StreamInPrefs(istream &s)
 	s>>temp>>temp>>FILTERGRAN;
 	s>>temp>>temp>>OUTPUTFILE;
 	s>>temp>>temp>>MIDIFILE;
-	s>>temp>>temp>>REALTIMEOUT;
+	s>>temp>>temp>>USEPLUGINLIST;
 	s>>temp>>temp>>POLY;
 	//s>>temp>>temp>>GUI_COLOUR;
 	//s>>temp>>temp>>GUIBG_COLOUR;
@@ -86,7 +86,7 @@ void SpiralInfo::StreamOutPrefs(ostream &s)
 	s<<"FilterGranularity = "<<FILTERGRAN<<endl;
 	s<<"Output            = "<<OUTPUTFILE<<endl;
 	s<<"Midi              = "<<MIDIFILE<<endl;
-	s<<"WantRealtimeOut   = "<<REALTIMEOUT<<endl;
+	s<<"UsePluginList     = "<<USEPLUGINLIST<<endl;
 	s<<"Polyphony         = "<<POLY<<endl;
 	//s<<"GUIColour         = "<<GUI_COLOUR<<endl;
 	//s<<"GUIBGColour       = "<<GUIBG_COLOUR<<endl;

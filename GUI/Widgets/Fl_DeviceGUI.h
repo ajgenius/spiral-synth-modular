@@ -20,6 +20,7 @@
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Pixmap.h>
+#include <FL/Fl_Menu_Button.h>
 #include <iostream>
 #include <vector>
 #include <string>
@@ -88,12 +89,11 @@ public:
 		
 	int           GetID()           			 { return m_ID; }	
 	void          SetID(int s)      			 { m_ID=s; /*DisplayID(s);*/ } 		
-	
 	bool          Killed()          			 { return m_DelMe; }	
 	int           GetPortX(int n)                { return m_PortVec[n]->x()+PortSize/2; }
 	int           GetPortY(int n)                { return m_PortVec[n]->y()+PortSize/2; }
 	
-	// aesthitic, to keep track of number of connections to know whether to 
+	// aesthetic, to keep track of number of connections to know whether to 
 	// draw the port as occupied or not.
 	bool          AddConnection(int n);
 	void          RemoveConnection(int n);
@@ -101,6 +101,8 @@ public:
 	bool          GetPortValue(int n)            { return m_PortVec[n]->value(); }	
 	const         DeviceGUIInfo* GetInfo()       { return &m_Info; }
 	Fl_Group*     GetPluginWindow()              { return m_PluginWindow; }
+	string        GetName()						 { return m_Name; }
+	void          SetName(const string &s)		 { m_Name=s; m_DragBar->label(m_Name.c_str()); }
 	
 	// automatically called from the constructor, but may be redone at any time.
 	virtual void  Setup(const DeviceGUIInfo& Info, bool FirstTime = false); 
@@ -117,11 +119,16 @@ protected:
 	Fl_DragBar* m_DragBar;
 	Fl_Group*   m_PluginWindow;
 	Fl_Pixmap*  m_Icon;
-		
+	Fl_Menu_Button* m_Menu; 
+	
 private:
 
 	inline void cb_Port_i(Fl_Button* o, void* v);
 	static void cb_Port(Fl_Button* o, void* v);
+	inline void cb_Rename_i(Fl_Menu_Button* o, void* v);
+	static void cb_Rename(Fl_Menu_Button* o, void* v);
+	inline void cb_Delete_i(Fl_Menu_Button* o, void* v);
+	static void cb_Delete(Fl_Menu_Button* o, void* v);
 	
 	vector<Fl_PortButton*> m_PortVec;
 	

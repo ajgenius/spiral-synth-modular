@@ -42,6 +42,8 @@ public:
 	// spiralplugin is acceptable
 	virtual void UpdateValues(SpiralPlugin *o)=0;
 
+	void RenameTitleBar(const string &s) { m_Title=s; m_DragBar->label(m_Title.c_str()); }
+
 protected:
 
 	ChannelHandler *m_GUICH;
@@ -52,6 +54,8 @@ private:
 	Fl_Button*		 m_Hide;
 	Fl_Button*		 m_Help;
 	Fl_Double_Window *m_HelpWin;
+	
+	string m_Title;
 	
 	//// Callbacks ////
 	inline void cb_Hide_i(Fl_Button* o, void* v);

@@ -34,7 +34,7 @@ char** GetIcon()
 
 int GetID()
 {
-	return 50;
+	return 52;
 }
 
 string GetGroupName()

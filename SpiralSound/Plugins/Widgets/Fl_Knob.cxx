@@ -3,6 +3,7 @@
 #include "Fl_Knob.H"
 #include <Fl/fl_draw.H>
 #include <math.h>
+#include <iostream.h>
 
 Fl_Knob::Fl_Knob(int xx,int yy,int ww,int hh,const char *l): Fl_Valuator(xx,yy,ww,hh,l) {
   int side;
@@ -129,7 +130,6 @@ unsigned char rr,gg,bb;
 
 int Fl_Knob::handle(int  event) {
   int ox,oy,ww,hh;
-
 	ox = x() + 10; oy = y() + 10;
 	ww = w() - 20;
 	hh = h()-20;
@@ -165,6 +165,32 @@ int Fl_Knob::handle(int  event) {
 			return 1;
 		case FL_RELEASE:
 			handle_release();
+			return 1;
+		case FL_KEYUP:
+			/*if (Fl::event_key()=='=') 
+			{	
+				handle_drag(clamp(round(value()+step())));
+				return 1;
+			}
+			if (Fl::event_key()=='-') 
+			{	
+				handle_drag(clamp(round(value()-step())));
+				return 1;
+			}
+			if (Fl::event_key()==FL_Page_Up) 
+			{	
+				handle_drag(clamp(round(value()+step()*10)));
+				return 1;
+			}
+			if (Fl::event_key()==FL_Page_Down) 
+			{	
+				handle_drag(clamp(round(value()-step()*10)));
+				return 1;
+			}*/
+			return 0;
+		case FL_FOCUS:
+			return 1;
+		case FL_UNFOCUS:
 			return 1;
 		default:
 			return 0;
