@@ -56,6 +56,9 @@ m_WriteHeadPos(0)
 	m_PluginInfo.PortTips.push_back("Delay CV");		
 	m_PluginInfo.PortTips.push_back("ReadHead CV");	
 	m_PluginInfo.PortTips.push_back("Output");
+	
+	m_AudioCH->Register("Delay",&m_Delay);
+	m_AudioCH->Register("Mix",&m_Mix);
 }
 
 DelayPlugin::~DelayPlugin()
@@ -71,11 +74,9 @@ PluginInfo &DelayPlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *DelayPlugin::CreateGUI()
 {
-	m_GUI = new DelayPluginGUI(m_PluginInfo.Width,
+	return new DelayPluginGUI(m_PluginInfo.Width,
 								  	    m_PluginInfo.Height,
-										this,m_HostInfo);
-	m_GUI->hide();
-	return m_GUI;
+										this,m_AudioCH,m_HostInfo);
 }
 
 void DelayPlugin::Execute()

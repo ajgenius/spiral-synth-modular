@@ -33,12 +33,9 @@
 class DistributorPluginGUI : public SpiralPluginGUI
 {
 public:
-	DistributorPluginGUI(int w, int h, DistributorPlugin *o,const HostInfo *Info);
-	
-	virtual void UpdateValues();
-	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }
-	
-	DistributorPlugin *m_Plugin;	
+	DistributorPluginGUI(int w, int h, DistributorPlugin *o,ChannelHandler *ch,const HostInfo *Info);
+	virtual void UpdateValues(SpiralPlugin *o);
+
 private:
 
 	//// Callbacks ////

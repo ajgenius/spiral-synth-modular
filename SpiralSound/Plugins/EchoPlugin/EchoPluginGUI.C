@@ -26,11 +26,9 @@ static const int GUIBG2_COLOUR = 145;
 
 ////////////////////////////////////////////
 
-EchoPluginGUI::EchoPluginGUI(int w, int h,EchoPlugin *o,const HostInfo *Info) :
-SpiralPluginGUI(w,h,o)
+EchoPluginGUI::EchoPluginGUI(int w, int h,EchoPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
+SpiralPluginGUI(w,h,o,ch)
 {	
-	m_Plugin=o;
-	
 	m_Delay = new Fl_Slider(15, 20, 20, 70, "Delay");
 	m_Delay->type(4);
 	m_Delay->selection_color(GUI_COLOUR);
@@ -79,14 +77,16 @@ SpiralPluginGUI(w,h,o)
 
 extern "C" int sprintf(char *,const char *,...);
 
-void EchoPluginGUI::UpdateValues()
+void EchoPluginGUI::UpdateValues(SpiralPlugin *o)
 {
-	m_Delay->value(1.0f-m_Plugin->GetDelay());
-	m_Feedback->value(1.1f-m_Plugin->GetFeedback());
+	EchoPlugin *Plugin = (EchoPlugin*)o;
+	
+	m_Delay->value(1.0f-Plugin->GetDelay());
+	m_Feedback->value(1.1f-Plugin->GetFeedback());
 	char str[10];
-	sprintf(str,"%5.3f s", m_Plugin->GetDelay());
+	sprintf(str,"%5.3f s", Plugin->GetDelay());
 	m_out_delay->value(str);
-	sprintf(str,"%5.1f %%", 100*m_Plugin->GetFeedback());
+	sprintf(str,"%5.1f %%", 100*Plugin->GetFeedback());
 	m_out_feedback->value(str);
 }
 
@@ -94,7 +94,7 @@ inline void EchoPluginGUI::cb_Delay_i(Fl_Slider* o, void* v)
 {
 char str[10]; 
 float value=1.0f-o->value();
-	m_Plugin->SetDelay(value);
+	m_GUICH->Set("Delay",value);
 	sprintf(str,"%5.3f s", value);
 	m_out_delay->value(str);
 }
@@ -105,7 +105,7 @@ void EchoPluginGUI::cb_Delay(Fl_Slider* o, void* v)
 inline void EchoPluginGUI::cb_Feedback_i(Fl_Slider* o, void* v) 
 {
 char str[10];  
-	m_Plugin->SetFeedback(1.1f-o->value()); 
+	m_GUICH->Set("Feedback",(float)(1.1f-o->value())); 
 	sprintf(str,"%5.1f %%", 100*(1.1f-o->value()));
 	m_out_feedback->value(str);
 }

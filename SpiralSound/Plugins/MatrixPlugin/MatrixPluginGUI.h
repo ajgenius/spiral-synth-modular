@@ -33,21 +33,19 @@
 #ifndef MatrixGUI
 #define MatrixGUI
 
-
 class MatrixPluginGUI : public SpiralPluginGUI
 {
 public:
-	MatrixPluginGUI(int w, int h, MatrixPlugin *o,const HostInfo *Info);
+	MatrixPluginGUI(int w, int h, MatrixPlugin *o,ChannelHandler *ch,const HostInfo *Info);
+	virtual void draw();
+	virtual void UpdateValues(SpiralPlugin *o);
 	
-	virtual void UpdateValues();
-	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }
-	
-	void SetLED(int n);
-	
-	MatrixPlugin *m_Plugin;	
 private:
 	
+	void UpdateMatrix();
+	
 	int Numbers[MATX*MATY];
+	Pattern m_GUIMatrix[NUM_PATTERNS];
 	
 	Fl_Button*  m_NoteCut;
 	Fl_Counter* m_Pattern;

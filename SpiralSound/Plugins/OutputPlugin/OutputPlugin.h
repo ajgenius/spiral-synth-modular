@@ -74,16 +74,13 @@ public:
 	virtual ~OutputPlugin();
 
 	virtual PluginInfo& Initialise(const HostInfo *Host);
-	virtual SpiralGUIType*   CreateGUI();
+	virtual SpiralGUIType*  CreateGUI();
 	virtual void 		Execute();
 	virtual void	    StreamOut(ostream &s) {}
 	virtual void	    StreamIn(istream &s)  {}
 	
-	// has to be defined in the plugin	
-	virtual void UpdateGUI() { Fl::check(); }
-	
-	void SetMode(Mode s) { m_Mode=s; }
-	
+	Mode GetMode() { return m_Mode; }
+		
 private:
 	static int m_RefCount;
 	static int m_NoExecuted;

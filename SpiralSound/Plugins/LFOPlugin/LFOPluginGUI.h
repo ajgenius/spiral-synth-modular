@@ -28,11 +28,10 @@
 
 class LFOPluginGUI : public SpiralPluginGUI {
    public:
-      LFOPluginGUI(int w, int h, LFOPlugin *o,const HostInfo *Info);
-      virtual void UpdateValues();
-      virtual SpiralPlugin* GetPlugin() { return m_Plugin; }
-      LFOPlugin *m_Plugin;
-   private:
+      LFOPluginGUI(int w, int h, LFOPlugin *o,ChannelHandler *ch,const HostInfo *Info);
+      virtual void UpdateValues(SpiralPlugin *o);
+	  
+    private:
       Fl_Check_Button* ShapeSine;
       Fl_Pixmap pixmap_Sine;
       Fl_Check_Button* ShapeTri;

@@ -36,12 +36,9 @@ static int Numbers[MAX_CHANNELS];
 class ControllerPluginGUI : public SpiralPluginGUI
 {
 public:
-	ControllerPluginGUI(int w, int h, ControllerPlugin *o,const HostInfo *Info);
+	ControllerPluginGUI(int w, int h, ControllerPlugin *o,ChannelHandler *ch,const HostInfo *Info);
 	
-	virtual void UpdateValues();
-	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }
-	
-	ControllerPlugin *m_Plugin;	
+	virtual void UpdateValues(SpiralPlugin *o);
 	
 	void StreamIn(istream &s);
 	void StreamOut(ostream &s);

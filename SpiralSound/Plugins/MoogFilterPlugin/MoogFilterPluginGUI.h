@@ -32,12 +32,9 @@
 class MoogFilterPluginGUI : public SpiralPluginGUI
 {
 public:
-	MoogFilterPluginGUI(int w, int h, MoogFilterPlugin *o,const HostInfo *Info);
+	MoogFilterPluginGUI(int w, int h, MoogFilterPlugin *o,ChannelHandler *ch,const HostInfo *Info);
 	
-	virtual void UpdateValues();
-	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }
-	
-	MoogFilterPlugin *m_Plugin;	
+	virtual void UpdateValues(SpiralPlugin *o);
 	
 private:
 	

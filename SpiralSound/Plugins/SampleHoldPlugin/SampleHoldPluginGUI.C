@@ -26,16 +26,15 @@ static const int GUIBG2_COLOUR = 145;
 
 ////////////////////////////////////////////
 
-SampleHoldPluginGUI::SampleHoldPluginGUI(int w, int h,SampleHoldPlugin *o,const HostInfo *Info) :
-SpiralPluginGUI(w,h,o)
+SampleHoldPluginGUI::SampleHoldPluginGUI(int w, int h,SampleHoldPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
+SpiralPluginGUI(w,h,o,ch)
 {	
-	m_Plugin=o;
 	end();
 }
 
 
 
-void SampleHoldPluginGUI::UpdateValues()
+void SampleHoldPluginGUI::UpdateValues(SpiralPlugin *o)
 {
 }
 	

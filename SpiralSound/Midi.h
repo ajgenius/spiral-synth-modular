@@ -30,7 +30,7 @@
 
 using namespace std;
 
-#define KEYBOARD_SUPPORT
+//#define KEYBOARD_SUPPORT
 
 
 class MidiEvent

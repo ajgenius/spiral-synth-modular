@@ -57,6 +57,8 @@ m_Mix(0.5f)
 	m_PluginInfo.PortTips.push_back("B Right");	
 	m_PluginInfo.PortTips.push_back("Left");	
 	m_PluginInfo.PortTips.push_back("Right");	
+	
+	m_AudioCH->Register("Mix",&m_Mix);
 }
 
 XFadePlugin::~XFadePlugin()
@@ -70,11 +72,9 @@ PluginInfo &XFadePlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *XFadePlugin::CreateGUI()
 {
-	m_GUI = new XFadePluginGUI(m_PluginInfo.Width,
+	return new XFadePluginGUI(m_PluginInfo.Width,
 							 m_PluginInfo.Height,
-							 this,m_HostInfo);
-	m_GUI->hide();
-	return m_GUI;
+							 this,m_AudioCH,m_HostInfo);
 }
 
 void XFadePlugin::Execute()

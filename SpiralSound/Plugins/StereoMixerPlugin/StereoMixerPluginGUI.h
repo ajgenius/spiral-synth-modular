@@ -32,12 +32,9 @@
 class StereoMixerPluginGUI : public SpiralPluginGUI
 {
 public:
-	StereoMixerPluginGUI(int w, int h, StereoMixerPlugin *o,const HostInfo *Info);
+	StereoMixerPluginGUI(int w, int h, StereoMixerPlugin *o,ChannelHandler *ch,const HostInfo *Info);
+	virtual void UpdateValues(SpiralPlugin *o);
 	
-	virtual void UpdateValues();
-	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }
-	
-	StereoMixerPlugin *m_Plugin;	
 private:
 	
 	int Numbers[NUM_CHANNELS];

@@ -33,12 +33,9 @@
 class OutputPluginGUI : public SpiralPluginGUI
 {
 public:
-	OutputPluginGUI(int w, int h, OutputPlugin *o,const HostInfo *Info);
+	OutputPluginGUI(int w, int h, SpiralPlugin *o, ChannelHandler *ch, const HostInfo *Info);
 	
-	virtual void UpdateValues();
-	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }
-	
-	OutputPlugin *m_Plugin;
+	virtual void UpdateValues(SpiralPlugin *o);
 		
 private:
 

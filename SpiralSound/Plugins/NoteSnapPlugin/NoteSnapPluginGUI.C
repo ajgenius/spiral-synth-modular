@@ -26,16 +26,15 @@ static const int GUIBG2_COLOUR = 145;
 
 ////////////////////////////////////////////
 
-NoteSnapPluginGUI::NoteSnapPluginGUI(int w, int h,NoteSnapPlugin *o,const HostInfo *Info) :
-SpiralPluginGUI(w,h,o)
+NoteSnapPluginGUI::NoteSnapPluginGUI(int w, int h,NoteSnapPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
+SpiralPluginGUI(w,h,o,ch)
 {	
-	m_Plugin=o;
 	end();
 }
 
 
 
-void NoteSnapPluginGUI::UpdateValues()
+void NoteSnapPluginGUI::UpdateValues(SpiralPlugin *o)
 {
 }
 	

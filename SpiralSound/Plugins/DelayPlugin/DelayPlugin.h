@@ -34,13 +34,7 @@ public:
 	virtual void StreamOut(ostream &s);
 	virtual void StreamIn(istream &s);
 	
-	// has to be defined in the plugin	
-	virtual void UpdateGUI() { Fl::check(); }
-		
-    
-	void SetDelay(float s)    { m_Delay=s;    }
-	void SetMix(float s) { m_Mix=s; }
-	float GetDelay()    { return m_Delay;    }
+   	float GetDelay()    { return m_Delay;    }
 	float GetMix() { return m_Mix; }
 	
 	void Randomise();

@@ -23,6 +23,7 @@
 #define PoshSamplerPLUGIN
 
 static const int NUM_SAMPLES = 8;
+static const int TRANSBUF_SIZE = 0x10000;
 
 struct SampleDesc
 {
@@ -53,39 +54,61 @@ public:
 	virtual PluginInfo &Initialise(const HostInfo *Host);
 	virtual SpiralGUIType *CreateGUI();
 	virtual void Execute();
+	virtual void ExecuteCommands();
 	virtual void StreamOut(ostream &s);
 	virtual void StreamIn(istream &s);
 	
 	virtual bool	    SaveExternalFiles(const string &Dir);
 	virtual void	    LoadExternalFiles(const string &Dir);
 	
+	enum GUICommands{NONE,LOAD,SAVE,SETVOL,SETPITCH,SETLOOP,SETPING,SETNOTE,SETOCT,
+					SETPLAYPOINTS,SETREC,CUT,COPY,PASTE,CROP,MIX,REV,AMP,SETCURRENT,
+					GETSAMPLE};
+					
+	struct GUIArgs
+	{
+		int Num;
+		float Value;
+		bool Boole;
+		int Int;
+		long Start;
+		long End;
+		long LoopStart;
+		char Name[256];
+	};
+	
 	void LoadSample(int n, const string &Name);
 	void SaveSample(int n, const string &Name);
 	Sample* GetSample(int n)  { return m_SampleVec[n]; }
 	
-	void  SetVolume(int n, float s) { m_SampleDescVec[n]->Volume=s; }
 	float GetVolume(int n)          { return m_SampleDescVec[n]->Volume; }
-	void  SetPitch(int n, float s)  { m_SampleDescVec[n]->PitchMod=s; }
 	float GetPitch(int n)           { return m_SampleDescVec[n]->PitchMod; }
-	void  SetLoop(int n, bool s)    { m_SampleDescVec[n]->Loop=s; }
 	bool  GetLoop(int n)            { return m_SampleDescVec[n]->Loop; }
-	void  SetPingPong(int n, bool s){ m_SampleDescVec[n]->PingPong=s; }
 	bool  GetPingPong(int n)        { return m_SampleDescVec[n]->PingPong; }
-	void  SetNote(int n, int s)     { m_SampleDescVec[n]->Note=s; }
 	int   GetNote(int n)            { return m_SampleDescVec[n]->Note; }
-	void  SetOctave(int n, int s)   { m_SampleDescVec[n]->Octave=s-6; }
 	int   GetOctave(int n)          { return m_SampleDescVec[n]->Octave+6; }
-	//void  SetSampleNum(int n, int s){ m_SampleDescVec[n]->Note=s; }
-	//int   GetSampleNum(int n)       { return m_SampleDescVec[n]->Note; }
 	
-	void SetPlayStart(int n, long s) { m_SampleDescVec[n]->PlayStart=s; }
 	long GetPlayStart(int n)         { return m_SampleDescVec[n]->PlayStart; }
-	void SetLoopStart(int n, long s) { m_SampleDescVec[n]->LoopStart=s; }
 	long GetLoopStart(int n)         { return m_SampleDescVec[n]->LoopStart; }
-	void SetLoopEnd(int n, long s)   { m_SampleDescVec[n]->LoopEnd=s; }
 	long GetLoopEnd(int n)           { return m_SampleDescVec[n]->LoopEnd; }
+				
+	vector<Sample*> m_SampleVec;
+	vector<SampleDesc*> m_SampleDescVec;
+			
+private:
+
+	void  SetVolume(int n, float s) { m_SampleDescVec[n]->Volume=s; }
+	void  SetPitch(int n, float s)  { m_SampleDescVec[n]->PitchMod=s; }
+	void  SetLoop(int n, bool s)    { m_SampleDescVec[n]->Loop=s; }
+	void  SetPingPong(int n, bool s){ m_SampleDescVec[n]->PingPong=s; }
+	void  SetNote(int n, int s)     { m_SampleDescVec[n]->Note=s; }
+	void  SetOctave(int n, int s)   { m_SampleDescVec[n]->Octave=s-6; }
+
+	void SetPlayStart(int n, long s) { m_SampleDescVec[n]->PlayStart=s; }
+	void SetLoopStart(int n, long s) { m_SampleDescVec[n]->LoopStart=s; }
+	void SetLoopEnd(int n, long s)   { m_SampleDescVec[n]->LoopEnd=s; }
 	void SetRecord(bool s)    		 { m_Recording=s; }
-		
+	
 	void  Cut(int n, long s, long e);
 	void  Copy(int n, long s, long e);
 	void  Paste(int n, long s, long e);
@@ -93,13 +116,18 @@ public:
 	void  Crop(int n, long s, long e);
 	void  Reverse(int n, long s, long e);
 	void  Amp(int n, long s, long e);
-		
-	vector<Sample*> m_SampleVec;
-	vector<SampleDesc*> m_SampleDescVec;
-			
-private:
+	
+	int m_Current;
+
+	GUIArgs m_GUIArgs;
+
 	Sample m_CopyBuffer;
 	bool   m_Recording;
+	
+	char  m_SampleBuffer[TRANSBUF_SIZE];
+	long  m_SampleSize;
+	
+	long  m_CurrentPlayPos;
 };
 
 #endif

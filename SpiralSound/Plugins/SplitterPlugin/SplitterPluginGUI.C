@@ -26,16 +26,15 @@ static const int GUIBG2_COLOUR = 145;
 
 ////////////////////////////////////////////
 
-SplitterPluginGUI::SplitterPluginGUI(int w, int h,SplitterPlugin *o,const HostInfo *Info) :
-SpiralPluginGUI(w,h,o)
+SplitterPluginGUI::SplitterPluginGUI(int w, int h,SplitterPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
+SpiralPluginGUI(w,h,o,ch)
 {	
-	m_Plugin=o;
 	end();
 }
 
 
 
-void SplitterPluginGUI::UpdateValues()
+void SplitterPluginGUI::UpdateValues(SpiralPlugin *o)
 {
 }
 	

@@ -43,6 +43,7 @@ mandir = @mandir@
 
 HEADERS =	../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
+		../../ChannelHandler.h \
 		../Widgets/Fl_Knob.H \
 		../Widgets/Fl_DragBar.H \
 		../Widgets/Fl_LED_Button.H \
@@ -51,6 +52,7 @@ HEADERS =	../SpiralPlugin.h \
 		MatrixPluginGUI.h
 SOURCES =	../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
+		../../ChannelHandler.C \
 		../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_DragBar.cxx \
 		../Widgets/Fl_LED_Button.cxx \
@@ -59,6 +61,7 @@ SOURCES =	../SpiralPlugin.C \
 		MatrixPluginGUI.C
 OBJECTS =	../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
+		../../ChannelHandler.o \
 		../Widgets/Fl_Knob.o \
 		../Widgets/Fl_DragBar.o \
 		../Widgets/Fl_LED_Button.o \
@@ -174,3 +177,5 @@ MatrixPluginGUI.o: MatrixPluginGUI.C \
 		../Widgets/Fl_Knob.H \
 		../Widgets/Fl_LED_Button.H
 
+../../ChannelHandler.o: ../../ChannelHandler.C \
+		../../ChannelHandler.h

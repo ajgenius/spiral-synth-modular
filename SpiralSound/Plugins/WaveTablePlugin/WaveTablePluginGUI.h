@@ -32,13 +32,10 @@
 class WaveTablePluginGUI : public SpiralPluginGUI
 {
 public:
-	WaveTablePluginGUI(int w, int h, WaveTablePlugin *o,const HostInfo *Info);
+	WaveTablePluginGUI(int w, int h, SpiralPlugin *o, ChannelHandler *ch, const HostInfo *Info);
 	
-	virtual void UpdateValues();
-	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }
-	
-	WaveTablePlugin *m_Plugin;
-		
+	virtual void UpdateValues(SpiralPlugin* o);
+			
 private:
 
 	Fl_Check_Button *ShapeSquare;

@@ -32,12 +32,9 @@
 class FilterPluginGUI : public SpiralPluginGUI
 {
 public:
-	FilterPluginGUI(int w, int h, FilterPlugin *o,const HostInfo *Info);
+	FilterPluginGUI(int w, int h, FilterPlugin *o,ChannelHandler *ch,const HostInfo *Info);
 	
-	virtual void UpdateValues();
-	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }
-	
-	FilterPlugin *m_Plugin;	
+	virtual void UpdateValues(SpiralPlugin *o);
 	
 private:
 	

@@ -71,6 +71,9 @@ t2(0.0f)
 	m_PluginInfo.PortTips.push_back("LowPass output");
 	m_PluginInfo.PortTips.push_back("BandPass output");
 	m_PluginInfo.PortTips.push_back("HighPass output");
+	
+	m_AudioCH->Register("Cutoff",&Cutoff);
+	m_AudioCH->Register("Resonance",&Resonance);
 }
 
 MoogFilterPlugin::~MoogFilterPlugin()
@@ -86,11 +89,9 @@ PluginInfo &MoogFilterPlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *MoogFilterPlugin::CreateGUI()
 {
-	m_GUI = new MoogFilterPluginGUI(m_PluginInfo.Width,
+	return new MoogFilterPluginGUI(m_PluginInfo.Width,
 								  	    m_PluginInfo.Height,
-										this,m_HostInfo);
-	m_GUI->hide();
-	return m_GUI;
+										this,m_AudioCH,m_HostInfo);
 }
 
 void MoogFilterPlugin::Execute()

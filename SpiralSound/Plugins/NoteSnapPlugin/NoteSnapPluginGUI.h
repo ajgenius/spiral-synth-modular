@@ -33,12 +33,10 @@
 class NoteSnapPluginGUI : public SpiralPluginGUI
 {
 public:
-	NoteSnapPluginGUI(int w, int h, NoteSnapPlugin *o,const HostInfo *Info);
+	NoteSnapPluginGUI(int w, int h, NoteSnapPlugin *o,ChannelHandler *ch,const HostInfo *Info);
 	
-	virtual void UpdateValues();
-	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }
+	virtual void UpdateValues(SpiralPlugin *o);
 	
-	NoteSnapPlugin *m_Plugin;	
 private:
 
 	//// Callbacks ////

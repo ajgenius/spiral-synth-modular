@@ -25,97 +25,30 @@
 #include <math.h>
 #include <dlfcn.h>
 #include <vector>
-#include <algorithm>
 #include "utils.h"
 
 static const int GUI_COLOUR = 179;
 static const int GUIBG_COLOUR = 144;
 static const int GUIBG2_COLOUR = 145;
 
-////////////////////////////////////////////
-
-/* FIXME: No matter what, I can't let this as it!! */
-static LADSPAPluginGUI * lg = NULL;
-
-void describePluginLibrary(const char * pcFullFilename, void * pvPluginHandle,
-					    LADSPA_Descriptor_Function pfDescriptorFunction) {
-	const LADSPA_Descriptor * psDescriptor;
-	long lIndex;
-	unsigned long lPluginIndex;
-	unsigned long lPortIndex;
-	unsigned long lLength;
-	LADSPA_PortRangeHintDescriptor iHintDescriptor;
-	LADSPA_Data fBound;
-
-#define testcond(c,s) { \
-  if (!(c)) { \
-    cerr << (s); \
-    failure = 1; \
-  } \
-}
-	for (lIndex = 0; (psDescriptor = pfDescriptorFunction(lIndex)) != NULL; lIndex++) {
-		int failure = 0;
-    		testcond(!LADSPA_IS_REALTIME(psDescriptor->Properties), "ERROR: PLUGIN MUST RUN REAL TIME.\n");
-    		testcond(psDescriptor->instantiate, "ERROR: PLUGIN HAS NO INSTANTIATE FUNCTION.\n");
-    		testcond(psDescriptor->connect_port, "ERROR: PLUGIN HAS NO CONNECT_PORT FUNCTION.\n");
-		testcond(psDescriptor->run, "ERROR: PLUGIN HAS NO RUN FUNCTION.\n");
-		testcond(!(psDescriptor->run_adding != 0 && psDescriptor->set_run_adding_gain == 0),
-			    "ERROR: PLUGIN HAS RUN_ADDING FUNCTION BUT NOT SET_RUN_ADDING_GAIN.\n");
-		testcond(!(psDescriptor->run_adding == 0 && psDescriptor->set_run_adding_gain != 0),
-    			    "ERROR: PLUGIN HAS SET_RUN_ADDING_GAIN FUNCTION BUT NOT RUN_ADDING.\n");
-    		testcond(psDescriptor->cleanup, "ERROR: PLUGIN HAS NO CLEANUP FUNCTION.\n");
-    		testcond(!LADSPA_IS_INPLACE_BROKEN(psDescriptor->Properties),
-			    "ERROR: THIS PLUGIN CANNOT USE IN-PLACE PROCESSING.\n");
-    		testcond(psDescriptor->PortCount, "ERROR: PLUGIN HAS NO PORTS.\n");
-
-		if (!failure) {
-			LPluginInfo pi;
-			pi.Filename = pcFullFilename;
-			pi.Label = psDescriptor->Label;
-			pi.Name = psDescriptor->Name;
-			/* ARGH! I really can't stand this ugly hack */
-			lg->PluginList.push_back(pi);
-		} else {
-			cerr << "Plugin ignored...\n\n";
-		}
-	}
-
-	dlclose(pvPluginHandle);
-}
-
-void LADSPAPluginGUI::refreshPluginList(void)
+LADSPAPluginGUI::LADSPAPluginGUI(int w, int h,LADSPAPlugin *o, ChannelHandler *ch,const HostInfo *Info, const vector<LPluginInfo> &PVec) :
+SpiralPluginGUI(w,h,o,ch)
 {
-	PluginList.clear();
-	CurrentPlugin.Name = "";
-	CurrentPlugin.Filename = "";
-	CurrentPlugin.Label = "";
-
-	lg = this;
-	LADSPAPluginSearch(describePluginLibrary);
-	lg = NULL;
-
-	m_Browser->clear();
-
-	sort(PluginList.begin(), PluginList.end(), LPluginInfoSortAsc());
-
-	for (vector<LPluginInfo>::iterator i = PluginList.begin(); i != PluginList.end(); i++)
-	{
-	   	m_Browser->add((*i).Name.c_str());
-	}
-}
-
-LADSPAPluginGUI::LADSPAPluginGUI(int w, int h,LADSPAPlugin *o,const HostInfo *Info) :
-SpiralPluginGUI(w,h,o)
-{
+	PluginList=PVec;
+	
 	m_Filename="None";
-
-	m_Plugin=o;
 
 	int Width=20;
 	int Height=100;
 
 	m_Browser= new Fl_Hold_Browser(5,20,290,260,"LADSPA Plugins");
 	m_Browser->callback((Fl_Callback*)cb_Select);
+	
+	for (vector<LPluginInfo>::iterator i=PluginList.begin();
+		 i!=PluginList.end(); i++)
+	{
+		m_Browser->add((*i).Name.c_str());
+	}
 
 	m_InputScroll = new Fl_Scroll(300,80,290,150,"  Value   Min    Max   Clamp?");
 	m_InputScroll->align(FL_ALIGN_TOP_LEFT);
@@ -164,10 +97,6 @@ SpiralPluginGUI(w,h,o)
 	m_PowerAmp->type(1);
 	m_PowerAmp->callback((Fl_Callback*)cb_PowerAmp);
 	add(m_PowerAmp);
-	
-	inited = 0;
-	refreshPluginList();	
-	inited = 1;
 	
 	end();
 }
@@ -280,21 +209,24 @@ void LADSPAPluginGUI::AddPortInfo(const char *Info)
 }
 
 
-void LADSPAPluginGUI::UpdateValues()
+void LADSPAPluginGUI::UpdateValues(SpiralPlugin *o)
 {
-	m_OutputGain->value(m_Plugin->GetGain());
+	LADSPAPlugin* Plugin = (LADSPAPlugin*)o;
+	m_OutputGain->value(Plugin->GetGain());
 }
 
 inline void LADSPAPluginGUI::cb_Gain_i(Fl_Knob* o, void* v) 
-{ m_Plugin->SetGain(o->value()); }
+{ m_GUICH->Set("Gain",(float)(o->value())); }
 void LADSPAPluginGUI::cb_Gain(Fl_Knob* o, void* v) 
 { ((LADSPAPluginGUI*)(o->parent()))->cb_Gain_i(o,v); }
 
 inline void LADSPAPluginGUI::cb_Select_i(Fl_Hold_Browser* o) 
 {	
 	m_Filename=PluginList[o->value()-1].Filename;
-	m_Label=PluginList[o->value()-1].Label;	
-	m_Plugin->UpdatePlugin(m_Filename.c_str(), m_Label.c_str());
+	m_Label=PluginList[o->value()-1].Label;
+	
+	m_GUICH->Set("Num",o->value()-1);	
+	m_GUICH->SetCommand(LADSPAPlugin::UPDATEPLUGIN);
 }
 void LADSPAPluginGUI::cb_Select(Fl_Hold_Browser* o) 
 { ((LADSPAPluginGUI*)(o->parent()))->cb_Select_i(o);}
@@ -305,21 +237,21 @@ inline void LADSPAPluginGUI::cb_MinMax_i(Fl_Button* o, void* v)
 	for (vector<Fl_Input*>::iterator i=m_PortMin.begin();
 		 i!=m_PortMin.end(); i++)	
 	{
-		m_Plugin->SetMin(n,atof((*i)->value()));
+		m_GUICH->Set("Min",(float)(n,atof((*i)->value())));
 		n++;
 	}
 	n=0;
 	for (vector<Fl_Input*>::iterator i=m_PortMax.begin();
 		 i!=m_PortMax.end(); i++)	
 	{
-		m_Plugin->SetMax(n,atof((*i)->value()));
+		m_GUICH->Set("Max",(n,atof((*i)->value())));
 		n++;
 	}
 	n=0;
 	for (vector<Fl_Check_Button*>::iterator i=m_PortClamp.begin();
 		 i!=m_PortClamp.end(); i++)
 	{
-		m_Plugin->SetPortClamp(n,(*i)->value());
+		m_GUICH->Set("Clamp",(bool)(n,(*i)->value()));
 		n++;
 	}
 }
@@ -328,7 +260,7 @@ void LADSPAPluginGUI::cb_MinMax(Fl_Button* o, void* v)
 
 inline void LADSPAPluginGUI::cb_PowerAmp_i(Fl_Button* o, void* v) 
 {	
-	m_Plugin->SetAmped(o->value());
+	m_GUICH->Set("Amped",(bool)(o->value()));
 }
 void LADSPAPluginGUI::cb_PowerAmp(Fl_Button* o, void* v) 
 { ((LADSPAPluginGUI*)(o->parent()))->cb_PowerAmp_i(o,v);}

@@ -51,6 +51,8 @@ m_Amount(1.0f)
 	m_PluginInfo.PortTips.push_back("Input 1");	
 	m_PluginInfo.PortTips.push_back("Input 2");	
 	m_PluginInfo.PortTips.push_back("Output");	
+	
+	m_AudioCH->Register("Amount",&m_Amount);
 }
 
 RingModPlugin::~RingModPlugin()
@@ -64,11 +66,9 @@ PluginInfo &RingModPlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *RingModPlugin::CreateGUI()
 {
-	m_GUI = new RingModPluginGUI(m_PluginInfo.Width,
+	return new RingModPluginGUI(m_PluginInfo.Width,
 								  	    m_PluginInfo.Height,
-										this,m_HostInfo);
-	m_GUI->hide();
-	return m_GUI;
+										this,m_AudioCH,m_HostInfo);
 }
 
 void RingModPlugin::Execute()

@@ -101,6 +101,18 @@ m_CopyPattern(0)
 		
 		m_TriggerLevel[n]=0;
 	}
+	
+	m_AudioCH->Register("NoteCut",&m_NoteCut,ChannelHandler::INPUT);
+	m_AudioCH->Register("Current",&m_Current,ChannelHandler::INPUT);
+	m_AudioCH->Register("StepTime",&m_StepTime,ChannelHandler::INPUT);
+	m_AudioCH->Register("Num",&m_GUIArgs.Num,ChannelHandler::INPUT);
+	m_AudioCH->Register("Length",&m_GUIArgs.Length,ChannelHandler::INPUT);
+	m_AudioCH->Register("Speed",&m_GUIArgs.Speed,ChannelHandler::INPUT);
+	m_AudioCH->Register("X",&m_GUIArgs.X,ChannelHandler::INPUT);
+	m_AudioCH->Register("Y",&m_GUIArgs.Y,ChannelHandler::INPUT);
+	m_AudioCH->Register("Octave",&m_GUIArgs.Octave,ChannelHandler::INPUT);
+	m_AudioCH->Register("Step",&m_Step,ChannelHandler::OUTPUT);
+	m_AudioCH->RegisterData("Matrix",ChannelHandler::OUTPUT_REQUEST,&m_Matrix,sizeof(m_Matrix));
 }
 
 MatrixPlugin::~MatrixPlugin()
@@ -116,11 +128,9 @@ PluginInfo &MatrixPlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *MatrixPlugin::CreateGUI()
 {
-	m_GUI = new MatrixPluginGUI(m_PluginInfo.Width,
+	return new MatrixPluginGUI(m_PluginInfo.Width,
 								  	    m_PluginInfo.Height,
-										this,m_HostInfo);
-	m_GUI->hide();
-	return m_GUI;
+										this,m_AudioCH,m_HostInfo);
 }
 
 void MatrixPlugin::Execute()
@@ -157,7 +167,7 @@ void MatrixPlugin::Execute()
 				// make it so the next note to trigger
 				// will be the first one
 				
-				if (m_GUI) ((MatrixPluginGUI*)m_GUI)->UpdateValues();
+				//if (m_GUI) ((MatrixPluginGUI*)m_GUI)->UpdateValues();
 								
 				m_Time=m_StepTime*(1/m_Matrix[m_Current].Speed);
 				m_Step=-1;
@@ -206,7 +216,7 @@ void MatrixPlugin::Execute()
 			
 			if (m_Step >= m_Matrix[m_Current].Length) m_Step=0;
 			
-			if (m_GUI) ((MatrixPluginGUI*)m_GUI)->SetLED(m_Step);
+			//if (m_GUI) ((MatrixPluginGUI*)m_GUI)->SetLED(m_Step);
 			
 			// Reset the values
 			m_CurrentTriggerCV=0;
@@ -236,10 +246,52 @@ void MatrixPlugin::Execute()
 		}		
 	}
 }
-void MatrixPlugin::PastePattern() {
-cerr<<hex<<this<<dec<<endl;
-cerr<<m_CopyPattern<<endl;
 
+void MatrixPlugin::ExecuteCommands()
+{
+	if (m_AudioCH->IsCommandWaiting())
+	{
+		switch (m_AudioCH->GetCommand())
+		{
+			case MAT_LENGTH   :
+				cerr<<m_GUIArgs.Length<<endl;
+				m_Matrix[m_Current].Length=m_GUIArgs.Length; 
+			break;
+			
+			case MAT_SPEED    : 
+				m_Matrix[m_Current].Speed=m_GUIArgs.Speed; 
+			break;		
+			
+			case MAT_ACTIVATE : 
+				m_Matrix[m_Current].Matrix[m_GUIArgs.X][m_GUIArgs.Y]=true; 
+			break;		
+			
+			case MAT_DEACTIVATE : 
+				m_Matrix[m_Current].Matrix[m_GUIArgs.X][m_GUIArgs.Y]=false; 
+			break;
+			case MAT_OCTAVE : 
+				m_Matrix[m_Current].Octave=m_GUIArgs.Octave; 
+			break;
+			case COPY : 
+				CopyPattern(); 
+			break;
+			case PASTE : 
+				PastePattern(); 
+			break;
+			case CLEAR : 
+				ClearPattern(); 
+			break;
+			case TUP : 
+				if (CanTransposeUp()) TransposeUp(); 
+			break;
+			case TDOWN : 
+				if (CanTransposeDown()) TransposeDown(); 
+			break;
+		}
+	}
+}
+
+void MatrixPlugin::PastePattern() {
      m_Matrix[m_Current].Length = m_Matrix[m_CopyPattern].Length;
      m_Matrix[m_Current].Speed = m_Matrix[m_CopyPattern].Speed;
      m_Matrix[m_Current].Octave = m_Matrix[m_CopyPattern].Octave;

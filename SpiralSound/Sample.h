@@ -44,7 +44,7 @@ public:
 	
 	Sample(int Len=0);
 	Sample(const Sample &rhs);
-	Sample(float *S, int Len);
+	Sample(const float *S, int Len);
 	~Sample();
 
 	bool Allocate(int Size);

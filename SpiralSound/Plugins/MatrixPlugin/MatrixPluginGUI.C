@@ -27,10 +27,9 @@ static const int GUIBG2_COLOUR = 145;
 
 ////////////////////////////////////////////
 
-MatrixPluginGUI::MatrixPluginGUI(int w, int h,MatrixPlugin *o,const HostInfo *Info) :
-SpiralPluginGUI(w,h,o)
+MatrixPluginGUI::MatrixPluginGUI(int w, int h,MatrixPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
+SpiralPluginGUI(w,h,o,ch)
 {	
-	m_Plugin=o;
 	//size_range(10,10);
 	m_NoteCut = new Fl_Button (5, h-30, 85, 20,"NoteCut");
 	m_NoteCut->type(1);
@@ -142,25 +141,39 @@ SpiralPluginGUI(w,h,o)
 	end();
 }
 
-void MatrixPluginGUI::UpdateValues()
+void MatrixPluginGUI::draw()
+{	
+	SpiralPluginGUI::draw();
+	
+	for(int x=0; x<MATX; x++)
+	{
+		m_Flash[x]->value(0);
+	}
+
+	m_Flash[m_GUICH->GetInt("Step")]->value(1);
+}
+
+void MatrixPluginGUI::UpdateValues(SpiralPlugin *o)
 {
-	m_Pattern->value(m_Plugin->GetCurrent());
-	m_Length->value(m_Plugin->GetPattern()->Length);
-	m_Speed->value(m_Plugin->GetPattern()->Speed);
+	MatrixPlugin *Plugin = (MatrixPlugin*)o;
+	
+	m_Pattern->value(Plugin->GetCurrent());
+	m_Length->value(Plugin->GetPattern()->Length);
+	m_Speed->value(Plugin->GetPattern()->Speed);
 	m_SpeedVal->value((int)m_Speed->value());
-	m_Octave->value(m_Plugin->GetPattern()->Octave);
+	m_Octave->value(Plugin->GetPattern()->Octave);
 	
 	for(int x=0; x<MATX; x++)
 	for(int y=0; y<MATY; y++)
 	{
-		m_Matrix[x][y]->value(m_Plugin->GetPattern()->Matrix[x][y]);
+		m_Matrix[x][y]->value(Plugin->GetPattern()->Matrix[x][y]);
 	}        
 	
-	if (m_Plugin->CanTransposeUp()) m_TransUpBtn->activate(); else m_TransUpBtn->deactivate();
-    if (m_Plugin->CanTransposeDown()) m_TransDnBtn->activate(); else m_TransDnBtn->deactivate();
+	//if (Plugin->CanTransposeUp()) m_TransUpBtn->activate(); else m_TransUpBtn->deactivate();
+    //if (Plugin->CanTransposeDown()) m_TransDnBtn->activate(); else m_TransDnBtn->deactivate();
 }
 	
-void MatrixPluginGUI::SetLED(int n) 
+/*void MatrixPluginGUI::SetLED(int n) 
 { 
 	for (int i=0; i<MATX; i++) 
 	{
@@ -168,20 +181,35 @@ void MatrixPluginGUI::SetLED(int n)
 	}
 	
 	m_Flash[n]->value(true); 
+}*/
+	
+void MatrixPluginGUI::UpdateMatrix()
+{
+	m_GUICH->RequestChannelAndWait("Matrix");
+	m_GUICH->GetData("Matrix",(void*)m_GUIMatrix);
+	
+	for(int x=0; x<MATX; x++)
+	for(int y=0; y<MATY; y++)
+	{
+		m_Matrix[x][y]->value(m_GUIMatrix[(int)m_Pattern->value()].Matrix[x][y]);
+	}        
+
 }
-	
-	
+
 inline void MatrixPluginGUI::cb_NoteCut_i(Fl_Button* o, void* v)
 { 
-	m_Plugin->SetNoteCut(o->value());
+	m_GUICH->Set("NoteCut",o->value());
 }
 void MatrixPluginGUI::cb_NoteCut(Fl_Button* o, void* v)
 { ((MatrixPluginGUI*)(o->parent()))->cb_NoteCut_i(o,v);}
 
 inline void  MatrixPluginGUI::cb_Matrix_i(Fl_Button* o, void* v)
 { 
-	m_Plugin->GetPattern()->Matrix[*(int*)v/MATY][*(int*)v%MATY]=o->value();
-	UpdateValues();
+	m_GUICH->Set("X",*(int*)v/MATY);
+	m_GUICH->Set("Y",*(int*)v%MATY);
+
+	if (o->value())	m_GUICH->SetCommand(MatrixPlugin::MAT_ACTIVATE);
+	else m_GUICH->SetCommand(MatrixPlugin::MAT_DEACTIVATE);
 }
 void  MatrixPluginGUI::cb_Matrix(Fl_Button* o, void* v)
 { ((MatrixPluginGUI*)(o->parent()))->cb_Matrix_i(o,v);}
@@ -190,8 +218,8 @@ inline void MatrixPluginGUI::cb_Pattern_i(Fl_Counter* o, void* v)
 { 	
 	if (o->value()<0) o->value(0);
 	if (o->value()>NUM_PATTERNS-1) o->value(NUM_PATTERNS-1);
-	m_Plugin->SetCurrent((int)o->value());
-	UpdateValues();
+	m_GUICH->Set("Current",(int)o->value());
+	UpdateMatrix();
 }
 void MatrixPluginGUI::cb_Pattern(Fl_Counter* o, void* v)
 { ((MatrixPluginGUI*)(o->parent()))->cb_Pattern_i(o,v);}
@@ -200,7 +228,13 @@ inline void MatrixPluginGUI::cb_Length_i(Fl_Counter* o, void* v)
 {
 	if (o->value()<1) o->value(1);
 	if (o->value()>64) o->value(64);
- 	m_Plugin->GetPattern()->Length=(int)o->value();
+ 	//m_GUICH->GetPattern()->Length=(int)o->value();
+	
+	cerr<<(int)o->value()<<endl;
+	
+	m_GUICH->Set("Length",(int)o->value());
+	m_GUICH->SetCommand(MatrixPlugin::MAT_LENGTH);
+
 }
 void MatrixPluginGUI::cb_Length(Fl_Counter* o, void* v)
 { ((MatrixPluginGUI*)(o->parent()))->cb_Length_i(o,v);}
@@ -209,8 +243,10 @@ inline void MatrixPluginGUI::cb_Speed_i(Fl_Knob* o, void* v)
 { 	
 	// Round off value, but it should be a float for tweaking
 	float value=o->value()+((int)o->value()-o->value());
-	m_Plugin->GetPattern()->Speed=o->value();
 	m_SpeedVal->value(value);
+		
+	m_GUICH->Set("Speed",(float)value);
+	m_GUICH->SetCommand(MatrixPlugin::MAT_SPEED);
 }
 void MatrixPluginGUI::cb_Speed(Fl_Knob* o, void* v)
 { ((MatrixPluginGUI*)(o->parent()))->cb_Speed_i(o,v);}
@@ -218,16 +254,17 @@ void MatrixPluginGUI::cb_Speed(Fl_Knob* o, void* v)
 inline void MatrixPluginGUI::cb_Octave_i(Fl_Counter* o, void* v)
 {
 	if (o->value()<0) o->value(0);
-	if (o->value()>6) o->value(6);
-	m_Plugin->GetPattern()->Octave=(int)o->value();
+	if (o->value()>6) o->value(6);	
+	
+	m_GUICH->Set("Octave",(int)o->value());
+	m_GUICH->SetCommand(MatrixPlugin::MAT_OCTAVE);
 }
 void MatrixPluginGUI::cb_Octave(Fl_Counter* o, void* v)
 { ((MatrixPluginGUI*)(o->parent()))->cb_Octave_i(o,v);}
 
 inline void MatrixPluginGUI::cb_SpeedVal_i (Fl_Counter* o, void* v) 
 {
-       m_Speed->value (o->value());
-       m_Plugin->GetPattern()->Speed = (float)o->value() * 0.1;
+       m_Speed->value(o->value());
 }
 
 void MatrixPluginGUI::cb_SpeedVal (Fl_Counter* o, void* v) 
@@ -238,7 +275,7 @@ void MatrixPluginGUI::cb_SpeedVal (Fl_Counter* o, void* v)
 inline void MatrixPluginGUI::cb_CopyBtn_i (Fl_Button* o, void* v) 
 {
        m_PasteBtn->activate();
-       m_Plugin->CopyPattern();
+	   m_GUICH->SetCommand(MatrixPlugin::COPY);
 }
 
 void MatrixPluginGUI::cb_CopyBtn (Fl_Button* o, void* v) 
@@ -248,8 +285,8 @@ void MatrixPluginGUI::cb_CopyBtn (Fl_Button* o, void* v)
 
 inline void MatrixPluginGUI::cb_PasteBtn_i (Fl_Button* o, void* v) 
 {
-       m_Plugin->PastePattern();
-       UpdateValues();
+ 	   m_GUICH->SetCommand(MatrixPlugin::PASTE);
+	   UpdateMatrix();
 }
 
 void MatrixPluginGUI::cb_PasteBtn (Fl_Button* o, void* v) 
@@ -259,8 +296,8 @@ void MatrixPluginGUI::cb_PasteBtn (Fl_Button* o, void* v)
 
 inline void MatrixPluginGUI::cb_ClearBtn_i (Fl_Button* o, void* v) 
 {
-       m_Plugin->ClearPattern();
-       UpdateValues();
+  	   m_GUICH->SetCommand(MatrixPlugin::CLEAR);
+	   UpdateMatrix();
 }
 
 void MatrixPluginGUI::cb_ClearBtn (Fl_Button* o, void* v) 
@@ -270,8 +307,8 @@ void MatrixPluginGUI::cb_ClearBtn (Fl_Button* o, void* v)
 
 inline void MatrixPluginGUI::cb_TransUpBtn_i (Fl_Button* o, void* v) 
 {
-       m_Plugin->TransposeUp();
-       UpdateValues();
+  	   m_GUICH->SetCommand(MatrixPlugin::TUP);
+	   UpdateMatrix();
 }
 
 void MatrixPluginGUI::cb_TransUpBtn (Fl_Button* o, void* v) 
@@ -281,8 +318,8 @@ void MatrixPluginGUI::cb_TransUpBtn (Fl_Button* o, void* v)
 
 inline void MatrixPluginGUI::cb_TransDnBtn_i (Fl_Button* o, void* v) 
 {
-       m_Plugin->TransposeDown();
-       UpdateValues();
+  	   m_GUICH->SetCommand(MatrixPlugin::TDOWN);
+	   UpdateMatrix();
 }
 
 void MatrixPluginGUI::cb_TransDnBtn (Fl_Button* o, void* v) 

@@ -69,8 +69,7 @@ PluginInfo &DistributorPlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *DistributorPlugin::CreateGUI()
 {
-	m_GUI=NULL;
-	return m_GUI;
+	return NULL;
 }
 
 void DistributorPlugin::Execute()

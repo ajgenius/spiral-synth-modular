@@ -45,6 +45,7 @@ mandir = @mandir@
 
 HEADERS =	../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
+		../../ChannelHandler.h \
 		../Widgets/Fl_Knob.H \
 		../Widgets/Fl_DragBar.H \
 		../Widgets/Fl_LED_Button.H \
@@ -54,6 +55,7 @@ HEADERS =	../SpiralPlugin.h \
 		JackPluginGUI.h
 SOURCES =	../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
+		../../ChannelHandler.C \
 		../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_DragBar.cxx \
 		../Widgets/Fl_LED_Button.cxx \
@@ -63,6 +65,7 @@ SOURCES =	../SpiralPlugin.C \
 		JackPluginGUI.C
 OBJECTS =	../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
+		../ChannelHandler.o \
 		../Widgets/Fl_Knob.o \
 		../Widgets/Fl_DragBar.o \
 		../Widgets/Fl_LED_Button.o \
@@ -187,3 +190,5 @@ JackPluginGUI.o: JackPluginGUI.C \
 		../SpiralPluginGUI.h \
 		../Widgets/Fl_DragBar.H
 
+../../ChannelHandler.o: ../../ChannelHandler.C \
+		../../ChannelHandler.h

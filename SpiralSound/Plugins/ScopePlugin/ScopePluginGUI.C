@@ -30,8 +30,13 @@ m_Data(NULL),
 m_Channels(1),
 m_Bufsize(BUFSIZE)
 {
+	m_Data = new float[BUFSIZE];
 }
 
+ScopeWidget::~ScopeWidget()
+{
+	delete[] m_Data;
+}
 
 void ScopeWidget::draw()    	
 {	
@@ -44,14 +49,14 @@ void ScopeWidget::draw()
 	float Value=0,NextValue=0;
 
 	fl_color(FL_WHITE);
-	for(int n=0; n<m_Bufsize-1 && n<w(); n+=m_Channels)
+	for(int n=0; n<m_Bufsize-1 && n<w(); n++)
 	{
 		Value = NextValue;
 		
 		NextValue = m_Data[n]*ho;
 			
-		fl_line(x()+n-2, y()+ho-(int)Value,
-				x()+n-1, y()+ho-(int)NextValue);
+		fl_line((int)(x()+n-2), (int)(y()+ho-Value),
+				(int)(x()+n-1), (int)(y()+ho-NextValue));
 	}	
 	
 	fl_pop_clip();
@@ -59,12 +64,10 @@ void ScopeWidget::draw()
 
 ////////////////////////////////////////////
 
-ScopePluginGUI::ScopePluginGUI(int w, int h,ScopePlugin *o,const HostInfo *Info) :
-SpiralPluginGUI(w,h,o),
+ScopePluginGUI::ScopePluginGUI(int w, int h, SpiralPlugin *o, ChannelHandler *ch, const HostInfo *Info) :
+SpiralPluginGUI(w,h,o,ch),
 m_Bypass(false) 
 {	
-	m_Plugin=o;
-
     m_Scope = new ScopeWidget(5, 20, 210, 85, "Scope", Info->BUFSIZE);
  	Bypass = new Fl_Button(175, 107, 40, 16, "Bypass");
   	Bypass->labelsize(10);
@@ -75,25 +78,20 @@ m_Bypass(false)
 
 void ScopePluginGUI::Display(const float *data)
 {
-	m_Scope->m_Data=data;
+	//m_Scope->m_Data=data;
 	if (!m_Bypass) m_Scope->redraw();
 }
 
 void ScopePluginGUI::draw()
 {
 	SpiralGUIType::draw();
-	
-	if (m_Plugin->GetInput(0)!=NULL)
-	{
-		Display(m_Plugin->GetInput(0)->GetBuffer());
-	}
-	else
-	{
-		Display(NULL);
-	}
+	const float *data;
+	//cerr<<"getting and drawing..."<<endl;
+	m_GUICH->GetData("AudioData",(void*)m_Scope->m_Data);
+	Display(data);
 }
 
-void ScopePluginGUI::UpdateValues()
+void ScopePluginGUI::UpdateValues(SpiralPlugin* o)
 {
 }
 	

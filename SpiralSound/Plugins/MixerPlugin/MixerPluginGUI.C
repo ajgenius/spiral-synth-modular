@@ -26,11 +26,9 @@ static const int GUIBG2_COLOUR = 145;
 
 ////////////////////////////////////////////
 
-MixerPluginGUI::MixerPluginGUI(int w, int h,MixerPlugin *o,const HostInfo *Info) :
-SpiralPluginGUI(w,h,o)
+MixerPluginGUI::MixerPluginGUI(int w, int h,MixerPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
+SpiralPluginGUI(w,h,o,ch)
 {	
-	m_Plugin=o;
-		
 	int Width=20;
 	int Height=100;
 	
@@ -52,15 +50,22 @@ SpiralPluginGUI(w,h,o)
 	end();
 }
 
-void MixerPluginGUI::UpdateValues()
+void MixerPluginGUI::UpdateValues(SpiralPlugin *o)
 {
+	MixerPlugin *Plugin = (MixerPlugin *)o;
+	
 	for (int n=0; n<NUM_CHANNELS; n++)
 	{
-		m_Chan[n]->value(2.0f-m_Plugin->GetChannel(n));
+		m_Chan[n]->value(2.0f-Plugin->GetChannel(n));
 	}
 }
 	
 inline void MixerPluginGUI::cb_Chan_i(Fl_Slider* o, void* v) 
-{ m_Plugin->SetChannel(*(int*)(v),2.0f-o->value()); }
+{ 
+	m_GUICH->Set("Num",(*(int*)(v)));
+	m_GUICH->Set("Value",(float)(2.0f-o->value()));
+	m_GUICH->SetCommand(MixerPlugin::SETCH);
+}
+
 void MixerPluginGUI::cb_Chan(Fl_Slider* o, void* v) 
 { ((MixerPluginGUI*)(o->parent()))->cb_Chan_i(o,v);}

@@ -45,6 +45,9 @@ m_TableLength (DEFAULT_TABLE_LEN) {
 	m_PluginInfo.PortTips.push_back ("Output");
 	m_PluginInfo.PortTips.push_back ("'Cosine' Output");
 	m_PluginInfo.PortTips.push_back ("Inverted Output");
+	
+	m_AudioCH->Register("Freq",&m_Freq);
+	m_AudioCH->Register("Type",(char*)&m_Type);
 }
 
 LFOPlugin::~LFOPlugin() {
@@ -59,9 +62,7 @@ PluginInfo &LFOPlugin::Initialise (const HostInfo *Host) {
 }
 
 SpiralGUIType *LFOPlugin::CreateGUI() {
-          m_GUI = new LFOPluginGUI(m_PluginInfo.Width, m_PluginInfo.Height, this, m_HostInfo);
-  	  m_GUI->hide();
-	  return m_GUI;
+      return new LFOPluginGUI(m_PluginInfo.Width, m_PluginInfo.Height, this, m_AudioCH, m_HostInfo);
 }
 
 void LFOPlugin::WriteWaves() {

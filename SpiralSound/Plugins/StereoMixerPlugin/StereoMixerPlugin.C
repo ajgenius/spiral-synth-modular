@@ -62,6 +62,9 @@ StereoMixerPlugin::StereoMixerPlugin()
 		m_ChannelVal[n]=1.0f;
 		m_Pan[n]=0.5f;		
 	}
+	
+	m_AudioCH->Register("Num",&m_GUIArgs.Num);
+	m_AudioCH->Register("Value",&m_GUIArgs.Value);
 }
 
 StereoMixerPlugin::~StereoMixerPlugin()
@@ -75,11 +78,9 @@ PluginInfo &StereoMixerPlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *StereoMixerPlugin::CreateGUI()
 {
-	m_GUI = new StereoMixerPluginGUI(m_PluginInfo.Width,
+	return new StereoMixerPluginGUI(m_PluginInfo.Width,
 								  	    m_PluginInfo.Height,
-										this,m_HostInfo);
-	m_GUI->hide();
-	return m_GUI;
+										this,m_AudioCH,m_HostInfo);
 }
 
 void StereoMixerPlugin::Execute()
@@ -108,6 +109,18 @@ void StereoMixerPlugin::Execute()
 					  (GetInput(1,n)*m_ChannelVal[1])*(1-Pan[1])+
 					  (GetInput(2,n)*m_ChannelVal[2])*(1-Pan[2])+
 					  (GetInput(3,n)*m_ChannelVal[3])*(1-Pan[3]));
+	}
+}
+
+void StereoMixerPlugin::ExecuteCommands()
+{
+	if (m_AudioCH->IsCommandWaiting())
+	{
+		switch (m_AudioCH->GetCommand())
+		{
+			case (SETCH) : SetChannel(m_GUIArgs.Num,m_GUIArgs.Value); break;
+			case (SETPAN) : SetPan(m_GUIArgs.Num,m_GUIArgs.Value); break;		
+		}
 	}
 }
 

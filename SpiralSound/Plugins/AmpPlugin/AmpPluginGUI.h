@@ -33,9 +33,9 @@
 class AmpPluginGUI : public SpiralPluginGUI
 {
 public:
-	AmpPluginGUI(int w, int h, AmpPlugin *o,const HostInfo *Info);
+	AmpPluginGUI(int w, int h, AmpPlugin *o,ChannelHandler *ch,const HostInfo *Info);
 	
-	virtual void UpdateValues();
+	virtual void UpdateValues(SpiralPlugin *o);
 	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }		
 	AmpPlugin *m_Plugin;	
 	

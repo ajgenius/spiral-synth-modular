@@ -33,13 +33,10 @@
 class OscillatorPluginGUI : public SpiralPluginGUI
 {
 public:
-	OscillatorPluginGUI(int w, int h, OscillatorPlugin *o,const HostInfo *Info);
+	OscillatorPluginGUI(int w, int h, OscillatorPlugin *o,ChannelHandler *ch,const HostInfo *Info);
 	
-	virtual void UpdateValues();
-	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }
+	virtual void UpdateValues(SpiralPlugin *o);
 	
-	OscillatorPlugin *m_Plugin;
-		
 private:
 
 	Fl_Check_Button *ShapeSquare;

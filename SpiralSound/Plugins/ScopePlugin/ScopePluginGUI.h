@@ -33,6 +33,7 @@ class ScopeWidget : public Fl_Widget
 {
 public:
     ScopeWidget(int x,int y,int w,int h,const char *l, int BUFSIZE);
+	~ScopeWidget();
 	
     void draw(); 
 	void SetNumChannels(int s) {m_Channels=s;}
@@ -50,14 +51,12 @@ private:
 class ScopePluginGUI : public SpiralPluginGUI
 {
 public:
-	ScopePluginGUI(int w, int h, ScopePlugin *o,const HostInfo *Info);
+	ScopePluginGUI(int w, int h, SpiralPlugin *o, ChannelHandler *ch, const HostInfo *Info);
 	
-	virtual void UpdateValues();
+	virtual void UpdateValues(SpiralPlugin* o);
 	virtual void draw();	
 	void Display(const float *data);
-	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }
 	
-	ScopePlugin *m_Plugin;	
 private:
 
 	bool m_Bypass;

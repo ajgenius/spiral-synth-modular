@@ -73,6 +73,12 @@ m_CurrentNote(0)
 	m_PluginInfo.PortTips.push_back("Aftertouch CV");
 	
 	for (int n=0; n<128; n++) m_ControlLevel[n]=0;
+	
+	m_AudioCH->Register("DeviceNum",&m_DeviceNum);
+	m_AudioCH->Register("NoteCut",&m_NoteCut);
+	m_AudioCH->Register("CC",&m_GUIArgs.s);
+	m_AudioCH->RegisterData("Name",ChannelHandler::INPUT,
+		&m_GUIArgs.Name,sizeof(m_GUIArgs.Name));
 }
 
 MidiPlugin::~MidiPlugin()
@@ -91,16 +97,14 @@ PluginInfo &MidiPlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *MidiPlugin::CreateGUI()
 {
-	m_GUI = new MidiPluginGUI(m_PluginInfo.Width,
+	return new MidiPluginGUI(m_PluginInfo.Width,
 										  m_PluginInfo.Height,
-										  this,m_HostInfo);
-//	m_GUI->show();
-	m_GUI->hide();
-	return m_GUI;
+										  this,m_AudioCH,m_HostInfo);
 }
 
 void MidiPlugin::Execute()
 {
+
 	// Done to clear IsEmpty field... 
 	GetOutputBuf(0)->Zero();
 	GetOutputBuf(1)->Zero();
@@ -227,6 +231,19 @@ void MidiPlugin::Execute()
 	// make sure the trigger is registered if it's 
 	// note is pressed before releasing the previous one.
 	if (Triggered && !m_ContinuousNotes) SetOutput(1,0,0);
+}
+
+void  MidiPlugin::ExecuteCommands()
+{
+	// Process any commands from the GUI
+	if (m_AudioCH->IsCommandWaiting())
+	{
+		switch (m_AudioCH->GetCommand())
+		{
+			case (ADDCONTROL) : AddControl(m_GUIArgs.s,m_GUIArgs.Name); break;
+			case (DELCONTROL) : DeleteControl();
+		};
+	}
 }
 
 void MidiPlugin::AddControl(int s, const string &Name)

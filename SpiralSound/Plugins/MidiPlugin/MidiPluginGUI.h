@@ -36,12 +36,9 @@ int OptionsList(const vector<string> &List);
 class MidiPluginGUI : public SpiralPluginGUI
 {
 public:
-	MidiPluginGUI(int w, int h, MidiPlugin *o,const HostInfo *Info);
+	MidiPluginGUI(int w, int h, MidiPlugin *o,ChannelHandler *ch,const HostInfo *Info);
 	
-	virtual void UpdateValues();
-	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }
-	
-	MidiPlugin *m_Plugin;
+	virtual void UpdateValues(SpiralPlugin *o);
 		
 private:
 	

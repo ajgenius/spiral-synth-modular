@@ -34,9 +34,6 @@ public:
 	virtual void	    StreamOut(ostream &s) {}
 	virtual void	    StreamIn(istream &s) {}
 	
-	// has to be defined in the plugin	
-	virtual void UpdateGUI() { Fl::check(); }
-
 private:
 	float	m_val;
 	short	m_flag;

@@ -74,11 +74,9 @@ int OptionsList(const vector<string> &List)
 
 ////////////////////////////////////////////////////////////////////////
 
-MidiPluginGUI::MidiPluginGUI(int w, int h,MidiPlugin *o,const HostInfo *Info) :
-SpiralPluginGUI(w,h,o)
+MidiPluginGUI::MidiPluginGUI(int w, int h,MidiPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
+SpiralPluginGUI(w,h,o,ch)
 {	
-	m_Plugin=o;
-	
 	m_DeviceNum = new Fl_Counter(20,30,40,20,"Channel");
 	m_DeviceNum->type(FL_SIMPLE_COUNTER);
 	m_DeviceNum->step(1);
@@ -103,24 +101,25 @@ SpiralPluginGUI(w,h,o)
 	m_RemoveControl->callback((Fl_Callback*)cb_RemoveControl, NULL);
 }
 
-void MidiPluginGUI::UpdateValues()
+void MidiPluginGUI::UpdateValues(SpiralPlugin *o)
 {
-	m_DeviceNum->value(m_Plugin->GetDeviceNum());
+	MidiPlugin *Plugin = (MidiPlugin*)o;
+	m_DeviceNum->value(Plugin->GetDeviceNum());
 }
 	
 //// Callbacks ////
 inline void MidiPluginGUI::cb_DeviceNum_i(Fl_Counter* o, void* v) 
-{ m_Plugin->SetDeviceNum((int)o->value()); }
+{ m_GUICH->Set("DeviceNum",(int)o->value()); }
 void MidiPluginGUI::cb_DeviceNum(Fl_Counter* o, void* v) 
 { ((MidiPluginGUI*)(o->parent()))->cb_DeviceNum_i(o,v);}
 
 inline void MidiPluginGUI::cb_NoteCut_i(Fl_Button* o, void* v) 
-{ m_Plugin->SetNoteCut(o->value()); }
+{ m_GUICH->Set("NoteCut",o->value()); }
 void MidiPluginGUI::cb_NoteCut(Fl_Button* o, void* v) 
 { ((MidiPluginGUI*)(o->parent()))->cb_NoteCut_i(o,v);}
 
 inline void MidiPluginGUI::cb_ContinuousNotes_i(Fl_Button* o, void* v) 
-{ m_Plugin->SetContinuousNotes(o->value()); }
+{ m_GUICH->Set("ContinuousNotes",o->value()); }
 void MidiPluginGUI::cb_ContinuousNotes(Fl_Button* o, void* v) 
 { ((MidiPluginGUI*)(o->parent()))->cb_ContinuousNotes_i(o,v);}
 
@@ -258,12 +257,23 @@ inline void MidiPluginGUI::cb_AddControl_i(Fl_Button* o, void* v)
 	List.push_back("127 Poly Operation");
 		
 	int c=OptionsList(List)-1;
-	if (c>-1) m_Plugin->AddControl(c,List[c]); 
+	if (c>-1) 
+	{
+		m_GUICH->Set("CC",c);
+		char Temp[256];
+		sprintf(Temp,"%s",List[c].c_str());
+		m_GUICH->SetData("Name",Temp);
+		m_GUICH->SetCommand(MidiPlugin::ADDCONTROL);
+		
+		//m_Plugin->AddControl(c,List[c]); 
+	}
 }
 void MidiPluginGUI::cb_AddControl(Fl_Button* o, void* v) 
 { ((MidiPluginGUI*)(o->parent()))->cb_AddControl_i(o,v);}
 
 inline void MidiPluginGUI::cb_RemoveControl_i(Fl_Button* o, void* v) 
-{ m_Plugin->DeleteControl(); }
+{
+	m_GUICH->SetCommand(MidiPlugin::DELCONTROL);
+}
 void MidiPluginGUI::cb_RemoveControl(Fl_Button* o, void* v) 
 { ((MidiPluginGUI*)(o->parent()))->cb_RemoveControl_i(o,v);}

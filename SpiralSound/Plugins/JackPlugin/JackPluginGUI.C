@@ -75,8 +75,8 @@ int OptionsList(const vector<string> &List)
 
 ////////////////////////////////////////////////////////////////////////
 
-JackPluginGUI::JackPluginGUI(int w, int h,JackPlugin *o,const HostInfo *Info) :
-SpiralPluginGUI(w,h,o)
+JackPluginGUI::JackPluginGUI(int w, int h,JackPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
+SpiralPluginGUI(w,h,o,ch)
 {	
 	for (int n=0; n<255; n++) Numbers[n]=n;
 
@@ -122,7 +122,7 @@ SpiralPluginGUI(w,h,o)
 	end();
 }
 
-void JackPluginGUI::UpdateValues()
+void JackPluginGUI::UpdateValues(SpiralPlugin *o)
 {
 	
 }
@@ -146,7 +146,26 @@ inline void JackPluginGUI::cb_OutputConnect_i(Fl_Button* o, void* v)
 { 
 cerr<<"cb_OutputConnect_i"<<endl;
 	vector<string> Inputs,Outputs;
-	m_Plugin->GetPortNames(Inputs,Outputs);	
+	m_GUICH->Set("UpdateNames",true);	
+	
+	// bit of a hack for multithreaded safety
+	int ninputs=m_GUICH->GetInt("NumOutputPortNames"),
+	int noutputs=m_GUICH->GetInt("NumOutputPortNames");
+	char **inputs = new char[MAX_INPUTPORTS][256];
+	char **outputs = new char[MAX_OUTPUTPORTS][256];;
+	
+	for (int n=0 n<m_GUICH->GetInt("NumInputPortNames"); n++)
+	{
+		Inputs.push_back(inputs[n]);
+	}
+	
+	for (int n=0 n<m_GUICH->GetInt("NumOutputPortNames"); n++)
+	{
+		Inputs.push_back(outputs[n]);
+	}
+	
+	delete[] inputs;
+	delete[] outputs;
 	
 	// connect this plugin's output to a jack input
 	int choice=OptionsList(Inputs);

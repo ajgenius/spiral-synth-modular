@@ -32,7 +32,7 @@ public:
 	virtual ~WaveTablePlugin();
 
 	virtual PluginInfo &Initialise(const HostInfo *Host);
-	virtual SpiralGUIType  *CreateGUI();
+	virtual SpiralGUIType *CreateGUI();
 	virtual void 		Execute();
 	virtual void	    StreamOut(ostream &s);
 	virtual void	    StreamIn(istream &s);
@@ -43,16 +43,12 @@ public:
 	enum Type{SINE,SQUARE,SAW,REVSAW,TRIANGLE,PULSE1,PULSE2,INVSINE};
 	
 	void WriteWaves();
-	
 	void NoteTrigger(int V,int s,int v);
-	void SetOctave(int o) {m_Octave=o;}
-	void SetFineFreq(float s) {m_FineFreq=s;}
-	void SetType(Type t) {m_Type=t;}
-	void SetModAmount(float s) {m_ModAmount=s;}
-	int   GetOctave() {return m_Octave;}
-	float GetFineFreq() {return m_FineFreq;}
-	Type  GetType() {return m_Type;}
-	float GetModAmount() {return m_ModAmount;}
+	
+	Type GetType()      { return m_Type; }
+	int  GetOctave()    { return m_Octave; }
+	float GetFinefreq() { return m_FineFreq; } 
+	float GetModAmount(){ return m_ModAmount; }
 	
 private:
 

@@ -71,6 +71,13 @@ m_SHModBuf(NULL)
 	m_PluginInfo.PortTips.push_back("PulseWidth CV");
 	m_PluginInfo.PortTips.push_back("Sample & Hold length CV");
 	m_PluginInfo.PortTips.push_back("Output");
+	
+	m_AudioCH->Register("Octave",&m_Octave);
+	m_AudioCH->Register("FineFreq",&m_FineFreq);
+	m_AudioCH->Register("PulseWidth",&m_PulseWidth);
+	m_AudioCH->Register("Type",(char*)&m_Type);
+	m_AudioCH->Register("SHLen",&m_SHLen);
+	m_AudioCH->Register("ModAmount",&m_ModAmount);	
 }
 
 OscillatorPlugin::~OscillatorPlugin()
@@ -84,11 +91,9 @@ PluginInfo &OscillatorPlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *OscillatorPlugin::CreateGUI()
 {
-	m_GUI = new OscillatorPluginGUI(m_PluginInfo.Width,
+	return new OscillatorPluginGUI(m_PluginInfo.Width,
 										  m_PluginInfo.Height,
-										  this,m_HostInfo);									  
-  	m_GUI->hide();
-	return m_GUI;
+										  this,m_AudioCH,m_HostInfo);									  
 }
 
 void OscillatorPlugin::Execute()

@@ -27,11 +27,9 @@ static const float TIMED_SLIDER_MAX = 3.0f;
 
 ////////////////////////////////////////////
 
-EnvelopePluginGUI::EnvelopePluginGUI(int w, int h,EnvelopePlugin *o,const HostInfo *Info) :
-SpiralPluginGUI(w,h,o)
-{	
-	m_Plugin=o;
-		
+EnvelopePluginGUI::EnvelopePluginGUI(int w, int h,EnvelopePlugin *o,ChannelHandler *ch,const HostInfo *Info) :
+SpiralPluginGUI(w,h,o,ch)
+{		
 	Thresh = new Fl_Slider(10, 20, 20, 70, "T");
 	Thresh->type(4);
 	Thresh->selection_color(GUI_COLOUR);
@@ -154,26 +152,28 @@ SpiralPluginGUI(w,h,o)
 
 extern "C" int sprintf(char *,const char *,...);
 
-void EnvelopePluginGUI::UpdateValues()
+void EnvelopePluginGUI::UpdateValues(SpiralPlugin *o)
 {
-	Thresh->value(1.0f-sqrt(m_Plugin->GetAttack()));
-	Attack->value(TIMED_SLIDER_MAX-sqrt(m_Plugin->GetAttack()));
-	Decay->value(TIMED_SLIDER_MAX-sqrt(m_Plugin->GetDecay()));
-	Sustain->value(1.0f-m_Plugin->GetSustain());
-	Release->value(TIMED_SLIDER_MAX-sqrt(m_Plugin->GetRelease()));
-	Volume->value(1.0f-m_Plugin->GetVolume());
+	EnvelopePlugin *Plugin = (EnvelopePlugin*)o;
+
+	Thresh->value(1.0f-sqrt(Plugin->GetAttack()));
+	Attack->value(TIMED_SLIDER_MAX-sqrt(Plugin->GetAttack()));
+	Decay->value(TIMED_SLIDER_MAX-sqrt(Plugin->GetDecay()));
+	Sustain->value(1.0f-Plugin->GetSustain());
+	Release->value(TIMED_SLIDER_MAX-sqrt(Plugin->GetRelease()));
+	Volume->value(1.0f-Plugin->GetVolume());
 	char str[10];
-	sprintf(str,"%4.0f %%", 100*m_Plugin->GetTrigThresh());
+	sprintf(str,"%4.0f %%", 100*Plugin->GetTrigThresh());
 	m_out_thresh->value(str);
-	sprintf(str,"%5.3f s", m_Plugin->GetAttack());
+	sprintf(str,"%5.3f s", Plugin->GetAttack());
 	m_out_attack->value(str); 
-	sprintf(str,"%5.3f s", m_Plugin->GetDecay());
+	sprintf(str,"%5.3f s", Plugin->GetDecay());
 	m_out_decay->value(str); 
-	sprintf(str,"%4.0f %%", 100*m_Plugin->GetSustain());
+	sprintf(str,"%4.0f %%", 100*Plugin->GetSustain());
 	m_out_sustain->value(str); 
-	sprintf(str,"%5.3f s", m_Plugin->GetRelease());
+	sprintf(str,"%5.3f s", Plugin->GetRelease());
 	m_out_release->value(str); 
-	sprintf(str,"%4.0f %%", 100*m_Plugin->GetVolume());
+	sprintf(str,"%4.0f %%", 100*Plugin->GetVolume());
 	m_out_volume->value(str); 
 }
 
@@ -181,7 +181,7 @@ void EnvelopePluginGUI::UpdateValues()
 inline void EnvelopePluginGUI::cb_Thresh_i(Fl_Slider* o, void* v) 
 { 
 char str[10];
-	m_Plugin->SetTrigThresh(1.0f-o->value()); 
+	m_GUICH->Set("Trig",1.0f-o->value()); 
 	sprintf(str,"%4.0f %%", 100*(1.0f-o->value()));
 	m_out_thresh->value(str); 
 }
@@ -193,7 +193,7 @@ inline void EnvelopePluginGUI::cb_Attack_i(Fl_Slider* o, void* v)
 { 
 char str[10];
 	float value=TIMED_SLIDER_MAX-o->value();
-	m_Plugin->SetAttack(value*value); 
+	m_GUICH->Set("Attack",value*value); 
 	sprintf(str,"%5.3f s", value*value);
 	m_out_attack->value(str);
 }
@@ -204,7 +204,7 @@ inline void EnvelopePluginGUI::cb_Decay_i(Fl_Slider* o, void* v)
 { 
 char str[10];
 	float value=TIMED_SLIDER_MAX-o->value();
-	m_Plugin->SetDecay(value*value);  
+	m_GUICH->Set("Decay",value*value);  
 	sprintf(str,"%5.3f s", value*value);
 	m_out_decay->value(str);
 }
@@ -214,7 +214,7 @@ void EnvelopePluginGUI::cb_Decay(Fl_Slider* o, void* v)
 inline void EnvelopePluginGUI::cb_Sustain_i(Fl_Slider* o, void* v) 
 {
 char str[10];
-	m_Plugin->SetSustain(1.0f-o->value());
+	m_GUICH->Set("Sustain",1.0f-o->value());
 	sprintf(str,"%4.0f %%", 100*(1.0f-o->value()));
 	m_out_sustain->value(str); 
 }
@@ -226,7 +226,7 @@ inline void EnvelopePluginGUI::cb_Release_i(Fl_Slider* o, void* v)
 { 
 char str[10];
 	float value=TIMED_SLIDER_MAX-o->value();
-	m_Plugin->SetRelease(value*value); 
+	m_GUICH->Set("Release",value*value); 
 	sprintf(str,"%5.3f s", value*value);
 		m_out_release->value(str);
 }
@@ -237,7 +237,7 @@ inline void EnvelopePluginGUI::cb_Volume_i(Fl_Slider* o, void* v)
 {
 char str[10];
 
-	m_Plugin->SetVolume(1.0f-o->value());
+	m_GUICH->Set("Volume",1.0f-o->value());
 	sprintf(str,"%4.0f %%", 100*(1.0f-o->value()));
 	m_out_volume->value(str); 
 }

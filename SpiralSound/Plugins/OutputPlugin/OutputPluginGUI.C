@@ -24,11 +24,9 @@ static const int GUI_COLOUR = 179;
 static const int GUIBG_COLOUR = 144;
 static const int GUIBG2_COLOUR = 145;
 
-OutputPluginGUI::OutputPluginGUI(int w, int h,OutputPlugin *o,const HostInfo *Info) :
-SpiralPluginGUI(w,h,o)
+OutputPluginGUI::OutputPluginGUI(int w, int h, SpiralPlugin *o, ChannelHandler *ch,const HostInfo *Info) :
+SpiralPluginGUI(w,h,o,ch)
 {	
-	m_Plugin=o;
-
     Volume = new Fl_Knob(30, 22, 40, 40, "Volume");
     Volume->color(GUI_COLOUR);
 	Volume->type(Fl_Knob::DOTLIN);
@@ -65,7 +63,7 @@ SpiralPluginGUI(w,h,o)
 	end();
 }
 
-void OutputPluginGUI::UpdateValues()
+void OutputPluginGUI::UpdateValues(SpiralPlugin *o)
 {
 	Volume->value(OSSOutput::Get()->GetVolume());
 }
@@ -108,7 +106,7 @@ inline void OutputPluginGUI::cb_OpenRead_i(Fl_Button* o, void* v)
 		OpenWrite->value(0);
 		OSSOutput::Get()->Close();
 		OSSOutput::Get()->OpenRead();
-		m_Plugin->SetMode(OutputPlugin::INPUT);
+		m_GUICH->Set("Mode",(char)OutputPlugin::INPUT);
 	}
 	else
 	{
@@ -126,7 +124,7 @@ inline void OutputPluginGUI::cb_OpenDuplex_i(Fl_Button* o, void* v)
 		OpenRead->value(0);
 		OSSOutput::Get()->Close();
 		OSSOutput::Get()->OpenReadWrite();
-		m_Plugin->SetMode(OutputPlugin::DUPLEX);
+		m_GUICH->Set("Mode",(char)OutputPlugin::DUPLEX);
 	}
 	else
 	{
@@ -144,7 +142,7 @@ inline void OutputPluginGUI::cb_OpenWrite_i(Fl_Button* o, void* v)
 		OpenRead->value(0);
 		OSSOutput::Get()->Close();
 		OSSOutput::Get()->OpenWrite();
-		m_Plugin->SetMode(OutputPlugin::OUTPUT);
+		m_GUICH->Set("Mode",(char)OutputPlugin::OUTPUT);
 	}
 	else
 	{

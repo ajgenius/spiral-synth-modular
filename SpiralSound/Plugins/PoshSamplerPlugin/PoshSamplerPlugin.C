@@ -118,6 +118,20 @@ m_Recording(false)
 	}
 	
 	m_Version=3;
+	m_Current = 0;
+	
+	m_AudioCH->Register("Num",&m_GUIArgs.Num);
+	m_AudioCH->Register("Value",&m_GUIArgs.Value);
+	m_AudioCH->Register("Bool",&m_GUIArgs.Boole);
+	m_AudioCH->Register("Int",&m_GUIArgs.Int);
+	m_AudioCH->Register("Start",&m_GUIArgs.Start);
+	m_AudioCH->Register("End",&m_GUIArgs.End);
+	m_AudioCH->Register("LoopStart",&m_GUIArgs.LoopStart);
+	m_AudioCH->RegisterData("Name",ChannelHandler::INPUT,&m_GUIArgs.Name,sizeof(m_GUIArgs.Name));
+	m_AudioCH->Register("PlayPos",&m_CurrentPlayPos,ChannelHandler::OUTPUT);
+	m_AudioCH->RegisterData("SampleBuffer",ChannelHandler::OUTPUT_REQUEST,&m_SampleBuffer,TRANSBUF_SIZE);
+	m_AudioCH->Register("SampleSize",&m_SampleSize,ChannelHandler::OUTPUT_REQUEST);
+	
 }
 
 PoshSamplerPlugin::~PoshSamplerPlugin()
@@ -142,11 +156,9 @@ PluginInfo &PoshSamplerPlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *PoshSamplerPlugin::CreateGUI()
 {
-	m_GUI = new PoshSamplerPluginGUI(m_PluginInfo.Width,
+	return new PoshSamplerPluginGUI(m_PluginInfo.Width,
 								  	    m_PluginInfo.Height,
-										this,m_HostInfo);
-	m_GUI->hide();
-	return m_GUI;
+										this,m_AudioCH,m_HostInfo);
 }
 
 void PoshSamplerPlugin::Execute()
@@ -249,14 +261,12 @@ void PoshSamplerPlugin::Execute()
 			}
 		}
 	}
-	
-	PoshSamplerPluginGUI *GUI=(PoshSamplerPluginGUI *)m_GUI;
-	
+		
 	// record	
 	static int LastRecording=false;
 	if(m_Recording && InputExists(REC_INPUT))
 	{		
-		int s=GUI->GetCurrentSample();
+		int s=0;//GUI->GetCurrentSample();
 	
 		if (!LastRecording) m_SampleVec[s]->Clear();
 
@@ -279,13 +289,49 @@ void PoshSamplerPlugin::Execute()
 	}
 	LastRecording=m_Recording;
 	
-	if (m_SampleDescVec[GUI->GetCurrentSample()]->SamplePos>0)
+	if (m_SampleDescVec[m_Current]->SamplePos>0)
 	{		
-		GUI->SetPlayPos((int)m_SampleDescVec[GUI->GetCurrentSample()]->SamplePos);
+		m_CurrentPlayPos=(long)m_SampleDescVec[m_Current]->SamplePos;
 	}
 }
 
-#include <FL/fl_file_chooser.H>
+void PoshSamplerPlugin::ExecuteCommands()
+{
+	if (m_AudioCH->IsCommandWaiting())
+	{
+		switch(m_AudioCH->GetCommand())
+		{
+			case (LOAD)         : LoadSample(m_GUIArgs.Num,m_GUIArgs.Name); break;
+			case (SAVE)         : SaveSample(m_GUIArgs.Num,m_GUIArgs.Name); break;
+			case (SETVOL)       : SetVolume(m_GUIArgs.Num,m_GUIArgs.Value); break;
+			case (SETPITCH)     : SetPitch(m_GUIArgs.Num,m_GUIArgs.Value); break;
+			case (SETLOOP)      : SetLoop(m_GUIArgs.Num,m_GUIArgs.Boole); break;
+			case (SETPING)      : SetPingPong(m_GUIArgs.Num,m_GUIArgs.Boole); break;
+			case (SETNOTE)      : SetNote(m_GUIArgs.Num,m_GUIArgs.Int); break;
+			case (SETOCT)       : SetOctave(m_GUIArgs.Num,m_GUIArgs.Int); break;
+			case (SETPLAYPOINTS): 
+			{
+				SetPlayStart(m_GUIArgs.Num,m_GUIArgs.Start); 
+				SetLoopStart(m_GUIArgs.Num,m_GUIArgs.LoopStart); 
+				SetLoopEnd(m_GUIArgs.Num,m_GUIArgs.End); 
+			} break;
+			case (SETREC)       : SetRecord(m_GUIArgs.Boole); break;
+			case (CUT)          : Cut(m_GUIArgs.Num,m_GUIArgs.Start,m_GUIArgs.End); break;
+			case (COPY)         : Copy(m_GUIArgs.Num,m_GUIArgs.Start,m_GUIArgs.End); break;
+			case (PASTE)        : Paste(m_GUIArgs.Num,m_GUIArgs.Start,m_GUIArgs.End); break;
+			case (MIX)          : Mix(m_GUIArgs.Num,m_GUIArgs.Start,m_GUIArgs.End); break;
+			case (CROP)         : Crop(m_GUIArgs.Num,m_GUIArgs.Start,m_GUIArgs.End); break;
+			case (REV)          : Reverse(m_GUIArgs.Num,m_GUIArgs.Start,m_GUIArgs.End); break;
+			case (AMP)          : Amp(m_GUIArgs.Num,m_GUIArgs.Start,m_GUIArgs.End); break;
+			case (SETCURRENT)   : m_Current = m_GUIArgs.Num; break;
+			case (GETSAMPLE)    : 
+			{
+				m_AudioCH->SetupBulkTransfer((void*)m_SampleVec[m_Current]->GetBuffer());
+				m_SampleSize=m_SampleVec[m_Current]->GetLengthInBytes();
+			} break;
+		};
+	}
+}
 
 void PoshSamplerPlugin::StreamOut(ostream &s)
 {
@@ -334,8 +380,6 @@ void PoshSamplerPlugin::StreamIn(istream &s)
 			s.get(Buf,size+1);			
 		}			
 	}
-	
-	((PoshSamplerPluginGUI*)m_GUI)->UpdateValues();
 }
 
 void PoshSamplerPlugin::LoadSample(int n, const string &Name)
@@ -349,7 +393,7 @@ void PoshSamplerPlugin::LoadSample(int n, const string &Name)
 		m_SampleDescVec[n]->SampleRate=Wav.GetSamplerate();
 		m_SampleDescVec[n]->Stereo=Wav.IsStereo();
 		m_SampleDescVec[n]->Pitch *= m_SampleDescVec[n]->SampleRate/(float)m_HostInfo->SAMPLERATE;												
-		m_SampleDescVec[n]->LoopEnd=m_SampleVec[n]->GetLength()-1;				
+		m_SampleDescVec[n]->LoopEnd=m_SampleVec[n]->GetLength()-1;
 	}
 }
 

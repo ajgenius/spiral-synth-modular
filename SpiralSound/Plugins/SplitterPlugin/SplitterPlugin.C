@@ -64,8 +64,7 @@ PluginInfo &SplitterPlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *SplitterPlugin::CreateGUI()
 {
-	m_GUI=NULL;
-	return m_GUI;
+	return NULL;
 }
 
 void SplitterPlugin::Execute()

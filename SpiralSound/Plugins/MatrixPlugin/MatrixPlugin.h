@@ -43,20 +43,31 @@ public:
 	virtual PluginInfo &Initialise(const HostInfo *Host);
 	virtual SpiralGUIType *CreateGUI();
 	virtual void Execute();
+	virtual void ExecuteCommands();
 	virtual void StreamOut(ostream &s);
 	virtual void StreamIn(istream &s);
-	
-	// has to be defined in the plugin	
-	virtual void UpdateGUI() { Fl::check(); }
-	
-	void  SetNoteCut(bool s)         { m_NoteCut=s; }
+		
 	bool  GetNoteCut()               { return m_NoteCut; }
-	void  SetCurrent(int s)          { m_Current=s; }
 	int   GetCurrent()               { return m_Current; }
-	void  SetStepTime(float s)       { m_StepTime=s; }
 	float GetStepTime()              { return m_StepTime; }
 	Pattern* GetPattern() 			 { return &m_Matrix[m_Current]; }
+		
+	enum GUICommands{NONE,MAT_LENGTH,MAT_SPEED,MAT_ACTIVATE,MAT_DEACTIVATE,
+						MAT_OCTAVE,COPY,PASTE,CLEAR,TUP,TDOWN};
 	
+	struct GUIArgs
+	{
+		int Num;
+		int Length;
+		float Speed;
+		int X,Y;
+		int Octave;
+	};
+	
+private:
+
+	GUIArgs m_GUIArgs;
+
 	void CopyPattern() { m_CopyPattern = m_Current; }
     void PastePattern();
     void ClearPattern();
@@ -65,7 +76,6 @@ public:
     void TransposeDown();
     bool CanTransposeDown();
 	
-private:
 	float m_TickTime;
 	float m_StepTime;
 	float m_Time;

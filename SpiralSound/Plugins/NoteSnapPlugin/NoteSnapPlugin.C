@@ -62,8 +62,7 @@ PluginInfo &NoteSnapPlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *NoteSnapPlugin::CreateGUI()
 {
-	m_GUI=NULL;
-	return m_GUI;
+	return NULL;
 }
 
 void NoteSnapPlugin::Execute()

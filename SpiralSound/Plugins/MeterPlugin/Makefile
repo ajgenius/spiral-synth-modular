@@ -7,8 +7,8 @@
 
 CC	=	gcc
 CXX	=	g++
-CFLAGS	=	-pipe -Wall -O3 -ffast-math -DNO_DEBUG -Wno-unused 
-CXXFLAGS=	-pipe -Wall -O3 -ffast-math -DNO_DEBUG -Wno-unused 
+CFLAGS	=	-pipe -Wall -O3 -ffast-math -DNO_DEBUG -Wno-unused  -fPIC
+CXXFLAGS=	-pipe -Wall -O3 -ffast-math -DNO_DEBUG -Wno-unused  -fPIC -fPIC
 INCPATH	=	-I/usr/X11R6/include
 LINK	=	g++ -shared
 LFLAGS	=

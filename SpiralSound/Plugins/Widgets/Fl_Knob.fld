@@ -1,14 +1,11 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 2.00 
+version 1.0100 
 header_name {.H} 
-code_name {.cxx} 
-gridx 5 
-gridy 5 
-snap 3
-decl {\#include <FL/Fl_Valuator.H>} {public
+code_name {.cxx}
+decl {\#include <Fl/Fl_Valuator.H>} {public
 } 
 
-decl {\#include <FL/fl_draw.H>} {} 
+decl {\#include <Fl/fl_draw.H>} {} 
 
 decl {\#include <math.h>} {} 
 
@@ -18,19 +15,28 @@ class Fl_Knob {open : {public Fl_Valuator}
   }
   decl {int _type;} {}
   decl {float _percent;} {}
+  decl {float _capsize;} {}
+  decl {int _capr,_capg,_capb;} {}
   decl {int _scaleticks;} {}
   decl {short a1,a2;} {}
   Function {Fl_Knob(int xx,int yy,int ww,int hh,const char *l=0): Fl_Valuator(xx,yy,ww,hh,l)} {} {
-    code {a1 = 35;
+    code {int side;
+
+	a1 = 35;
 	a2 = 325;
 	_type = DOTLIN;
 	_percent = 0.3;
-	_scaleticks = 10;} {}
+	_scaleticks = 10;
+	_capr = _capg = _capb = -1;
+	side = ww > hh ? hh:ww;
+	_capsize = 100*(float)(side - 10) / (float)side;} {}
   }
   Function {~Fl_Knob()} {} {}
   Function {draw()} {open private
   } {
     code {int ox,oy,ww,hh,side;
+int capradius;
+int capoffset;
 float sa,ca,a_r;
 unsigned char rr,gg,bb;
 
@@ -50,48 +56,87 @@ unsigned char rr,gg,bb;
 		side = ww;
 		oy = oy + (hh - side) / 2; 
 	}
-	side = w() > h () ? hh:ww;
+	side = ww > hh ? hh:ww;
 	int dam = damage();
+	capradius = (int)((side-11) * (_capsize / 100.0));
+	capoffset = (side - capradius)/2; 
 	if (dam & FL_DAMAGE_ALL)
 	{
-		int col = parent()->color();
+		int col = ((Fl_Widget *)parent())->color();
+		// Clear rectangle with parent color
 		fl_color(col);
 		fl_rectf(ox,oy,side,side);
+
+		// Cast round shadow
 		Fl::get_color((Fl_Color)col,rr,gg,bb);
 		shadow(-60,rr,gg,bb);
 		fl_pie(ox+9,oy+9,side-12,side-12,0,360);
+
+		// Draw ticks
 		draw_scale(ox,oy,side);
 		col = color();
 		Fl::get_color((Fl_Color)col,rr,gg,bb);
+
+		// Draw hilights of the button crown
+		shadow(7,rr,gg,bb);
+		fl_pie(ox+6,oy+6,side-12,side-12,40,50);
+		fl_pie(ox+6,oy+6,side-12,side-12,260,270);
+
 		shadow(15,rr,gg,bb);
-		fl_pie(ox+6,oy+6,side-12,side-12,40,80);
+		fl_pie(ox+6,oy+6,side-12,side-12,50,70);
+		fl_pie(ox+6,oy+6,side-12,side-12,230,260);
+
+		shadow(25,rr,gg,bb);
+		fl_pie(ox+6,oy+6,side-12,side-12,70,80);
+		fl_pie(ox+6,oy+6,side-12,side-12,220,230);
+
 		shadow(30,rr,gg,bb);
 		fl_pie(ox+6,oy+6,side-12,side-12,80,220);
-		shadow(-15,rr,gg,bb);
-		fl_pie(ox+6,oy+6,side-12,side-12,220,260);
-		shadow(-30,rr,gg,bb);
-		fl_pie(ox+6,oy+6,side-12,side-12,260,400);
+
+		shadow(-9,rr,gg,bb);
+		fl_pie(ox+6,oy+6,side-12,side-12,30,40);
+		fl_pie(ox+6,oy+6,side-12,side-12,270,280);
+
+		shadow(-18,rr,gg,bb);
+		fl_pie(ox+6,oy+6,side-12,side-12,280,400);
+		shadow(-28,rr,gg,bb);
+		fl_pie(ox+6,oy+6,side-12,side-12,290,390);
+
 		fl_color(FL_BLACK);
 		fl_arc(ox+6,oy+6,side-11,side-11,0,360);
-		fl_color(col);
-		fl_pie(ox+10,oy+10,side-20,side-20,0,360);
-	}
-	else
-	{
-		fl_color(color());
-		fl_pie(ox+10,oy+10,side-20,side-20,0,360);
 	}
 	Fl::get_color((Fl_Color)color(),rr,gg,bb);
+	// Draw button cap
+	if (_capr != -1)
+		{ rr = _capr; gg = _capg; bb = _capb;}
+	else
+		Fl::get_color((Fl_Color)color(),rr,gg,bb);
+	fl_color(rr,gg,bb);
+	int xx = ox + capoffset;
+	int yy = oy + capoffset;
+	int dx = capradius;
+	fl_pie(xx,yy,dx,dx,0,360);
+
+	// Draw hilights of button cap
 	shadow(10,rr,gg,bb);
-	fl_pie(ox+10,oy+10,side-20,side-20,110,150);
-	fl_pie(ox+10,oy+10,side-20,side-20,290,330);
+	fl_pie(xx,yy,dx,dx,110,150);
+	fl_pie(xx,yy,dx,dx,290,330);
 	shadow(17,rr,gg,bb);
-	fl_pie(ox+10,oy+10,side-20,side-20,120,140);
-	fl_pie(ox+10,oy+10,side-20,side-20,300,320);
-	shadow(25,rr,gg,bb);
-	fl_pie(ox+10,oy+10,side-20,side-20,127,133);
-	fl_pie(ox+10,oy+10,side-20,side-20,307,313);
-	draw_cursor(ox,oy,side);
+	fl_pie(xx,yy,dx,dx,120,140);
+	fl_pie(xx,yy,dx,dx,300,320);
+	shadow(30,rr,gg,bb);
+	fl_pie(xx,yy,dx,dx,127,133);
+	fl_pie(xx,yy,dx,dx,307,313);
+
+	shadow(-7,rr,gg,bb);
+	fl_pie(xx,yy,dx,dx,50,90);
+	fl_pie(xx,yy,dx,dx,230,290);
+	shadow(-15,rr,gg,bb);
+	fl_pie(xx,yy,dx,dx,65,75);
+	fl_pie(xx,yy,dx,dx,242,278);
+
+	// Draw the button cursor
+	draw_cursor(ox+side/2,oy+side/2,dx/2);
 	fl_pop_clip();} {selected
     }
   }
@@ -140,9 +185,6 @@ unsigned char rr,gg,bb;
   	}
 	return 0;} {}
   }
-  Function {type(int ty)} {} {
-    code {_type = ty;} {}
-  }
   Function {shadow(const int offs,const uchar r,uchar g,uchar b)} {private
   } {
     code {int rr,gg,bb;
@@ -161,6 +203,7 @@ unsigned char rr,gg,bb;
   Function {draw_scale(const int ox,const int oy,const int side)} {private
   } {
     code {float x1,y1,x2,y2,rds,cx,cy,ca,sa;
+float minv,maxv,curv;
 
 	rds = side / 2;
 	cx = ox + side / 2;
@@ -219,15 +262,17 @@ unsigned char rr,gg,bb;
 		}
 	}} {}
   }
-  Function {draw_cursor(const int ox,const int oy,const int side)} {private
+  Function {draw_cursor(const int ox,const int oy,const int side)} {open private
   } {
     code {float rds,cur,cx,cy;
 double angle;
 	
-	rds = (side - 20) / 2.0;
+//	rds = (side-40) * _capsize / 100.0;
+rds=side;
 	cur = _percent * rds / 2;
-	cx = ox + side / 2;
-	cy = oy + side / 2;
+//	cx = ox + side / 2;
+//	cy = oy + side / 2;
+cx = ox;cy = oy;
 	angle = (a2-a1)*(value()-minimum())/(maximum()-minimum()) + a1;	
 	fl_push_matrix();
 	fl_scale(1,1);
@@ -264,6 +309,9 @@ double angle;
 	}
 	fl_pop_matrix();} {}
   }
+  Function {type(int ty)} {} {
+    code {_type = ty;} {}
+  }
   Function {cursor(const int pc)} {} {
     code {_percent = (float)pc/100.0;
 
@@ -276,5 +324,23 @@ double angle;
 	if (_scaleticks < 0) _scaleticks = 0;
 	if (_scaleticks > 31) _scaleticks = 31;
 	if (visible()) damage(FL_DAMAGE_ALL);} {}
+  }
+  Function {capsize(const float percent)} {} {
+    code {if (percent > 100) return;
+	if (percent < 40) return;
+	_capsize = percent;} {}
+  }
+  Function {capcolor(const Fl_Color col)} {} {
+    code {uchar rr,gg,bb;
+	
+	Fl::get_color(col,rr,gg,bb);
+	_capr = rr;
+	_capg = gg;
+	_capb = bb;} {}
+  }
+  Function {capcolor(const uchar cr,const uchar cg,const uchar cb)} {} {
+    code {_capr = cr;
+	_capg = cg;
+	_capb = cb;} {}
   }
 } 

@@ -34,16 +34,16 @@ class LFOPlugin : public SpiralPlugin {
       virtual void Execute();
       virtual void StreamOut (ostream &s);
       virtual void StreamIn (istream &s);
-      // has to be defined in the plugin
-      virtual void UpdateGUI() { Fl::check(); }
+	  
       enum Type {SINE, TRIANGLE, SQUARE, SAW};
+	  
       void WriteWaves();
       void NoteTrigger (int V, int s, int v);
-      void SetFreq (float s) { m_Freq=s; }
       float GetFreq() { return m_Freq; }
-      void SetType (Type t) { m_Type=t; }
       Type GetType() { return m_Type; }
+	  
    private:
+   
       float AdjustPos (float pos);
       // Voice specific parameter
       int m_Note;

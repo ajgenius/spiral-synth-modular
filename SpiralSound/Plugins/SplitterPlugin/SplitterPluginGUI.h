@@ -33,12 +33,10 @@
 class SplitterPluginGUI : public SpiralPluginGUI
 {
 public:
-	SplitterPluginGUI(int w, int h, SplitterPlugin *o,const HostInfo *Info);
+	SplitterPluginGUI(int w, int h, SplitterPlugin *o, ChannelHandler *ch, const HostInfo *Info);
 	
-	virtual void UpdateValues();
-	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }
-	
-	SplitterPlugin *m_Plugin;	
+	virtual void UpdateValues(SpiralPlugin *o);
+
 private:
 
 	//// Callbacks ////

@@ -34,9 +34,6 @@ public:
 	virtual void	    StreamOut(ostream &s);
 	virtual void	    StreamIn(istream &s);
 	
-	// has to be defined in the plugin	
-	virtual void UpdateGUI() { Fl::check(); }
-
 	enum Type{NONE,SQUARE,SAW,NOISE};
 	
 	void ModulateFreq(Sample *data) {m_FreqModBuf=data;}
@@ -44,12 +41,6 @@ public:
 	void ModulateSHLen(Sample *data) {m_SHModBuf=data;}
 	
 	void NoteTrigger(int V,int s,int v);
-	void SetOctave(int o) {m_Octave=o;}
-	void SetFineFreq(float s) {m_FineFreq=s;}
-	void SetPulseWidth(float p) {m_PulseWidth=p;}
-	void SetType(Type t) {m_Type=t;}
-	void SetSHLen(float s) {m_SHLen=s;}
-	void SetModAmount(float s) {m_ModAmount=s;}
 	int   GetOctave() {return m_Octave;}
 	float GetFineFreq() {return m_FineFreq;}
 	float GetPulseWidth() {return m_PulseWidth;}

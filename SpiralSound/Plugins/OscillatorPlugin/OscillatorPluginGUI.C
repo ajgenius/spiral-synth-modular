@@ -100,14 +100,12 @@ static unsigned char *image_Saw[] = {
 (unsigned char*)"                    "};
 
 
-OscillatorPluginGUI::OscillatorPluginGUI(int w, int h,OscillatorPlugin *o,const HostInfo *Info) :
-SpiralPluginGUI(w,h,o),
+OscillatorPluginGUI::OscillatorPluginGUI(int w, int h,OscillatorPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
+SpiralPluginGUI(w,h,o,ch),
 pixmap_Square(image_Square),
 pixmap_Noise(image_Noise),
 pixmap_Saw(image_Saw)
 {	
-	m_Plugin=o;
-
     ShapeSquare = new Fl_Check_Button(5, 15, 55, 30);
     ShapeSquare->type(102);
     ShapeSquare->down_box(FL_DIAMOND_DOWN_BOX);
@@ -224,13 +222,15 @@ pixmap_Saw(image_Saw)
 
 extern "C" int sprintf(char *,const char *,...);	
 
-void OscillatorPluginGUI::UpdateValues()
+void OscillatorPluginGUI::UpdateValues(SpiralPlugin *o)
 {
+	OscillatorPlugin *Plugin = (OscillatorPlugin*)o;
+
 	ShapeSquare->value(0);
 	ShapeNoise->value(0);
 	ShapeSaw->value(0);
 
-	switch (m_Plugin->GetType())
+	switch (Plugin->GetType())
 	{
 		case OscillatorPlugin::SQUARE : ShapeSquare->value(1); break;
 		case OscillatorPlugin::NOISE  : ShapeNoise->value(1); break;
@@ -238,25 +238,25 @@ void OscillatorPluginGUI::UpdateValues()
 		case OscillatorPlugin::NONE   : break;
 	}
 
-	Freq->value(m_Plugin->GetOctave()+3);
-	ModAmount->value(m_Plugin->GetModAmount());
-	FineTune->value(sqrt(m_Plugin->GetFineFreq()));
-	PulseWidth->value(m_Plugin->GetPulseWidth());
+	Freq->value(Plugin->GetOctave()+3);
+	ModAmount->value(Plugin->GetModAmount());
+	FineTune->value(sqrt(Plugin->GetFineFreq()));
+	PulseWidth->value(Plugin->GetPulseWidth());
 	
-	SHLen->value(0.2f-m_Plugin->GetSHLen());
+	SHLen->value(0.2f-Plugin->GetSHLen());
 	
 	char str[10];
-	float fr = 110.0f * m_Plugin->GetFineFreq();
-	int oc = m_Plugin->GetOctave();
+	float fr = 110.0f * Plugin->GetFineFreq();
+	int oc = Plugin->GetOctave();
 	if (oc > 0) fr *= 1 << oc;
 	if (oc < 0) fr /= 1 << (-oc);
   	sprintf(str,"%4.1f Hz", fr);
   	m_out_freq->value(str); 
-	sprintf(str,"%4.0f %%", 100*m_Plugin->GetPulseWidth());
+	sprintf(str,"%4.0f %%", 100*Plugin->GetPulseWidth());
 	m_out_pulseW->value(str); 
-	sprintf(str,"%4.0f %%", 100*m_Plugin->GetModAmount());
+	sprintf(str,"%4.0f %%", 100*Plugin->GetModAmount());
 	m_out_mod->value(str);
-	sprintf(str,"%4.3f s", m_Plugin->GetSHLen());
+	sprintf(str,"%4.3f s", Plugin->GetSHLen());
 	m_out_SHlen->value(str);
 }
 	
@@ -266,13 +266,13 @@ void OscillatorPluginGUI::UpdateValues()
 inline void OscillatorPluginGUI::cb_Freq_i(Fl_Knob* o, void* v) 
 {
 char str[10]; 
- 	m_Plugin->SetOctave((int)o->value()-3);
-	float fr = 110.0f * m_Plugin->GetFineFreq();
-	int oc = m_Plugin->GetOctave();
-	if (oc > 0) fr *= 1 << oc;
-	if (oc < 0) fr /= 1 << (-oc);
-  	sprintf(str,"%4.1f Hz", fr);
-    m_out_freq->value(str); 
+ 	m_GUICH->Set("Octave",(int)o->value()-3);
+	//float fr = 110.0f * m_Plugin->GetFineFreq();
+	//int oc = m_Plugin->GetOctave();
+	//if (oc > 0) fr *= 1 << oc;
+	//if (oc < 0) fr /= 1 << (-oc);
+  	//sprintf(str,"%4.1f Hz", fr);
+    //m_out_freq->value(str); 
 }
   
 void OscillatorPluginGUI::cb_Freq(Fl_Knob* o, void* v) 
@@ -281,13 +281,13 @@ void OscillatorPluginGUI::cb_Freq(Fl_Knob* o, void* v)
 inline void OscillatorPluginGUI::cb_FineTune_i(Fl_Knob* o, void* v) 
 {
 char str[10]; 
- 	m_Plugin->SetFineFreq(o->value()*o->value());
-	float fr = 110.0f * m_Plugin->GetFineFreq();
-	int oc = m_Plugin->GetOctave();
-	if (oc > 0) fr *= 1 << oc;
-	if (oc < 0) fr /= 1 << (-oc);
-  	sprintf(str,"%4.1f Hz", fr);
-	m_out_freq->value(str);
+ 	m_GUICH->Set("FineFreq",o->value()*o->value());
+	//float fr = 110.0f * m_Plugin->GetFineFreq();
+	//int oc = m_Plugin->GetOctave();
+	//if (oc > 0) fr *= 1 << oc;
+	//if (oc < 0) fr /= 1 << (-oc);
+  	//sprintf(str,"%4.1f Hz", fr);
+	//m_out_freq->value(str);
 }
   
 void OscillatorPluginGUI::cb_FineTune(Fl_Knob* o, void* v) 
@@ -296,7 +296,7 @@ void OscillatorPluginGUI::cb_FineTune(Fl_Knob* o, void* v)
 inline void OscillatorPluginGUI::cb_PulseWidth_i(Fl_Slider* o, void* v) 
 {
 char str[10]; 
-	m_Plugin->SetPulseWidth(o->value());
+	m_GUICH->Set("PulseWidth",o->value());
 	sprintf(str,"%4.0f %%", 100*o->value());
 	m_out_pulseW->value(str); 
 }
@@ -305,24 +305,24 @@ void OscillatorPluginGUI::cb_PulseWidth(Fl_Slider* o, void* v)
 { ((OscillatorPluginGUI*)(o->parent()))->cb_PulseWidth_i(o,v);}
 
 inline void OscillatorPluginGUI::cb_Square_i(Fl_Check_Button* o, void* v)
-{ m_Plugin->SetType(OscillatorPlugin::SQUARE); }
+{ m_GUICH->Set("Type",(char)OscillatorPlugin::SQUARE); }
 void OscillatorPluginGUI::cb_Square(Fl_Check_Button* o, void* v)
 { ((OscillatorPluginGUI*)(o->parent()))->cb_Square_i(o,v); }
 
 inline void OscillatorPluginGUI::cb_Saw_i(Fl_Check_Button* o, void* v)
-{ m_Plugin->SetType(OscillatorPlugin::SAW); }
+{ m_GUICH->Set("Type",(char)OscillatorPlugin::SAW); }
 void OscillatorPluginGUI::cb_Saw(Fl_Check_Button* o, void* v)
 { ((OscillatorPluginGUI*)(o->parent()))->cb_Saw_i(o,v); }
 
 inline void OscillatorPluginGUI::cb_Noise_i(Fl_Check_Button* o, void* v)
-{ m_Plugin->SetType(OscillatorPlugin::NOISE); }
+{ m_GUICH->Set("Type",(char)OscillatorPlugin::NOISE); }
 void OscillatorPluginGUI::cb_Noise(Fl_Check_Button* o, void* v)
 { ((OscillatorPluginGUI*)(o->parent()))->cb_Noise_i(o,v); }
 
 inline void OscillatorPluginGUI::cb_SHLen_i(Fl_Slider* o, void* v)
 {
 char str[10]; 
-	m_Plugin->SetSHLen(0.2f-o->value()); 
+	m_GUICH->Set("SHLen",0.2f-o->value()); 
 	sprintf(str,"%4.3f s", 0.2f-o->value());
 	m_out_SHlen->value(str);
 }
@@ -333,7 +333,7 @@ void OscillatorPluginGUI::cb_SHLen(Fl_Slider* o, void* v)
 inline void OscillatorPluginGUI::cb_ModAmount_i(Fl_Knob* o, void* v)
 {
 char str[10];
-	m_Plugin->SetModAmount(o->value());
+	m_GUICH->Set("ModAmount",o->value());
 	sprintf(str,"%4.0f %%", 100*o->value());
 	m_out_mod->value(str); 
 }

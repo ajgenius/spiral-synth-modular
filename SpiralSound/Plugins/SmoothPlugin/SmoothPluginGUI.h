@@ -33,12 +33,10 @@
 class SmoothPluginGUI : public SpiralPluginGUI
 {
 public:
-	SmoothPluginGUI(int w, int h, SmoothPlugin *o,const HostInfo *Info);
+	SmoothPluginGUI(int w, int h, SmoothPlugin *o,ChannelHandler *ch,const HostInfo *Info);
 	
-	virtual void UpdateValues();
-	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }
-	
-	SmoothPlugin *m_Plugin;	
+	virtual void UpdateValues(SpiralPlugin *o);
+
 private:
 
 	Fl_Knob* m_Up;

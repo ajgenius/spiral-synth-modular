@@ -58,6 +58,13 @@ m_TrigThresh(0.01)
 	m_PluginInfo.PortTips.push_back("Input");	
 	m_PluginInfo.PortTips.push_back("CV");	
 	m_PluginInfo.PortTips.push_back("Output");
+	
+	m_AudioCH->Register("Attack",&m_Attack);
+	m_AudioCH->Register("Decay",&m_Decay);
+	m_AudioCH->Register("Sustain",&m_Sustain);
+	m_AudioCH->Register("Release",&m_Release);
+	m_AudioCH->Register("Volume",&m_Volume);
+	m_AudioCH->Register("Trig",&m_TrigThresh);
 }
 
 EnvelopePlugin::~EnvelopePlugin()
@@ -73,11 +80,9 @@ PluginInfo &EnvelopePlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *EnvelopePlugin::CreateGUI()
 {
-	m_GUI = new EnvelopePluginGUI(m_PluginInfo.Width,
+	return new EnvelopePluginGUI(m_PluginInfo.Width,
 								  	    m_PluginInfo.Height,
-										this,m_HostInfo);
-	m_GUI->hide();
-	return m_GUI;
+										this,m_AudioCH,m_HostInfo);
 }
 
 void EnvelopePlugin::Execute()

@@ -26,10 +26,9 @@ static const int GUIBG2_COLOUR = 145;
 
 ////////////////////////////////////////////
 
-StereoMixerPluginGUI::StereoMixerPluginGUI(int w, int h,StereoMixerPlugin *o,const HostInfo *Info) :
-SpiralPluginGUI(w,h,o) {
+StereoMixerPluginGUI::StereoMixerPluginGUI(int w, int h,StereoMixerPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
+SpiralPluginGUI(w,h,o,ch) {
 
-  m_Plugin=o;
   int Width=20;
   int Height=100;
 
@@ -64,18 +63,19 @@ SpiralPluginGUI(w,h,o) {
   end();
 }
 
-void StereoMixerPluginGUI::UpdateValues () {
+void StereoMixerPluginGUI::UpdateValues (SpiralPlugin *o) {
+	StereoMixerPlugin* Plugin = (StereoMixerPlugin*)o;
+
   for (int n=0; n<NUM_CHANNELS; n++) {
-    m_Chan[n]->value (2.0f - m_Plugin->GetChannel (n));
-    // This line used to be
-    //         m_Pan[n]->value (m_Plugin->GetChannel (n));
-    // And that definately fixes the problem
-    m_Pan[n]->value (m_Plugin->GetPan (n));
+    m_Chan[n]->value (2.0f - Plugin->GetChannel (n));
+    m_Pan[n]->value (Plugin->GetPan (n));
   }
 }
 
 inline void StereoMixerPluginGUI::cb_Chan_i(Fl_Slider* o, void* v) {
-  m_Plugin->SetChannel(*(int*)(v),2.0f-o->value());
+  m_GUICH->Set("Num",*(int*)(v));
+  m_GUICH->Set("Value",(float)(2.0f-o->value()));
+  m_GUICH->SetCommand(StereoMixerPlugin::SETCH);
 }
 
 void StereoMixerPluginGUI::cb_Chan(Fl_Slider* o, void* v) {
@@ -83,7 +83,9 @@ void StereoMixerPluginGUI::cb_Chan(Fl_Slider* o, void* v) {
 }
 
 inline void StereoMixerPluginGUI::cb_Pan_i(Fl_Knob* o, void* v) {
-  m_Plugin->SetPan(*(int*)(v),o->value());
+  m_GUICH->Set("Num",*(int*)(v));
+  m_GUICH->Set("Value",(float)(2.0f-o->value()));
+  m_GUICH->SetCommand(StereoMixerPlugin::SETPAN);
 }
 
 void StereoMixerPluginGUI::cb_Pan(Fl_Knob* o, void* v) {

@@ -32,12 +32,9 @@
 class RingModPluginGUI : public SpiralPluginGUI
 {
 public:
-	RingModPluginGUI(int w, int h, RingModPlugin *o,const HostInfo *Info);
+	RingModPluginGUI(int w, int h, RingModPlugin *o,ChannelHandler *ch,const HostInfo *Info);
 	
-	virtual void UpdateValues();
-	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }
-	
-	RingModPlugin *m_Plugin;	
+	virtual void UpdateValues(SpiralPlugin *o);
 	
 private:
 	

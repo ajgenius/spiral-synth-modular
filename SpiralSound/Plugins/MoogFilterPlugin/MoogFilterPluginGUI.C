@@ -26,11 +26,9 @@ static const int GUIBG2_COLOUR = 145;
 
 ////////////////////////////////////////////
 
-MoogFilterPluginGUI::MoogFilterPluginGUI(int w, int h,MoogFilterPlugin *o,const HostInfo *Info) :
-SpiralPluginGUI(w,h,o)
+MoogFilterPluginGUI::MoogFilterPluginGUI(int w, int h,MoogFilterPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
+SpiralPluginGUI(w,h,o,ch)
 {	
-	m_Plugin=o;
-	
 	Cutoff = new Fl_Slider(15, 20, 20, 70, "Cutoff");
 	Cutoff->type(4);
 	Cutoff->selection_color(GUI_COLOUR);
@@ -52,22 +50,24 @@ SpiralPluginGUI(w,h,o)
 	end();
 }
 
-void MoogFilterPluginGUI::UpdateValues()
+void MoogFilterPluginGUI::UpdateValues(SpiralPlugin *o)
 {
-	Cutoff->value(1.0f-m_Plugin->GetCutoff());
-	Resonance->value(m_Plugin->GetResonance());
+	MoogFilterPlugin *Plugin = (MoogFilterPlugin*)o;
+	
+	Cutoff->value(1.0f-Plugin->GetCutoff());
+	Resonance->value(Plugin->GetResonance());
 }
 
 inline void MoogFilterPluginGUI::cb_Cutoff_i(Fl_Slider* o, void* v) 
 { 
 	float value=1.0f-o->value();
 //	m_Plugin->SetCutoff((value*value)+10.0f); 
-	m_Plugin->SetCutoff(value); 
+	m_GUICH->Set("Cutoff",value); 
 }
 void MoogFilterPluginGUI::cb_Cutoff(Fl_Slider* o, void* v) 
 { ((MoogFilterPluginGUI*)(o->parent()))->cb_Cutoff_i(o,v); }
 
 inline void MoogFilterPluginGUI::cb_Resonance_i(Fl_Knob* o, void* v) 
-{ m_Plugin->SetResonance(o->value()); }
+{ m_GUICH->Set("Resonance",o->value()); }
 void MoogFilterPluginGUI::cb_Resonance(Fl_Knob* o, void* v) 
 { ((MoogFilterPluginGUI*)(o->parent()))->cb_Resonance_i(o,v); }

@@ -56,6 +56,9 @@ MixerPlugin::MixerPlugin()
 	{
 		m_ChannelVal[n]=1.0f;		
 	}
+	
+	m_AudioCH->Register("Value",&m_GUIArgs.Value);
+	m_AudioCH->Register("Num",&m_GUIArgs.Num);
 }
 
 MixerPlugin::~MixerPlugin()
@@ -69,11 +72,9 @@ PluginInfo &MixerPlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *MixerPlugin::CreateGUI()
 {
-	m_GUI = new MixerPluginGUI(m_PluginInfo.Width,
+	return new MixerPluginGUI(m_PluginInfo.Width,
 								  	    m_PluginInfo.Height,
-										this,m_HostInfo);
-	m_GUI->hide();
-	return m_GUI;
+										this,m_AudioCH,m_HostInfo);
 }
 
 void MixerPlugin::Execute()
@@ -85,6 +86,17 @@ void MixerPlugin::Execute()
 					  (GetInput(1,n)*m_ChannelVal[1])+
 					  (GetInput(2,n)*m_ChannelVal[2])+
 					  (GetInput(3,n)*m_ChannelVal[3]));
+	}
+}
+
+void MixerPlugin::ExecuteCommands()
+{
+	if (m_AudioCH->IsCommandWaiting())
+	{
+		switch (m_AudioCH->GetCommand())
+		{
+			case (SETCH) : SetChannel(m_GUIArgs.Num,m_GUIArgs.Value); break;
+		}
 	}
 }
 

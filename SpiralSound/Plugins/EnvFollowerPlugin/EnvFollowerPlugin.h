@@ -34,12 +34,7 @@ public:
 	virtual void	    StreamOut(ostream &s); 
 	virtual void	    StreamIn(istream &s);
 	
-	// has to be defined in the plugin	
-	virtual void UpdateGUI() { Fl::check(); }
-	
-	void  SetAttack(float v) { m_Attack=v; }
 	float GetAttack()        { return m_Attack; }
-	void  SetDecay(float v)  { m_Decay=v; }
 	float GetDecay()         { return m_Decay; }
 
 private:

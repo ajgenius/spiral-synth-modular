@@ -32,13 +32,10 @@
 class DelayPluginGUI : public SpiralPluginGUI
 {
 public:
-	DelayPluginGUI(int w, int h, DelayPlugin *o,const HostInfo *Info);
+	DelayPluginGUI(int w, int h, DelayPlugin *o,ChannelHandler *ch,const HostInfo *Info);
 	
-	virtual void UpdateValues();
-	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }
-	
-	DelayPlugin *m_Plugin;	
-	
+	virtual void UpdateValues(SpiralPlugin *o);
+		
 private:
 	
 	Fl_Slider 		*m_Delay;

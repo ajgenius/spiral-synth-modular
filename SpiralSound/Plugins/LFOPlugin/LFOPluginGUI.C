@@ -124,14 +124,12 @@ static unsigned char *image_Saw[] = {
 (unsigned char*)"                    ",
 (unsigned char*)"                    "};
 
-LFOPluginGUI::LFOPluginGUI(int w, int h,LFOPlugin *o,const HostInfo *Info) :
-SpiralPluginGUI(w,h,o),
+LFOPluginGUI::LFOPluginGUI(int w, int h,LFOPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
+SpiralPluginGUI(w,h,o,ch),
 pixmap_Sine(image_Sine),
 pixmap_Tri(image_Tri),
 pixmap_Square(image_Square),
 pixmap_Saw(image_Saw) {
-
-        m_Plugin=o;
 
         ShapeSine = new Fl_Check_Button (5, 15, 55, 30);
         ShapeSine->type (FL_RADIO_BUTTON);
@@ -196,18 +194,20 @@ pixmap_Saw(image_Saw) {
         end();
 }
 
-void LFOPluginGUI::UpdateValues() {
+void LFOPluginGUI::UpdateValues(SpiralPlugin *o) {
+	LFOPlugin* Plugin = (LFOPlugin*)o;
+
      ShapeSine->value (0);
      ShapeTri->value (0);
      ShapeSquare->value (0);
      ShapeSaw->value (0);
-     switch (m_Plugin->GetType()) {
+     switch (Plugin->GetType()) {
             case LFOPlugin::SINE : ShapeSine->value (1); break;
             case LFOPlugin::TRIANGLE : ShapeTri->value (1); break;
             case LFOPlugin::SQUARE : ShapeSquare->value (1); break;
             case LFOPlugin::SAW : ShapeSaw->value (1); break;
      }
-     float x = m_Plugin->GetFreq();
+     float x = Plugin->GetFreq();
      NumFreq->value (x);
      x = 1 / x;
      Perd->value (x);
@@ -217,8 +217,7 @@ void LFOPluginGUI::UpdateValues() {
 // Callbacks for knobs and counters
 
 inline void LFOPluginGUI::cb_Perd_i (Fl_Knob* o, void* v) {
-       m_Plugin->SetFreq (1 / o->value());
-       UpdateValues();
+       m_GUICH->Set("Freq",(float)(1.0f / o->value()));
 }
 void LFOPluginGUI::cb_Perd (Fl_Knob* o, void* v) {
      ((LFOPluginGUI*)(o->parent()))->cb_Perd_i (o, v);
@@ -226,8 +225,7 @@ void LFOPluginGUI::cb_Perd (Fl_Knob* o, void* v) {
 
 
 inline void LFOPluginGUI::cb_NumPerd_i (Fl_Knob* o, void* v) {
-       m_Plugin->SetFreq (1 / o->value());
-       UpdateValues();
+       m_GUICH->Set("Freq",(float)(1.0f / o->value()));
 }
 void LFOPluginGUI::cb_NumPerd (Fl_Knob* o, void* v) {
      ((LFOPluginGUI*)(o->parent()))->cb_NumPerd_i (o, v);
@@ -235,8 +233,7 @@ void LFOPluginGUI::cb_NumPerd (Fl_Knob* o, void* v) {
 
 
 inline void LFOPluginGUI::cb_NumFreq_i (Fl_Knob* o, void* v) {
-       m_Plugin->SetFreq (o->value());
-       UpdateValues();
+       m_GUICH->Set("Freq",(float)(o->value()));
 }
 
 void LFOPluginGUI::cb_NumFreq (Fl_Knob* o, void* v) {
@@ -246,7 +243,7 @@ void LFOPluginGUI::cb_NumFreq (Fl_Knob* o, void* v) {
 // Callbacks for waveform buttons
 
 inline void LFOPluginGUI::cb_Sine_i (Fl_Check_Button* o, void* v) {
-       m_Plugin->SetType (LFOPlugin::SINE);
+       m_GUICH->Set("Type",(char)(LFOPlugin::SINE));
 }
 void LFOPluginGUI::cb_Sine(Fl_Check_Button* o, void* v) {
      ((LFOPluginGUI*)(o->parent()))->cb_Sine_i (o, v);
@@ -254,7 +251,7 @@ void LFOPluginGUI::cb_Sine(Fl_Check_Button* o, void* v) {
 
 
 inline void LFOPluginGUI::cb_Tri_i (Fl_Check_Button* o, void* v) {
-       m_Plugin->SetType (LFOPlugin::TRIANGLE);
+       m_GUICH->Set("Type",(char)(LFOPlugin::TRIANGLE));
 }
 void LFOPluginGUI::cb_Tri (Fl_Check_Button* o, void* v) {
      ((LFOPluginGUI*)(o->parent()))->cb_Tri_i (o, v);
@@ -262,7 +259,7 @@ void LFOPluginGUI::cb_Tri (Fl_Check_Button* o, void* v) {
 
 
 inline void LFOPluginGUI::cb_Square_i (Fl_Check_Button* o, void* v) {
-       m_Plugin->SetType (LFOPlugin::SQUARE);
+       m_GUICH->Set("Type",(char)(LFOPlugin::SQUARE));
 }
 void LFOPluginGUI::cb_Square (Fl_Check_Button* o, void* v) {
      ((LFOPluginGUI*)(o->parent()))->cb_Square_i (o, v);
@@ -270,7 +267,7 @@ void LFOPluginGUI::cb_Square (Fl_Check_Button* o, void* v) {
 
 
 inline void LFOPluginGUI::cb_Saw_i (Fl_Check_Button* o, void* v) {
-       m_Plugin->SetType (LFOPlugin::SAW);
+       m_GUICH->Set("Type",(LFOPlugin::SAW));
 }
 void LFOPluginGUI::cb_Saw (Fl_Check_Button* o, void* v) {
      ((LFOPluginGUI*)(o->parent()))->cb_Saw_i (o, v);

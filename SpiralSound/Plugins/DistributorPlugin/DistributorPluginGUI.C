@@ -26,16 +26,15 @@ static const int GUIBG2_COLOUR = 145;
 
 ////////////////////////////////////////////
 
-DistributorPluginGUI::DistributorPluginGUI(int w, int h,DistributorPlugin *o,const HostInfo *Info) :
-SpiralPluginGUI(w,h,o)
+DistributorPluginGUI::DistributorPluginGUI(int w, int h,DistributorPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
+SpiralPluginGUI(w,h,o,ch)
 {	
-	m_Plugin=o;
 	end();
 }
 
 
 
-void DistributorPluginGUI::UpdateValues()
+void DistributorPluginGUI::UpdateValues(SpiralPlugin *o)
 {
 }
 	

@@ -33,12 +33,9 @@
 class XFadePluginGUI : public SpiralPluginGUI
 {
 public:
-	XFadePluginGUI(int w, int h, XFadePlugin *o,const HostInfo *Info);
+	XFadePluginGUI(int w, int h, XFadePlugin *o,ChannelHandler *ch,const HostInfo *Info);
 	
-	virtual void UpdateValues();
-	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }
-	
-	XFadePlugin *m_Plugin;	
+	virtual void UpdateValues(SpiralPlugin *o);
 	
 private:
 	

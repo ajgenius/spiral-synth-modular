@@ -25,14 +25,15 @@ static const int GUI_COLOUR = 154;
 static const int GUIBG_COLOUR = 144;
 static const int GUIBG2_COLOUR = 145;
 
-SpiralPluginGUI::SpiralPluginGUI(int w, int h, SpiralPlugin* o) :
+SpiralPluginGUI::SpiralPluginGUI(int w, int h, SpiralPlugin* o, ChannelHandler *ch) :
 SpiralGUIType(0,0,w,h,"")
 {	
 	Fl::visible_focus(false);
 	
+	m_GUICH = ch;
+	
 	box(FL_THIN_UP_BOX);
-   	//clear_border();
-    m_DragBar = new Fl_DragBar(0,0,w,20,o->GetName().c_str());
+	m_DragBar = new Fl_DragBar(0,0,w,20,o->GetName().c_str());
 	m_DragBar->type(Fl_DragBar::FLDRAG);
 	add(m_DragBar);
   	
@@ -47,17 +48,6 @@ SpiralPluginGUI::~SpiralPluginGUI()
 {
 	// Needed to properly remove the window.
 	Fl::check();
-}
-
-// This could be improved.
-void SpiralPluginGUI::draw() 
-{ 
-	if (GetPlugin()->ValueChanged()) 
-	{	
-		UpdateValues(); 
-	}
-	
-	SpiralGUIType::draw();
 }
 		
 //// Callbacks ////

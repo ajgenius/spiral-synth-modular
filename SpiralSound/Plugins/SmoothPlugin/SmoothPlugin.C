@@ -51,6 +51,9 @@ m_Value(0)
 	m_PluginInfo.NumOutputs=1;
 	m_PluginInfo.PortTips.push_back("Input");	
 	m_PluginInfo.PortTips.push_back("Output");
+	
+	m_AudioCH->Register("Up",&m_Up);
+	m_AudioCH->Register("Down",&m_Down);
 }
 
 SmoothPlugin::~SmoothPlugin()
@@ -64,11 +67,9 @@ PluginInfo &SmoothPlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *SmoothPlugin::CreateGUI()
 {
-	m_GUI = new SmoothPluginGUI(m_PluginInfo.Width,
+	return new SmoothPluginGUI(m_PluginInfo.Width,
 								  	    m_PluginInfo.Height,
-										this,m_HostInfo);
-	m_GUI->hide();
-	return m_GUI;
+										this,m_AudioCH,m_HostInfo);
 }
 
 void SmoothPlugin::Execute()

@@ -36,17 +36,10 @@ public:
 	virtual void Execute();
 	virtual void StreamOut(ostream &s);
 	virtual void StreamIn(istream &s);
-	
-	// has to be defined in the plugin	
-	virtual void UpdateGUI() { Fl::check(); }
 		
 	void Reset();
 	void SetupCoeffs();
 
-	void SetCutoff(double s) {fc=s;}
-	void SetResonance(double s) {Q=s;}
-	void SetRevCutoffMod(bool s) {m_RevCutoffMod=s;}
-	void SetRevResonanceMod(bool s) {m_RevResonanceMod=s;}
 	double GetCutoff() {return fc;}
 	double GetResonance() {return Q;}
 	bool GetRevCutoffMod() {return m_RevCutoffMod;}
@@ -58,10 +51,10 @@ private:
    	
 	// Voice independant
 	float    *coef; 
-    double   fs, fc;     // Sampling frequency, cutoff frequency  
-    double   Q;          // Resonance > 1.0 < 1000  
-	double   m_LastFC;
-	double   m_LastQ;
+    float   fs, fc;     // Sampling frequency, cutoff frequency  
+    float   Q;          // Resonance > 1.0 < 1000  
+	float   m_LastFC;
+	float   m_LastQ;
     unsigned nInd; 
     double   a0, a1, a2, b0, b1, b2; 
     double   k;          // overall gain factor 

@@ -63,7 +63,8 @@ int OutputPlugin::m_NoExecuted=0;
 									return;           \
 								}
 
-extern "C" {
+extern "C"
+{
 SpiralPlugin* CreateInstance()
 {
 	return new OutputPlugin;
@@ -97,6 +98,8 @@ OutputPlugin::OutputPlugin()
 	m_PluginInfo.PortTips.push_back("Left In");
 	m_PluginInfo.PortTips.push_back("Right In");
 	
+	m_AudioCH->Register("Mode",(char*)&m_Mode,ChannelHandler::INPUT);
+	
 	m_Mode=OUTPUT;
 }
 
@@ -119,11 +122,11 @@ PluginInfo &OutputPlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *OutputPlugin::CreateGUI()
 {
-	m_GUI = new OutputPluginGUI(m_PluginInfo.Width,
+	return new OutputPluginGUI(m_PluginInfo.Width,
 										  m_PluginInfo.Height,
-										  this,m_HostInfo);
-	m_GUI->hide();
-	return m_GUI;
+										  this,
+										  m_AudioCH,
+										  m_HostInfo);
 }
 
 void OutputPlugin::Execute()
@@ -472,6 +475,3 @@ void OSSOutput::OpenReadWrite()
 	result = ioctl(m_Dspfd,SNDCTL_DSP_SPEED,&val);
 	CHECK_AND_REPORT_ERROR;
 }
-
-
-

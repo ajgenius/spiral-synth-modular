@@ -35,12 +35,9 @@
 class EchoPluginGUI : public SpiralPluginGUI
 {
 public:
-	EchoPluginGUI(int w, int h, EchoPlugin *o,const HostInfo *Info);
+	EchoPluginGUI(int w, int h, EchoPlugin *o,ChannelHandler *ch,const HostInfo *Info);
 	
-	virtual void UpdateValues();
-	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }
-	
-	EchoPlugin *m_Plugin;	
+	virtual void UpdateValues(SpiralPlugin *o);
 	
 private:
 	

@@ -17,12 +17,14 @@
 */ 
 
 #include <vector>
+#include <map>
 #include <string>
 #include <iostream>
-#include "../Sample.h"
 #include <math.h>
 #include <FL/Fl.h>
-#include <FL/Fl_Window.h>
+#include <FL/Fl_Group.h>
+#include "../Sample.h"
+#include "../ChannelHandler.h"
 
 #ifndef SPIRALPLUGIN
 #define SPIRALPLUGIN
@@ -30,6 +32,8 @@
 #define SpiralGUIType Fl_Group
 
 static const float MAX_FREQ = 13000;
+
+class ChannelHander;
 
 struct PluginInfo
 {
@@ -55,6 +59,10 @@ struct HostInfo
 	int    GUI_COLOUR;
 };
 
+/////////////////////////////////////////////////////////////////////
+
+class ChannelHandler;
+
 class SpiralPlugin
 {
 public:
@@ -62,7 +70,12 @@ public:
 	virtual ~SpiralPlugin();
 		
 	virtual PluginInfo& Initialise(const HostInfo *Host);
+	
+	// execute the audio
 	virtual void        Execute()=0;
+	// run the commands from the GUI
+	virtual void        ExecuteCommands() {}
+	// create the GUI, do not store the pointer - it wont be threadsafe to use it
 	virtual SpiralGUIType*  CreateGUI()=0;
 	
 	// stream the plugins state
@@ -72,25 +85,28 @@ public:
 	// stuff here gets saved in filename_files directory
 	// you must return true if this feature is used.
 	virtual bool	    SaveExternalFiles(const string &Dir) { return false; }
-	virtual void	    LoadExternalFiles(const string &Dir) {}
+	virtual void	    LoadExternalFiles(const string &Dir) {}	
 
 	const HostInfo*     GetHostInfo() { return m_HostInfo; }
 	bool                GetOutput(unsigned int n, Sample **s);
 	bool                SetInput(unsigned int n, const Sample *s);
 	const Sample*       GetInput(unsigned int n) { return m_Input[n]; }
 	string 				GetName() { return m_PluginInfo.Name; }
-	
-	bool ValueChanged();
-	void SetValueChanged(bool s) { m_ValuesChanged=s; }
 
 	void UpdatePluginInfoWithHost();
 	void SetUpdateInfoCallback(int ID, void(*s)(int, void *));
 	void SetUpdateCallback(void (*s)(void*,bool m)) { cb_Update=s; }
 	void SetParent(void *s) { m_Parent=s; }
 	void SetInPortType(PluginInfo &pinfo, int port, Sample::SampleType type);    
-    void SetOutPortType(PluginInfo &pinfo, int port, Sample::SampleType type);    
+    void SetOutPortType(PluginInfo &pinfo, int port, Sample::SampleType type);
+
+	void UpdateChannelHandler();
+	 
+    ChannelHandler *GetChannelHandler() { return m_AudioCH; }
 	
 protected:
+	
+    ChannelHandler *m_AudioCH;
 
 	void  SetOutput(int n,int p, float s) 
 		{ if (m_Output[n]) m_Output[n]->Set(p,s); }
@@ -123,12 +139,10 @@ protected:
 	
 	Sample* GetOutputBuf(int n) { return m_Output[n]; }	
 	
-	SpiralGUIType  *m_GUI;
 	const HostInfo *m_HostInfo;
 	PluginInfo      m_PluginInfo;
-	bool 			m_ValuesChanged;
-	int             m_Version;		
-	
+	int             m_Version;
+		
 	// needed for jack
 	void (*cb_Update)(void*o ,bool m);	
 	void  *m_Parent;

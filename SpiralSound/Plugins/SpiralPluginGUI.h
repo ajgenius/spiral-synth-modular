@@ -17,32 +17,33 @@
 */ 
 
 #include <FL/Fl.H>
-#include <FL/Fl_Group.H>
+#include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Button.H>
 #include <iostream>
 #include <math.h>
 
 #include "Widgets/Fl_DragBar.H"
+#include "SpiralPlugin.h" // for the channel handler
 
 #ifndef SPIRALPLUGINGUI
 #define SPIRALPLUGINGUI
 
 #define SpiralGUIType Fl_Group
-
-class SpiralPlugin;
-
+ 
 class SpiralPluginGUI : public SpiralGUIType
 {
 public:
-	SpiralPluginGUI(int w, int h, SpiralPlugin* o);
+	SpiralPluginGUI(int w, int h, SpiralPlugin* o, ChannelHandler *ch);
 	~SpiralPluginGUI();
 	
-	// Draw also does the job of reassigning the 
-	// data values to the widgets. This could be better.
-	virtual void draw();	
-	virtual void UpdateValues() = 0;
-	virtual SpiralPlugin* GetPlugin() = 0; 
-	
+	// called while audio thread is suspended, so direct access to the
+	// spiralplugin is acceptable
+	virtual void UpdateValues(SpiralPlugin *o)=0;
+
+protected:
+
+	ChannelHandler *m_GUICH;
+		
 private:
 	Fl_DragBar*      m_DragBar;
 	Fl_Button*		 m_Hide;

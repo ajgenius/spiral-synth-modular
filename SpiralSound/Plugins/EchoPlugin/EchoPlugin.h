@@ -33,13 +33,7 @@ public:
 	virtual void Execute();
 	virtual void StreamOut(ostream &s);
 	virtual void StreamIn(istream &s);
-	
-	// has to be defined in the plugin	
-	virtual void UpdateGUI() { Fl::check(); }
-		
-    
-	void SetDelay(float s)    { m_Delay=s;    }
-	void SetFeedback(float s) { m_Feedback=s; }
+	    
 	float GetDelay()    { return m_Delay;    }
 	float GetFeedback() { return m_Feedback; }
 	

@@ -10,8 +10,8 @@
 
 CC	=	gcc
 CXX	=	g++
-CFLAGS	=	-pipe -Wall -O3 -ffast-math -DNO_DEBUG -Wno-unused  
-CXXFLAGS=	-pipe -Wall -O3 -ffast-math -DNO_DEBUG -Wno-unused  
+CFLAGS	=	-pipe -Wall -O3 -ffast-math -DNO_DEBUG -Wno-unused  -fPIC 
+CXXFLAGS=	-pipe -Wall -O3 -ffast-math -DNO_DEBUG -Wno-unused  -fPIC -fPIC 
 INCPATH	=	-I/usr/X11R6/include
 LINK	=	g++ -shared
 LFLAGS	=	
@@ -44,6 +44,7 @@ mandir = ${prefix}/man
 
 HEADERS =	../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
+		../../ChannelHandler.h \
 		../Widgets/Fl_Knob.H \
 		../Widgets/Fl_DragBar.H \
 		../../Sample.h \
@@ -51,6 +52,7 @@ HEADERS =	../SpiralPlugin.h \
 		LFOPluginGUI.h
 SOURCES =	../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
+		../../ChannelHandler.C \
 		../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_DragBar.cxx \
 		../../Sample.C \
@@ -58,6 +60,7 @@ SOURCES =	../SpiralPlugin.C \
 		LFOPluginGUI.C
 OBJECTS =	../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
+		../../ChannelHandler.o \
 		../Widgets/Fl_Knob.o \
 		../Widgets/Fl_DragBar.o \
 		../../Sample.o \
@@ -165,3 +168,5 @@ LFOPluginGUI.o: LFOPluginGUI.C \
 		../../SpiralInfo.h \
 		../../Sample.h
 
+../../ChannelHandler.o: ../../ChannelHandler.C \
+		../../ChannelHandler.h

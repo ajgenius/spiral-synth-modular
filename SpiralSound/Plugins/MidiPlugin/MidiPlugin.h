@@ -31,22 +31,29 @@ public:
 	virtual PluginInfo& Initialise(const HostInfo *Host);
 	virtual SpiralGUIType*  CreateGUI();
 	virtual void 		Execute();
+	virtual void        ExecuteCommands();
 	virtual void	    StreamOut(ostream &s);
 	virtual void	    StreamIn(istream &s);
 	
 	// has to be defined in the plugin	
 	virtual void UpdateGUI() { Fl::check(); }
 	
-	void SetDeviceNum(int s) { m_DeviceNum=s; }
 	int  GetDeviceNum()      { return m_DeviceNum; }
-	void SetNoteCut(bool s)  { m_NoteCut=s; }
 	bool GetNoteCut()        { return m_NoteCut; }
-	void SetContinuousNotes(bool s)  { m_ContinuousNotes=s; }
 	bool GetContinuousNotes()        { return m_ContinuousNotes; }
+	
+	enum GUICommands{NONE,ADDCONTROL,DELCONTROL};
+	struct GUIArgs
+	{
+		int s;
+		char Name[256];
+	};
+		
+private:
+	GUIArgs m_GUIArgs;
+	
 	void AddControl(int s,const string &Name);
 	void DeleteControl();
-	
-private:
 	
 	int m_DeviceNum;
 

@@ -26,11 +26,9 @@ static const int GUIBG2_COLOUR = 145;
 
 ////////////////////////////////////////////
 
-XFadePluginGUI::XFadePluginGUI(int w, int h,XFadePlugin *o,const HostInfo *Info) :
-SpiralPluginGUI(w,h,o)
+XFadePluginGUI::XFadePluginGUI(int w, int h,XFadePlugin *o,ChannelHandler *ch,const HostInfo *Info) :
+SpiralPluginGUI(w,h,o,ch)
 {	
-	m_Plugin=o;
-	
 	m_Mix = new Fl_Slider(5, 20, 200, 20, "");
 	m_Mix->type(FL_HORIZONTAL);
 	m_Mix->selection_color(GUI_COLOUR);
@@ -43,14 +41,15 @@ SpiralPluginGUI(w,h,o)
 	end();
 }
 
-void XFadePluginGUI::UpdateValues()
+void XFadePluginGUI::UpdateValues(SpiralPlugin *o)
 {
-	m_Mix->value(m_Plugin->GetMix());
+	XFadePlugin *Plugin = (XFadePlugin*)o;
+	m_Mix->value(Plugin->GetMix());
 }
 
 inline void XFadePluginGUI::cb_Mix_i(Fl_Slider* o, void* v) 
 { 
-	m_Plugin->SetMix(o->value()); 
+	m_GUICH->Set("Mix",o->value()); 
 }
 void XFadePluginGUI::cb_Mix(Fl_Slider* o, void* v) 
 { ((XFadePluginGUI*)(o->parent()))->cb_Mix_i(o,v); }

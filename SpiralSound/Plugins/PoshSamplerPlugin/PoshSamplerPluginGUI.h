@@ -35,7 +35,7 @@ class Fl_WaveDisplay : public Fl_Widget
 		~Fl_WaveDisplay();		
 		virtual void draw();		
 		virtual int handle(int event);		
-		void SetSample(Sample* s) { m_Sample=s; }
+		void SetSample(const float* s, long len);
 		long GetRangeStart()      { return m_StartPos; }
 		long GetRangeEnd()        { return m_EndPos; }
 		long GetViewStart()       { return m_ViewStart; }
@@ -52,6 +52,7 @@ class Fl_WaveDisplay : public Fl_Widget
 		void SetPosMarker(bool s) { m_PosMarker=s; }
 		
 	private:	
+			
 		Sample *m_Sample;
 		long m_StartPos;
 		long m_EndPos;
@@ -70,17 +71,19 @@ class Fl_WaveDisplay : public Fl_Widget
 class PoshSamplerPluginGUI : public SpiralPluginGUI
 {
 public:
-	PoshSamplerPluginGUI(int w, int h, PoshSamplerPlugin *o,const HostInfo *Info);
+	PoshSamplerPluginGUI(int w, int h, PoshSamplerPlugin *o,ChannelHandler *ch, const HostInfo *Info);
 	
-	virtual void UpdateValues();
-	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }
+	virtual void UpdateValues(SpiralPlugin *o);
+	virtual void draw();
 	
 	void SetPlayPos(long s) { m_Display->SetPlayPos(s); }
 	int  GetCurrentSample() { return (int)m_SampleNum->value(); }
 	
-	PoshSamplerPlugin *m_Plugin;	
 private:
-	
+
+	void UpdateSampleDisplay(int num);
+
+	char m_TextBuf[256];
 	int Numbers[NUM_SAMPLES];
 	
 	Fl_Button* m_Load;

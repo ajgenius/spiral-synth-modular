@@ -43,6 +43,7 @@ mandir = @mandir@
 
 HEADERS =	../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
+		../../ChannelHandler.h \
 		../Widgets/Fl_Knob.H \
 		../Widgets/Fl_DragBar.H \
 		../../Sample.h \
@@ -51,6 +52,7 @@ HEADERS =	../SpiralPlugin.h \
 		MidiPluginGUI.h
 SOURCES =	../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
+		../../ChannelHandler.C \
 		../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_DragBar.cxx \
 		../../Sample.C \
@@ -59,6 +61,7 @@ SOURCES =	../SpiralPlugin.C \
 		MidiPluginGUI.C
 OBJECTS =	../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
+		../../ChannelHandler.o \
 		../Widgets/Fl_Knob.o \
 		../Widgets/Fl_DragBar.o \
 		../../Sample.o \
@@ -175,3 +178,5 @@ MidiPluginGUI.o: MidiPluginGUI.C \
 		../SpiralPluginGUI.h \
 		../Widgets/Fl_DragBar.H
 
+../../ChannelHandler.o: ../../ChannelHandler.C \
+		../../ChannelHandler.h

@@ -31,7 +31,6 @@
 #include "../Widgets/Fl_Knob.H"
 
 #include <vector>
-#include "ladspa.h"
 #include <string>
 
 #include "LADSPAPlugin.h"
@@ -40,39 +39,18 @@
 #ifndef LADSPAGUI
 #define LADSPAGUI
 
-#include "ladspa.h"
 #include <stdio.h>
 #include <math.h>
 #include <dlfcn.h>
 #include <vector>
-#include "utils.h"
-
-class LPluginInfo {
-public:
-	string Filename;
-	string Label;
-	string Name;
-	bool operator<(const LPluginInfo & li) { return (Name < li.Name); }
-	bool operator==(const LPluginInfo& li) { return (Name == li.Name); }
-};
-
-// For sorting vectors of LPluginInfo's
-struct LPluginInfoSortAsc
-{
-	bool operator()(const LPluginInfo & begin, const LPluginInfo & end)
-	{
-		return begin.Name < end.Name;
-	}
-};
 
 class LADSPAPluginGUI : public SpiralPluginGUI
 {
 public:
-	LADSPAPluginGUI(int w, int h, LADSPAPlugin *o,const HostInfo *Info);
+	LADSPAPluginGUI(int w, int h, LADSPAPlugin *o, ChannelHandler *ch, const HostInfo *Info, const vector<LPluginInfo> &PVec);
 	~LADSPAPluginGUI();
 
-	virtual void UpdateValues();
-	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }
+	virtual void UpdateValues(SpiralPlugin *o);
 
 	void SetName(const char *s);
 	void SetMaker(const char *s);
@@ -87,14 +65,9 @@ public:
 	string GetLabel() { return m_Label; }
 	void SetFilename(string s) { m_Filename=s; }
 	void SetLabel(string s) { m_Label=s; }
-		
-	LADSPAPlugin *m_Plugin;	
-	
+			
 private:
-	vector<LPluginInfo> PluginList;
-	LPluginInfo CurrentPlugin;
-	friend void describePluginLibrary(const char * pcFullFilename, void * pvPluginHandle, LADSPA_Descriptor_Function pfDescriptorFunction);
-	void refreshPluginList(void);
+	LPluginInfo m_CurrentPlugin;
 
 	Fl_Scroll	      *m_InputScroll;
 	Fl_Pack  		  *m_InputPack;
@@ -109,6 +82,8 @@ private:
 	vector<Fl_Input*>  m_PortMin;
 	vector<Fl_Input*>  m_PortMax;	
 	vector<Fl_Check_Button*> m_PortClamp;
+	
+	vector<LPluginInfo> PluginList;
 	
 	// this is needed as fltk seems to crash if you delete
 	// the pack, is won't delete the children properly???

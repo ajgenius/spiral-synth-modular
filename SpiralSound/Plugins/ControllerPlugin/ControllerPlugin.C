@@ -60,6 +60,12 @@ m_Num(4)
 	{
 		m_ChannelVal[n]=0.0f;		
 	}
+	
+	m_AudioCH->Register("Number",&m_GUIArgs.Number);
+	m_AudioCH->Register("Value",&m_GUIArgs.Value);
+	m_AudioCH->Register("Min",&m_GUIArgs.Min);
+	m_AudioCH->Register("Max",&m_GUIArgs.Max);
+	m_AudioCH->RegisterData("Name",ChannelHandler::INPUT,m_GUIArgs.Name,sizeof(m_GUIArgs.Name));
 }
 
 ControllerPlugin::~ControllerPlugin()
@@ -73,11 +79,9 @@ PluginInfo &ControllerPlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *ControllerPlugin::CreateGUI()
 {
-	m_GUI = new ControllerPluginGUI(m_PluginInfo.Width,
+	return new ControllerPluginGUI(m_PluginInfo.Width,
 								  	    m_PluginInfo.Height,
-										this,m_HostInfo);
-	m_GUI->hide();
-	return m_GUI;
+										this,m_AudioCH,m_HostInfo);
 }
 
 void ControllerPlugin::Execute()
@@ -87,6 +91,22 @@ void ControllerPlugin::Execute()
 		for (int n=0; n<m_HostInfo->BUFSIZE; n++)
 		{			
 			SetOutput(c,n,m_ChannelVal[c]);
+		}
+	}
+}
+
+void ControllerPlugin::ExecuteCommands()
+{
+	if (m_AudioCH->IsCommandWaiting())
+	{
+		switch (m_AudioCH->GetCommand())
+		{
+			case (SETCHANNEL) : 
+				SetChannel(m_GUIArgs.Number,m_GUIArgs.Value,m_GUIArgs.Min,m_GUIArgs.Max,m_GUIArgs.Name);
+			break;
+			case (SETNUM)     : 
+				SetNum(m_GUIArgs.Number);
+			break;
 		}
 	}
 }
@@ -114,7 +134,7 @@ void ControllerPlugin::SetNum(int n)
 	
 	m_Num=n;
 	m_PluginInfo.NumOutputs=n;
-	
+
 	// do the actual update
 	UpdatePluginInfoWithHost();	
 }
@@ -133,25 +153,6 @@ void ControllerPlugin::StreamOut(ostream &s)
 	
 	switch (m_Version)
 	{
-		case 1:
-		{
-			for (int n=0; n<4; n++)
-			{
-				s<<m_ChannelVal[n]<<" ";
-			}
-		} break;
-		
-		case 2:
-		{
-			s<<m_Num<<" ";			
-			for (int n=0; n<m_Num; n++)
-			{
-				s<<m_ChannelVal[n]<<" ";
-			}
-			//s<<*(ControllerPluginGUI*)m_GUI<<" ";
-			((ControllerPluginGUI*)m_GUI)->StreamOut(s);
-		} break;
-		
 		case 3:
 		{
 			s<<m_Num<<" ";			
@@ -159,8 +160,21 @@ void ControllerPlugin::StreamOut(ostream &s)
 			{
 				s<<m_ChannelVal[n]<<" ";
 			}
-			((ControllerPluginGUI*)m_GUI)->StreamOut(s);
+			
+			s<<m_Num<<" ";			
+			for (int n=0; n<m_Num; n++)
+			{		
+				s<<m_Names[n].size()<<endl;
+				s<<m_Names[n]<<" ";
+				s<<m_MinVal[n]<<" ";
+				s<<m_MaxVal[n]<<" ";
+				s<<m_ChannelVal[n]<<endl;		
+			}
+			
 		} break;
+		default : 
+			cerr<<"ControllerPlugin - I dont support this streaming version any more"<<endl;
+		break;
 	}
 }
 
@@ -171,41 +185,6 @@ void ControllerPlugin::StreamIn(istream &s)
 	
 	switch (version)
 	{
-		case 1:
-		{
-			for (int n=0; n<4; n++)
-			{
-				s>>m_ChannelVal[n];
-			}
-		} break;
-		
-		case 2:
-		{
-			Clear();
-		
-			s>>m_Num;
-			
-			for (int n=0; n<m_Num; n++)
-			{
-				s>>m_ChannelVal[n];
-			}
-			
-			s>>*(ControllerPluginGUI*)m_GUI;								
-			
-			// add the channels one by one
-			for (int n=0; n<m_Num; n++)
-			{						
-				char t[256];
-				sprintf(t,"CV %d",n);
-				m_PluginInfo.PortTips.push_back(t);
-				AddOutput();
-			}
-			
-			m_PluginInfo.NumOutputs=m_Num;
-			UpdatePluginInfoWithHost();	
-			
-		} break;
-		
 		case 3:
 		{
 			Clear();
@@ -217,7 +196,20 @@ void ControllerPlugin::StreamIn(istream &s)
 				s>>m_ChannelVal[n];
 			}
 			
-			((ControllerPluginGUI*)m_GUI)->StreamIn(s);
+			char Buf[4096];
+			int size;
+					
+			s>>m_Num;			
+			for (int n=0; n<m_Num; n++)
+			{		
+				s>>size;
+				s.ignore(1);
+				s.get(Buf,size+1);
+				m_Names[n]=Buf;
+				s>>m_MinVal[n];
+				s>>m_MaxVal[n];
+				s>>m_ChannelVal[n];		
+			}
 			
 			// add the channels one by one
 			for (int n=0; n<m_Num; n++)
@@ -230,7 +222,10 @@ void ControllerPlugin::StreamIn(istream &s)
 			
 			m_PluginInfo.NumOutputs=m_Num;
 			UpdatePluginInfoWithHost();	
-			
 		} break;
+
+		default : 
+			cerr<<"ControllerPlugin - I dont support this streaming version any more"<<endl;
+		break;
 	}
 }

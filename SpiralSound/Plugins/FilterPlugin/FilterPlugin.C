@@ -64,6 +64,12 @@ m_RevResonanceMod(false)
 	m_PluginInfo.PortTips.push_back("Cutoff CV");	
 	m_PluginInfo.PortTips.push_back("Emphasis CV");	
 	m_PluginInfo.PortTips.push_back("Output");
+	
+	m_AudioCH->Register("Cutoff",&fc);
+	m_AudioCH->Register("Resonance",&Q);
+	m_AudioCH->Register("RevC",&m_RevCutoffMod);
+	m_AudioCH->Register("RevR",&m_RevResonanceMod);
+	
 }
 
 FilterPlugin::~FilterPlugin()
@@ -92,11 +98,9 @@ PluginInfo &FilterPlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *FilterPlugin::CreateGUI()
 {
-	m_GUI = new FilterPluginGUI(m_PluginInfo.Width,
+	return new FilterPluginGUI(m_PluginInfo.Width,
 								  	    m_PluginInfo.Height,
-										this,m_HostInfo);
-	m_GUI->hide();
-	return m_GUI;
+										this,m_AudioCH,m_HostInfo);
 }
 
 void FilterPlugin::Execute()
@@ -142,7 +146,7 @@ void FilterPlugin::Execute()
 				m_LastFC=fc;			
 			}
 		 }		  
-		 
+		 		 
 		 float in = GetInput(0,n);
 		 //if (in!=0)
 		 //{

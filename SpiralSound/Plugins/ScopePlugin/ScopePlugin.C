@@ -20,8 +20,8 @@
 #include <FL/Fl_Button.h>
 #include "SpiralIcon.xpm"
 
-
-extern "C" {
+extern "C"
+{
 SpiralPlugin* CreateInstance()
 {
 	return new ScopePlugin;
@@ -58,16 +58,18 @@ ScopePlugin::~ScopePlugin()
 PluginInfo &ScopePlugin::Initialise(const HostInfo *Host)
 {	
 	PluginInfo& Info = SpiralPlugin::Initialise(Host);	
+	m_Data = new float[Host->BUFSIZE];
+	m_AudioCH->RegisterData("AudioData",ChannelHandler::OUTPUT,m_Data,Host->BUFSIZE*sizeof(float));
 	return Info;
 }
 
 SpiralGUIType *ScopePlugin::CreateGUI()
 {
-	m_GUI = new ScopePluginGUI(m_PluginInfo.Width,
+	return new ScopePluginGUI(m_PluginInfo.Width,
 	 						   m_PluginInfo.Height,
-							   this,m_HostInfo);
-	m_GUI->hide();
-	return m_GUI;
+							   this,
+							   m_AudioCH,
+							   m_HostInfo);
 }
 
 void ScopePlugin::Execute()
@@ -76,6 +78,9 @@ void ScopePlugin::Execute()
 	if (GetOutputBuf(0)) GetOutputBuf(0)->Zero();
 	if (GetInput(0)) GetOutputBuf(0)->Mix(*GetInput(0),0);
 	
-	m_GUI->redraw();
+	if (GetInput(0)) 
+	{
+        //cerr<<1<<" "<<m_HostInfo->BUFSIZE<<endl;
+		memcpy(m_Data,GetInput(0)->GetBuffer(),m_HostInfo->BUFSIZE*sizeof(float));
+	}
 }
- 

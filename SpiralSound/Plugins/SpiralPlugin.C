@@ -18,11 +18,9 @@
 
 #include "SpiralPlugin.h"
 
-SpiralPlugin::SpiralPlugin():
-m_GUI(NULL)
+SpiralPlugin::SpiralPlugin()
 {
 	m_Version=1;
-	m_ValuesChanged=true;
 	m_PluginInfo.Name="BasePlugin";
 	m_PluginInfo.Width=100;
 	m_PluginInfo.Height=100;
@@ -32,6 +30,8 @@ m_GUI(NULL)
 	cb_Update=NULL;
 	m_Parent=NULL;
 	m_HostID=-1;
+	
+	m_AudioCH = new ChannelHandler;
 }
 
 SpiralPlugin::~SpiralPlugin()
@@ -41,11 +41,7 @@ SpiralPlugin::~SpiralPlugin()
 		delete m_Output[n];
 	}	
 	
-	//if (m_GUI) 
-	//{
-	//	m_GUI->hide();
-	//	delete m_GUI;
-	//}
+	delete m_AudioCH;
 }
 
 PluginInfo &SpiralPlugin::Initialise(const HostInfo *Host)
@@ -85,14 +81,9 @@ bool SpiralPlugin::SetInput(unsigned int n, const Sample *s)
 	return true;
 }
 	
-bool SpiralPlugin::ValueChanged()          
-{ 
-	if (m_ValuesChanged) 
-	{ 
-		m_ValuesChanged=false; 
-		return true; 
-	}	
-	return false;
+void SpiralPlugin::UpdateChannelHandler()
+{
+    m_AudioCH->UpdateDataNow();
 }
 
 void SpiralPlugin::AddOutput()

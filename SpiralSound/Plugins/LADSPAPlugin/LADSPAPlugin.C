@@ -20,7 +20,75 @@
 #include <stdio.h>
 #include "SpiralIcon.xpm"
 #include "utils.h"
- 
+#include <algorithm>
+
+////////////////////////////////////////////
+
+/* FIXME: No matter what, I can't let this as it!! */
+static LADSPAPlugin * lg = NULL;
+
+void describePluginLibrary(const char * pcFullFilename, void * pvPluginHandle,
+					    LADSPA_Descriptor_Function pfDescriptorFunction) {
+	const LADSPA_Descriptor * psDescriptor;
+	long lIndex;
+	unsigned long lPluginIndex;
+	unsigned long lPortIndex;
+	unsigned long lLength;
+	LADSPA_PortRangeHintDescriptor iHintDescriptor;
+	LADSPA_Data fBound;
+
+#define testcond(c,s) { \
+  if (!(c)) { \
+    cerr << (s); \
+    failure = 1; \
+  } \
+}
+	for (lIndex = 0; (psDescriptor = pfDescriptorFunction(lIndex)) != NULL; lIndex++) {
+		int failure = 0;
+    		testcond(!LADSPA_IS_REALTIME(psDescriptor->Properties), "ERROR: PLUGIN MUST RUN REAL TIME.\n");
+    		testcond(psDescriptor->instantiate, "ERROR: PLUGIN HAS NO INSTANTIATE FUNCTION.\n");
+    		testcond(psDescriptor->connect_port, "ERROR: PLUGIN HAS NO CONNECT_PORT FUNCTION.\n");
+		testcond(psDescriptor->run, "ERROR: PLUGIN HAS NO RUN FUNCTION.\n");
+		testcond(!(psDescriptor->run_adding != 0 && psDescriptor->set_run_adding_gain == 0),
+			    "ERROR: PLUGIN HAS RUN_ADDING FUNCTION BUT NOT SET_RUN_ADDING_GAIN.\n");
+		testcond(!(psDescriptor->run_adding == 0 && psDescriptor->set_run_adding_gain != 0),
+    			    "ERROR: PLUGIN HAS SET_RUN_ADDING_GAIN FUNCTION BUT NOT RUN_ADDING.\n");
+    		testcond(psDescriptor->cleanup, "ERROR: PLUGIN HAS NO CLEANUP FUNCTION.\n");
+    		testcond(!LADSPA_IS_INPLACE_BROKEN(psDescriptor->Properties),
+			    "ERROR: THIS PLUGIN CANNOT USE IN-PLACE PROCESSING.\n");
+    		testcond(psDescriptor->PortCount, "ERROR: PLUGIN HAS NO PORTS.\n");
+
+		if (!failure) {
+			LPluginInfo pi;
+			pi.Filename = pcFullFilename;
+			pi.Label = psDescriptor->Label;
+			pi.Name = psDescriptor->Name;
+			/* ARGH! I really can't stand this ugly hack */
+			lg->m_LADSPAList.push_back(pi);
+		} else {
+			cerr << "Plugin ignored...\n\n";
+		}
+	}
+
+	dlclose(pvPluginHandle);
+}
+
+void LADSPAPlugin::LoadPluginList(void)
+{
+	m_LADSPAList.clear();
+	m_CurrentPlugin.Name = "";
+	m_CurrentPlugin.Filename = "";
+	m_CurrentPlugin.Label = "";
+
+	lg = this;
+	LADSPAPluginSearch(describePluginLibrary);
+	lg = NULL;
+
+	sort(m_LADSPAList.begin(), m_LADSPAList.end(), LPluginInfoSortAsc());
+} 
+
+////////////////////////////////////////////////////
+
 extern "C" {
 SpiralPlugin* CreateInstance()
 {
@@ -54,6 +122,17 @@ m_Amped(false)
 	m_PluginInfo.NumInputs=0;
 	m_PluginInfo.NumOutputs=1;
 	m_PluginInfo.PortTips.push_back("Nuffink yet");	
+	
+	m_AudioCH->Register("Gain",&m_Gain);
+	m_AudioCH->Register("Amped",&m_Amped);
+	m_AudioCH->RegisterData("Desc",ChannelHandler::OUTPUT,&PlugDesc,sizeof(PlugDesc));
+	m_AudioCH->Register("Num",&m_GUIArgs.Num);
+	m_AudioCH->Register("Value",&m_GUIArgs.Value);
+	m_AudioCH->Register("Clamp",&m_GUIArgs.Clamp);
+	m_AudioCH->RegisterData("Filename",ChannelHandler::INPUT,&m_GUIArgs.Filename,sizeof(m_GUIArgs.Filename));
+	m_AudioCH->RegisterData("Label",ChannelHandler::INPUT,&m_GUIArgs.Label,sizeof(m_GUIArgs.Label));
+	
+	LoadPluginList();
 }
 
 LADSPAPlugin::~LADSPAPlugin()
@@ -70,11 +149,7 @@ PluginInfo &LADSPAPlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *LADSPAPlugin::CreateGUI()
 {
-	m_GUI = new LADSPAPluginGUI(m_PluginInfo.Width,
-								  	    m_PluginInfo.Height,
-										this,m_HostInfo);
-	m_GUI->hide();
-	return m_GUI;
+	return new LADSPAPluginGUI(m_PluginInfo.Width,m_PluginInfo.Height,this,m_AudioCH,m_HostInfo,m_LADSPAList);
 }
 
 void LADSPAPlugin::Execute()
@@ -106,7 +181,7 @@ void LADSPAPlugin::Execute()
 					}
 				}
 				// Update the GUI outputs with the first value in the buffer
-				((LADSPAPluginGUI*)m_GUI)->UpdatePortDisplay(n,m_LADSPABufVec[n][0]);
+				//((LADSPAPluginGUI*)m_GUI)->UpdatePortDisplay(n,m_LADSPABufVec[n][0]);
 			}
 			else // zero
 			{
@@ -138,6 +213,20 @@ void LADSPAPlugin::Execute()
 	}
 }
 
+void LADSPAPlugin::ExecuteCommands()
+{
+	if (m_AudioCH->IsCommandWaiting())
+	{
+		switch(m_AudioCH->GetCommand())
+		{
+			case (SETMIN)       : SetMin(m_GUIArgs.Num,m_GUIArgs.Value); break;
+			case (SETMAX)       : SetMax(m_GUIArgs.Num,m_GUIArgs.Value); break;
+			case (SETCLAMP)     : SetPortClamp(m_GUIArgs.Num,m_GUIArgs.Clamp); break;
+			case (UPDATEPLUGIN) : UpdatePlugin(m_GUIArgs.Num); break;
+		};
+	}
+}
+
 void LADSPAPlugin::StreamOut(ostream &s)
 {
 	s<<m_Version<<" ";
@@ -147,8 +236,8 @@ void LADSPAPlugin::StreamOut(ostream &s)
 		case 3:
 		{
 			s<<m_Gain<<" ";
-			s<<((LADSPAPluginGUI*)m_GUI)->GetFilename()<<" ";
-			s<<((LADSPAPluginGUI*)m_GUI)->GetLabel()<<" ";
+			s<<m_CurrentPlugin.Filename<<" ";
+			s<<m_CurrentPlugin.Label<<" ";
 			s<<m_PortMin.size()<<" ";
 			assert(m_PortMin.size()==m_PortMax.size());
 			assert(m_PortMin.size()==m_PortClamp.size());
@@ -174,8 +263,8 @@ void LADSPAPlugin::StreamOut(ostream &s)
 // version is always 3!
 		{
 			s<<m_Gain<<" ";
-			s<<((LADSPAPluginGUI*)m_GUI)->GetFilename()<<" ";
-			s<<((LADSPAPluginGUI*)m_GUI)->GetLabel()<<" ";
+			s<<m_CurrentPlugin.Filename<<" ";
+			s<<m_CurrentPlugin.Label<<" ";
 			s<<m_PortMin.size()<<" ";
 			assert(m_PortMin.size()==m_PortMax.size());
 			for (vector<float>::iterator i=m_PortMin.begin();
@@ -194,8 +283,8 @@ void LADSPAPlugin::StreamOut(ostream &s)
 		case 1:
 		{
 			s<<m_Gain<<" ";
-			s<<((LADSPAPluginGUI*)m_GUI)->GetFilename()<<" ";
-			s<<((LADSPAPluginGUI*)m_GUI)->GetLabel()<<" ";
+			s<<m_CurrentPlugin.Filename<<" ";
+			s<<m_CurrentPlugin.Label<<" ";
 		}
 		break;
 	}
@@ -240,10 +329,14 @@ void LADSPAPlugin::StreamIn(istream &s)
 			{
 				UpdatePlugin(Filename.c_str(), Label.c_str(), false);
 			}
-
+			
+			m_CurrentPlugin.Ports.reserve(PortCount);
+			
 			for (int n=0; n<PortCount; n++)
 			{
-				((LADSPAPluginGUI*)m_GUI)->SetMinMax(n,m_PortMin[n],m_PortMax[n],m_PortClamp[n]);
+				m_CurrentPlugin.Ports[n].Min=m_PortMin[n];
+				m_CurrentPlugin.Ports[n].Max=m_PortMax[n];
+				m_CurrentPlugin.Ports[n].Clamped=m_PortClamp[n];
 			}
 		}
 		break;
@@ -279,10 +372,14 @@ void LADSPAPlugin::StreamIn(istream &s)
 			{
 				UpdatePlugin(Filename.c_str(), Label.c_str(), false);
 			}
-
+			
+			m_CurrentPlugin.Ports.reserve(PortCount);
+			
 			for (int n=0; n<PortCount; n++)
 			{
-				((LADSPAPluginGUI*)m_GUI)->SetMinMax(n,m_PortMin[n],m_PortMax[n],m_PortClamp[n]);
+				m_CurrentPlugin.Ports[n].Min=m_PortMin[n];
+				m_CurrentPlugin.Ports[n].Max=m_PortMax[n];
+				m_CurrentPlugin.Ports[n].Clamped=m_PortClamp[n];
 			}
 		}
 		break;
@@ -303,7 +400,12 @@ void LADSPAPlugin::StreamIn(istream &s)
 	}
 }
 
-bool LADSPAPlugin::UpdatePlugin(const char * filename, const char * label, bool PortClampReset)
+bool LADSPAPlugin::UpdatePlugin(int n)
+{
+	return UpdatePlugin(m_LADSPAList[n].Filename.c_str(),m_LADSPAList[n].Label.c_str());
+}
+
+bool LADSPAPlugin::UpdatePlugin(const char * filename, const char * label, bool PortClampReset=true)
 {
 	// first call with same info, to clear the ports
 	UpdatePluginInfoWithHost();
@@ -385,11 +487,13 @@ bool LADSPAPlugin::UpdatePlugin(const char * filename, const char * label, bool 
 //////////////////////////////
 // Update the GUI stuff
 
-			((LADSPAPluginGUI*)m_GUI)->SetName(PlugDesc->Name);
-			((LADSPAPluginGUI*)m_GUI)->SetMaker(PlugDesc->Maker);
+			m_CurrentPlugin.Name=PlugDesc->Name;
+			m_CurrentPlugin.Maker=PlugDesc->Maker;
+			m_CurrentPlugin.Filename=filename;
+			m_CurrentPlugin.Label=label;
 			
+			m_CurrentPlugin.Ports.clear();
 			m_PluginInfo.PortTips.clear();
-			((LADSPAPluginGUI*)m_GUI)->ClearPortInfo();
 			
 			string desc;
 			c=0;
@@ -400,7 +504,11 @@ bool LADSPAPlugin::UpdatePlugin(const char * filename, const char * label, bool 
 					desc = string(PlugDesc->PortNames[i]) +
 					       (LADSPA_IS_PORT_CONTROL(PlugDesc->PortDescriptors[i]) ? " (CV)" : " (AU)");
 					m_PluginInfo.PortTips.push_back(desc.c_str());
-					((LADSPAPluginGUI*)m_GUI)->AddPortInfo(m_PluginInfo.PortTips[c].c_str());					
+							
+					LPluginInfo::LPortDetails PortDetails;
+					PortDetails.Name=m_PluginInfo.PortTips[c].c_str();
+					m_CurrentPlugin.Ports.push_back(PortDetails);
+					
 					c++;
 				}
 			}
@@ -415,10 +523,7 @@ bool LADSPAPlugin::UpdatePlugin(const char * filename, const char * label, bool 
 					m_PluginInfo.PortTips.push_back(desc.c_str());
 				}
 			}
-			
-			((LADSPAPluginGUI*)m_GUI)->SetFilename(filename);
-			((LADSPAPluginGUI*)m_GUI)->SetLabel(label);
-			
+						
 			UpdatePluginInfoWithHost();
 
 			if (PortClampReset)
@@ -455,8 +560,10 @@ bool LADSPAPlugin::UpdatePlugin(const char * filename, const char * label, bool 
 					m_PortMax.push_back(Max);
 // PortClamp defaults to true
 					m_PortClamp.push_back(true);
-								
-					((LADSPAPluginGUI*)m_GUI)->SetMinMax(n, Min, Max, true);
+					
+					m_CurrentPlugin.Ports[n].Min=Min;
+					m_CurrentPlugin.Ports[n].Max=Max;
+					m_CurrentPlugin.Ports[n].Clamped=true;
 				}
 			}								
 			return true;

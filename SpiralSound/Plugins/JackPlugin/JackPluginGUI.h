@@ -35,14 +35,10 @@
 class JackPluginGUI : public SpiralPluginGUI
 {
 public:
-	JackPluginGUI(int w, int h, JackPlugin *o,const HostInfo *Info);
+	JackPluginGUI(int w, int h, JackPlugin *o,ChannelHandler *ch,const HostInfo *Info);
 	
-	virtual void UpdateValues();
-	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }
-	
-	void SetAttached(bool s) { m_Indicator->value(s); }
-		
-	JackPlugin *m_Plugin;
+	virtual void UpdateValues(SpiralPlugin *o);
+	virtual void draw() { m_Indicator->value(m_GUICH->GetBool("Connected"); };
 		
 private:
 

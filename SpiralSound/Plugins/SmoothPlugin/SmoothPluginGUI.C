@@ -26,11 +26,9 @@ static const int GUIBG2_COLOUR = 145;
 
 ////////////////////////////////////////////
 
-SmoothPluginGUI::SmoothPluginGUI(int w, int h,SmoothPlugin *o,const HostInfo *Info) :
-SpiralPluginGUI(w,h,o)
+SmoothPluginGUI::SmoothPluginGUI(int w, int h,SmoothPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
+SpiralPluginGUI(w,h,o,ch)
 {	
-	m_Plugin=o;
-	
 	m_Up = new Fl_Knob(20, 25, 40, 40, "Up");	
 	m_Up->color(GUI_COLOUR);
 	m_Up->type(Fl_Knob::DOTLIN);
@@ -56,18 +54,20 @@ SpiralPluginGUI(w,h,o)
 
 
 
-void SmoothPluginGUI::UpdateValues()
+void SmoothPluginGUI::UpdateValues(SpiralPlugin *o)
 {
-	m_Up->value(m_Plugin->GetUp());
-	m_Down->value(m_Plugin->GetDown());
+	SmoothPlugin *Plugin = (SmoothPlugin*)o;
+	
+	m_Up->value(Plugin->GetUp());
+	m_Down->value(Plugin->GetDown());
 }
 	
 inline void SmoothPluginGUI::cb_Down_i(Fl_Knob* o, void* v)
-{ m_Plugin->SetDown(o->value()); }
+{ m_GUICH->Set("Down",o->value()); }
 void SmoothPluginGUI::cb_Down(Fl_Knob* o, void* v)
 { ((SmoothPluginGUI*)(o->parent()))->cb_Down_i(o,v);}
 
 inline void SmoothPluginGUI::cb_Up_i(Fl_Knob* o, void* v)
-{ m_Plugin->SetUp(o->value()); }
+{ m_GUICH->Set("Up",o->value()); }
 void SmoothPluginGUI::cb_Up(Fl_Knob* o, void* v)
 { ((SmoothPluginGUI*)(o->parent()))->cb_Up_i(o,v);}

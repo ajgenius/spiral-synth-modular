@@ -317,7 +317,8 @@ int GetID()
 
 ///////////////////////////////////////////////////////
 
-JackPlugin::JackPlugin() 
+JackPlugin::JackPlugin() :
+m_UpdateNames(false)
 {
 	m_RefCount++;
 	
@@ -340,6 +341,15 @@ JackPlugin::JackPlugin()
 		sprintf(Temp,"SSM Input %d",n);
 		m_PluginInfo.PortTips.push_back(Temp);
 	}	
+	
+	m_AudioCH->Register("Num",&GUIArgs.Num);
+	m_AudioCH->RegisterData("Port",ChannelHandler::INPUT,&GUIArgs.Port,sizeof(GUIArgs.Port));
+	m_AudioCH->Register("NumInputPortNames",&m_NumInputPortNames,ChannelHandler::OUTPUT);
+	m_AudioCH->Register("NumOutputPortNames",&m_NumOutputPortNames,ChannelHandler::OUTPUT);
+	m_AudioCH->RegisterData("InputPortNames",ChannelHandler::OUTPUT,&m_InputPortNames,sizeof(m_InputPortNames));
+	m_AudioCH->RegisterData("OutputPortNames",ChannelHandler::OUTPUT,&m_OutputPortNames,sizeof(m_OutputPortNames));
+	m_AudioCH->Register("UpdateNames",&m_UpdateNames,ChannelHandler::OUTPUT);	
+	m_AudioCH->Register("Connected",&m_Connected,ChannelHandler::OUTPUT);	
 }
 
 JackPlugin::~JackPlugin()
@@ -364,11 +374,9 @@ PluginInfo &JackPlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *JackPlugin::CreateGUI()
 {
-	m_GUI = new JackPluginGUI(m_PluginInfo.Width,
+	return new JackPluginGUI(m_PluginInfo.Width,
 							  m_PluginInfo.Height,
-						      this,m_HostInfo);
-	m_GUI->hide();
-	return m_GUI;
+						      this,m_AudioCH,m_HostInfo);
 }
 
 void JackPlugin::Execute()
@@ -401,3 +409,27 @@ void JackPlugin::Execute()
 
 }
 
+void JackPlugin::ExecuteCommands()
+{
+	if (m_UpdateNames)
+	{
+	    vector<string> InputNames,OutputNames;
+		GetPortNames(InputNames,OutputNames);
+		for (vector<string>::iterator i=InputNames.begin();
+			 i!=InputNames.end(); ++i)
+		{
+			strcpy(m_InputPortNames[n],i->c_str());
+		}
+		
+		for (vector<string>::iterator i=OutputNames.begin();
+			 i!=OutputNames.end(); ++i)
+		{
+			strcpy(m_OutputPortNames[n],i->c_str());
+		}
+		
+		m_NumInputPortNames=InputNames.size();
+		m_NumOutputPortNames=OutputNames.size();
+		
+		m_UpdateNames=false;
+	}
+}

@@ -73,6 +73,9 @@ m_n(1.0f)
 	m_PluginInfo.PortTips.push_back("HighPass output");
 	m_PluginInfo.PortTips.push_back("Notch output");
 	m_PluginInfo.PortTips.push_back("Peaking output");	
+	
+	m_AudioCH->Register("Cutoff",&Cutoff);
+	m_AudioCH->Register("Resonance",&Resonance);
 }
 
 SVFilterPlugin::~SVFilterPlugin()
@@ -88,11 +91,9 @@ PluginInfo &SVFilterPlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *SVFilterPlugin::CreateGUI()
 {
-	m_GUI = new SVFilterPluginGUI(m_PluginInfo.Width,
+	return new SVFilterPluginGUI(m_PluginInfo.Width,
 								  	    m_PluginInfo.Height,
-										this,m_HostInfo);
-	m_GUI->hide();
-	return m_GUI;
+										this,m_AudioCH,m_HostInfo);
 }
 
 void SVFilterPlugin::Execute()

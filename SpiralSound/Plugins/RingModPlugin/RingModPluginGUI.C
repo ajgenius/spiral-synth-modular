@@ -26,11 +26,9 @@ static const int GUIBG2_COLOUR = 145;
 
 ////////////////////////////////////////////
 
-RingModPluginGUI::RingModPluginGUI(int w, int h,RingModPlugin *o,const HostInfo *Info) :
-SpiralPluginGUI(w,h,o)
+RingModPluginGUI::RingModPluginGUI(int w, int h,RingModPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
+SpiralPluginGUI(w,h,o,ch)
 {	
-	m_Plugin=o;
-	
 	m_Amount = new Fl_Knob(34, 24, 50, 50, "Amount");
     m_Amount->color(GUI_COLOUR);
 	m_Amount->type(Fl_Knob::DOTLIN);
@@ -43,14 +41,15 @@ SpiralPluginGUI(w,h,o)
 	end();
 }
 
-void RingModPluginGUI::UpdateValues()
+void RingModPluginGUI::UpdateValues(SpiralPlugin *o)
 {
-	m_Amount->value(m_Plugin->GetAmount());
+	RingModPlugin* Plugin = (RingModPlugin*)o;
+	m_Amount->value(Plugin->GetAmount());
 }
 
 inline void RingModPluginGUI::cb_Amount_i(Fl_Knob* o, void* v) 
 { 
-	m_Plugin->SetAmount(o->value()); 
+	m_GUICH->Set("Amount",o->value()); 
 }
 void RingModPluginGUI::cb_Amount(Fl_Knob* o, void* v) 
 { ((RingModPluginGUI*)(o->parent()))->cb_Amount_i(o,v); }

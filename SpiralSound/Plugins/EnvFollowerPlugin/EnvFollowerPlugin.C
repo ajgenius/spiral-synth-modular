@@ -51,6 +51,9 @@ m_Value(0)
 	m_PluginInfo.NumOutputs=1;
 	m_PluginInfo.PortTips.push_back("Input");	
 	m_PluginInfo.PortTips.push_back("Output");
+	
+	m_AudioCH->Register("Attack",&m_Attack);
+	m_AudioCH->Register("Decay",&m_Decay);
 }
 
 EnvFollowerPlugin::~EnvFollowerPlugin()
@@ -64,11 +67,9 @@ PluginInfo &EnvFollowerPlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *EnvFollowerPlugin::CreateGUI()
 {
-	m_GUI = new EnvFollowerPluginGUI(m_PluginInfo.Width,
+	return new EnvFollowerPluginGUI(m_PluginInfo.Width,
 								  	    m_PluginInfo.Height,
-										this,m_HostInfo);
-	m_GUI->hide();
-	return m_GUI;
+										this,m_AudioCH,m_HostInfo);
 }
 
 void EnvFollowerPlugin::Execute()

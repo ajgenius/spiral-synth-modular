@@ -33,11 +33,7 @@ public:
 	virtual void Execute();
 	virtual void StreamOut(ostream &s);
 	virtual void StreamIn(istream &s);
-	
-	// has to be defined in the plugin	
-	virtual void UpdateGUI() { Fl::check(); }
-		
-	void  SetMix(float s) { m_Mix=s; }
+			
 	float GetMix()        { return m_Mix; }
 	
 	void Randomise();

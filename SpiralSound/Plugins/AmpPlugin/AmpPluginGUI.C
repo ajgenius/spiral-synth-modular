@@ -26,8 +26,8 @@ static const int GUIBG2_COLOUR = 145;
 
 ////////////////////////////////////////////
 
-AmpPluginGUI::AmpPluginGUI(int w, int h,AmpPlugin *o,const HostInfo *Info) :
-SpiralPluginGUI(w,h,o)
+AmpPluginGUI::AmpPluginGUI(int w, int h,AmpPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
+SpiralPluginGUI(w,h,o,ch)
 {	
 	m_Plugin=o;
 	
@@ -79,14 +79,16 @@ SpiralPluginGUI(w,h,o)
 
 extern "C" int sprintf(char *,const char *,...);	
 
-void AmpPluginGUI::UpdateValues()
+void AmpPluginGUI::UpdateValues(SpiralPlugin *o)
 {
-	m_Amp->value(2.0f-m_Plugin->GetAmp());
-	m_DC->value(2.0f-m_Plugin->GetDC());
+	AmpPlugin* Plugin = (AmpPlugin*)o;
+	
+	m_Amp->value(2.0f-Plugin->GetAmp());
+	m_DC->value(2.0f-Plugin->GetDC());
 	char str[10];
-  	sprintf(str,"%4.2f",m_Plugin->GetAmp());
+  	sprintf(str,"%4.2f",Plugin->GetAmp());
   	m_out_gain->value(str);
-	sprintf(str,"%4.2f",m_Plugin->GetDC());
+	sprintf(str,"%4.2f",Plugin->GetDC());
 	m_out_DC->value(str);
 }
 
@@ -95,7 +97,7 @@ inline void AmpPluginGUI::cb_Amp_i(Fl_Slider* o, void* v)
 
 char str[10];
 	float value=2.0f-o->value();
-	m_Plugin->SetAmp(value); 
+	m_GUICH->Set("Amp",value); 
 	sprintf(str,"%4.2f",value);
 	m_out_gain->value(str); 
 }
@@ -106,7 +108,7 @@ inline void AmpPluginGUI::cb_DC_i(Fl_Slider* o, void* v)
 { 
 char str[10];
 	float value=2.0f-o->value();
-	m_Plugin->SetDC(value);
+	m_GUICH->Set("DC",value);
 	sprintf(str,"%4.2f",value);
 	m_out_DC->value(str); 
 }

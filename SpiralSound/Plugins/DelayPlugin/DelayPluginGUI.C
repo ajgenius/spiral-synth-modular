@@ -26,11 +26,9 @@ static const int GUIBG2_COLOUR = 145;
 
 ////////////////////////////////////////////
 
-DelayPluginGUI::DelayPluginGUI(int w, int h,DelayPlugin *o,const HostInfo *Info) :
-SpiralPluginGUI(w,h,o)
-{	
-	m_Plugin=o;
-	
+DelayPluginGUI::DelayPluginGUI(int w, int h,DelayPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
+SpiralPluginGUI(w,h,o,ch)
+{		
 	m_Delay = new Fl_Slider(15, 20, 20, 70, "Delay");
 	m_Delay->type(4);
 	m_Delay->selection_color(GUI_COLOUR);
@@ -52,21 +50,23 @@ SpiralPluginGUI(w,h,o)
 	end();
 }
 
-void DelayPluginGUI::UpdateValues()
+void DelayPluginGUI::UpdateValues(SpiralPlugin *o)
 {
-	m_Delay->value(m_Plugin->GetDelay()-5.0f);
-	m_Mix->value(m_Plugin->GetMix());
+	DelayPlugin *Plugin = (DelayPlugin*)o;
+	
+	m_Delay->value(Plugin->GetDelay()-5.0f);
+	m_Mix->value(Plugin->GetMix());
 }
 
 inline void DelayPluginGUI::cb_Delay_i(Fl_Slider* o, void* v) 
 { 
 	float value=1.0f-o->value();
-	m_Plugin->SetDelay(value); 
+	m_GUICH->Set("Delay",value); 
 }
 void DelayPluginGUI::cb_Delay(Fl_Slider* o, void* v) 
 { ((DelayPluginGUI*)(o->parent()))->cb_Delay_i(o,v); }
 
 inline void DelayPluginGUI::cb_Mix_i(Fl_Knob* o, void* v) 
-{ m_Plugin->SetMix(o->value()); }
+{ m_GUICH->Set("Mix",o->value()); }
 void DelayPluginGUI::cb_Mix(Fl_Knob* o, void* v) 
 { ((DelayPluginGUI*)(o->parent()))->cb_Mix_i(o,v); }

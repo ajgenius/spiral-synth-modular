@@ -35,17 +35,7 @@ public:
 	virtual void Execute();
 	virtual void StreamOut(ostream &s);
 	virtual void StreamIn(istream &s);
-	
-	// has to be defined in the plugin	
-	virtual void UpdateGUI() { Fl::check(); }
-	
-	void SetAttack(float s)     { m_Attack=s;     }
-	void SetDecay(float s)      { m_Decay=s;      }	
-	void SetSustain(float s)    { m_Sustain=s;    }	
-	void SetRelease(float s)    { m_Release=s;    }	
-	void SetVolume(float s)     { m_Volume=s;     }
-	void SetTrigThresh(float s) { m_TrigThresh=s; }  
-	
+		
 	float GetAttack()           { return m_Attack;     }
 	float GetDecay()            { return m_Decay;      }	
 	float GetSustain()          { return m_Sustain;    }	

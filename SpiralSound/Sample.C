@@ -43,7 +43,7 @@ m_Length(0)
 }
 
 
-Sample::Sample(float *S, int Len):
+Sample::Sample(const float *S, int Len):
 m_IsEmpty(false),
 m_DataGranularity(512),
 m_Data(NULL),

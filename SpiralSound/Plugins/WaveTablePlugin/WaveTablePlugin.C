@@ -26,7 +26,8 @@ static const int IN_SHLEN = 2;
 
 static const int OUT_MAIN = 0;
 
-extern "C" {
+extern "C"
+{
 SpiralPlugin* CreateInstance()
 {
 	return new WaveTablePlugin;
@@ -52,7 +53,6 @@ m_FineFreq(1.0f),
 m_ModAmount(1.0f),
 m_TableLength(DEFAULT_TABLE_LEN)
 {
-
 	m_CyclePos=0;	
 	m_Note=0;
 	
@@ -63,6 +63,11 @@ m_TableLength(DEFAULT_TABLE_LEN)
 	m_PluginInfo.NumOutputs=1;
 	m_PluginInfo.PortTips.push_back("Frequency CV");
 	m_PluginInfo.PortTips.push_back("Output");
+	
+	m_AudioCH->Register("Octave",&m_Octave,ChannelHandler::INPUT);
+	m_AudioCH->Register("FineFreq",&m_FineFreq,ChannelHandler::INPUT);
+	m_AudioCH->Register("Type",(char*)&m_Type,ChannelHandler::INPUT);
+	m_AudioCH->Register("ModAmount",&m_ModAmount,ChannelHandler::INPUT);
 }
 
 WaveTablePlugin::~WaveTablePlugin()
@@ -85,11 +90,7 @@ PluginInfo &WaveTablePlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *WaveTablePlugin::CreateGUI()
 {
-	m_GUI = new WaveTablePluginGUI(m_PluginInfo.Width,
-										  m_PluginInfo.Height,
-										  this,m_HostInfo);									  
-  	m_GUI->hide();
-	return m_GUI;
+	return new WaveTablePluginGUI(m_PluginInfo.Width,m_PluginInfo.Height,this,m_AudioCH,m_HostInfo);	
 }
 
 void WaveTablePlugin::WriteWaves()
@@ -170,20 +171,23 @@ void WaveTablePlugin::Execute()
 		{	
 			Freq=110;
 		}
-		
+
 		Freq*=m_FineFreq;
 		if (m_Octave>0) Freq*=1<<(m_Octave);
 		if (m_Octave<0) Freq/=1<<(-m_Octave);
-				
+		
 		Incr = Freq*(m_TableLength/(float)m_HostInfo->SAMPLERATE);
 		m_CyclePos+=Incr;
-		while (m_CyclePos>=m_TableLength) m_CyclePos-=m_TableLength;
+		
+		while (m_CyclePos>=m_TableLength) 
+		{
+			m_CyclePos-=m_TableLength;
+		}
 		
 		if (m_CyclePos<0 || m_CyclePos>=m_TableLength) m_CyclePos=0;
 		
 		SetOutput(OUT_MAIN,n,m_Table[m_Type][m_CyclePos]);	
 	}
-	
 }
 
 void WaveTablePlugin::StreamOut(ostream &s)

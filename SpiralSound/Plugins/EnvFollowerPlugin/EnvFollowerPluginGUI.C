@@ -26,11 +26,9 @@ static const int GUIBG2_COLOUR = 145;
 
 ////////////////////////////////////////////
 
-EnvFollowerPluginGUI::EnvFollowerPluginGUI(int w, int h,EnvFollowerPlugin *o,const HostInfo *Info) :
-SpiralPluginGUI(w,h,o)
+EnvFollowerPluginGUI::EnvFollowerPluginGUI(int w, int h,EnvFollowerPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
+SpiralPluginGUI(w,h,o,ch)
 {	
-	m_Plugin=o;
-	
 	m_Attack = new Fl_Knob(20, 25, 40, 40, "Attack");	
 	m_Attack->color(GUI_COLOUR);
 	m_Attack->type(Fl_Knob::DOTLIN);
@@ -56,18 +54,19 @@ SpiralPluginGUI(w,h,o)
 
 
 
-void EnvFollowerPluginGUI::UpdateValues()
+void EnvFollowerPluginGUI::UpdateValues(SpiralPlugin *o)
 {
-	m_Attack->value(m_Plugin->GetAttack());
-	m_Decay->value(m_Plugin->GetDecay());
+	EnvFollowerPlugin *Plugin = (EnvFollowerPlugin*)o;
+	m_Attack->value(Plugin->GetAttack());
+	m_Decay->value(Plugin->GetDecay());
 }
 	
 inline void EnvFollowerPluginGUI::cb_Decay_i(Fl_Knob* o, void* v)
-{ m_Plugin->SetDecay(o->value()); }
+{ m_GUICH->Set("Decay",o->value()); }
 void EnvFollowerPluginGUI::cb_Decay(Fl_Knob* o, void* v)
 { ((EnvFollowerPluginGUI*)(o->parent()))->cb_Decay_i(o,v);}
 
 inline void EnvFollowerPluginGUI::cb_Attack_i(Fl_Knob* o, void* v)
-{ m_Plugin->SetAttack(o->value()); }
+{ m_GUICH->Set("Attack",o->value()); }
 void EnvFollowerPluginGUI::cb_Attack(Fl_Knob* o, void* v)
 { ((EnvFollowerPluginGUI*)(o->parent()))->cb_Attack_i(o,v);}

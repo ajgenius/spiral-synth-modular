@@ -19,11 +19,41 @@
 #include "../SpiralPlugin.h"
 #include <FL/Fl_Pixmap.H>
 #include "ladspa.h"
+#include "utils.h"
 
 #ifndef LADSPAPLUGIN
 #define LADSPAPLUGIN
 
 static const unsigned int NUM_PORTS = 8;
+
+class LPluginInfo {
+public:
+	string Filename;
+	string Label;
+	string Name;
+	string Maker;
+	
+	struct LPortDetails
+	{
+		string Name;
+		float Min,Max;
+		bool Clamped;
+	};
+		
+	vector<LPortDetails> Ports;
+	
+	bool operator<(const LPluginInfo & li) { return (Name < li.Name); }
+	bool operator==(const LPluginInfo& li) { return (Name == li.Name); }
+};
+
+// For sorting vectors of LPluginInfo's
+struct LPluginInfoSortAsc
+{
+	bool operator()(const LPluginInfo & begin, const LPluginInfo & end)
+	{
+		return begin.Name < end.Name;
+	}
+};
 
 class LADSPAPlugin : public SpiralPlugin
 {
@@ -34,24 +64,36 @@ public:
 	virtual PluginInfo &Initialise(const HostInfo *Host);
 	virtual SpiralGUIType *CreateGUI();
 	virtual void Execute();
+	virtual void ExecuteCommands();	
 	virtual void StreamOut(ostream &s);
 	virtual void StreamIn(istream &s);
-	
-	// has to be defined in the plugin	
-	virtual void UpdateGUI() { Fl::check(); }
-	
-	void SetGain(float s) { m_Gain=s; }
+		
 	float GetGain() { return m_Gain; }
-	void SetMin(int n,float min) { m_PortMin[n]=min; }
-	void SetMax(int n,float max) { m_PortMax[n]=max; }
-	void SetPortClamp(int n,bool i) { m_PortClamp[n]=i; }
-	void SetAmped(bool s) { m_Amped=s; }
 	bool GetAmped() { return m_Amped; }
 	
-	bool UpdatePlugin(const char * filename, const char * label, bool PortClampReset=true);
-	const LADSPA_Descriptor * GetPlugDesc(void) { return PlugDesc; }
-	
+	enum GUICommands{NONE,SETMIN,SETMAX,SETCLAMP,UPDATEPLUGIN};
+	struct GUIArgs
+	{
+		int Num;
+		float Value;
+		bool Clamp;
+		char Filename[256];
+		char Label[256];
+	};
+		
 private:
+
+	GUIArgs m_GUIArgs;
+
+	void SetMin(int n,float min) { m_PortMin[n]=min; }
+	void SetMax(int n,float max) { m_PortMax[n]=max; }
+	void SetPortClamp(int n,bool i) { m_PortClamp[n]=i; }	
+	bool UpdatePlugin(int n);
+	bool UpdatePlugin(const char * filename, const char * label, bool PortClampReset=true);
+
+	friend void describePluginLibrary(const char * pcFullFilename, void * pvPluginHandle, LADSPA_Descriptor_Function pfDescriptorFunction);
+	void LoadPluginList(void);
+
 	void * PlugHandle;
 	const LADSPA_Descriptor * PlugDesc;
 	
@@ -62,6 +104,10 @@ private:
 	vector<float> m_PortMax;	
 	vector<bool> m_PortClamp;
 	
+	// our database of ladspa plugins
+	vector<LPluginInfo> m_LADSPAList;
+	LPluginInfo m_CurrentPlugin;
+
 	float m_Gain;
 	bool m_Amped;
 };

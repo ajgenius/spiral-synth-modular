@@ -54,7 +54,10 @@ m_DC(0.0f)
 	m_PluginInfo.PortTips.push_back("Input");	
 	m_PluginInfo.PortTips.push_back("Amp CV");	
 	m_PluginInfo.PortTips.push_back("DC Offset CV");	
-	m_PluginInfo.PortTips.push_back("Output");	
+	m_PluginInfo.PortTips.push_back("Output");
+	
+	m_AudioCH->Register("Amp",&m_Amp);
+	m_AudioCH->Register("DC",&m_DC);	
 }
 
 AmpPlugin::~AmpPlugin()
@@ -68,11 +71,9 @@ PluginInfo &AmpPlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *AmpPlugin::CreateGUI()
 {
-	m_GUI = new AmpPluginGUI(m_PluginInfo.Width,
+	return new AmpPluginGUI(m_PluginInfo.Width,
 							 m_PluginInfo.Height,
-							 this,m_HostInfo);
-	m_GUI->hide();
-	return m_GUI;
+							 this,m_AudioCH,m_HostInfo);
 }
 
 void AmpPlugin::Execute()

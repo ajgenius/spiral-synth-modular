@@ -65,8 +65,7 @@ PluginInfo &SampleHoldPlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *SampleHoldPlugin::CreateGUI()
 {
-	m_GUI=NULL;
-	return m_GUI;
+	return NULL;
 }
 
 void SampleHoldPlugin::Execute()

@@ -37,9 +37,7 @@ public:
 	// has to be defined in the plugin	
 	virtual void UpdateGUI() { Fl::check(); }
 		
-	void SetAmp(float s) { m_Amp=s; }
-	void SetDC(float s)  { m_DC=s;  }
-	float GetAmp()       { return m_Amp; }
+				float GetAmp()       { return m_Amp; }
 	float GetDC()        { return m_DC;  } 
 	
 	void Randomise();

@@ -30,6 +30,8 @@ typedef jack_default_audio_sample_t sample_t;
 
 const int NUM_INPUTS  = 8;
 const int NUM_OUTPUTS = 8;
+const int MAX_INPUTPORTS = 256;
+const int MAX_OUTPUTPORTS = 256;
 
 class JackClient
 {
@@ -99,17 +101,32 @@ public:
 	virtual void	    StreamOut(ostream &s) {}
 	virtual void	    StreamIn(istream &s)  {}
 	
-	// has to be defined in the plugin	
-	virtual void UpdateGUI() { Fl::check(); }
-		
+	enum GUICommands{NONE,ATTACH,DETACH,CONNECTINPUT,CONNECTOUTPUT};
+	struct GUIArgs
+	{
+		int Num;
+		char Port[256];
+	};
+			
+private:
+	GUIArgs m_GUIArgs;	
+	
+	// slightly clumsy, but we have to share this data with the gui
+	int  m_NumInputPortNames;
+	char m_InputPortNames[MAX_INPUTPORTS][256];
+	int  m_NumOutputPortNames;
+	char m_OutputPortNames[MAX_OUTPUTPORTS][256];
+
 	void Attach() { JackClient::Get()->Attach(); }
 	void Detach() { JackClient::Get()->Detach(); }
 	void GetPortNames(vector<string> &InputNames,vector<string> &OutputNames) { JackClient::Get()->GetPortNames(InputNames,OutputNames); }
 	void ConnectInput(int n, const string &JackPort)  { JackClient::Get()->ConnectInput(n,JackPort); }
 	void ConnectOutput(int n, const string &JackPort) { JackClient::Get()->ConnectOutput(n,JackPort); }
-private:
+
 	static int m_RefCount;
 	static int m_NoExecuted;
+	bool       m_UpdateNames;
+	bool       m_Connected;	
 };
 
 #endif

@@ -37,11 +37,6 @@ public:
 	virtual void StreamOut(ostream &s);
 	virtual void StreamIn(istream &s);
 	
-	// has to be defined in the plugin	
-	virtual void UpdateGUI() { Fl::check(); }
-		
-	void SetCutoff(float s)     { Cutoff=s; }
-	void SetResonance(float s)  { Resonance=s;  }
 	float GetCutoff()    { return Cutoff; }
 	float GetResonance() { return Resonance;  } 
 	

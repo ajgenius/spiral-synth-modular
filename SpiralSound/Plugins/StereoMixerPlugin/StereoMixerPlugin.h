@@ -33,18 +33,26 @@ public:
 	virtual PluginInfo &Initialise(const HostInfo *Host);
 	virtual SpiralGUIType *CreateGUI();
 	virtual void Execute();
+	virtual void ExecuteCommands();
 	virtual void StreamOut(ostream &s);
 	virtual void StreamIn(istream &s);
-	
-	// has to be defined in the plugin	
-	virtual void UpdateGUI() { Fl::check(); }
-	
-	void  SetChannel(int n, float s) { m_ChannelVal[n]=s; }
+		
 	float GetChannel(int n) { return m_ChannelVal[n]; }
-	void  SetPan(int n, float s) { m_Pan[n]=s; }
 	float GetPan(int n) { return m_Pan[n]; }
 	
+	enum GUICommands {NONE,SETCH,SETPAN};
+	struct GUIArgs
+	{
+		int Num;
+		float Value;
+	};
+	
 private:
+	GUIArgs m_GUIArgs;
+
+	void  SetChannel(int n, float s) { m_ChannelVal[n]=s; }
+	void  SetPan(int n, float s) { m_Pan[n]=s; }
+
 	float m_ChannelVal[NUM_CHANNELS];
 	float m_Pan[NUM_CHANNELS];
 };

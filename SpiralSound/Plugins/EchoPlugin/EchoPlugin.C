@@ -55,6 +55,9 @@ m_HeadPos(0)
 	m_PluginInfo.PortTips.push_back("Delay CV");	
 	m_PluginInfo.PortTips.push_back("Feedback CV");	
 	m_PluginInfo.PortTips.push_back("Output");
+	
+	m_AudioCH->Register("Delay",&m_Delay);
+	m_AudioCH->Register("Feedback",&m_Feedback);
 }
 
 EchoPlugin::~EchoPlugin()
@@ -70,11 +73,9 @@ PluginInfo &EchoPlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *EchoPlugin::CreateGUI()
 {
-	m_GUI = new EchoPluginGUI(m_PluginInfo.Width,
+	return new EchoPluginGUI(m_PluginInfo.Width,
 								  	    m_PluginInfo.Height,
-										this,m_HostInfo);
-	m_GUI->hide();
-	return m_GUI;
+										this,m_AudioCH,m_HostInfo);
 }
 
 void EchoPlugin::Execute()

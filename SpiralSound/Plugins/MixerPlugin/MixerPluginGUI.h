@@ -31,12 +31,10 @@
 class MixerPluginGUI : public SpiralPluginGUI
 {
 public:
-	MixerPluginGUI(int w, int h, MixerPlugin *o,const HostInfo *Info);
+	MixerPluginGUI(int w, int h, MixerPlugin *o,ChannelHandler *ch,const HostInfo *Info);
 	
-	virtual void UpdateValues();
-	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }
-	
-	MixerPlugin *m_Plugin;	
+	virtual void UpdateValues(SpiralPlugin *o);
+
 private:
 	
 	int Numbers[NUM_CHANNELS];
