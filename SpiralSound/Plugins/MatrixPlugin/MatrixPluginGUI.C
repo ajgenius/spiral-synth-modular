@@ -37,19 +37,6 @@ cb_context(NULL)
 	m_SliderHidden=true;
 	m_VolVal=255;
 }
-	
-void Fl_MatrixButton::draw()
-{
-	if (m_Volume)
-	{
-		m_VolVal=255-m_Volume->value();
-		fl_color((char)m_VolVal,(char)m_VolVal,255);
-		selection_color(fl_color());
-		
-		if (cb_VolChange) cb_VolChange(this,cb_context);
-	}
-	Fl_Button::draw();
-}
 
 int Fl_MatrixButton::handle(int event)
 {
@@ -63,6 +50,8 @@ int Fl_MatrixButton::handle(int event)
 			m_Volume->maximum(255);
     		m_Volume->step(1);
     		m_Volume->value(255-m_VolVal);
+			m_Volume->user_data((void*)this);
+			m_Volume->callback((Fl_Callback*)cb_Vol);
 			m_Volume->show();
 			parent()->add(m_Volume);
 			parent()->redraw();
@@ -71,7 +60,7 @@ int Fl_MatrixButton::handle(int event)
 		else 
 		{
 			m_Volume->hide();
-			m_VolVal=m_Volume->value();
+			m_VolVal=255-m_Volume->value();
 			parent()->remove(m_Volume);
 			parent()->redraw();
 			m_Volume=NULL;
@@ -81,10 +70,32 @@ int Fl_MatrixButton::handle(int event)
 		return 1;
 	}
 	
+	if (event==FL_PUSH && Fl::event_button()==1 && !m_SliderHidden)
+	{
+		m_Volume->hide();
+		m_VolVal=255-m_Volume->value();
+		parent()->remove(m_Volume);
+		parent()->redraw();
+		m_Volume=NULL;
+		m_SliderHidden=true;
+	}
+	
 	if (Fl::event_button()!=3) return Fl_Button::handle(event);
 	
 	return 1;
 }
+
+inline void Fl_MatrixButton::cb_Vol_i(Fl_Slider* o, void* v)
+{
+	m_VolVal=255-m_Volume->value();
+	fl_color((char)m_VolVal,(char)m_VolVal,255);
+	selection_color(fl_color());
+	
+	if (cb_VolChange) cb_VolChange(this,cb_context);
+	redraw();
+}
+void Fl_MatrixButton::cb_Vol(Fl_Slider* o, void* v)
+{ ((Fl_MatrixButton*)(o->user_data()))->cb_Vol_i(o,v);}
 
 ////////////////////////////////////////////
 

@@ -39,7 +39,6 @@ public:
 	Fl_MatrixButton(int x, int y, int w, int h, char* n);
 	~Fl_MatrixButton() {}
 	
-	virtual void draw();
 	virtual int handle(int event);
 	
 	float GetVolume() { return m_VolVal/255.0f; }
@@ -58,6 +57,10 @@ private:
 	
 	void (*cb_VolChange)(Fl_Widget*, void*);
 	void  *cb_context;
+	
+	inline void cb_Vol_i(Fl_Slider* o, void* v);
+	static void cb_Vol(Fl_Slider* o, void* v); 
+
 };
 
 class MatrixPluginGUI : public SpiralPluginGUI

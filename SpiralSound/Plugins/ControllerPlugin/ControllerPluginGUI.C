@@ -154,9 +154,9 @@ inline void ControllerPluginGUI::cb_Chan_i(Fl_Slider* o, void* v)
 	int num=*(int*)(v);
 	// swap em over, cos it's the easiqest way to reverse
 	// the fltk slider, which is upside down imho	
-	long max=strtol(m_GuiVec[num]->m_Min->value(),NULL,10);
-	long min=strtol(m_GuiVec[num]->m_Max->value(),NULL,10);
-	float val=o->value()*(max-min)+min;				
+	long max=strtol(m_GuiVec[num]->m_Max->value(),NULL,10);
+	long min=strtol(m_GuiVec[num]->m_Min->value(),NULL,10);
+	float val=(1.0f-o->value())*(max-min)+min;				
 	m_GUICH->Set("Number",(int)num);
 	m_GUICH->Set("Value",(float)val);
 	m_GUICH->Set("Min",(float)min);

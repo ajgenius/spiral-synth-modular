@@ -54,7 +54,8 @@ public:
 	ScopePluginGUI(int w, int h, SpiralPlugin *o, ChannelHandler *ch, const HostInfo *Info);
 	
 	virtual void UpdateValues(SpiralPlugin* o);
-	virtual void draw();	
+	virtual void Update();	
+	virtual void draw();
 	void Display(const float *data);
 	
 private:

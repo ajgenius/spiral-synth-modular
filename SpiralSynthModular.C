@@ -40,6 +40,7 @@
 #include "GUI/Widgets/PawfalYesNo.h"
 
 //#define DEBUG_PLUGINS
+#define DEBUG_STREAM
 
 const static string LABEL = "SpiralSynthModular "+VER_STRING;
 static string TITLEBAR;
@@ -687,7 +688,7 @@ istream &operator>>(istream &s, SynthModular &o)
 {	
 	o.PauseAudio();
 
-	string dummy;
+	string dummy,dummy2;
 	int ver;
 	s>>dummy>>dummy>>dummy>>ver;
 	
@@ -714,13 +715,20 @@ istream &operator>>(istream &s, SynthModular &o)
 
 	for(int n=0; n<Num; n++)
 	{	
-		//cerr<<"Loading Device "<<n<<endl;
+		#ifdef DEBUG_STREAM
+		cerr<<"Loading Device "<<n<<endl;
+		#endif
 		
-		s>>dummy;    //cerr<<dummy<<" ";
-		s>>ID;       //cerr<<ID<<" ";
-		s>>dummy;    //cerr<<dummy<<" ";
-		s>>PluginID; //cerr<<PluginID<<endl;
+		s>>dummy;    
+		s>>ID;       
+		s>>dummy2;    
+		s>>PluginID; 
 		s>>x>>y;
+		
+		#ifdef DEBUG_STREAM
+		cerr<<dummy<<" "<<ID<<" "<<dummy2<<" "<<PluginID<<" "<<x<<" "<<y<<endl;
+		#endif
+		
 		if (ver>1) s>>ps>>px>>py;
 		
 		// Check we're not duplicating an ID

@@ -80,6 +80,7 @@ SpiralPluginGUI(w,h,o,ch)
 	m_DeviceNum = new Fl_Counter(20,30,40,20,"Channel");
 	m_DeviceNum->type(FL_SIMPLE_COUNTER);
 	m_DeviceNum->step(1);
+	m_DeviceNum->value(1);
 	m_DeviceNum->callback((Fl_Callback*)cb_DeviceNum, NULL);
 	
 	m_NoteCut = new Fl_Button(5,70,75,20,"Note Cut");
@@ -109,7 +110,12 @@ void MidiPluginGUI::UpdateValues(SpiralPlugin *o)
 	
 //// Callbacks ////
 inline void MidiPluginGUI::cb_DeviceNum_i(Fl_Counter* o, void* v) 
-{ m_GUICH->Set("DeviceNum",(int)o->value()); }
+{ 
+	if (o->value()<1) o->value(1);
+	if (o->value()>128) o->value(128);
+	
+	m_GUICH->Set("DeviceNum",(int)o->value()-1); 
+}
 void MidiPluginGUI::cb_DeviceNum(Fl_Counter* o, void* v) 
 { ((MidiPluginGUI*)(o->parent()))->cb_DeviceNum_i(o,v);}
 

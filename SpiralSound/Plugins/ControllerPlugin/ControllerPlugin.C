@@ -105,7 +105,6 @@ void ControllerPlugin::ExecuteCommands()
 		switch (m_AudioCH->GetCommand())
 		{
 			case (SETCHANNEL) : 
-				cerr<<m_GUIArgs.Name<<endl;
 				SetChannel(m_GUIArgs.Number,m_GUIArgs.Value,m_GUIArgs.Min,m_GUIArgs.Max,m_GUIArgs.Name);
 			break;
 			case (SETNUM)     : 
@@ -164,7 +163,7 @@ void ControllerPlugin::StreamOut(ostream &s)
 			{
 				s<<m_ChannelVal[n]<<" ";
 			}
-			
+			s<<1<<endl;
 			s<<m_Num<<" ";			
 			for (int n=0; n<m_Num; n++)
 			{		
@@ -201,8 +200,8 @@ void ControllerPlugin::StreamIn(istream &s)
 			}
 			
 			char Buf[4096];
-			int size;
-					
+			int size,dummy;
+			s>>dummy;
 			s>>m_Num;			
 			for (int n=0; n<m_Num; n++)
 			{		

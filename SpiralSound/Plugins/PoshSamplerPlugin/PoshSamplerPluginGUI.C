@@ -115,16 +115,18 @@ void Fl_WaveDisplay::draw()
 		Value = NextValue;
 		
 		// get max
-		NextValue=(*m_Sample)[n];
+		float max=(*m_Sample)[n];
+		float min=(*m_Sample)[n];
 		for (int m=n; m<n+Jump; m++)
 		{	
-			if (NextValue<(*m_Sample)[m]) NextValue=(*m_Sample)[m];
+			if (max<(*m_Sample)[m]) max=(*m_Sample)[m];
+			if (min>(*m_Sample)[m]) min=(*m_Sample)[m];
 		}
 		
-		NextValue*=ho;
+		min*=ho; max*=ho;
 				
-		fl_line(x()+pos-2, y()+ho-(int)Value,
-				x()+pos-1, y()+ho-(int)NextValue);				
+		fl_line(x()+pos-1, y()+ho-(int)min,
+				x()+pos-1, y()+ho-(int)max);				
 		pos++;
 	}	
 }
@@ -386,11 +388,11 @@ m_UpdateMe(false)
 
 	m_ZoomIn = new Fl_Button(bx+(n++*bs),by,bw,bh,"Zoom +");
 	m_ZoomIn->labelsize(10);
-	m_ZoomIn->callback((Fl_Callback*)cb_ZoomIn);
+	//m_ZoomIn->callback((Fl_Callback*)cb_ZoomIn);
 
 	m_ZoomOut = new Fl_Button(bx+(n++*bs),by,bw,bh,"Zoom -");
 	m_ZoomOut->labelsize(10);
-	m_ZoomOut->callback((Fl_Callback*)cb_ZoomOut);
+	//m_ZoomOut->callback((Fl_Callback*)cb_ZoomOut);
 
 	end();
 	
@@ -416,6 +418,9 @@ void PoshSamplerPluginGUI::UpdateSampleDisplay(int num)
 void PoshSamplerPluginGUI::Update()
 {
 	SetPlayPos(m_GUICH->GetLong("PlayPos"));
+	
+	if (m_ZoomIn->value()) m_Display->ZoomIn();	
+	if (m_ZoomOut->value()) m_Display->ZoomOut();
 	
 	if (m_UpdateMe)
 	{

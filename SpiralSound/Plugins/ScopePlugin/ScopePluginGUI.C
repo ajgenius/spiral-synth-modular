@@ -82,6 +82,11 @@ void ScopePluginGUI::Display(const float *data)
 	if (!m_Bypass) m_Scope->redraw();
 }
 
+void ScopePluginGUI::Update()
+{
+	redraw();
+}
+
 void ScopePluginGUI::draw()
 {
 	SpiralGUIType::draw();
