@@ -73,7 +73,7 @@ void MixSwitchPlugin::ExecuteCommands () {
   }
 }
 
-void MixSwitchPlugin::CreatePorts (int n = 2, bool AddPorts = false) {
+void MixSwitchPlugin::CreatePorts (int n, bool AddPorts) {
   int c;
   m_PluginInfo.NumInputs = 2 + n;
   m_PluginInfo.PortTips.push_back ("CV");

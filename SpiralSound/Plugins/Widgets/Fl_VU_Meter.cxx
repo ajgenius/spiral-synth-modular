@@ -2,7 +2,7 @@
 #include "Fl_VU_Meter.h"
 #include <FL/fl_draw.H>
 
-Fl_VU_Meter::Fl_VU_Meter (int x, int y, int w, int h, const char *l = 0) :
+Fl_VU_Meter::Fl_VU_Meter (int x, int y, int w, int h, const char *l) :
 Fl_Progress (x, y, w, h, l) {
 }
 

@@ -150,7 +150,7 @@ ostream &operator<<(ostream &s, Pattern &o)
 
 //////////////////////////////////////////////////////////////////////////
 
-Sequence::Sequence(float st=0, int pat=0)
+Sequence::Sequence(float st, int pat)
 {
 	m_StartTime=st;
 	m_Pattern=pat;
