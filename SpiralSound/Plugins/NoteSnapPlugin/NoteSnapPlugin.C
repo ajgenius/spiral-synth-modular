@@ -128,10 +128,13 @@ void NoteSnapPlugin::StreamOut(ostream &s)
 
 void NoteSnapPlugin::StreamIn(istream &s) 
 {
-	int version;
-	s>>version;
-	for (int n=0; n<12; n++)
-	{
-		s>>m_Filter[n];
+// Pre-version 1 - check for blank line
+	if (s.peek() != 10) {
+		int version;
+		s>>version;
+		for (int n=0; n<12; n++)
+		{
+			s>>m_Filter[n];
+		}
 	}
 }
