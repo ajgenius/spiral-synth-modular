@@ -75,6 +75,7 @@ LADSPAInfo::RescanPlugins(void)
 
 		// Oops
 			cerr << "WARNING: LADSPA_PATH environment variable not set" << endl;
+			cerr << "         Assuming /usr/lib/ladspa:/usr/local/lib/ladspa" << endl;
 		}
 
 	// Extract path elements and add path
@@ -102,6 +103,7 @@ LADSPAInfo::RescanPlugins(void)
 
 		if (!rdf_path) {
 			cerr << "WARNING: LADSPA_RDF_PATH environment variable not set" << endl;
+			cerr << "         Assuming /usr/share/ladspa/rdf:/usr/local/share/ladspa/rdf" << endl;
 
 		} else {
 
