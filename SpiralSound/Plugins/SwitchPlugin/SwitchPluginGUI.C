@@ -20,6 +20,8 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 SwitchPluginGUI::SwitchPluginGUI(int w, int h,SwitchPlugin *o,ChannelHandler *ch,const HostInfo *Info) :

@@ -21,6 +21,8 @@
 #include <FL/fl_draw.H>
 #include <stdio.h>
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 CounterPluginGUI::CounterPluginGUI(int w, int h,CounterPlugin *o,ChannelHandler *ch,const HostInfo *Info) :

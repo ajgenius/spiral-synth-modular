@@ -20,6 +20,8 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 SplitterPluginGUI::SplitterPluginGUI(int w, int h,SplitterPlugin *o,ChannelHandler *ch,const HostInfo *Info) :

@@ -27,7 +27,7 @@ static const int TRANSBUF_SIZE = 0x10000;
 
 struct SampleDesc
 {
-	string Pathname;
+	std::string Pathname;
 	float  Volume;
 	float  Velocity;
 	float  Pitch;
@@ -55,11 +55,11 @@ public:
 	virtual SpiralGUIType *CreateGUI();
 	virtual void Execute();
 	virtual void ExecuteCommands();
-	virtual void StreamOut(ostream &s);
-	virtual void StreamIn(istream &s);
+	virtual void StreamOut(std::ostream &s);
+	virtual void StreamIn(std::istream &s);
 	
-	virtual bool	    SaveExternalFiles(const string &Dir);
-	virtual void	    LoadExternalFiles(const string &Dir);
+	virtual bool	    SaveExternalFiles(const std::string &Dir);
+	virtual void	    LoadExternalFiles(const std::string &Dir);
 	
 	enum GUICommands{NONE,LOAD,SAVE,SETVOL,SETPITCH,SETLOOP,SETPING,SETNOTE,SETOCT,
 					SETPLAYPOINTS,SETREC,CUT,COPY,PASTE,CROP,MIX,REV,AMP,SETCURRENT,
@@ -77,8 +77,8 @@ public:
 		char Name[256];
 	};
 	
-	void LoadSample(int n, const string &Name);
-	void SaveSample(int n, const string &Name);
+	void LoadSample(int n, const std::string &Name);
+	void SaveSample(int n, const std::string &Name);
 	Sample* GetSample(int n)  { return m_SampleVec[n]; }
 	
 	float GetVolume(int n)          { return m_SampleDescVec[n]->Volume; }
@@ -92,8 +92,8 @@ public:
 	long GetLoopStart(int n)         { return m_SampleDescVec[n]->LoopStart; }
 	long GetLoopEnd(int n)           { return m_SampleDescVec[n]->LoopEnd; }
 				
-	vector<Sample*> m_SampleVec;
-	vector<SampleDesc*> m_SampleDescVec;
+	std::vector<Sample*> m_SampleVec;
+	std::vector<SampleDesc*> m_SampleDescVec;
 			
 private:
 

@@ -22,6 +22,8 @@
 #include "../../RiffWav.h"
 #include "../../NoteTable.h"
 
+using namespace std;
+
 static const float TRIG_THRESH = 0.1;
 static const float BUFSECONDS = 1.0f;
 

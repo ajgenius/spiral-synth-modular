@@ -25,7 +25,7 @@
 #ifndef MIDIGUI
 #define MIDIGUI
 
-int OptionsList(const vector<string> &List);
+int OptionsList(const std::vector<std::string> &List);
 
 class MidiPluginGUI : public SpiralPluginGUI
 {
@@ -35,7 +35,7 @@ public:
 	virtual void UpdateValues(SpiralPlugin *o);
 		
 protected:
-    const string GetHelpText(const string &loc);	
+    const std::string GetHelpText(const std::string &loc);
 	
 private:
 	

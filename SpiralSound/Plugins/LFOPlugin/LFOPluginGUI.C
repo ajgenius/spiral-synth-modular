@@ -24,6 +24,8 @@
 #include "../GUI/WS_Square.h"
 #include "../GUI/WS_Saw.h"
 
+using namespace std;
+
 LFOPluginGUI::LFOPluginGUI (int w, int h, LFOPlugin *o, ChannelHandler *ch, const HostInfo *Info) :
 SpiralPluginGUI (w, h, o, ch),
 m_PixmapSine (image_Sine),

@@ -22,6 +22,8 @@
 #include "../../RiffWav.h"
 #include "../../NoteTable.h"
 
+using namespace std;
+
 // for note on's
 static const float TRIGGER_LEV=0.1;
 

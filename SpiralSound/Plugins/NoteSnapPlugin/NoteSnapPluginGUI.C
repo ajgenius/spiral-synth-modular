@@ -20,6 +20,8 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 NoteSnapPluginGUI::NoteSnapPluginGUI(int w, int h,NoteSnapPlugin *o,ChannelHandler *ch,const HostInfo *Info) :

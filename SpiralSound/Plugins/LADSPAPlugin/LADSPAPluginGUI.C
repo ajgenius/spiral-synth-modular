@@ -31,6 +31,8 @@
 #include "LADSPAPluginGUI.h"
 #include "LADSPAInfo.h"
 
+using namespace std;
+
 LADSPAPluginGUI::LADSPAPluginGUI(int w, int h,
                                  LADSPAPlugin *o,
                                  ChannelHandler *ch,

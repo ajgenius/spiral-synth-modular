@@ -38,7 +38,7 @@ public:
 	SpiralLoopPluginGUI(int w, int h, SpiralLoopPlugin *o,ChannelHandler *ch,const HostInfo *Info);
 	virtual void UpdateValues(SpiralPlugin *o);
 	virtual void Update();
-	virtual const string GetHelpText(const string &loc);
+	virtual const std::string GetHelpText(const std::string &loc);
 	
 private:
 	void UpdateSampleDisplay();
@@ -70,7 +70,7 @@ private:
 	Fl_Button *m_Hold;	
 	Fl_Button *m_Undo;	
 		
-	vector<Fl_Trigger*> m_TriggerVec;
+	std::vector<Fl_Trigger*> m_TriggerVec;
 
 	Fl_Loop* m_LoopGUI;
 	

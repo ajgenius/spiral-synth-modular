@@ -20,6 +20,8 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 MoogFilterPluginGUI::MoogFilterPluginGUI(int w, int h,MoogFilterPlugin *o,ChannelHandler *ch,const HostInfo *Info) :

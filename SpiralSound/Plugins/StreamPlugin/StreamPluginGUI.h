@@ -35,7 +35,7 @@ class StreamPluginGUI : public SpiralPluginGUI {
       virtual void Update ();
       virtual void UpdateValues (SpiralPlugin *o);
    protected:
-      const string GetHelpText (const string &loc);
+      const std::string GetHelpText (const std::string &loc);
    private:
       bool m_Playing;
       float m_PitchValue;

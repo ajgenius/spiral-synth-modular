@@ -20,6 +20,8 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 MasherPluginGUI::MasherPluginGUI(int w, int h,MasherPlugin *o,ChannelHandler *ch,const HostInfo *Info) :

@@ -19,6 +19,8 @@
 #include "JoystickPluginGUI.h"
 #include <FL/fl_draw.h>
 
+using namespace std;
+
 JoystickPluginGUI::JoystickPluginGUI(int w, int h,JoystickPlugin *o,const HostInfo *Info) :
   SpiralPluginGUI(w,h,o)
 {	

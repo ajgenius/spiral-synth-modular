@@ -32,8 +32,8 @@ class LFOPlugin : public SpiralPlugin {
       virtual PluginInfo &Initialise (const HostInfo *Host);
       virtual SpiralGUIType* CreateGUI();
       virtual void Execute();
-      virtual void StreamOut (ostream &s);
-      virtual void StreamIn (istream &s);
+      virtual void StreamOut (std::ostream &s);
+      virtual void StreamIn (std::istream &s);
       //typedef char Type;
       enum Type {SINE, TRIANGLE, SQUARE, SAW};
       void WriteWaves();
@@ -50,11 +50,11 @@ class LFOPlugin : public SpiralPlugin {
       float m_Freq;
       Sample m_Table[NUM_TABLES];
       int m_TableLength;
-      friend istream &operator>> (istream &s, LFOPlugin &o);
-      friend ostream &operator<< (ostream &s, LFOPlugin &o);
+      friend std::istream &operator>> (std::istream &s, LFOPlugin &o);
+      friend std::ostream &operator<< (std::ostream &s, LFOPlugin &o);
 };
 
-istream &operator>> (istream &s, LFOPlugin &o);
-ostream &operator<< (ostream &s, LFOPlugin &o);
+std::istream &operator>> (std::istream &s, LFOPlugin &o);
+std::ostream &operator<< (std::ostream &s, LFOPlugin &o);
 
 #endif

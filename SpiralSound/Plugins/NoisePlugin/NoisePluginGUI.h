@@ -30,7 +30,7 @@ class NoisePluginGUI : public SpiralPluginGUI
 	NoisePluginGUI(int w, int h, NoisePlugin *o, ChannelHandler *ch, const HostInfo *Info);
 	virtual void UpdateValues(SpiralPlugin *o);
     protected:
-        const string GetHelpText(const string &loc);
+        const std::string GetHelpText(const std::string &loc);
     private:
     	Fl_LED_Button *White, *Pink;
     	//// Callbacks ////

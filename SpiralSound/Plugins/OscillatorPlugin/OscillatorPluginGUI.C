@@ -23,6 +23,8 @@
 #include "../GUI/WS_Noise.h"
 #include "../GUI/WS_Saw.h"
 
+using namespace std;
+
 OscillatorPluginGUI::OscillatorPluginGUI (int w, int h, OscillatorPlugin *o, ChannelHandler *ch, const HostInfo *Info) :
 SpiralPluginGUI (w, h, o, ch),
 m_PixmapSquare (image_Square),

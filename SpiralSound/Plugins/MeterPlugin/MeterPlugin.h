@@ -29,8 +29,8 @@ class MeterPlugin : public SpiralPlugin {
     virtual SpiralGUIType* CreateGUI();
     virtual void Execute();
     virtual void ExecuteCommands();
-    virtual void StreamOut (ostream &s);
-    virtual void StreamIn (istream &s);
+    virtual void StreamOut (std::ostream &s);
+    virtual void StreamIn (std::istream &s);
     int GetVUMode (void) { return m_VUMode; }
     enum GUICommands {NONE, SETVU, SETMM};
   private:

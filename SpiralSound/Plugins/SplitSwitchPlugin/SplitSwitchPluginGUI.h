@@ -30,7 +30,7 @@ class SplitSwitchPluginGUI : public SpiralPluginGUI {
     virtual void UpdateValues(SpiralPlugin *o);
     virtual void Update();
   protected:
-    const string GetHelpText(const string &loc);
+    const std::string GetHelpText(const std::string &loc);
   private:
     Fl_Counter *m_Switch, *m_Chans;
     inline void cb_Switch_i (Fl_Counter* o, void* v);

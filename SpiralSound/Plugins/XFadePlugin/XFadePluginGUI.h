@@ -32,7 +32,7 @@ public:
 	virtual void UpdateValues(SpiralPlugin *o);
 
 protected:
-	virtual const string GetHelpText(const string &loc);
+	virtual const std::string GetHelpText(const std::string &loc);
 	
 private:
 	Fl_Slider 		*m_Mix;	

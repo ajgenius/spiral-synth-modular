@@ -20,6 +20,8 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 BeatMatchPluginGUI::BeatMatchPluginGUI(int w, int h,BeatMatchPlugin *o,ChannelHandler *ch,const HostInfo *Info) :

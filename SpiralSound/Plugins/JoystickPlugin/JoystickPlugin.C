@@ -29,6 +29,8 @@
 #include <FL/Fl_Button.h>
 #include "SpiralIcon.xpm"
 
+using namespace std;
+
 LowLevelJoystick* LowLevelJoystick::m_Singleton = NULL;
 int JoystickPlugin::m_RefCount=0;
 int JoystickPlugin::m_NoExecuted=0;

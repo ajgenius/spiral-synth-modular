@@ -21,6 +21,8 @@
 #include <FL/fl_draw.H>
 #include <stdio.h>
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 TrigPluginGUI::TrigPluginGUI(int w, int h,TrigPlugin *o,ChannelHandler *ch,const HostInfo *Info) :

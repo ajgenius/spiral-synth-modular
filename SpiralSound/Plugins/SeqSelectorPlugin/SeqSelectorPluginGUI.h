@@ -63,11 +63,11 @@ public:
 	int   GetNumLines() { return m_LineVec.size(); }
 	void  SetLED(int n);
 
-	void StreamOut(ostream &s);
-	void StreamIn(istream &s);
+	void StreamOut(std::ostream &s);
+	void StreamIn(std::istream &s);
 
 protected:
-    const string GetHelpText(const string &loc);
+    const std::string GetHelpText(const std::string &loc);
 
 private:
 
@@ -81,7 +81,7 @@ private:
 	Fl_Counter *m_End;
 	Fl_Button  *m_UseRange;
 
-	list<CountLine*> m_LineVec;
+	std::list<CountLine*> m_LineVec;
 
 	//// Callbacks ////
 	inline void cb_New_i(Fl_Button* o, void* v);

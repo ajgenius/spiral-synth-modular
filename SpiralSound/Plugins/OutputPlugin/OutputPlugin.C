@@ -44,6 +44,8 @@
 #include <FL/fl_file_chooser.H>
 #include "SpiralIcon.xpm"
 
+using namespace std;
+
 static const int IN_FREQ  = 0;
 static const int IN_PW    = 1;
 static const int IN_SHLEN = 2;

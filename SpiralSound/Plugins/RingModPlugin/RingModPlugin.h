@@ -31,8 +31,8 @@ public:
 	virtual PluginInfo &Initialise(const HostInfo *Host);
 	virtual SpiralGUIType *CreateGUI();
 	virtual void Execute();
-	virtual void StreamOut(ostream &s);
-	virtual void StreamIn(istream &s);
+	virtual void StreamOut(std::ostream &s);
+	virtual void StreamIn(std::istream &s);
 			
 	float GetAmount()       { return m_Amount; }
 	
@@ -41,10 +41,10 @@ public:
 private:
 	float m_Amount;
 	
-	friend istream &operator>>(istream &s, RingModPlugin &o);
-	friend ostream &operator<<(ostream &s, RingModPlugin &o);
+	friend std::istream &operator>>(std::istream &s, RingModPlugin &o);
+	friend std::ostream &operator<<(std::ostream &s, RingModPlugin &o);
 };
-istream &operator>>(istream &s, RingModPlugin &o);
-ostream &operator<<(ostream &s, RingModPlugin &o);
+std::istream &operator>>(std::istream &s, RingModPlugin &o);
+std::ostream &operator<<(std::ostream &s, RingModPlugin &o);
 
 #endif

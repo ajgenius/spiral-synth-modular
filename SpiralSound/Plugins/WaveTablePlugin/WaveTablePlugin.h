@@ -34,8 +34,8 @@ public:
 	virtual PluginInfo &Initialise(const HostInfo *Host);
 	virtual SpiralGUIType *CreateGUI();
 	virtual void 		Execute();
-	virtual void	    StreamOut(ostream &s);
-	virtual void	    StreamIn(istream &s);
+	virtual void	    StreamOut(std::ostream &s);
+	virtual void	    StreamIn(std::istream &s);
 	
 	// has to be defined in the plugin	
 	virtual void UpdateGUI() { Fl::check(); }
@@ -66,11 +66,11 @@ private:
 	Sample m_Table[NUM_TABLES];
 	int    m_TableLength;
 	
-	friend istream &operator>>(istream &s, WaveTablePlugin &o);
-	friend ostream &operator<<(ostream &s, WaveTablePlugin &o);
+	friend std::istream &operator>>(std::istream &s, WaveTablePlugin &o);
+	friend std::ostream &operator<<(std::ostream &s, WaveTablePlugin &o);
 };
 
-istream &operator>>(istream &s, WaveTablePlugin &o);
-ostream &operator<<(ostream &s, WaveTablePlugin &o);
+std::istream &operator>>(std::istream &s, WaveTablePlugin &o);
+std::ostream &operator<<(std::ostream &s, WaveTablePlugin &o);
 
 #endif

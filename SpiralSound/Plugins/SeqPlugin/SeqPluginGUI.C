@@ -22,6 +22,8 @@
 #include <FL/fl_draw.H>
 #include <FL/fl_file_chooser.h>
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 SeqPluginGUI::SeqPluginGUI(int w, int h,SeqPlugin *o,const HostInfo *Info) :

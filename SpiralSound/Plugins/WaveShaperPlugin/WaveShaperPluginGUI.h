@@ -50,7 +50,7 @@ class WaveShaperPluginGUI : public SpiralPluginGUI {
     virtual void UpdateValues (SpiralPlugin *o);
     virtual void Update ();
   protected:
-    const string GetHelpText (const string &loc);
+    const std::string GetHelpText (const std::string &loc);
   private:
     FunctionPlot *fplot;
     Fl_LED_Button *radio_polynomial, *radio_sines;

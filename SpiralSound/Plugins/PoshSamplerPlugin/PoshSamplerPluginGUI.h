@@ -83,7 +83,7 @@ public:
 	int  GetCurrentSample() { return (int)m_SampleNum->value(); }
 
 protected:
-    const string GetHelpText(const string &loc);
+    const std::string GetHelpText(const std::string &loc);
 
 private:
 

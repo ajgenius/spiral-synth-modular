@@ -27,7 +27,7 @@ static const int MAX_TRIGGERS = 8;
 
 struct SampleDesc
 {
-	string Pathname;
+	std::string Pathname;
 	float  Volume;
 	float  Pitch;
 	float  PitchMod;
@@ -56,10 +56,10 @@ public:
 	virtual SpiralGUIType *CreateGUI();
 	virtual void Execute();
 	virtual void ExecuteCommands();
-	virtual void StreamOut(ostream &s);
-	virtual void StreamIn(istream &s);
-	virtual bool SaveExternalFiles(const string &Dir);
-	virtual void LoadExternalFiles(const string &Dir);
+	virtual void StreamOut(std::ostream &s);
+	virtual void StreamIn(std::istream &s);
+	virtual bool SaveExternalFiles(const std::string &Dir);
+	virtual void LoadExternalFiles(const std::string &Dir);
 	
 	enum GUICommands{NONE,START,STOP,RECORD,OVERDUB,ENDRECORD,LOAD,SAVE,CUT,
 					 COPY,PASTE,PASTEMIX,ZERO_RANGE,REVERSE_RANGE,SELECT_ALL,DOUBLE,HALF,
@@ -98,8 +98,8 @@ public:
 	const float  GetSpeed() 				{return m_Speed;}
 	const float  GetVolume()     			{ return m_Volume; }
 	const float  GetCurrentAngle() 			{ return m_LoopPoint?(m_Pos/m_LoopPoint)*360.0f:0; }
-	const string& GetSampleName()  			{ return m_Sample; }
-	vector<TriggerInfo> *GetTriggerVec()    { return &m_TriggerVec; }
+	const std::string& GetSampleName()  			{ return m_Sample; }
+	std::vector<TriggerInfo> *GetTriggerVec()    { return &m_TriggerVec; }
 	
 	void Cut(int Start, int End);
 	void Copy(int Start, int End);
@@ -111,7 +111,7 @@ public:
 	void Halve();
 	void SelectAll();
 	void Move(int Start);
-	
+
 	Sample *GetStoreBuffer() { return &m_StoreBuffer; }
 		
 private:
@@ -160,9 +160,9 @@ private:
 	char  m_SampleBuffer[TRANSBUF_SIZE];
 	long  m_SampleSize;
 	
-	vector<TriggerInfo> m_TriggerVec;
+	std::vector<TriggerInfo> m_TriggerVec;
 
-	string m_Sample;			
+	std::string m_Sample;
 };
 
 #endif

@@ -22,6 +22,8 @@
 #include "SpiralIcon.xpm"
 #include "../../NoteTable.h"
 
+using namespace std;
+
 extern "C" {
 SpiralPlugin* SpiralPlugin_CreateInstance()
 {

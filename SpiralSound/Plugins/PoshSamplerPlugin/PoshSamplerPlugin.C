@@ -23,6 +23,8 @@
 #include "../../NoteTable.h"
 #include <stdio.h>
 
+using namespace std;
+
 static const int   NOTETRIG    = NUM_SAMPLES*2+1;
 static const int   REC_INPUT   = 16;
 

@@ -22,6 +22,8 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Box.H>
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 CountLine::CountLine (int n, Fl_Color col) :

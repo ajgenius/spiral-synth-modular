@@ -19,6 +19,8 @@
 #include "TransposePluginGUI.h"
 #include <FL/fl_draw.h>
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 TransposePluginGUI::TransposePluginGUI (int w, int h,TransposePlugin *o,ChannelHandler *ch,const HostInfo *Info) :

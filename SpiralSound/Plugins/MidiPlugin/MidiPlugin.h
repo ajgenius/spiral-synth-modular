@@ -32,8 +32,8 @@ public:
 	virtual SpiralGUIType*  CreateGUI();
 	virtual void 		Execute();
 	virtual void        ExecuteCommands();
-	virtual void	    StreamOut(ostream &s);
-	virtual void	    StreamIn(istream &s);
+	virtual void	    StreamOut(std::ostream &s);
+	virtual void	    StreamIn(std::istream &s);
 	
 	// has to be defined in the plugin	
 	virtual void UpdateGUI() { Fl::check(); }
@@ -52,7 +52,7 @@ public:
 private:
 	GUIArgs m_GUIArgs;
 	
-	void AddControl(int s,const string &Name);
+	void AddControl(int s,const std::string &Name);
 	void DeleteControl();
 	
 	int m_DeviceNum;
@@ -69,7 +69,7 @@ private:
 	
 	static int m_RefCount;
 	
-	vector<int> m_ControlList;
+	std::vector<int> m_ControlList;
 };
 
 #endif

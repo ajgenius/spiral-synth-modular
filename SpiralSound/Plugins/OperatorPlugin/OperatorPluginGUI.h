@@ -30,7 +30,7 @@ class OperatorPluginGUI : public SpiralPluginGUI {
       OperatorPluginGUI (int w, int h, OperatorPlugin *o, ChannelHandler *ch, const HostInfo *Info);
       virtual void UpdateValues(SpiralPlugin *o);
    protected:
-      const string GetHelpText(const string &loc);
+      const std::string GetHelpText(const std::string &loc);
    private:
       Fl_Button *m_Add, *m_Sub, *m_Mul, *m_Div;
       Fl_Counter *m_Constant;

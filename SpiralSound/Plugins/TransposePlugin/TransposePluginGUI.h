@@ -29,7 +29,7 @@ class TransposePluginGUI : public SpiralPluginGUI {
       TransposePluginGUI (int w, int h, TransposePlugin *o, ChannelHandler *ch, const HostInfo *Info);
       virtual void UpdateValues (SpiralPlugin *o);
    protected:
-      const string GetHelpText (const string &loc);
+      const std::string GetHelpText (const std::string &loc);
    private:
       Fl_Counter* m_Amount;
       inline void cb_Amount_i (Fl_Counter* o, void* v);

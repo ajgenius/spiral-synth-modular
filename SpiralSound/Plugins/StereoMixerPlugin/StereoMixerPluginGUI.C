@@ -20,6 +20,8 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 StereoMixerPluginGUI::StereoMixerPluginGUI (int w, int h, StereoMixerPlugin *o, ChannelHandler *ch, const HostInfo *Info) :

@@ -33,8 +33,8 @@ public:
 	virtual PluginInfo &Initialise(const HostInfo *Host);
 	virtual SpiralGUIType *CreateGUI();
 	virtual void Execute();
-	virtual void StreamOut(ostream &s);
-	virtual void StreamIn(istream &s);
+	virtual void StreamOut(std::ostream &s);
+	virtual void StreamIn(std::istream &s);
 	
 	// has to be defined in the plugin	
 	virtual void UpdateGUI() { Fl::check(); }
@@ -63,12 +63,12 @@ private:
 		int Grain;
 	};
 	
-	vector<GrainDesc> m_OverlapVec;
+	std::vector<GrainDesc> m_OverlapVec;
 	
-	friend istream &operator>>(istream &s, MasherPlugin &o);
-	friend ostream &operator<<(ostream &s, MasherPlugin &o);
+	friend std::istream &operator>>(std::istream &s, MasherPlugin &o);
+	friend std::ostream &operator<<(std::ostream &s, MasherPlugin &o);
 };
-istream &operator>>(istream &s, MasherPlugin &o);
-ostream &operator<<(ostream &s, MasherPlugin &o);
+std::istream &operator>>(std::istream &s, MasherPlugin &o);
+std::ostream &operator<<(std::ostream &s, MasherPlugin &o);
 
 #endif

@@ -32,8 +32,8 @@ public:
 	virtual SpiralGUIType*  CreateGUI();
 	virtual void 		Execute();
 	virtual void 		ExecuteCommands();
-	virtual void	    StreamOut(ostream &s);
-	virtual void	    StreamIn(istream &s);
+	virtual void	    StreamOut(std::ostream &s);
+	virtual void	    StreamIn(std::istream &s);
 	
 	float GetSensitivity() { return m_Sensitivity; }
 	

@@ -58,8 +58,8 @@ public:
 	virtual SpiralGUIType *CreateGUI();
 	virtual void Execute();
 	virtual void ExecuteCommands();
-	virtual void StreamOut(ostream &s);
-	virtual void StreamIn(istream &s);
+	virtual void StreamOut(std::ostream &s);
+	virtual void StreamIn(std::istream &s);
 
 	unsigned long  GetUniqueID() { return m_UniqueID; }
 	const char    *GetName() { return (const char *)m_Name; }
@@ -105,15 +105,15 @@ private:
 	void ResetPortSettings(void);
 	void SetGUIExports(void);
 
-	const LADSPA_Descriptor *m_PlugDesc;
-	vector<LADSPA_Data*>     m_LADSPABufVec;
-	LADSPA_Handle            m_PlugInstHandle;
+	const LADSPA_Descriptor     *m_PlugDesc;
+	std::vector<LADSPA_Data*>    m_LADSPABufVec;
+	LADSPA_Handle                m_PlugInstHandle;
 
-	vector<int>     m_PortID;
-	vector<float>   m_InputPortMin;
-	vector<float>   m_InputPortMax;
-	vector<bool>    m_InputPortClamp;
-	vector<float>   m_InputPortDefault;
+	std::vector<int>        m_PortID;
+	std::vector<float>      m_InputPortMin;
+	std::vector<float>      m_InputPortMax;
+	std::vector<bool>       m_InputPortClamp;
+	std::vector<float>      m_InputPortDefault;
 
 	int             m_Version;
 

@@ -22,6 +22,8 @@
 #include <FL/Fl_Hold_Browser.H>
 #include <FL/Fl_Double_Window.H>
 
+using namespace std;
+
 ////////////////////////////////////////////////////////////////////////
 
 int OptionsList(const vector<string> &List)

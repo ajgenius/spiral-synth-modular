@@ -39,14 +39,14 @@ public:
 	float Time;
 	float Length;
 	int   MidiNote;
-	float Vol;	
+	float Vol;
 
-	friend istream &operator>>(istream &s, Note &o);
-	friend ostream &operator<<(ostream &s, Note &o);	
+	friend std::istream &operator>>(std::istream &s, Note &o);
+	friend std::ostream &operator<<(std::ostream &s, Note &o);
 };
 
-istream &operator>>(istream &s, Note &o);
-ostream &operator<<(ostream &s, Note &o);	
+std::istream &operator>>(std::istream &s, Note &o);
+std::ostream &operator<<(std::ostream &s, Note &o);
 
 class Pattern
 {
@@ -62,12 +62,12 @@ public:
 	
 	map<int,Note> m_NoteMap;
 	
-	friend istream &operator>>(istream &s, Pattern &o);
-	friend ostream &operator<<(ostream &s, Pattern &o);	
+	friend std::istream &operator>>(std::istream &s, Pattern &o);
+	friend std::ostream &operator<<(std::ostream &s, Pattern &o);
 };
 
-istream &operator>>(istream &s, Pattern &o);
-ostream &operator<<(ostream &s, Pattern &o);	
+std::istream &operator>>(std::istream &s, Pattern &o);
+std::ostream &operator<<(std::ostream &s, Pattern &o);
 	
 class Sequence
 {
@@ -99,12 +99,12 @@ private:
 	float  m_Length;
 	int    m_Channel;	
 
-	friend istream &operator>>(istream &s, Sequence &o);
-	friend ostream &operator<<(ostream &s, Sequence &o);	
+	friend std::istream &operator>>(std::istream &s, Sequence &o);
+	friend std::ostream &operator<<(std::ostream &s, Sequence &o);
 };
 	
-istream &operator>>(istream &s, Sequence &o);
-ostream &operator<<(ostream &s, Sequence &o);	
+std::istream &operator>>(std::istream &s, Sequence &o);
+std::ostream &operator<<(std::ostream &s, Sequence &o);
 
 class Track
 {
@@ -131,17 +131,17 @@ private:
 	void      AddPattern(int ID);
 	void      RemovePattern(int ID);
 	
-	map<int,Pattern>  m_PatternMap;
-	map<int,Sequence> m_SequenceMap;
+	std::map<int,Pattern>  m_PatternMap;
+	std::map<int,Sequence> m_SequenceMap;
 	
 	int m_NextPatternID;
 	
-	friend istream &operator>>(istream &s, Track &o);
-	friend ostream &operator<<(ostream &s, Track &o);	
+	friend std::istream &operator>>(std::istream &s, Track &o);
+	friend std::ostream &operator<<(std::ostream &s, Track &o);
 };
 
-istream &operator>>(istream &s, Track &o);
-ostream &operator<<(ostream &s, Track &o);	
+std::istream &operator>>(std::istream &s, Track &o);
+std::ostream &operator<<(std::ostream &s, Track &o);
 
 ///////////////////////////////////////////////////////////////////////////
 

@@ -32,9 +32,9 @@ public:
 	virtual SpiralGUIType*  CreateGUI();
 	virtual void 		Execute();
 	virtual void 		ExecuteCommands();
-	virtual void	    StreamOut(ostream &s);
-	virtual void	    StreamIn(istream &s);
-	virtual string 		GetGroupName() { return "Maths/Logic"; }
+	virtual void	    StreamOut(std::ostream &s);
+	virtual void	    StreamIn(std::istream &s);
+	virtual std::string GetGroupName() { return "Maths/Logic"; }
 	
 	bool      GetMix() { return m_Mix; }
 	

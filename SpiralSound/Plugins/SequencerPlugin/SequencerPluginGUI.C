@@ -23,6 +23,8 @@
 #include <FL/fl_file_chooser.h>
 #include <FL/Fl_Color_Chooser.H>
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 SequencerPluginGUI::PatternWin::PatternWin(int w,int h,const char* n) :

@@ -20,6 +20,8 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 RingModPluginGUI::RingModPluginGUI (int w, int h, RingModPlugin *o, ChannelHandler *ch, const HostInfo *Info) :

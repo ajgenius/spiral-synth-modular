@@ -21,6 +21,8 @@
 #include <FL/fl_draw.H>
 #include <FL/fl_file_chooser.h>
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 Fl_WaveDisplay::Fl_WaveDisplay(int x,int y,int w,int h, char *Name) :

@@ -22,6 +22,8 @@
 #include "../../RiffWav.h"
 #include "../../NoteTable.h"
 
+using namespace std;
+
 static const int   NOTETRIG    = NUM_SAMPLES*2+1;
 
 extern "C" {

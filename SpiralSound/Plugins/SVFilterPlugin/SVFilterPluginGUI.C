@@ -20,6 +20,8 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 SVFilterPluginGUI::SVFilterPluginGUI(int w, int h,SVFilterPlugin *o,ChannelHandler *ch,const HostInfo *Info) :

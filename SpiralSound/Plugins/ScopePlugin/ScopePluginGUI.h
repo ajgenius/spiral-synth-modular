@@ -54,7 +54,7 @@ class ScopePluginGUI : public SpiralPluginGUI
       virtual void draw();
       void Display (const float *data);
    protected:
-      const string GetHelpText (const string &loc);
+      const std::string GetHelpText (const std::string &loc);
    private:
       bool m_Bypass;
       // Fl_Button *Bypass;

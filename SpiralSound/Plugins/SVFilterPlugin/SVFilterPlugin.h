@@ -34,8 +34,8 @@ public:
 	virtual PluginInfo &Initialise(const HostInfo *Host);
 	virtual SpiralGUIType *CreateGUI();
 	virtual void Execute();
-	virtual void StreamOut(ostream &s);
-	virtual void StreamIn(istream &s);
+	virtual void StreamOut(std::ostream &s);
+	virtual void StreamIn(std::istream &s);
 	
 	float GetCutoff()    { return Cutoff; }
 	float GetResonance() { return Resonance;  } 
@@ -56,10 +56,10 @@ private:
 	// Outputs
 	double m_h, m_b, m_l, m_p, m_n;
 		
-	friend istream &operator>>(istream &s, SVFilterPlugin &o);
-	friend ostream &operator<<(ostream &s, SVFilterPlugin &o);
+	friend std::istream &operator>>(std::istream &s, SVFilterPlugin &o);
+	friend std::ostream &operator<<(std::ostream &s, SVFilterPlugin &o);
 };
-istream &operator>>(istream &s, SVFilterPlugin &o);
-ostream &operator<<(ostream &s, SVFilterPlugin &o);
+std::istream &operator>>(std::istream &s, SVFilterPlugin &o);
+std::ostream &operator<<(std::ostream &s, SVFilterPlugin &o);
 
 #endif

@@ -31,8 +31,8 @@ public:
 	virtual PluginInfo &Initialise(const HostInfo *Host);
 	virtual SpiralGUIType  *CreateGUI();
 	virtual void 		Execute();
-	virtual void	    StreamOut(ostream &s);
-	virtual void	    StreamIn(istream &s);
+	virtual void	    StreamOut(std::ostream &s);
+	virtual void	    StreamIn(std::istream &s);
 
 	typedef char Type;
 	enum {NONE,SQUARE,SAW,NOISE};
@@ -71,11 +71,11 @@ private:
 
 	static const int FIXED;
 
-	friend istream &operator>>(istream &s, OscillatorPlugin &o);
-	friend ostream &operator<<(ostream &s, OscillatorPlugin &o);
+	friend std::istream &operator>>(std::istream &s, OscillatorPlugin &o);
+	friend std::ostream &operator<<(std::ostream &s, OscillatorPlugin &o);
 };
 
-istream &operator>>(istream &s, OscillatorPlugin &o);
-ostream &operator<<(ostream &s, OscillatorPlugin &o);
+std::istream &operator>>(std::istream &s, OscillatorPlugin &o);
+std::ostream &operator<<(std::ostream &s, OscillatorPlugin &o);
 
 #endif

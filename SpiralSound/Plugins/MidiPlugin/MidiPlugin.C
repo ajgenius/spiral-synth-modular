@@ -23,6 +23,8 @@
 #include "../../Midi.h"
 #include "SpiralIcon.xpm"
 
+using namespace std;
+
 int MidiPlugin::m_RefCount = 0;
 
 extern "C" {

@@ -34,7 +34,7 @@ class MeterPluginGUI : public SpiralPluginGUI {
     virtual void Update ();
     virtual void draw ();
   protected:
-    const string GetHelpText (const string &loc);
+    const std::string GetHelpText (const std::string &loc);
   private:
     bool m_Bypass;
     float *m_Data, m_Min, m_Max;

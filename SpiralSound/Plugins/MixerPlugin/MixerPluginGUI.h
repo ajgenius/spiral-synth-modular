@@ -34,11 +34,11 @@ class MixerPluginGUI : public SpiralPluginGUI {
       virtual void UpdateValues(SpiralPlugin *o);
       virtual void Update ();
    protected:
-      const string GetHelpText(const string &loc);
+      const std::string GetHelpText(const std::string &loc);
    private:
       void AddChan (bool SendData = false, bool ResizeIt = false);
       void DeleteChan (bool SendData = true);
-      vector<Fl_Slider*> m_SlidVec;
+      std::vector<Fl_Slider*> m_SlidVec;
       Fl_Pack *m_MainPack, *m_Buttons;
       Fl_Button *m_Add, *m_Delete;
       Fl_LED_Button *m_PeakInd;

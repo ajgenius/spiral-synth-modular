@@ -20,6 +20,8 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
+using namespace std;
+
 ScopeWidget::ScopeWidget (int x, int y, int w, int h, const char *l, int BUFSIZE) :
 Fl_Widget (x, y, w, h, l),
 m_Data (NULL),

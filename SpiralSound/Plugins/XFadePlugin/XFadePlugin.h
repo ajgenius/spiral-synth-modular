@@ -31,8 +31,8 @@ public:
 	virtual PluginInfo &Initialise(const HostInfo *Host);
 	virtual SpiralGUIType *CreateGUI();
 	virtual void Execute();
-	virtual void StreamOut(ostream &s);
-	virtual void StreamIn(istream &s);
+	virtual void StreamOut(std::ostream &s);
+	virtual void StreamIn(std::istream &s);
 			
 	float GetMix()        { return m_Mix; }
 	
@@ -41,10 +41,10 @@ public:
 private:	
 	float m_Mix;
 	
-	friend istream &operator>>(istream &s, XFadePlugin &o);
-	friend ostream &operator<<(ostream &s, XFadePlugin &o);
+	friend std::istream &operator>>(std::istream &s, XFadePlugin &o);
+	friend std::ostream &operator<<(std::ostream &s, XFadePlugin &o);
 };
-istream &operator>>(istream &s, XFadePlugin &o);
-ostream &operator<<(ostream &s, XFadePlugin &o);
+std::istream &operator>>(std::istream &s, XFadePlugin &o);
+std::ostream &operator<<(std::ostream &s, XFadePlugin &o);
 
 #endif

@@ -22,6 +22,8 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 MixSwitchPluginGUI::MixSwitchPluginGUI (int w, int h, MixSwitchPlugin *o, ChannelHandler *ch, const HostInfo *Info) :

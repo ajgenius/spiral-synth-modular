@@ -29,6 +29,8 @@
 
 //#define TRACE_OUT
 
+using namespace std;
+
 const int HEADERLEN = (4+24+8);
 
 #if __BYTE_ORDER == BIG_ENDIAN

@@ -28,6 +28,8 @@
 #include "../GUI/WS_Pulse2.h"
 #include "../GUI/WS_InvSine.h"
 
+using namespace std;
+
 WaveTablePluginGUI::WaveTablePluginGUI (int w, int h, SpiralPlugin *o, ChannelHandler *ch, const HostInfo *Info) :
 SpiralPluginGUI (w, h, o, ch),
 m_PixmapSine (image_Sine),

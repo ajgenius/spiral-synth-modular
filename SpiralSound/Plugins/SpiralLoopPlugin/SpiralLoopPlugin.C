@@ -22,6 +22,8 @@
 #include "../../RiffWav.h"
 #include "../../NoteTable.h"
 
+using namespace std;
+
 static const float TRIG_THRESH = 0.1;
 static const int   RECBUFFERSIZE = 16384;
 static const float RECORD_GAIN = 1.0f;

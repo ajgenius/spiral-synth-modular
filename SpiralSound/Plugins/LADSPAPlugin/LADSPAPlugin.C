@@ -37,6 +37,8 @@
 #include "LADSPAPluginGUI.h"
 #include "LADSPAInfo.h"
 
+using namespace std;
+
 ////////////////////////////////////////////////////
 
 extern "C" {

@@ -21,6 +21,8 @@
 #include <FL/fl_draw.H>
 #include <FL/fl_file_chooser.h>
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 SpiralLoopPluginGUI::SpiralLoopPluginGUI(int w, int h,SpiralLoopPlugin *o,ChannelHandler *ch,const HostInfo *Info) :

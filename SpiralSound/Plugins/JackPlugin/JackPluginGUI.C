@@ -22,6 +22,8 @@
 #include <FL/fl_file_chooser.H>
 #include <FL/Fl_Hold_Browser.H>
 
+using namespace std;
+
 static int Numbers[255];
 
 ////////////////////////////////////////////////////////////////////////

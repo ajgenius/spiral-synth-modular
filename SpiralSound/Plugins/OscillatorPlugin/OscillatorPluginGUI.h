@@ -35,7 +35,7 @@ class OscillatorPluginGUI : public SpiralPluginGUI {
       OscillatorPluginGUI (int w, int h, OscillatorPlugin *o, ChannelHandler *ch, const HostInfo *Info);
       virtual void UpdateValues (SpiralPlugin *o);
    protected:
-      const string GetHelpText(const string &loc);
+      const std::string GetHelpText(const std::string &loc);
    private:
       // Utility Functions
       void UpdateFreq (void);

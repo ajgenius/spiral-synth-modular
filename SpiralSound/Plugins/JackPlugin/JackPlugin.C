@@ -23,6 +23,8 @@
 #include "JackPluginGUI.h"
 #include "SpiralIcon.xpm"
 
+using namespace std;
+
 static const HostInfo* host;
 JackClient*       JackClient::m_Singleton  = NULL;
 bool              JackClient::m_Attached   = false;

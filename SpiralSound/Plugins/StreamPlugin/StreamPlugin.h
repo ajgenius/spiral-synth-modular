@@ -31,8 +31,8 @@ class StreamPlugin : public SpiralPlugin {
       virtual SpiralGUIType *CreateGUI();
       virtual void Execute();
       virtual void ExecuteCommands();
-      virtual void StreamOut (ostream &s);
-      virtual void StreamIn (istream &s);
+      virtual void StreamOut (std::ostream &s);
+      virtual void StreamIn (std::istream &s);
       enum GUICommands { NONE, SET_TIME, LOAD, RESTART, STOP, PLAY };
       // has to be defined in the plugin
       //virtual void UpdateGUI() { Fl::check(); }

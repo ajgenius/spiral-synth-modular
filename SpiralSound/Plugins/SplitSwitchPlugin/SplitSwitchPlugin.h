@@ -30,8 +30,8 @@ class SplitSwitchPlugin : public SpiralPlugin {
     virtual SpiralGUIType* CreateGUI ();
     virtual void Execute ();
     virtual void ExecuteCommands ();
-    virtual void StreamOut (ostream &s);
-    virtual void StreamIn (istream &s);
+    virtual void StreamOut (std::ostream &s);
+    virtual void StreamIn (std::istream &s);
     int GetSwitch (void) { return m_SwitchPos + 1; }
     int GetChans (void) { return m_PluginInfo.NumOutputs - 1; }
     enum GUICommands {NONE, SETCHANS};
@@ -46,11 +46,11 @@ class SplitSwitchPlugin : public SpiralPlugin {
     void SetSwitch (int n);
     int m_SwitchPos;
     bool m_Triggered;
-    friend istream &operator>> (istream &s, SplitSwitchPlugin &o);
-    friend ostream &operator<< (ostream &s, SplitSwitchPlugin &o);
+    friend std::istream &operator>> (std::istream &s, SplitSwitchPlugin &o);
+    friend std::ostream &operator<< (std::ostream &s, SplitSwitchPlugin &o);
 };
 
-istream &operator>> (istream &s, SplitSwitchPlugin &o);
-ostream &operator<< (ostream &s, SplitSwitchPlugin &o);
+std::istream &operator>> (std::istream &s, SplitSwitchPlugin &o);
+std::ostream &operator<< (std::ostream &s, SplitSwitchPlugin &o);
 
 #endif

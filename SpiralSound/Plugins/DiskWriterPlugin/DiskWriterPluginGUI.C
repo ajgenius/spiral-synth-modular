@@ -20,6 +20,8 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_file_chooser.H>
 
+using namespace std;
+
 DiskWriterPluginGUI::DiskWriterPluginGUI(int w, int h, SpiralPlugin *o, ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
 {	

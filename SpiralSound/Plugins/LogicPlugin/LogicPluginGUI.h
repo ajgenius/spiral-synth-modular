@@ -33,7 +33,7 @@ public:
 	LogicPluginGUI(int w, int h, LogicPlugin *o,ChannelHandler *ch,const HostInfo *Info);
 	virtual void UpdateValues(SpiralPlugin *o);
 protected:
-        const string GetHelpText(const string &loc);
+        const std::string GetHelpText(const std::string &loc);
 private:
         Fl_Counter *m_Inputs;
 	Fl_Button *m_AND,*m_OR,*m_NOT,*m_NAND,*m_NOR,*m_XOR,*m_XNOR;

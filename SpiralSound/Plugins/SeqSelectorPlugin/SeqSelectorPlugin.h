@@ -34,8 +34,8 @@ public:
 	virtual SpiralGUIType *CreateGUI();
 	virtual void Execute();
 	virtual void ExecuteCommands();
-	virtual void StreamOut(ostream &s);
-	virtual void StreamIn(istream &s);
+	virtual void StreamOut(std::ostream &s);
+	virtual void StreamIn(std::istream &s);
 		
 	int  GetBegin()      { return m_Begin; }
 	int  GetEnd()        { return m_End; }
@@ -54,7 +54,7 @@ public:
 		int Value[NUM_VALUES];
 	};
 	
-	vector<Line> m_Lines;
+	std::vector<Line> m_Lines;
 	
 private:
 

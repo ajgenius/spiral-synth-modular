@@ -21,6 +21,8 @@
 #include <limits.h>
 #include "SpiralIcon.xpm"
 
+using namespace std;
+
 extern "C" {
 SpiralPlugin* SpiralPlugin_CreateInstance()
 {

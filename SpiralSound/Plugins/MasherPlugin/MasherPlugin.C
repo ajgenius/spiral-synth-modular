@@ -23,6 +23,8 @@
 
 #define PI 3.141592654
 
+using namespace std;
+
 float RandRange(float L, float H)
 {
 	return ((rand()%10000/10000.0f)*(H-L))+L;

@@ -21,6 +21,8 @@
 #include "SpiralIcon.xpm"
 #include "../../NoteTable.h"
 
+using namespace std;
+
 static const float PI=3.141592654;
 static const float RAD=(PI/180)*360;
 

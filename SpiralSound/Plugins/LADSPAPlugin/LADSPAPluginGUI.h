@@ -60,7 +60,7 @@ public:
 	virtual void Update(void);
 
 protected:
-	const string GetHelpText(const string &loc);
+	const std::string GetHelpText(const std::string &loc);
 private:
 	void ClearPlugin(void);
 	void SelectPlugin(void);
@@ -91,7 +91,7 @@ private:
 	float ConvertControlValue(unsigned long p, float value);
 
 	Fl_Color m_GUIColour;
-        Fl_Boxtype m_GUIBox;
+	Fl_Boxtype m_GUIBox;
 
 // Buttons
 	Fl_Button                     *m_BKnob;

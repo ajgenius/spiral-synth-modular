@@ -37,18 +37,18 @@ class JackClient
 public:
 	static JackClient *Get()      { if(!m_Singleton) m_Singleton=new JackClient; return m_Singleton; }
 	static void PackUpAndGoHome() { if(m_Singleton)  { delete m_Singleton; m_Singleton=NULL; } }
-	
+
 	bool   Attach();
 	void   Detach();
 	bool   IsAttached()                   { return m_Attached; }
-	void   SetCallback(void(*Run)(void*, bool m),void *Context) { RunCallback=Run; RunContext=Context; }					
-	void   GetPortNames(vector<string> &InputNames,vector<string> &OutputNames);
-	void   ConnectInput(int n, const string &JackPort);
-	void   ConnectOutput(int n, const string &JackPort);
+	void   SetCallback(void(*Run)(void*, bool m),void *Context) { RunCallback=Run; RunContext=Context; }
+	void   GetPortNames(std::vector<std::string> &InputNames,std::vector<std::string> &OutputNames);
+	void   ConnectInput(int n, const std::string &JackPort);
+	void   ConnectOutput(int n, const std::string &JackPort);
 	void   DisconnectInput(int n);
 	void   DisconnectOutput(int n);
-	string GetInputName(int ID)           { return m_InputPortMap[ID]->Name; }
-	string GetOutputName(int ID)          { return m_OutputPortMap[ID]->Name; }
+	std::string GetInputName(int ID)           { return m_InputPortMap[ID]->Name; }
+	std::string GetOutputName(int ID)          { return m_OutputPortMap[ID]->Name; }
 	void   SetInputBuf(int ID, float* s);
 	void   SetOutputBuf(int ID, float* s);
 
@@ -69,17 +69,17 @@ private:
 		JackPort::JackPort() :
 			Connected(false),Buf(NULL),Port(NULL) {}
 		
-		string         Name;
+		std::string         Name;
 		bool           Connected;
 		float*         Buf;
 		jack_port_t*   Port;
-		string         ConnectedTo;
+		std::string    ConnectedTo;
 	};
 
 	static JackClient*        m_Singleton;
 	static jack_client_t*     m_Client;
-	static map<int,JackPort*> m_InputPortMap;	
-	static map<int,JackPort*> m_OutputPortMap;	
+	static std::map<int,JackPort*> m_InputPortMap;
+	static std::map<int,JackPort*> m_OutputPortMap;
 	static long unsigned int  m_BufferSize;
 	static long unsigned int  m_SampleRate;	
 	static bool               m_Attached;
@@ -100,8 +100,8 @@ public:
 	virtual SpiralGUIType*  CreateGUI();
 	virtual void 		Execute();
 	virtual void 		ExecuteCommands();
-	virtual void	    StreamOut(ostream &s) {}
-	virtual void	    StreamIn(istream &s)  {}
+	virtual void	    StreamOut(std::ostream &s) {}
+	virtual void	    StreamIn(std::istream &s)  {}
 	
 	enum GUICommands{NONE,ATTACH,DETACH,CONNECTINPUT,CONNECTOUTPUT,UPDATE_NAMES};
 	struct GUIArgs
@@ -121,9 +121,9 @@ private:
 
 	void Attach() { JackClient::Get()->Attach(); }
 	void Detach() { JackClient::Get()->Detach(); }
-	void GetPortNames(vector<string> &InputNames,vector<string> &OutputNames) { JackClient::Get()->GetPortNames(InputNames,OutputNames); }
-	void ConnectInput(int n, const string &JackPort)  { JackClient::Get()->ConnectInput(n,JackPort); }
-	void ConnectOutput(int n, const string &JackPort) { JackClient::Get()->ConnectOutput(n,JackPort); }
+	void GetPortNames(std::vector<std::string> &InputNames,std::vector<std::string> &OutputNames) { JackClient::Get()->GetPortNames(InputNames,OutputNames); }
+	void ConnectInput(int n, const std::string &JackPort)  { JackClient::Get()->ConnectInput(n,JackPort); }
+	void ConnectOutput(int n, const std::string &JackPort) { JackClient::Get()->ConnectOutput(n,JackPort); }
 
 	static int m_RefCount;
 	static int m_NoExecuted;

@@ -34,7 +34,7 @@ public:
 	MasherPlugin *m_Plugin;
 
 protected:
-    const string GetHelpText(const string &loc);
+    const std::string GetHelpText(const std::string &loc);
 
 private:
 

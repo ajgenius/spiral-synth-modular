@@ -20,6 +20,8 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 SampleHoldPluginGUI::SampleHoldPluginGUI(int w, int h,SampleHoldPlugin *o,ChannelHandler *ch,const HostInfo *Info) :

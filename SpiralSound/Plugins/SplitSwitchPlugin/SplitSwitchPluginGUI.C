@@ -20,6 +20,8 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 SplitSwitchPluginGUI::SplitSwitchPluginGUI (int w, int h, SplitSwitchPlugin *o, ChannelHandler *ch, const HostInfo *Info) :

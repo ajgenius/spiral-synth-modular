@@ -19,6 +19,8 @@
 #include "MeterPluginGUI.h"
 #include <stdio.h>
 
+using namespace std;
+
 char label_buf[10];
 
 MeterPluginGUI::MeterPluginGUI (int w, int h, MeterPlugin *o, ChannelHandler *ch, const HostInfo *Info) :

@@ -34,6 +34,8 @@
 #include <FL/fl_file_chooser.H>
 #include "SpiralIcon.xpm"
 
+using namespace std;
+
 static const HostInfo* host;
 
 #define CHECK_AND_REPORT_ERROR	if (result<0)         \

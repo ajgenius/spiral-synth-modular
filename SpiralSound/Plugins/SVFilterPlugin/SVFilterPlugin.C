@@ -20,6 +20,8 @@
 #include "SVFilterPluginGUI.h"
 #include "SpiralIcon.xpm"
 
+using namespace std;
+
 static const double PI = 3.141592654;
 static const int GRANULARITY = 10;
 

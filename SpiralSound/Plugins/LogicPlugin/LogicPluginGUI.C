@@ -21,6 +21,8 @@
 #include <FL/fl_draw.H>
 #include <stdio.h>
 
+using namespace std;
+
 ////////////////////////////////////////////
 
 LogicPluginGUI::LogicPluginGUI(int w, int h,LogicPlugin *o,ChannelHandler *ch,const HostInfo *Info) :

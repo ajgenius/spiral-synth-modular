@@ -31,8 +31,8 @@ class WaveShaperPlugin : public SpiralPlugin {
     virtual SpiralGUIType* CreateGUI();
     virtual void Execute();
     virtual void ExecuteCommands();
-    virtual void StreamOut(ostream &s);
-    virtual void StreamIn(istream &s);
+    virtual void StreamOut(std::ostream &s);
+    virtual void StreamIn(std::istream &s);
     float GetCoef(int);
     int GetWaveType(void);
     enum GUICommands { NONE, SETWAVETYPE, SETCOEF };
@@ -46,11 +46,11 @@ class WaveShaperPlugin : public SpiralPlugin {
     int m_Wave;
     void calc (void);
     void set (int index, float v);
-    friend istream &operator>> (istream &s, WaveShaperPlugin &o);
-    friend ostream &operator<< (ostream &s, WaveShaperPlugin &o);
+    friend std::istream &operator>> (std::istream &s, WaveShaperPlugin &o);
+    friend std::ostream &operator<< (std::ostream &s, WaveShaperPlugin &o);
 };
 
-istream &operator>> (istream &s, WaveShaperPlugin &o);
-ostream &operator<< (ostream &s, WaveShaperPlugin &o);
+std::istream &operator>> (std::istream &s, WaveShaperPlugin &o);
+std::ostream &operator<< (std::ostream &s, WaveShaperPlugin &o);
 
 #endif

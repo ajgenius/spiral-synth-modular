@@ -22,6 +22,8 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Box.H>
 
+using namespace std;
+
 FunctionPlot::FunctionPlot(int ox, int oy, int ww, int hh) :
 Fl_Widget (ox, oy, ww, hh),
 m_IndColour(FL_YELLOW),
