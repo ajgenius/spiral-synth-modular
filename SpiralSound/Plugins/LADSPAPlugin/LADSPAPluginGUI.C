@@ -17,15 +17,16 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */ 
 
-#include "LADSPAPluginGUI.h"
-#include "LADSPAInfo.h"
-#include <FL/fl_draw.h>
-#include <FL/fl_draw.H>
-#include "ladspa.h"
 #include <cstdio>
 #include <cmath>
 #include <dlfcn.h>
 #include <vector>
+
+#include <FL/fl_draw.h>
+#include <FL/fl_draw.H>
+
+#include "LADSPAPluginGUI.h"
+#include "LADSPAInfo.h"
 
 static const int GUI_COLOUR = 179;
 static const int GUIBG_COLOUR = 144;

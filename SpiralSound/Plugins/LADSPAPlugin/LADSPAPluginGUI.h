@@ -16,6 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */ 
 
+#ifndef __ladspa_plugin_gui_h__
+#define __ladspa_plugin_gui_h__
+
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Group.H>
@@ -31,18 +34,13 @@
 
 #include <vector>
 #include <string>
+#include <cstdio>
+#include <cmath>
+#include <dlfcn.h>
 
 #include "LADSPAPlugin.h"
 #include "LADSPAInfo.h"
 #include "../SpiralPluginGUI.h"
-
-#ifndef LADSPAGUI
-#define LADSPAGUI
-
-#include <cstdio>
-#include <cmath>
-#include <dlfcn.h>
-#include <vector>
 
 class LADSPAPluginGUI : public SpiralPluginGUI
 {
@@ -117,4 +115,4 @@ private:
 
 
 
-#endif
+#endif // __ladspa_plugin_gui_h__

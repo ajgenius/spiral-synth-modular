@@ -16,13 +16,14 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#ifndef __ladspa_plugin_h__
+#define __ladspa_plugin_h__
+
+#include <FL/Fl_Pixmap.H>
+#include <ladspa.h>
+
 #include "../SpiralPlugin.h"
 #include "LADSPAInfo.h"
-#include <FL/Fl_Pixmap.H>
-#include "ladspa.h"
-
-#ifndef LADSPAPLUGIN
-#define LADSPAPLUGIN
 
 static const unsigned int NUM_PORTS = 8;
 
@@ -124,4 +125,4 @@ private:
 	InputChannelData      m_InData;
 };
 
-#endif
+#endif // __ladspa_plugin_h__
