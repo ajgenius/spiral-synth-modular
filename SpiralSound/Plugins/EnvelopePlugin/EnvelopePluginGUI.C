@@ -181,7 +181,7 @@ void EnvelopePluginGUI::UpdateValues(SpiralPlugin *o)
 inline void EnvelopePluginGUI::cb_Thresh_i(Fl_Slider* o, void* v) 
 { 
 char str[10];
-	m_GUICH->Set("Trig",1.0f-o->value()); 
+	m_GUICH->Set("Trig",(float)(1.0f-o->value())); 
 	sprintf(str,"%4.0f %%", 100*(1.0f-o->value()));
 	m_out_thresh->value(str); 
 }
@@ -214,7 +214,7 @@ void EnvelopePluginGUI::cb_Decay(Fl_Slider* o, void* v)
 inline void EnvelopePluginGUI::cb_Sustain_i(Fl_Slider* o, void* v) 
 {
 char str[10];
-	m_GUICH->Set("Sustain",1.0f-o->value());
+	m_GUICH->Set("Sustain",(float)(1.0f-o->value()));
 	sprintf(str,"%4.0f %%", 100*(1.0f-o->value()));
 	m_out_sustain->value(str); 
 }
@@ -237,8 +237,8 @@ inline void EnvelopePluginGUI::cb_Volume_i(Fl_Slider* o, void* v)
 {
 char str[10];
 
-	m_GUICH->Set("Volume",1.0f-o->value());
-	sprintf(str,"%4.0f %%", 100*(1.0f-o->value()));
+	m_GUICH->Set("Volume",(float)(1.0f-o->value()));
+	sprintf(str,"%4.0f %%", (float)(100.0f*(1.0f-o->value())));
 	m_out_volume->value(str); 
 }
 

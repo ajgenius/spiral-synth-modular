@@ -68,6 +68,6 @@ void MoogFilterPluginGUI::cb_Cutoff(Fl_Slider* o, void* v)
 { ((MoogFilterPluginGUI*)(o->parent()))->cb_Cutoff_i(o,v); }
 
 inline void MoogFilterPluginGUI::cb_Resonance_i(Fl_Knob* o, void* v) 
-{ m_GUICH->Set("Resonance",o->value()); }
+{ m_GUICH->Set("Resonance",(float)(o->value())); }
 void MoogFilterPluginGUI::cb_Resonance(Fl_Knob* o, void* v) 
 { ((MoogFilterPluginGUI*)(o->parent()))->cb_Resonance_i(o,v); }
