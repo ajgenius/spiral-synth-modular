@@ -144,6 +144,104 @@ LADSPAPluginGUI::~LADSPAPluginGUI(void)
 	Fl::check();
 }
 
+// Rearrange knobs depending on connections
+// Knobs corresponding to connected ports are hidden,
+// the rest are shown
+void LADSPAPluginGUI::UpdateDefaultAdjustControls(void)
+{
+	int column = 0;
+
+// First, clear out all groups in Pack
+// We need to remove all the knobs first, or they'll go
+// with the group. Which would be bad.
+	while (m_ControlPack->children() > 0) {
+		Fl_Group *Group = (Fl_Group *)m_ControlPack->child(0);
+		while (Group->children() > 0) {
+			Fl_Knob *Knob = (Fl_Knob *)Group->child(0);
+			Group->remove(Knob);
+		}
+		m_ControlPack->remove(Group);
+	}
+
+	Fl_Group *NewGroup = new Fl_Group(0,0,460,65,"");
+	NewGroup->box(FL_FLAT_BOX);
+	m_ControlPack->add(NewGroup);
+
+	for (unsigned long p = 0; p < m_InputPortCount; p++)
+	{
+		if (!m_InputPortValues[p].Connected) {
+			m_PortDefaultAdjust[p]->position(50 + column * 105, 0);
+			m_PortDefaultAdjust[p]->show();
+			NewGroup->add(m_PortDefaultAdjust[p]);
+
+			column++;
+			if ((column > 3) && (p < m_InputPortCount - 1)) {
+				NewGroup = new Fl_Group(0,0,460,65,"");
+				NewGroup->box(FL_FLAT_BOX);
+				m_ControlPack->add(NewGroup);
+
+				column = 0;
+			}
+		} else {
+			m_PortDefaultAdjust[p]->hide();
+		}
+	}
+
+	m_ControlScroll->redraw();
+}
+
+// This lot is only done on patch load
+void LADSPAPluginGUI::UpdateValues(SpiralPlugin *o)
+{
+	LADSPAPlugin* Plugin = (LADSPAPlugin*)o;
+	SetPluginIndex(Plugin->GetPluginIndex());
+	SetName(Plugin->GetName());
+	SetMaker(Plugin->GetMaker());
+	SetTabIndex(Plugin->GetTabIndex());
+	SetUpdateInputs(Plugin->GetUpdateInputs());
+
+	m_InputPortCount = Plugin->GetInputPortCount();
+	const char *name;
+	PortSettings settings;
+	float defolt;
+
+	for (unsigned long p = 0; p < m_InputPortCount; p++) {
+		name = Plugin->GetInputPortName(p);
+		settings = Plugin->GetInputPortSettings(p);
+		defolt = Plugin->GetInputPortDefault(p);
+		AddPortInfo(name);
+		SetPortSettings(p, settings.Min, settings.Max, settings.Clamp, defolt);
+		SetDefaultAdjust(p);
+	}
+
+	UpdateDefaultAdjustControls();
+
+	m_PortIndex = m_InputPortCount;
+}
+
+// ****************************************************************************
+// **                    Protected Member Functions                          **
+// ****************************************************************************
+
+const string LADSPAPluginGUI::GetHelpText(const string &loc)
+{
+//	if (loc == "DE") {
+//	} else if (loc == "FR") {
+//	} else {
+	// Default to English?
+		return string("LADSPA Plugin\n\n")
+		            + "This plugin allows you to use any LADSPA plugin in SSM.\n\n"
+		            + "It grows or shrinks the device GUI to allow you to connect\n"
+		            + "up the ports as any other native SSM plugin, so you can\n"
+		            + "seamlessly use the plugins as part of your layouts.\n\n"
+		            + "";
+//	}
+}
+
+// ****************************************************************************
+// **                      Private Member Functions                          **
+// ****************************************************************************
+
 void LADSPAPluginGUI::SetTabIndex(int index)
 {
 	m_TabIndex = index;
@@ -282,81 +380,6 @@ void LADSPAPluginGUI::AddPortInfo(const char *Info)
 	NewKnob->callback((Fl_Callback *)cb_DefaultAdjust);
 	NewKnob->hide();
 	m_PortDefaultAdjust.push_back(NewKnob);
-}
-
-// Rearrange knobs depending on connections
-// Knobs corresponding to connected ports are hidden,
-// the rest are shown
-void LADSPAPluginGUI::UpdateDefaultAdjustControls(void)
-{
-	int column = 0;
-
-// First, clear out all groups in Pack
-// We need to remove all the knobs first, or they'll go
-// with the group. Which would be bad.
-	while (m_ControlPack->children() > 0) {
-		Fl_Group *Group = (Fl_Group *)m_ControlPack->child(0);
-		while (Group->children() > 0) {
-			Fl_Knob *Knob = (Fl_Knob *)Group->child(0);
-			Group->remove(Knob);
-		}
-		m_ControlPack->remove(Group);
-	}
-
-	Fl_Group *NewGroup = new Fl_Group(0,0,460,65,"");
-	NewGroup->box(FL_FLAT_BOX);
-	m_ControlPack->add(NewGroup);
-
-	for (unsigned long p = 0; p < m_InputPortCount; p++)
-	{
-		if (!m_InputPortValues[p].Connected) {
-			m_PortDefaultAdjust[p]->position(50 + column * 105, 0);
-			m_PortDefaultAdjust[p]->show();
-			NewGroup->add(m_PortDefaultAdjust[p]);
-
-			column++;
-			if ((column > 3) && (p < m_InputPortCount - 1)) {
-				NewGroup = new Fl_Group(0,0,460,65,"");
-				NewGroup->box(FL_FLAT_BOX);
-				m_ControlPack->add(NewGroup);
-
-				column = 0;
-			}
-		} else {
-			m_PortDefaultAdjust[p]->hide();
-		}
-	}
-
-	m_ControlScroll->redraw();
-}
-
-// This lot is only done on patch load
-void LADSPAPluginGUI::UpdateValues(SpiralPlugin *o)
-{
-	LADSPAPlugin* Plugin = (LADSPAPlugin*)o;
-	SetPluginIndex(Plugin->GetPluginIndex());
-	SetName(Plugin->GetName());
-	SetMaker(Plugin->GetMaker());
-	SetTabIndex(Plugin->GetTabIndex());
-	SetUpdateInputs(Plugin->GetUpdateInputs());
-
-	m_InputPortCount = Plugin->GetInputPortCount();
-	const char *name;
-	PortSettings settings;
-	float defolt;
-
-	for (unsigned long p = 0; p < m_InputPortCount; p++) {
-		name = Plugin->GetInputPortName(p);
-		settings = Plugin->GetInputPortSettings(p);
-		defolt = Plugin->GetInputPortDefault(p);
-		AddPortInfo(name);
-		SetPortSettings(p, settings.Min, settings.Max, settings.Clamp, defolt);
-		SetDefaultAdjust(p);
-	}
-
-	UpdateDefaultAdjustControls();
-
-	m_PortIndex = m_InputPortCount;
 }
 
 // This is done all the time

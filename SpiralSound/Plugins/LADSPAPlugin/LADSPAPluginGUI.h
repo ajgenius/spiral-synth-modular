@@ -56,6 +56,8 @@ public:
 	virtual void UpdateValues(SpiralPlugin *o);
 	virtual void Update(void);
 
+protected:
+	const string GetHelpText(const string &loc);
 private:
 	void AddPortInfo(const char *Info);
 	void SetTabIndex(int index);
