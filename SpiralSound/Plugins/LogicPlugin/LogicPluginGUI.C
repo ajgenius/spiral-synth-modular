@@ -74,7 +74,15 @@ SpiralPluginGUI(w,h,o,ch)
 	m_XNOR->labelsize(10);
     m_XNOR->selection_color(GUI_COLOUR);
 	m_XNOR->callback((Fl_Callback*)cb_XNOR);
-	
+
+  // Andy Preston - multiple inputs
+  m_Inputs = new Fl_Counter (17, 97, 40, 20, "Inputs");
+  m_Inputs->labelsize (10);
+  m_Inputs->type (FL_SIMPLE_COUNTER);
+  m_Inputs->step (1);
+  m_Inputs->value (2);
+  m_Inputs->callback ((Fl_Callback*) cb_Inputs);
+
 	end();
 }
 
@@ -103,9 +111,25 @@ void LogicPluginGUI::UpdateValues(SpiralPlugin *o)
 		case LogicPlugin::XOR  : m_XOR->value(true); break;
 		case LogicPlugin::XNOR : m_XNOR->value(true); break;
 	}
+        // Andy Preston - multiple inputs
+        m_Inputs->value (Plugin->GetInputs());
 }
 
 //// Callbacks ////
+
+// Andy Preston - multiple inputs
+inline void LogicPluginGUI::cb_Inputs_i (Fl_Counter* o, void* v) {
+  if (o->value() < 2) o->value(2);
+  else {
+    m_GUICH->Set ("Inputs", int (o->value ()));
+    m_GUICH->SetCommand (LogicPlugin::SETINPUTS);
+  }
+}
+
+void LogicPluginGUI::cb_Inputs (Fl_Counter* o, void* v) {
+  ((LogicPluginGUI*) (o->parent ())) -> cb_Inputs_i (o, v);
+}
+
 inline void LogicPluginGUI::cb_AND_i(Fl_Button* o, void* v)
 {
 	if (o->value())
@@ -220,8 +244,9 @@ void LogicPluginGUI::cb_XNOR(Fl_Button* o, void* v)
 
 const string LogicPluginGUI::GetHelpText(const string &loc){
     return string("")
+    + "Note that NOT only uses input 1,\nand XOR/XNOR only use inputs 1 and 2\n\n"
     + "1001010111010101101111101010100101010101010100010100100101\n"
     + "0010101010111010010010101010001010011110001010101000101010\n"
-	+ "1110111101101001000010101010111110101010101010101111010101\n"
-	+ "0011011111010101101000001010101010001010100001100111010111";
+    + "1110111101101001000010101010111110101010101010101111010101\n"
+    + "0011011111010101101000001010101010001010100001100111010111";
 }

@@ -14,16 +14,13 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Button.H>
-#include <FL/Fl_Button.H>
-#include <FL/Fl_Input.H>
-
-#include "../Widgets/Fl_Knob.H"
+#include <FL/Fl_Counter.H>
 #include "../Widgets/Fl_DragBar.H"
 #include "LogicPlugin.h"
 #include "../SpiralPluginGUI.h"
@@ -32,36 +29,35 @@
 #define PluginGUI
 
 static const int NUM_KEYS = 12;
+
 class LogicPluginGUI : public SpiralPluginGUI
 {
 public:
 	LogicPluginGUI(int w, int h, LogicPlugin *o,ChannelHandler *ch,const HostInfo *Info);
-	
 	virtual void UpdateValues(SpiralPlugin *o);
-	
 protected:
-    const string GetHelpText(const string &loc);	
-
+        const string GetHelpText(const string &loc);
 private:
+        Fl_Counter *m_Inputs;
 	Fl_Button *m_AND,*m_OR,*m_NOT,*m_NAND,*m_NOR,*m_XOR,*m_XNOR;
-	
-	void ClearButtons();
-
-	//// Callbacks ////
+    	void ClearButtons();
+    	//// Callbacks ////
 	inline void cb_AND_i(Fl_Button* o, void* v);
-	static void cb_AND(Fl_Button* o, void* v); 
+	static void cb_AND(Fl_Button* o, void* v);
 	inline void cb_OR_i(Fl_Button* o, void* v);
-	static void cb_OR(Fl_Button* o, void* v); 
+	static void cb_OR(Fl_Button* o, void* v);
 	inline void cb_NOT_i(Fl_Button* o, void* v);
-	static void cb_NOT(Fl_Button* o, void* v); 
+	static void cb_NOT(Fl_Button* o, void* v);
 	inline void cb_NAND_i(Fl_Button* o, void* v);
 	static void cb_NAND(Fl_Button* o, void* v);
 	inline void cb_NOR_i(Fl_Button* o, void* v);
-	static void cb_NOR(Fl_Button* o, void* v); 
+	static void cb_NOR(Fl_Button* o, void* v);
 	inline void cb_XOR_i(Fl_Button* o, void* v);
-	static void cb_XOR(Fl_Button* o, void* v); 
+	static void cb_XOR(Fl_Button* o, void* v);
 	inline void cb_XNOR_i(Fl_Button* o, void* v);
 	static void cb_XNOR(Fl_Button* o, void* v);
+        inline void cb_Inputs_i (Fl_Counter* o, void* v);
+        static void cb_Inputs (Fl_Counter* o, void* v);
 };
 
 #endif

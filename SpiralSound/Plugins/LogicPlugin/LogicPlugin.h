@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include "../SpiralPlugin.h"
 #include <FL/Fl_Pixmap.H>
@@ -27,7 +27,7 @@ class LogicPlugin : public SpiralPlugin
 public:
  	LogicPlugin();
 	virtual ~LogicPlugin();
-	
+
 	virtual PluginInfo& Initialise(const HostInfo *Host);
 	virtual SpiralGUIType*  CreateGUI();
 	virtual void 		Execute();
@@ -38,11 +38,18 @@ public:
 	enum OperatorType{NONE,AND,OR,NOT,NAND,NOR,XOR,XNOR};
 
 	OperatorType GetOperator() { return m_Operator; }
-	float        GetConstant() { return m_Constant; }
-	
+	// float        GetConstant() { return m_Constant; }       Andy Preston - this value is not used
+        // Andy Preston - Multiple Inputs
+        enum GUICommands {NOCMD, SETINPUTS};
+        int GetInputs (void) { return m_Inputs; }
+
 private:
 	OperatorType m_Operator;
-	float        m_Constant;
+	// float        m_Constant;      Andy Preston - this value is not used
+        // Andy Preston - Multiple Inputs
+        int m_Inputs;
+        void SetInputs (int n);
+        void CreatePorts (int n = 2, bool AddPorts = false);
 };
 
 #endif
