@@ -125,6 +125,11 @@ void SpiralSynthModularInfo::StreamInPrefs(istream &s)
 		s>>st;
 		if (st!="end") PLUGINVEC.push_back(st);
 	}
+#if __APPLE__
+	// ignore custom paths, plugins are encapsulated in the app anyway
+	// this prevents the program to fail if the user move the application icon
+	PLUGIN_PATH = PLUGIN_PATH_LOCATION;
+#endif
 }
 
 void SpiralSynthModularInfo::StreamOutPrefs(ostream &s)

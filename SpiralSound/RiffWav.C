@@ -32,9 +32,11 @@
 const int HEADERLEN = (4+24+8);
 
 #if __BYTE_ORDER == BIG_ENDIAN
-
-#define SWAPSHORT(a) (a)=(((a)<<8)|((a)>>8))
+#define SWAPSHORT(a) (a)=(((a)<<8)|(((a)>>8)&0xff))
 #define SWAPINT(a) (a)=(((a)&0x000000ff)<<24)|(((a)&0x0000ff00)<<8)|(((a)&0x00ff0000)>>8)|(((a)&0xff000000)>>24)
+#else
+#define SWAPSHORT(a)
+#define SWAPINT(a)
 #endif
 
 int WavFile::Open(string FileName, Mode mode, Channels channels)
@@ -92,7 +94,6 @@ int WavFile::Open(string FileName, Mode mode, Channels channels)
 		
 		m_DataHeader.DataLengthBytes=0;
 			
-		#if __BYTE_ORDER == BIG_ENDIAN
 		SWAPINT(m_Header.RiffFileLength);
 		SWAPINT(m_Header.FmtLength);
 		SWAPSHORT(m_Header.FmtTag);
@@ -102,7 +103,6 @@ int WavFile::Open(string FileName, Mode mode, Channels channels)
 		SWAPSHORT(m_Header.FmtBlockAlign);
 		SWAPSHORT(m_Header.FmtBitsPerSample);
 		SWAPINT(m_DataHeader.DataLengthBytes);
-		#endif
 			
 		fwrite(&m_Header,1,sizeof(CanonicalWavHeader),m_Stream);		
 		fwrite(&m_DataHeader,1,sizeof(DataHeader),m_Stream);		
@@ -113,7 +113,16 @@ int WavFile::Open(string FileName, Mode mode, Channels channels)
 	if (mode==READ)
 	{
 		fread(&m_Header,sizeof(CanonicalWavHeader),1,m_Stream);
-		
+
+		SWAPINT(m_Header.RiffFileLength);
+		SWAPINT(m_Header.FmtLength);
+		SWAPSHORT(m_Header.FmtTag);
+		SWAPSHORT(m_Header.FmtChannels);
+		SWAPINT(m_Header.FmtSamplerate);
+		SWAPINT(m_Header.FmtBytesPerSec);
+		SWAPSHORT(m_Header.FmtBlockAlign);
+		SWAPSHORT(m_Header.FmtBitsPerSample);
+
 		#ifdef TRACE_OUT		
 		cerr<<FileName<<endl;
 		cerr<<"RiffFileLength "<<m_Header.RiffFileLength<<endl;
@@ -133,7 +142,9 @@ int WavFile::Open(string FileName, Mode mode, Channels channels)
 		}
 		
 		fread(&m_DataHeader,sizeof(DataHeader),1,m_Stream);
-		
+
+		SWAPINT(m_DataHeader.DataLengthBytes);
+
 		while (m_DataHeader.DataName[0]!='d' || 
 			   m_DataHeader.DataName[1]!='a' || 
 			   m_DataHeader.DataName[2]!='t' || 
@@ -206,10 +217,15 @@ int WavFile::Save(Sample &data)
 		float v=data[n];
 		if (v<-1) v=-1; if (v>1) v=1;
 		temp[n]=(short)(v*SHRT_MAX);
+		SWAPSHORT(temp[n]);
 	}
 	
 	m_DataHeader.DataLengthBytes+=data.GetLength()*2;
 	fwrite(temp,sizeof(&temp),data.GetLength()/2,m_Stream);
+	
+	// leak!
+	delete[] temp;
+	
 	return 1;
 }
 
@@ -270,7 +286,9 @@ int WavFile::Load(Sample &data)
 			long value=0;
 			for (int i=0; i<m_Header.FmtChannels; i++)
 			{
-				value+=TempBuf[(n*m_Header.FmtChannels)+i];
+				short s = TempBuf[(n*m_Header.FmtChannels)+i];
+				SWAPSHORT(s);
+				value+=s;
 			}
 			value/=m_Header.FmtChannels;
 			
@@ -280,7 +298,7 @@ int WavFile::Load(Sample &data)
 		m_DataHeader.DataLengthBytes /= m_Header.FmtChannels;
 		m_Header.FmtChannels=1;
 		 
-		delete TempBuf;
+		delete[] TempBuf;
 	}
 	else // it's mono.
 	{
@@ -294,10 +312,12 @@ int WavFile::Load(Sample &data)
 		
 		for (int n=0; n<GetSize(); n++)
 		{
-			data.Set(n,TempBuf[n]/(float)SHRT_MAX);
+			short s = TempBuf[n];
+			SWAPSHORT(s);
+			data.Set(n,s/(float)SHRT_MAX);
 		}
 		
-		delete TempBuf;
+		delete[] TempBuf;
 	}
 	
 	return 1;
@@ -324,7 +344,9 @@ int WavFile::Load(short *data)
 			long value=0;
 			for (int i=0; i<m_Header.FmtChannels; i++)
 			{
-				value+=TempBuf[(n*m_Header.FmtChannels)+i];
+				short s = TempBuf[(n*m_Header.FmtChannels)+i];
+				SWAPSHORT(s);
+				value+=s;
 			}
 			value/=m_Header.FmtChannels;
 			
@@ -334,13 +356,18 @@ int WavFile::Load(short *data)
 		m_DataHeader.DataLengthBytes /= m_Header.FmtChannels;
 		m_Header.FmtChannels=1;
 		
-		delete TempBuf;
+		delete[] TempBuf;
 	}
 	else // we can read the data directly in, it's mono.
 	{
     	if (m_DataHeader.DataLengthBytes==
 		(int)fread(data,1,m_DataHeader.DataLengthBytes,m_Stream))
     	{
+#if __BYTE_ORDER == BIG_ENDIAN
+			short *TempBuf = (short*)data;
+			for (int n=0; n < m_DataHeader.DataLengthBytes / 2; n++)
+				SWAPSHORT(TempBuf[n]);
+#endif
     	    return 1;
     	}
 	
@@ -389,7 +416,7 @@ int WavFile::LoadChunk(int NumSamples, Sample &ldata, Sample &rdata)
 			rdata.Set(n,TempBuf[(n*2)+1]/(float)SHRT_MAX);
 		}
 		
-		delete TempBuf;
+		delete[] TempBuf;
 	}
 	else // we can read the data directly in, it's mono.
 	{

@@ -34,7 +34,8 @@ public:
 	virtual void	    StreamOut(ostream &s);
 	virtual void	    StreamIn(istream &s);
 	
-	enum Type{NONE,SQUARE,SAW,NOISE};
+	typedef char Type;
+	enum {NONE,SQUARE,SAW,NOISE};
 	
 	void ModulateFreq(Sample *data) {m_FreqModBuf=data;}
 	void ModulatePulseWidth(Sample *data) {m_PulseWidthModBuf=data;}

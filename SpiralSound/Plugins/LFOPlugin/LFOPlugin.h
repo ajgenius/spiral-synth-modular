@@ -35,7 +35,8 @@ class LFOPlugin : public SpiralPlugin {
       virtual void StreamOut (ostream &s);
       virtual void StreamIn (istream &s);
 	  
-      enum Type {SINE, TRIANGLE, SQUARE, SAW};
+	  typedef char Type;
+      enum {SINE, TRIANGLE, SQUARE, SAW};
 	  
       void WriteWaves();
       void NoteTrigger (int V, int s, int v);

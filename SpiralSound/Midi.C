@@ -45,6 +45,10 @@ static int NKEYS = 30;
 MidiDevice *MidiDevice::m_Singleton;
 string MidiDevice::m_DeviceName;
  
+#if __APPLE__
+#define read	AppleRead
+#endif
+
 MidiDevice::MidiDevice() :
 m_Poly(1)
 {
@@ -52,9 +56,7 @@ m_Poly(1)
 	seq_handle=AlsaOpen();
 #else
 	Open();
-#endif
-
-	
+#endif	
 
 #ifdef KEYBOARD_SUPPORT
 	m_Oct=4;
@@ -78,6 +80,9 @@ MidiDevice::~MidiDevice()
 
 void MidiDevice::Close()
 {
+#if __APPLE__
+	AppleClose();
+#else
 	pthread_mutex_lock(m_Mutex);
 	pthread_cancel(m_MidiReader); 
 	pthread_mutex_unlock(m_Mutex);
@@ -86,11 +91,15 @@ void MidiDevice::Close()
 	close(m_MidiFd);
 	close(m_MidiWrFd);
 	cerr<<"Closed midi device"<<endl;
+#endif // !__APPLE__
 }
 
 
 void MidiDevice::Open()
 {
+#if __APPLE__
+	AppleOpen();
+#else
 	//if (!SpiralInfo::WANTMIDI) return;
 	
 	m_MidiFd = open(m_DeviceName.c_str(),O_RDONLY|O_SYNC);  
@@ -108,6 +117,7 @@ void MidiDevice::Open()
 	}
 	
 	cerr<<"Opened midi device ["<<m_DeviceName<<"]"<<endl;
+#endif // !__APPLE__
 	
 	m_Mutex = new pthread_mutex_t;
     pthread_mutex_init(m_Mutex, NULL);
@@ -402,3 +412,89 @@ snd_seq_t *MidiDevice::AlsaOpen()
 
 #endif
 
+#if __APPLE__
+
+void MidiDevice::AppleOpen()
+{
+	m_ReadFillIndex = m_ReadReadIndex = 0;
+	
+	OSStatus err = 0;
+
+	mMIDISource					= NULL;
+	mMIDIClient					= NULL;
+	mMIDIDestination			= NULL;
+	
+	err = MIDIClientCreate(CFSTR("org.pawpal.ssm"), NULL, NULL, &mMIDIClient);
+	if (err) printf("MIDIClientCreate failed returned %d\n", err);
+	
+	if (!err) {
+		err = MIDISourceCreate(mMIDIClient, CFSTR("SpiralSynth"), &mMIDISource);
+		if (err) printf("MIDIInputPortCreate failed returned %d\n", err);
+	}
+	
+	if (!err) {
+		err = MIDIDestinationCreate(mMIDIClient, CFSTR("SpiralSynth"), sMIDIRead, this, &mMIDIDestination);
+		MIDIObjectSetIntegerProperty(mMIDIDestination, kMIDIPropertyUniqueID, 'SSmP');
+	}
+}
+
+
+void MidiDevice::AppleClose()
+{
+	if (mMIDIDestination)
+		MIDIEndpointDispose(mMIDIDestination);
+	if (mMIDISource)
+		MIDIEndpointDispose(mMIDISource);
+	mMIDISource = NULL;
+	if (mMIDIClient)
+		MIDIClientDispose(mMIDIClient);
+	mMIDIClient = NULL;
+}
+
+int MidiDevice::AppleWrite(int dummy, unsigned char *outbuffer, int maxlen)
+{
+	return 0;
+}
+
+int MidiDevice::AppleRead(int dummy, unsigned char *outbuffer, int maxlen)
+{
+	if (!mMIDIClient)
+		return -1;
+	int len = 0;
+	do {
+		while (m_ReadReadIndex == m_ReadFillIndex)
+			usleep(1000);	// 1ms
+		int readl =  m_ReadFillIndex - m_ReadReadIndex;
+		if (readl < 0)
+			readl += midi_ReadSize;	// wrapped
+		while (len < maxlen && readl-- > 0) {
+			int r = m_ReadReadIndex;
+			outbuffer[len++] = m_ReadBuffer[r];
+			r++;
+			m_ReadReadIndex = r % midi_ReadSize;
+		}
+	} while (len < maxlen);
+	return len;
+}
+
+void MidiDevice::sMIDIRead(const MIDIPacketList *pktlist, void *readProcRefCon, void *srcConnRefCon)
+{
+	MidiDevice & t = *((MidiDevice*)readProcRefCon);
+	
+	const MIDIPacket *packet = &pktlist->packet[0];
+	for (int i = 0; i < (int)pktlist->numPackets; i++) {
+		const MIDIPacket & p = *packet;
+
+		for (int b = 0; b < p.length; b++) {
+		//	printf("%02x ", p.data[b]);
+			int d = t.m_ReadFillIndex;
+			t.m_ReadBuffer[d] = p.data[b];
+			d++;
+			t.m_ReadFillIndex = d % midi_ReadSize;
+		}
+	//	printf("\n");
+		packet = MIDIPacketNext(packet);
+	}
+}
+
+#endif

@@ -34,8 +34,8 @@ int LINE_COLOUR;// = 140;
 
 ////////////////////////////////////////////////////////////////////
 
-Fl_EventMap::Fl_EventMap(int x, int y, int w, int h, const char* label) :
-Fl_Group(x,y,w,h,label),
+Fl_EventMap::Fl_EventMap(int x, int y, int ww, int h, const char* label) :
+Fl_Group(x,y,ww,h,label),
 m_Type(ARRANGE_MAP),
 m_Update(true),
 m_Zoom(1.0f),
@@ -62,6 +62,7 @@ m_FirstUpdate(true)
 	LINE_COLOUR=fl_color();
 	
 	fl_color(200,200,200);
+// SpiralSound/Plugins/Widgets/Fl_EventMap.C:65: declaration of `w' shadows a parameter
 	int w=fl_color();
 	fl_color(50,50,50);
 	int b=fl_color();
@@ -263,12 +264,14 @@ void Fl_EventMap::SetTime(float Time)
 		int Depth=parent()->h();
 				
 		if (DrawPos>Left && DrawPos<Left+Width)
-		{		
+		{
+#if !__APPLE__
   			XSetFunction(fl_display,fl_gc,GXxor);
   			XSetForeground(fl_display, fl_gc, 0xff00ffff);
 			if (!m_FirstUpdate) fl_line(m_LastPos,Top,m_LastPos,Depth);
 			fl_line(DrawPos,Top,DrawPos,Depth);
 			XSetFunction(fl_display,fl_gc,GXcopy);
+#endif
 			m_LastPos=DrawPos;
 		}
 	}

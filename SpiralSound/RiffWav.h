@@ -24,6 +24,12 @@
 #include <stdio.h>
 #include "Sample.h"
 
+#if __APPLE__
+// this is the traditional way of setting 2 bytes alignment
+// else the apple compiler might use 4, or even 8
+#pragma options align=mac68k
+#endif
+
 struct CanonicalWavHeader
 {
 	char  RiffName[4];
@@ -45,6 +51,10 @@ struct DataHeader
 	char  DataName[4];
 	int   DataLengthBytes;
 };
+
+#if __APPLE__
+#pragma options align=reset
+#endif
 
 class WavFile
 {

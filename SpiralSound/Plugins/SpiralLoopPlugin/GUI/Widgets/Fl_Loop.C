@@ -186,8 +186,10 @@ void Fl_Loop::DrawPosMarker()
 	if (m_Pos) 
 	{
 		float Angle=(*m_Pos/m_Length)*360.0;
-		fl_line_style(FL_SOLID, 3, NULL);								
+		fl_line_style(FL_SOLID, 3, NULL);
+#if !__APPLE__
     	XSetFunction(fl_display,fl_gc,GXxor);
+#endif
 		fl_line(m_IndSX,m_IndSY,m_IndEX,m_IndEY);
 		
 		fl_color(FL_BLUE);
@@ -200,7 +202,9 @@ void Fl_Loop::DrawPosMarker()
 		
 		fl_line(m_IndSX,m_IndSY,m_IndEX,m_IndEY);
 		fl_line_style(FL_SOLID, 1, NULL);
+#if !__APPLE__
 		XSetFunction(fl_display,fl_gc,GXcopy);					
+#endif
 	}
 	
 	if (m_PosMarkerCount>POSMARKER_MAX)

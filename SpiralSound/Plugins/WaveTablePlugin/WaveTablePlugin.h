@@ -40,7 +40,8 @@ public:
 	// has to be defined in the plugin	
 	virtual void UpdateGUI() { Fl::check(); }
 
-	enum Type{SINE,SQUARE,SAW,REVSAW,TRIANGLE,PULSE1,PULSE2,INVSINE};
+	typedef char Type;
+	enum {SINE,SQUARE,SAW,REVSAW,TRIANGLE,PULSE1,PULSE2,INVSINE};
 	
 	void WriteWaves();
 	void NoteTrigger(int V,int s,int v);
