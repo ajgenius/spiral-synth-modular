@@ -42,7 +42,6 @@ HEADERS =	EnvFollowerPlugin.h \
 		EnvFollowerPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../Widgets/Fl_Knob.H \
@@ -51,7 +50,6 @@ SOURCES =	EnvFollowerPlugin.C \
 		EnvFollowerPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../Widgets/Fl_Knob.cxx \
@@ -60,7 +58,6 @@ OBJECTS =	EnvFollowerPlugin.o \
 		EnvFollowerPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../Widgets/Fl_Knob.o \
@@ -150,7 +147,6 @@ EnvFollowerPlugin.o: EnvFollowerPlugin.C \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
 		../../Sample.h \
-		../../SpiralInfo.h \
 		../Widgets/Fl_Knob.H \
 		../../../GUI/Widgets/SpiralGUI.H \
 		SpiralIcon.xpm
@@ -160,7 +156,6 @@ EnvFollowerPluginGUI.o: EnvFollowerPluginGUI.C \
 		EnvFollowerPluginGUI.h \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		../Widgets/Fl_Knob.H \
 		../../../GUI/Widgets/SpiralGUI.H

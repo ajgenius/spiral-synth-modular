@@ -42,7 +42,6 @@ HEADERS =	SampleHoldPlugin.h \
 		SampleHoldPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../../../GUI/Widgets/SpiralGUI.H
@@ -50,7 +49,6 @@ SOURCES =	SampleHoldPlugin.C \
 		SampleHoldPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../../../GUI/Widgets/SpiralGUI.C
@@ -58,7 +56,6 @@ OBJECTS =	SampleHoldPlugin.o \
 		SampleHoldPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../../../GUI/Widgets/SpiralGUI.o
@@ -144,7 +141,6 @@ SampleHoldPlugin.o: SampleHoldPlugin.C \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
 		../../Sample.h \
-		../../SpiralInfo.h \
 		SpiralIcon.xpm
 
 SampleHoldPluginGUI.o: SampleHoldPluginGUI.C \
@@ -152,7 +148,6 @@ SampleHoldPluginGUI.o: SampleHoldPluginGUI.C \
 		SampleHoldPlugin.h \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		../../../GUI/Widgets/SpiralGUI.H
 

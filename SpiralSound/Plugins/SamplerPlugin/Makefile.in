@@ -42,7 +42,6 @@ HEADERS =	SamplerPlugin.h \
 		SamplerPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../../RiffWav.h \
@@ -52,7 +51,6 @@ SOURCES =	SamplerPlugin.C \
 		SamplerPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../../RiffWav.C \
@@ -62,7 +60,6 @@ OBJECTS =	SamplerPlugin.o \
 		SamplerPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../../RiffWav.o \
@@ -149,14 +146,12 @@ install:
 
 ../../RiffWav.o: ../../RiffWav.C \
 		../../RiffWav.h \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 SamplerPlugin.o: SamplerPlugin.C \
 		SamplerPlugin.h \
 		../SpiralPlugin.h \
 		../../Sample.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		SamplerPluginGUI.h \
 		../SpiralPluginGUI.h \
@@ -169,7 +164,6 @@ SamplerPluginGUI.o: SamplerPluginGUI.C \
 		SamplerPlugin.h \
 		../SpiralPlugin.h \
 		../../Sample.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		../SpiralPluginGUI.h \
 		../../../GUI/Widgets/SpiralGUI.H \

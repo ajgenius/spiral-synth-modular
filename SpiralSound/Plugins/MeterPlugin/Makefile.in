@@ -42,7 +42,6 @@ HEADERS =	MeterPlugin.h \
 		MeterPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../Widgets/Fl_SevenSeg.H \
@@ -52,7 +51,6 @@ SOURCES =	MeterPlugin.C \
 		MeterPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../Widgets/Fl_SevenSeg.cxx \
@@ -62,7 +60,6 @@ OBJECTS =	MeterPlugin.o \
 		MeterPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../Widgets/Fl_SevenSeg.o \
@@ -155,7 +152,6 @@ MeterPlugin.o: MeterPlugin.C \
 		MeterPluginGUI.h \
                 ../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		SpiralIcon.xpm
 
@@ -167,7 +163,6 @@ MeterPluginGUI.o: MeterPluginGUI.C \
 		../../../GUI/Widgets/SpiralGUI.H \
 		../Widgets/Fl_VU_Meter.h \
 		../Widgets/Fl_SevenSeg.H \
-		../../SpiralInfo.h \
 		../../Sample.h
 
 ../../ChannelHandler.o: ../../ChannelHandler.C \

@@ -42,7 +42,6 @@ HEADERS =	LADSPAPlugin.h \
 		LADSPAPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		LADSPAInfo.h \
@@ -54,7 +53,6 @@ SOURCES =	LADSPAPlugin.C \
 		LADSPAPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		LADSPAInfo.C \
@@ -66,7 +64,6 @@ OBJECTS =	LADSPAPlugin.o \
 		LADSPAPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		LADSPAInfo.o \
@@ -161,7 +158,6 @@ install:
 LADSPAPlugin.o: LADSPAPlugin.C \
 		LADSPAPlugin.h \
 		../SpiralPlugin.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		LADSPAPluginGUI.h \
 		../SpiralPluginGUI.h \
@@ -173,7 +169,6 @@ LADSPAPluginGUI.o: LADSPAPluginGUI.C \
 		../Widgets/Fl_Knob.H \
 		LADSPAPlugin.h \
 		../SpiralPlugin.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		../SpiralPluginGUI.h \
 		../Widgets/Fl_Knob.H \

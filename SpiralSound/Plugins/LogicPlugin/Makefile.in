@@ -42,7 +42,6 @@ HEADERS =	LogicPlugin.h \
 		LogicPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../../../GUI/Widgets/SpiralGUI.H
@@ -50,7 +49,6 @@ SOURCES =	LogicPlugin.C \
 		LogicPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../../../GUI/Widgets/SpiralGUI.C
@@ -58,7 +56,6 @@ OBJECTS =	LogicPlugin.o \
 		LogicPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../../../GUI/Widgets/SpiralGUI.o
@@ -135,7 +132,6 @@ LogicPlugin.o: LogicPlugin.C \
 		LogicPlugin.h \
 		LogicPluginGUI.h \
 		../../NoteTable.h \
-		../../SpiralInfo.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
 		SpiralIcon.xpm
@@ -145,7 +141,6 @@ LogicPluginGUI.o: LogicPluginGUI.C \
 		LogicPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../../GUI/Widgets/SpiralGUI.H
 
 ../../ChannelHandler.o: ../../ChannelHandler.C \

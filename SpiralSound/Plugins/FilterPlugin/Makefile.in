@@ -42,7 +42,6 @@ HEADERS =	FilterPlugin.h \
 		FilterPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		iir_filter.h \
@@ -52,7 +51,6 @@ SOURCES =	FilterPlugin.C \
 		FilterPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		iir_filter.C \
@@ -62,7 +60,6 @@ OBJECTS =	FilterPlugin.o \
 		FilterPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		iir_filter.o \
@@ -156,7 +153,6 @@ FilterPlugin.o: FilterPlugin.C \
 		iir_filter.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		SpiralIcon.xpm
 
@@ -166,7 +162,6 @@ FilterPluginGUI.o: FilterPluginGUI.C \
 		iir_filter.h \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		../../../GUI/Widgets/SpiralGUI.H \
 		../Widgets/Fl_Knob.H

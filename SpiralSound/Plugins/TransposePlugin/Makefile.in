@@ -38,7 +38,6 @@ HEADERS =	TransposePlugin.h \
 		TransposePluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-                ../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../../../GUI/Widgets/SpiralGUI.H
@@ -46,7 +45,6 @@ SOURCES =	TransposePlugin.C \
 		TransposePluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-                ../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../../../GUI/Widgets/SpiralGUI.C
@@ -54,7 +52,6 @@ OBJECTS =	TransposePlugin.o \
 		TransposePluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-                ../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../../../GUI/Widgets/SpiralGUI.o
@@ -142,7 +139,6 @@ TransposePlugin.o: TransposePlugin.C \
 TransposePluginGUI.o: TransposePluginGUI.C \
 		TransposePlugin.h \
 		TransposePluginGUI.h \
-                ../../SpiralInfo.h \
                 ../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
 		../../../GUI/Widgets/SpiralGUI.H

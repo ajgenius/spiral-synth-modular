@@ -43,7 +43,6 @@ HEADERS =	PoshSamplerPlugin.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
 		../../ChannelHandler.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		../../RiffWav.h \
 		../Widgets/Fl_Knob.H \
@@ -52,7 +51,6 @@ SOURCES =	PoshSamplerPlugin.C \
 		PoshSamplerPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../../RiffWav.C \
@@ -62,7 +60,6 @@ OBJECTS =	PoshSamplerPlugin.o \
 		PoshSamplerPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../../RiffWav.o \
@@ -149,15 +146,13 @@ install:
 
 ../../RiffWav.o: ../../RiffWav.C \
 		../../RiffWav.h \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 PoshSamplerPlugin.o: PoshSamplerPlugin.C \
 		PoshSamplerPlugin.h \
 		PoshSamplerPluginGUI.h \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		SpiralIcon.xpm \
 		../../RiffWav.h \
@@ -168,7 +163,6 @@ PoshSamplerPluginGUI.o: PoshSamplerPluginGUI.C \
 		PoshSamplerPlugin.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		../../../GUI/Widgets/SpiralGUI.H \
 		../Widgets/Fl_Knob.H

@@ -91,6 +91,7 @@ private:
 	float ConvertControlValue(unsigned long p, float value);
 
 	Fl_Color m_GUIColour;
+        Fl_Boxtype m_GUIBox;
 
 // Buttons
 	Fl_Button                     *m_BKnob;

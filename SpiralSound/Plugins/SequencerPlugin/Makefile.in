@@ -42,7 +42,6 @@ HEADERS =	SequencerPlugin.h \
 		SequencerPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../../RiffWav.h \
@@ -54,7 +53,6 @@ SOURCES =	SequencerPlugin.C \
 		SequencerPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../../RiffWav.C \
@@ -66,7 +64,6 @@ OBJECTS =	SequencerPlugin.o \
 		SequencerPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../../RiffWav.o \
@@ -163,15 +160,13 @@ install:
 
 ../../RiffWav.o: ../../RiffWav.C \
 		../../RiffWav.h \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 SequencerPlugin.o: SequencerPlugin.C \
 		SequencerPlugin.h \
 		SequencerPluginGUI.h \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		../../RiffWav.h \
 		../../NoteTable.h \
@@ -182,7 +177,6 @@ SequencerPluginGUI.o: SequencerPluginGUI.C \
 		SequencerPlugin.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		../Widgets/Fl_EventMap.h \
 		../Widgets/Fl_SEvent.h \

@@ -44,7 +44,6 @@ HEADERS =	JackPlugin.h \
 		JackPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../../RiffWav.h \
@@ -55,7 +54,6 @@ SOURCES =	JackPlugin.C \
 		JackPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../../RiffWav.C \
@@ -66,7 +64,6 @@ OBJECTS =	JackPlugin.o \
 		JackPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../../RiffWav.o \
@@ -157,15 +154,13 @@ install:
 
 ../../RiffWav.o: ../../RiffWav.C \
 		../../RiffWav.h \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 JackPlugin.o: JackPlugin.C \
 		JackPlugin.h \
 		JackPluginGUI.h \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		../../RiffWav.h \
 		SpiralIcon.xpm
@@ -175,7 +170,6 @@ JackPluginGUI.o: JackPluginGUI.C \
 		JackPlugin.h \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		../../RiffWav.h \
 		../Widgets/Fl_Knob.H \

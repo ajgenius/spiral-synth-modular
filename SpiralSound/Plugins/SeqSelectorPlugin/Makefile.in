@@ -42,7 +42,6 @@ HEADERS =	SeqSelectorPlugin.h \
 		SeqSelectorPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../Widgets/Fl_LED_Button.H \
@@ -51,7 +50,6 @@ SOURCES =	SeqSelectorPlugin.C \
 		SeqSelectorPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../Widgets/Fl_LED_Button.cxx \
@@ -60,7 +58,6 @@ OBJECTS =	SeqSelectorPlugin.o \
 		SeqSelectorPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../Widgets/Fl_LED_Button.o \
@@ -149,7 +146,6 @@ SeqSelectorPlugin.o: SeqSelectorPlugin.C \
 		SeqSelectorPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../NoteTable.h \
 		../../Sample.h \
 		SpiralIcon.xpm
@@ -159,7 +155,6 @@ SeqSelectorPluginGUI.o: SeqSelectorPluginGUI.C \
 		SeqSelectorPlugin.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		../Widgets/Fl_LED_Button.H \
 		../../../GUI/Widgets/SpiralGUI.H

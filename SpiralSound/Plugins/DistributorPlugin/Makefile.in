@@ -42,7 +42,6 @@ HEADERS =	DistributorPlugin.h \
 		DistributorPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../../../GUI/Widgets/SpiralGUI.H
@@ -50,7 +49,6 @@ SOURCES =	DistributorPlugin.C \
 		DistributorPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../../../GUI/Widgets/SpiralGUI.C
@@ -58,7 +56,6 @@ OBJECTS =	DistributorPlugin.o \
 		DistributorPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../../../GUI/Widgets/SpiralGUI.o
@@ -143,7 +140,6 @@ DistributorPlugin.o: DistributorPlugin.C \
 		DistributorPluginGUI.h \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		SpiralIcon.xpm
 
@@ -153,7 +149,6 @@ DistributorPluginGUI.o: DistributorPluginGUI.C \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
 		../../Sample.h \
-		../../SpiralInfo.h \
 		../../../GUI/Widgets/SpiralGUI.H
 
 ../../ChannelHandler.o: ../../ChannelHandler.C \

@@ -42,7 +42,6 @@ HEADERS =	OutputPlugin.h \
 		OutputPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../../RiffWav.h \
@@ -52,7 +51,6 @@ SOURCES =	OutputPlugin.C \
 		OutputPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../../RiffWav.C \
@@ -62,7 +60,6 @@ OBJECTS =	OutputPlugin.o \
 		OutputPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../../RiffWav.o \
@@ -149,15 +146,13 @@ install:
 
 ../../RiffWav.o: ../../RiffWav.C \
 		../../RiffWav.h \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 OutputPlugin.o: OutputPlugin.C \
 		OutputPlugin.h \
 		OutputPluginGUI.h \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		../../RiffWav.h \
 		SpiralIcon.xpm
@@ -167,7 +162,6 @@ OutputPluginGUI.o: OutputPluginGUI.C \
 		OutputPlugin.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		../../RiffWav.h \
 		../Widgets/Fl_Knob.H \

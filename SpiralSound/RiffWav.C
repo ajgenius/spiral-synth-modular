@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include <iostream>
 #include <fstream>
@@ -22,12 +22,12 @@
 #include <stdlib.h>
 #include <limits.h>
 #include "RiffWav.h"
-#include "SpiralInfo.h"
+//#include "SpiralInfo.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 
-//#define TRACE_OUT		
+//#define TRACE_OUT
 
 const int HEADERLEN = (4+24+8);
 
@@ -41,15 +41,15 @@ const int HEADERLEN = (4+24+8);
 
 int WavFile::Open(string FileName, Mode mode, Channels channels)
 {
-	if (m_Stream!=NULL) 
+	if (m_Stream!=NULL)
 	{
 		cerr<<"WavFile: File already open ["<<FileName<<"]"<<endl;
 		return 0;
 	}
-	
-	if (mode==WRITE) m_Stream = fopen (FileName.c_str(), "wb"); 
-	else m_Stream = fopen (FileName.c_str(), "rb"); 
-	
+
+	if (mode==WRITE) m_Stream = fopen (FileName.c_str(), "wb");
+	else m_Stream = fopen (FileName.c_str(), "rb");
+
 	if (m_Stream == (FILE*)0)
 	{
 		cerr<<"WavFile: File ["<<FileName<<"] does not exist"<<endl;
@@ -59,7 +59,7 @@ int WavFile::Open(string FileName, Mode mode, Channels channels)
 	//Write the header
 
 	if (mode==WRITE)
-	{		
+	{
 		m_Header.RiffName[0]='R';
 		m_Header.RiffName[1]='I';
 		m_Header.RiffName[2]='F';

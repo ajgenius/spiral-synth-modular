@@ -42,7 +42,6 @@ HEADERS =	StereoMixerPlugin.h \
 		StereoMixerPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../Widgets/Fl_Knob.H \
@@ -51,7 +50,6 @@ SOURCES =	StereoMixerPlugin.C \
 		StereoMixerPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../Widgets/Fl_Knob.cxx \
@@ -60,7 +58,6 @@ OBJECTS =	StereoMixerPlugin.o \
 		StereoMixerPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../Widgets/Fl_Knob.o \
@@ -151,7 +148,6 @@ StereoMixerPlugin.o: StereoMixerPlugin.C \
 		StereoMixerPluginGUI.h \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		SpiralIcon.xpm
 
@@ -160,7 +156,6 @@ StereoMixerPluginGUI.o: StereoMixerPluginGUI.C \
 		StereoMixerPlugin.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		../Widgets/Fl_Knob.H \
 		../../../GUI/Widgets/SpiralGUI.H

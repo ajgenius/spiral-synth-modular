@@ -42,7 +42,6 @@ HEADERS =	LFOPlugin.h \
 		LFOPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
                 ../../Sample.h \
 		../Widgets/Fl_Knob.H \
@@ -56,7 +55,6 @@ SOURCES =	LFOPlugin.C \
 		LFOPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../Widgets/Fl_Knob.cxx \
@@ -66,7 +64,6 @@ OBJECTS =	LFOPlugin.o \
 		LFOPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../Widgets/Fl_Knob.o \
@@ -159,7 +156,6 @@ LFOPlugin.o: LFOPlugin.C \
 		LFOPluginGUI.h \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		SpiralIcon.xpm
 
@@ -175,7 +171,6 @@ LFOPluginGUI.o: LFOPluginGUI.C \
                 ../GUI/WS_Tri.h \
                 ../GUI/WS_Square.h \
                 ../GUI/WS_Saw.h \
-		../../SpiralInfo.h \
 		../../Sample.h
 
 ../../ChannelHandler.o: ../../ChannelHandler.C \

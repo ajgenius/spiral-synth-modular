@@ -42,7 +42,6 @@ HEADERS =	SmoothPlugin.h \
 		SmoothPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../Widgets/Fl_Knob.H \
@@ -51,7 +50,6 @@ SOURCES =	SmoothPlugin.C \
 		SmoothPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../Widgets/Fl_Knob.cxx \
@@ -60,7 +58,6 @@ OBJECTS =	SmoothPlugin.o \
 		SmoothPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../Widgets/Fl_Knob.o \
@@ -149,7 +146,6 @@ SmoothPlugin.o: SmoothPlugin.C \
 		SmoothPluginGUI.h \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		SpiralIcon.xpm
 
@@ -159,7 +155,6 @@ SmoothPluginGUI.o: SmoothPluginGUI.C \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
 		../../Sample.h \
-		../../SpiralInfo.h \
 		../Widgets/Fl_Knob.H \
 		../../../GUI/Widgets/SpiralGUI.H
 

@@ -42,7 +42,6 @@ HEADERS =	MidiPlugin.h \
 		MidiPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../../Midi.h \
@@ -52,7 +51,6 @@ SOURCES =	MidiPlugin.C \
 		MidiPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../../Midi.C \
@@ -62,7 +60,6 @@ OBJECTS =	MidiPlugin.o \
 		MidiPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../../Midi.o \
@@ -156,7 +153,6 @@ MidiPlugin.o: MidiPlugin.C \
 		MidiPluginGUI.h \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		../../NoteTable.h \
 		../../Midi.h \
@@ -167,7 +163,6 @@ MidiPluginGUI.o: MidiPluginGUI.C \
 		MidiPlugin.h \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		../Widgets/Fl_Knob.H \
 		../../../GUI/Widgets/SpiralGUI.H

@@ -42,7 +42,6 @@ HEADERS =	BeatMatchPlugin.h \
 		BeatMatchPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../Widgets/Fl_Knob.H \
@@ -51,7 +50,6 @@ SOURCES =	BeatMatchPlugin.C \
 		BeatMatchPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../Widgets/Fl_Knob.cxx \
@@ -60,7 +58,6 @@ OBJECTS =	BeatMatchPlugin.o \
 		BeatMatchPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../Widgets/Fl_Knob.o \
@@ -141,7 +138,6 @@ BeatMatchPlugin.o: BeatMatchPlugin.C \
 		BeatMatchPlugin.h \
 		BeatMatchPluginGUI.h \
 		../../NoteTable.h \
-		../../SpiralInfo.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
 		SpiralIcon.xpm
@@ -151,7 +147,6 @@ BeatMatchPluginGUI.o: BeatMatchPluginGUI.C \
 		BeatMatchPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
                 ../../../GUI/Widgets/SpiralGUI.H
 
 ../../ChannelHandler.o: ../../ChannelHandler.C \

@@ -42,7 +42,6 @@ HEADERS =	MousePlugin.h \
 		MousePluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		scratch.h \
@@ -51,7 +50,6 @@ SOURCES =	MousePlugin.C \
 		MousePluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		scratch.C \
@@ -60,7 +58,6 @@ OBJECTS =	MousePlugin.o \
 		MousePluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		scratch.o \
@@ -142,7 +139,6 @@ MousePlugin.o: MousePlugin.C \
 		MousePluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		scratch.h \
 		SpiralIcon.xpm
@@ -153,7 +149,6 @@ MousePluginGUI.o: MousePluginGUI.C \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
 		../../../GUI/Widgets/SpiralGUI.H \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		scratch.h
 

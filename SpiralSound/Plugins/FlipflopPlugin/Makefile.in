@@ -42,7 +42,6 @@ HEADERS =	FlipflopPlugin.h \
 		FlipflopPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../Widgets/Fl_Knob.H \
@@ -51,7 +50,6 @@ SOURCES =	FlipflopPlugin.C \
 		FlipflopPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../Widgets/Fl_Knob.cxx \
@@ -61,7 +59,6 @@ OBJECTS =	FlipflopPlugin.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
 		../../ChannelHandler.o \
-		../../SpiralInfo.o \
 		../../Sample.o \
 		../Widgets/Fl_Knob.o \
 		../../../GUI/Widgets/SpiralGUI.o
@@ -141,7 +138,6 @@ FlipflopPlugin.o: FlipflopPlugin.C \
 		FlipflopPlugin.h \
 		FlipflopPluginGUI.h \
 		../../NoteTable.h \
-		../../SpiralInfo.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
 		SpiralIcon.xpm
@@ -151,7 +147,6 @@ FlipflopPluginGUI.o: FlipflopPluginGUI.C \
 		FlipflopPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../Widgets/Fl_Knob.H \
 		../../../GUI/Widgets/SpiralGUI.H
 

@@ -42,7 +42,6 @@ HEADERS =	WaveTablePlugin.h \
 		WaveTablePluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
                 ../../Sample.h \
                 ../GUI/WS_Square.h \
@@ -60,7 +59,6 @@ SOURCES =	WaveTablePlugin.C \
 		WaveTablePluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../Widgets/Fl_Knob.cxx \
@@ -70,7 +68,6 @@ OBJECTS =	WaveTablePlugin.o \
 		WaveTablePluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../Widgets/Fl_Knob.o \
@@ -163,7 +160,6 @@ WaveTablePlugin.o: WaveTablePlugin.C \
 		WaveTablePluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		SpiralIcon.xpm
 
@@ -182,9 +178,7 @@ WaveTablePluginGUI.o: WaveTablePluginGUI.C \
                 ../GUI/WS_Sine.h \
                 ../GUI/WS_Pulse1.h \
                 ../GUI/WS_Pulse2.h \
-                ../GUI/WS_InvSine.h \
-		../../SpiralInfo.h \
-		../../Sample.h
+                ../GUI/WS_InvSine.h
 
 ../../ChannelHandler.o: ../../ChannelHandler.C \
 		../../ChannelHandler.h

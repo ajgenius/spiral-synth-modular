@@ -42,7 +42,6 @@ HEADERS =	WaveShaperPlugin.h \
 		WaveShaperPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../Widgets/Fl_Knob.H \
@@ -52,7 +51,6 @@ SOURCES =	WaveShaperPlugin.C \
 		WaveShaperPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.h \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../Widgets/Fl_Knob.cxx \
@@ -62,7 +60,6 @@ OBJECTS =	WaveShaperPlugin.o \
 		WaveShaperPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../Widgets/Fl_Knob.o \
@@ -155,7 +152,6 @@ WaveShaperPlugin.o: WaveShaperPlugin.C \
 		WaveShaperPluginGUI.h \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		SpiralIcon.xpm
 
@@ -164,7 +160,6 @@ WaveShaperPluginGUI.o: WaveShaperPluginGUI.C \
 		WaveShaperPlugin.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		../Widgets/Fl_Knob.H \
 		../Widgets/Fl_LED_Button.H \

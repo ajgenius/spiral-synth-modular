@@ -59,6 +59,8 @@ struct HostInfo
         unsigned SCOPE_SEL_COLOUR;
         unsigned SCOPE_IND_COLOUR;
         unsigned SCOPE_MRK_COLOUR;
+        unsigned GUICOL_Device;
+        unsigned GUIDEVICE_Box;
 };
 
 /////////////////////////////////////////////////////////////////////

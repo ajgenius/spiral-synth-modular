@@ -42,7 +42,6 @@ HEADERS =	StreamPlugin.h \
 		StreamPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../../RiffWav.h \
@@ -53,7 +52,6 @@ SOURCES =	StreamPlugin.C \
 		StreamPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../../RiffWav.C \
@@ -64,7 +62,6 @@ OBJECTS =	StreamPlugin.o \
 		StreamPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../../RiffWav.o \
@@ -154,15 +151,13 @@ install:
 
 ../../RiffWav.o: ../../RiffWav.C \
 		../../RiffWav.h \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 StreamPlugin.o: StreamPlugin.C \
 		StreamPlugin.h \
 		StreamPluginGUI.h \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		../../RiffWav.h \
 		SpiralIcon.xpm \
@@ -174,7 +169,6 @@ StreamPluginGUI.o: StreamPluginGUI.C \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
 		../../Sample.h \
-		../../SpiralInfo.h \
 		../../RiffWav.h \
 		../../../GUI/Widgets/SpiralGUI.H \
 		../Widgets/Fl_Knob.H \

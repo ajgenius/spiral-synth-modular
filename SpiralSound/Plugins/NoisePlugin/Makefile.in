@@ -42,7 +42,6 @@ HEADERS =	NoisePlugin.h \
 		NoisePluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../Widgets/Fl_LED_Button.H \
@@ -51,7 +50,6 @@ SOURCES =	NoisePlugin.C \
 		NoisePluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../Widgets/Fl_LED_Button.cxx \
@@ -60,7 +58,6 @@ OBJECTS =	NoisePlugin.o \
 		NoisePluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../Widgets/Fl_LED_Button.o \
@@ -149,7 +146,6 @@ NoisePlugin.o: NoisePlugin.C \
 		NoisePluginGUI.h \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		SpiralIcon.xpm
 
@@ -160,7 +156,6 @@ NoisePluginGUI.o: NoisePluginGUI.C \
 		../SpiralPluginGUI.h \
 		../../../GUI/Widgets/SpiralGUI.H \
 		../Widgets/Fl_LED_Button.H \
-		../../SpiralInfo.h \
 		../../Sample.h
 
 ../../ChannelHandler.o: ../../ChannelHandler.C \

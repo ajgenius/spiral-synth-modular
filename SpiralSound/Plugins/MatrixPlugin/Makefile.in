@@ -42,7 +42,6 @@ HEADERS =	MatrixPlugin.h \
 		MatrixPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../Widgets/Fl_Knob.H \
@@ -52,7 +51,6 @@ SOURCES =	MatrixPlugin.C \
 		MatrixPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../Widgets/Fl_Knob.cxx \
@@ -62,7 +60,6 @@ OBJECTS =	MatrixPlugin.o \
 		MatrixPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../Widgets/Fl_Knob.o \
@@ -155,7 +152,6 @@ MatrixPlugin.o: MatrixPlugin.C \
 		MatrixPluginGUI.h \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		SpiralIcon.xpm \
 		../../RiffWav.h \
@@ -166,7 +162,6 @@ MatrixPluginGUI.o: MatrixPluginGUI.C \
 		MatrixPlugin.h \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		../../../GUI/Widgets/SpiralGUI.H \
 		../Widgets/Fl_Knob.H \

@@ -42,7 +42,6 @@ HEADERS =	SeqPlugin.h \
 		SeqPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../../RiffWav.h \
@@ -54,7 +53,6 @@ SOURCES =	SeqPlugin.C \
 		SeqPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../../RiffWav.C \
@@ -66,7 +64,6 @@ OBJECTS =	SeqPlugin.o \
 		SeqPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../../RiffWav.o \
@@ -163,8 +160,7 @@ install:
 
 ../../RiffWav.o: ../../RiffWav.C \
 		../../RiffWav.h \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 SeqPlugin.o: SeqPlugin.C \
 		SeqPlugin.h \
@@ -172,7 +168,6 @@ SeqPlugin.o: SeqPlugin.C \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
 		../../Sample.h \
-		../../SpiralInfo.h \
 		SpiralIcon.xpm \
 		../../RiffWav.h \
 		../../NoteTable.h
@@ -182,7 +177,6 @@ SeqPluginGUI.o: SeqPluginGUI.C \
 		SeqPlugin.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		../Widgets/Fl_EventMap.h \
 		../Widgets/Fl_SEvent.h \

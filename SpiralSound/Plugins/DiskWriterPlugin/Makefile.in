@@ -42,7 +42,6 @@ HEADERS =	DiskWriterPlugin.h \
 		DiskWriterPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../../RiffWav.h \
@@ -51,7 +50,6 @@ SOURCES =	DiskWriterPlugin.C \
 		DiskWriterPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../../RiffWav.C \
@@ -60,7 +58,6 @@ OBJECTS =	DiskWriterPlugin.o \
 		DiskWriterPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../../RiffWav.o \
@@ -144,14 +141,12 @@ install:
 
 ../../RiffWav.o: ../../RiffWav.C \
 		../../RiffWav.h \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 DiskWriterPlugin.o: DiskWriterPlugin.C \
 		DiskWriterPlugin.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		../../RiffWav.h \
 		DiskWriterPluginGUI.h \
@@ -162,7 +157,6 @@ DiskWriterPluginGUI.o: DiskWriterPluginGUI.C \
 		DiskWriterPlugin.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		../../RiffWav.h \
 		../../../GUI/Widgets/SpiralGUI.H

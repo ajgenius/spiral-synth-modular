@@ -213,7 +213,7 @@ int main(int argc, char **argv)
   	}
 	
 	//pthread_cancel(loopthread);
-	delete synth;	
+        delete synth;
 
 	return 1;
 }

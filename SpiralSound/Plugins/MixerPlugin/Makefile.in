@@ -42,7 +42,6 @@ HEADERS =	MixerPlugin.h \
 		MixerPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../Widgets/Fl_LED_Button.H \
@@ -51,7 +50,6 @@ SOURCES =	MixerPlugin.C \
 		MixerPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../Widgets/Fl_LED_Button.cxx \
@@ -60,7 +58,6 @@ OBJECTS =	MixerPlugin.o \
 		MixerPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../Widgets/Fl_LED_Button.o \
@@ -149,7 +146,6 @@ MixerPlugin.o: MixerPlugin.C \
 		MixerPluginGUI.h \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		SpiralIcon.xpm
 
@@ -158,7 +154,6 @@ MixerPluginGUI.o: MixerPluginGUI.C \
 		MixerPlugin.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		../../../GUI/Widgets/SpiralGUI.H \
 		../Widgets/Fl_LED_Button.H

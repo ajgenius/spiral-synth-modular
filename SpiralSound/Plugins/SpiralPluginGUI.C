@@ -97,22 +97,22 @@ inline void SpiralPluginGUI::cb_Help_i(Fl_Button* o, void* v)
 		m_HelpWin_text->buffer(new Fl_Text_Buffer);
 
 		m_HelpWin_text->textsize(12);
-		
+
 		m_HelpWin->add(m_HelpWin_text);
 		m_HelpWin->resizable(m_HelpWin_text);
-		
+
 		m_HelpWin->callback((Fl_Callback*)cb_Help_close);
 	}
-	
+
 	if(Help_owner!=this)
 	{
-		m_HelpWin_text->buffer()->text(GetHelpText(SpiralInfo::LOCALE).c_str());
+                m_HelpWin_text->buffer()->text(GetHelpText(SpiralInfo::LOCALE).c_str());
 		m_HelpWin->show();
 		Help_owner=this;
 	}
 	else cb_Help_close_i(m_HelpWin, NULL);
 }
-void SpiralPluginGUI::cb_Help(Fl_Button* o, void* v) 
+void SpiralPluginGUI::cb_Help(Fl_Button* o, void* v)
 { ((SpiralPluginGUI*)(o->parent()))->cb_Help_i(o,v); }
 
 inline void SpiralPluginGUI::cb_Help_close_i(Fl_Double_Window* w, void* v)
@@ -121,6 +121,6 @@ inline void SpiralPluginGUI::cb_Help_close_i(Fl_Double_Window* w, void* v)
 	Help_owner=NULL;
 }
 
-void SpiralPluginGUI::cb_Help_close(Fl_Double_Window* w, void* v) 
+void SpiralPluginGUI::cb_Help_close(Fl_Double_Window* w, void* v)
 { ((SpiralPluginGUI*)(w->parent()))->cb_Help_close_i(w,v); }
 

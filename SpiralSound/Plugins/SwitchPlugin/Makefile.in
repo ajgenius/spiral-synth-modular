@@ -42,7 +42,6 @@ HEADERS =	SwitchPlugin.h \
 		SwitchPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-                ../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../../../GUI/Widgets/SpiralGUI.H
@@ -50,7 +49,6 @@ SOURCES =	SwitchPlugin.C \
 		SwitchPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-                ../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../../../GUI/Widgets/SpiralGUI.C
@@ -58,7 +56,6 @@ OBJECTS =	SwitchPlugin.o \
 		SwitchPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-                ../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../../../GUI/Widgets/SpiralGUI.o
@@ -142,7 +139,6 @@ SwitchPlugin.o: SwitchPlugin.C \
 SwitchPluginGUI.o: SwitchPluginGUI.C \
 		SwitchPlugin.h \
 		SwitchPluginGUI.h \
-                ../../SpiralInfo.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
 		../../../GUI/Widgets/SpiralGUI.H

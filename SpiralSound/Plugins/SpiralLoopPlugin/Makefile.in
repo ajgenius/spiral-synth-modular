@@ -42,7 +42,6 @@ HEADERS =	SpiralLoopPlugin.h \
 		SpiralLoopPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../../RiffWav.h \
@@ -55,7 +54,6 @@ SOURCES =	SpiralLoopPlugin.C \
 		SpiralLoopPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../../RiffWav.C \
@@ -68,7 +66,6 @@ OBJECTS =	SpiralLoopPlugin.o \
 		SpiralLoopPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../../RiffWav.o \
@@ -154,8 +151,7 @@ install:
 
 ../../RiffWav.o: ../../RiffWav.C \
 		../../RiffWav.h \
-		../../Sample.h \
-		../../SpiralInfo.h
+		../../Sample.h
 
 #GUI/Widgets/Fl_Loop.o: GUI/Widgets/Fl_Loop.C \
 #		GUI/Widgets/Fl_Loop.h
@@ -171,7 +167,6 @@ SpiralLoopPlugin.o: SpiralLoopPlugin.C \
 		SpiralLoopPlugin.h \
 		../SpiralPlugin.h \
 		../../Sample.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		../../NoteTable.h \
 		Fl_Loop.h \
@@ -190,12 +185,9 @@ SpiralLoopPluginGUI.o: SpiralLoopPluginGUI.C \
 		SpiralLoopPlugin.h \
 		../SpiralPlugin.h \
 		../../Sample.h \
-		../../SpiralInfo.h \
-		../../Sample.h \
 		../../NoteTable.h \
 		Fl_Loop.h \
 		Fl_Trigger.h \
-		../../Sample.h \
 		../SpiralPluginGUI.h \
 		../../../GUI/Widgets/SpiralGUI.H \
 		../Widgets/Fl_Knob.H

@@ -42,7 +42,6 @@ HEADERS =	CounterPlugin.h \
 		CounterPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../Widgets/Fl_Knob.H \
@@ -51,7 +50,6 @@ SOURCES =	CounterPlugin.C \
 		CounterPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../Widgets/Fl_Knob.cxx \
@@ -60,7 +58,6 @@ OBJECTS =	CounterPlugin.o \
 		CounterPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../Widgets/Fl_Knob.o \
@@ -141,7 +138,6 @@ CounterPlugin.o: CounterPlugin.C \
 		CounterPlugin.h \
 		CounterPluginGUI.h \
 		../../NoteTable.h \
-		../../SpiralInfo.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
 		SpiralIcon.xpm
@@ -149,7 +145,6 @@ CounterPlugin.o: CounterPlugin.C \
 CounterPluginGUI.o: CounterPluginGUI.C \
 		CounterPlugin.h \
 		CounterPluginGUI.h \
-		../../SpiralInfo.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
 		../../../GUI/Widgets/SpiralGUI.H

@@ -43,7 +43,6 @@ HEADERS =	ComplexEnvelopePlugin.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
 		../../ChannelHandler.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		Bezier.h \
 		../Widgets/Fl_Knob.H \
@@ -53,7 +52,6 @@ SOURCES =	ComplexEnvelopePlugin.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
 		../../ChannelHandler.C \
-		../../SpiralInfo.C \
 		../../Sample.C \
 		Bezier.C \
 		../Widgets/Fl_Knob.cxx \
@@ -62,7 +60,6 @@ OBJECTS =	ComplexEnvelopePlugin.o \
 		ComplexEnvelopePluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		Bezier.o \
@@ -153,7 +150,6 @@ Bezier.o: Bezier.C \
 ComplexEnvelopePlugin.o: ComplexEnvelopePlugin.C \
 		ComplexEnvelopePlugin.h \
 		../SpiralPlugin.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		ComplexEnvelopePluginGUI.h \
 		../SpiralPluginGUI.h \
@@ -165,7 +161,6 @@ ComplexEnvelopePluginGUI.o: ComplexEnvelopePluginGUI.C \
 		ComplexEnvelopePluginGUI.h \
 		ComplexEnvelopePlugin.h \
 		../SpiralPlugin.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		../SpiralPluginGUI.h \
 		Bezier.h \

@@ -42,7 +42,6 @@ HEADERS =	OscillatorPlugin.h \
 		OscillatorPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
                 ../../Sample.h \
                 ../GUI/WS_Square.h \
@@ -55,7 +54,6 @@ SOURCES =	OscillatorPlugin.C \
 		OscillatorPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../Widgets/Fl_Knob.cxx \
@@ -65,7 +63,6 @@ OBJECTS =	OscillatorPlugin.o \
 		OscillatorPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../Widgets/Fl_Knob.o \
@@ -158,7 +155,6 @@ OscillatorPlugin.o: OscillatorPlugin.C \
 		OscillatorPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../Sample.h \
 		SpiralIcon.xpm
 
@@ -173,7 +169,6 @@ OscillatorPluginGUI.o: OscillatorPluginGUI.C \
                 ../GUI/WS_Saw.h \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../SpiralInfo.h \
 		../../Sample.h
 
 ../../ChannelHandler.o: ../../ChannelHandler.C \

@@ -67,7 +67,6 @@ vector<string> SpiralInfo::PLUGINVEC;
 
 string SpiralInfo::PLUGIN_PATH;
 
-
 SpiralInfo* SpiralInfo::m_SpiralInfo=NULL;
 
 SpiralInfo* SpiralInfo::Get() {

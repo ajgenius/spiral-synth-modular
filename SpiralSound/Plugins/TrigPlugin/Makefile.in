@@ -42,7 +42,6 @@ HEADERS =	TrigPlugin.h \
 		TrigPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-                ../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../../../GUI/Widgets/SpiralGUI.H
@@ -50,7 +49,6 @@ SOURCES =	TrigPlugin.C \
 		TrigPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-                ../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../../../GUI/Widgets/SpiralGUI.C
@@ -58,7 +56,6 @@ OBJECTS =	TrigPlugin.o \
 		TrigPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-                ../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../../../GUI/Widgets/SpiralGUI.o
@@ -142,7 +139,6 @@ TrigPlugin.o: TrigPlugin.C \
 TrigPluginGUI.o: TrigPluginGUI.C \
 		TrigPlugin.h \
 		TrigPluginGUI.h \
-                ../../SpiralInfo.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
 		../../../GUI/Widgets/SpiralGUI.H

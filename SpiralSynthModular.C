@@ -78,22 +78,23 @@ SynthModular::SynthModular():
 m_NextID(0),
 m_PauseAudio(false)
 {
-	m_Info.BUFSIZE    = SpiralInfo::BUFSIZE;
-	m_Info.FRAGSIZE   = SpiralInfo::FRAGSIZE;
-	m_Info.FRAGCOUNT  = SpiralInfo::FRAGCOUNT;
+	m_Info.BUFSIZE = SpiralInfo::BUFSIZE;
+	m_Info.FRAGSIZE = SpiralInfo::FRAGSIZE;
+	m_Info.FRAGCOUNT = SpiralInfo::FRAGCOUNT;
 	m_Info.SAMPLERATE = SpiralInfo::SAMPLERATE;
 	m_Info.OUTPUTFILE = SpiralInfo::OUTPUTFILE;
-	m_Info.MIDIFILE   = SpiralInfo::MIDIFILE;
-	m_Info.POLY       = SpiralInfo::POLY;
-        m_Info.GUI_COLOUR       = SpiralInfo::GUI_COLOUR;
-        m_Info.SCOPE_BG_COLOUR  = SpiralInfo::SCOPE_BG_COLOUR;
-        m_Info.SCOPE_FG_COLOUR  = SpiralInfo::SCOPE_FG_COLOUR;
+	m_Info.MIDIFILE = SpiralInfo::MIDIFILE;
+	m_Info.POLY = SpiralInfo::POLY;
+        m_Info.GUI_COLOUR = SpiralInfo::GUI_COLOUR;
+        m_Info.SCOPE_BG_COLOUR = SpiralInfo::SCOPE_BG_COLOUR;
+        m_Info.SCOPE_FG_COLOUR = SpiralInfo::SCOPE_FG_COLOUR;
         m_Info.SCOPE_SEL_COLOUR = SpiralInfo::SCOPE_SEL_COLOUR;
         m_Info.SCOPE_IND_COLOUR = SpiralInfo::SCOPE_IND_COLOUR;
         m_Info.SCOPE_MRK_COLOUR = SpiralInfo::SCOPE_MRK_COLOUR;
-	//m_Info.SpiralInfo::GUICOL_Button = SpiralInfo::SpiralInfo::GUICOL_Button;
+        m_Info.GUICOL_Device = SpiralInfo::GUICOL_Device;
+        m_Info.GUIDEVICE_Box = SpiralInfo::GUIDEVICE_Box;
 
-	for (int n=0; n<512; n++) Numbers[n]=n;
+        for (int n=0; n<512; n++) Numbers[n]=n;
 
 	m_CH.Register("PauseAudio",&m_PauseAudio);
 }
@@ -360,8 +361,7 @@ SpiralWindowType *SynthModular::CreateWindow()
 
 //////////////////////////////////////////////////////////
 
-vector<string> SynthModular::BuildPluginList(const string &Path)
-{
+vector<string> SynthModular::BuildPluginList (const string &Path) {
 	// Scan plugin path for plugins.
 	DIR *dp;
 	struct dirent *ep;
@@ -372,47 +372,37 @@ vector<string> SynthModular::BuildPluginList(const string &Path)
 	vector<string> ret;
 
 	dp = opendir(path);
-	if (!dp)
-	{
-		cerr << "WARNING: Could not open path " << path << endl;
+	if (!dp) {
+	   cerr << "WARNING: Could not open path " << path << endl;
 	}
-	else
-	{
-		while ((ep = readdir(dp)))
-		{
-
+	else {
+		while ((ep = readdir(dp))) {
 			// Need full path
 			fullpath = path;
 			fullpath.append(ep->d_name);
 
-			// Stat file to get type
-			if (!stat(fullpath.c_str(), &sb))
-			{
+                        // Stat file to get type
+			if (!stat(fullpath.c_str(), &sb)) {
 				// We only want regular files
-				if (S_ISREG(sb.st_mode))
-				{
-
-					// We're not fussed about resolving symbols yet, since we are just
-					// checking if it's a DLL.
+				if (S_ISREG(sb.st_mode))  {
+                                        // We're not fussed about resolving symbols yet, since we are just
+                                        // checking if it's a DLL.
 					handle = dlopen(fullpath.c_str(), RTLD_LAZY);
-					if (!handle)
-					{
+					if (!handle) {
 						cerr << "WARNING: File " << path << ep->d_name
 							<< " could not be examined" << endl;
 						cerr << "dlerror() output:" << endl;
 						cerr << dlerror() << endl;
 					}
-					else
-					{
+					else {
 						// It's a DLL. Add name to list
 						ret.push_back(ep->d_name);
 					}
-				}
-			}
+                                }
+                        }
 		}
 	}
-
-	return ret;
+        return ret;
 }
 
 void SynthModular::LoadPlugins(string pluginPath)
@@ -442,23 +432,22 @@ void SynthModular::LoadPlugins(string pluginPath)
 	Splash->add(splashtext);
 	Splash->show();
 
-	int ID=-1;
+        int ID=-1;
 
 	vector<string> PluginVector;
 
-	if (SpiralInfo::USEPLUGINLIST)
-	{
-		PluginVector=SpiralInfo::PLUGINVEC;
+	if (SpiralInfo::USEPLUGINLIST) {
+	   PluginVector=SpiralInfo::PLUGINVEC;
 	}
-	else
-	{
-                if (pluginPath.empty())
-                        PluginVector=BuildPluginList(SpiralInfo::PLUGIN_PATH);
-                else {
-                        string::iterator i = pluginPath.end() - 1;
-                        if (*i != '/') pluginPath += '/';
-                        PluginVector=BuildPluginList(pluginPath);
-                }
+	else {
+           if (pluginPath.empty()) {
+              PluginVector=BuildPluginList (SpiralInfo::PLUGIN_PATH);
+           }
+           else {
+              string::iterator i = pluginPath.end() - 1;
+              if (*i != '/') pluginPath += '/';
+              PluginVector=BuildPluginList(pluginPath);
+           }
 	}
 
 	for (vector<string>::iterator i=PluginVector.begin();
@@ -601,11 +590,9 @@ DeviceWin* SynthModular::NewDeviceWin(int n, int x, int y)
 
 	nlw->m_Device=Plugin->CreateInstance();
 
-	if (!nlw->m_Device)
-	{
-		return NULL;
-	}
-	nlw->m_Device->SetBlockingCallback(cb_Blocking);
+	if (!nlw->m_Device) return NULL;
+
+        nlw->m_Device->SetBlockingCallback(cb_Blocking);
 	nlw->m_Device->SetUpdateCallback(cb_Update);
 	nlw->m_Device->SetParent((void*)this);
 
@@ -614,10 +601,7 @@ DeviceWin* SynthModular::NewDeviceWin(int n, int x, int y)
 	Fl_Pixmap *Pix      = new Fl_Pixmap(Plugin->GetIcon());
 	nlw->m_PluginID     = n;
 
-	if (temp)
-	{
-		temp->position(x+10,y);
-	}
+	if (temp) temp->position(x+10,y);
 
 	DeviceGUIInfo Info=BuildDeviceGUIInfo(PInfo);
 

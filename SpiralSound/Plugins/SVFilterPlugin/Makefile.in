@@ -42,7 +42,6 @@ HEADERS =	SVFilterPlugin.h \
 		SVFilterPluginGUI.h \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../SpiralInfo.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../Widgets/Fl_Knob.H \
@@ -51,7 +50,6 @@ SOURCES =	SVFilterPlugin.C \
 		SVFilterPluginGUI.C \
 		../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../SpiralInfo.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../Widgets/Fl_Knob.cxx \
@@ -60,7 +58,6 @@ OBJECTS =	SVFilterPlugin.o \
 		SVFilterPluginGUI.o \
 		../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../SpiralInfo.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../Widgets/Fl_Knob.o \
@@ -150,7 +147,6 @@ SVFilterPlugin.o: SVFilterPlugin.C \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
 		../../Sample.h \
-		../../SpiralInfo.h \
 		SpiralIcon.xpm
 
 SVFilterPluginGUI.o: SVFilterPluginGUI.C \
@@ -159,7 +155,6 @@ SVFilterPluginGUI.o: SVFilterPluginGUI.C \
 		../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
 		../../Sample.h \
-		../../SpiralInfo.h \
 		../../../GUI/Widgets/SpiralGUI.H \
 		../Widgets/Fl_Knob.H
 
