@@ -167,9 +167,9 @@ void StreamPlugin::Execute() {
               float *TempBuf = new float[m_SampleSize * m_FileInfo.channels];
   	      int ChunkSize = 0;
   	    
-  	      ChunkSize = (int)sf_read_float(m_File, TempBuf, m_SampleSize);
+  	      ChunkSize = (int)sf_read_float(m_File, TempBuf, m_SampleSize*m_FileInfo.channels);
   	    
-              if (m_SampleSize!=ChunkSize)
+              if ((m_SampleSize*m_FileInfo.channels)!=ChunkSize)
               {
                 cerr<<"StreamPlugin: Only recieved "<<ChunkSize<<" of "<<m_SampleSize<<": Read chunk error"<<endl;
               } else {
@@ -303,19 +303,21 @@ void StreamPlugin::OpenStream (void) {
         cerr<<"StreamPlugin: File ["<<m_GUIArgs.FileName<<"] does not exist"<<endl;
 	return;
      }
+
      if (m_FileInfo.frames < 256)
-        m_SampleSize = m_FileInfo.frames;
+       m_SampleSize = m_FileInfo.frames;
      else
-        m_SampleSize = 256;	
+       m_SampleSize = 256;	
 
      m_SampleL.Allocate (m_SampleSize);
      m_SampleR.Allocate (m_SampleSize);
-     m_Pitch = m_SampleRate / (float)m_HostInfo->SAMPLERATE;
+     
+     m_Pitch = m_FileInfo.samplerate / (float)m_HostInfo->SAMPLERATE;
      if (m_FileInfo.channels>1) {
         m_Pitch *= 2;
-        m_GUIArgs.MaxTime = m_FileInfo.frames;
+        m_GUIArgs.MaxTime = GetLength();
      }
-     else m_GUIArgs.MaxTime = m_FileInfo.frames / 2;
+     else m_GUIArgs.MaxTime = GetLength() / 2;
 #else
      if (m_File.IsOpen ()) m_File.Close ();
      m_File.Open (m_GUIArgs.FileName, WavFile::READ);
