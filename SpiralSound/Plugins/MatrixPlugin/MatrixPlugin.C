@@ -206,6 +206,13 @@ void MatrixPlugin::Execute()
 					ExternalClockTriggered=true;
 				}
 			}
+			
+			// reset the position on a signal from input 1
+			if (InputExists(0) && GetInput(0,n)!=0)
+			{
+				m_Step=-1;
+				ExternalClockTriggered=true;
+			}
 		}
 			
 			
