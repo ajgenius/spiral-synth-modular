@@ -44,7 +44,8 @@ if test $ac_arg_jack = "Y" ; then
 	SampleHoldPlugin ScopePlugin SmoothPlugin SplitterPlugin StereoMixerPlugin StreamPlugin\
 	WaveTablePlugin LADSPAPlugin XFadePlugin PoshSamplerPlugin SeqSelectorPlugin\
 	DistributorPlugin LFOPlugin KeyboardPlugin DiskWriterPlugin FormantFilterPlugin \
-	AnotherFilterPlugin JackPlugin"
+        SplitSwitchPlugin MixSwitchPlugin MeterPlugin WaveShaperPlugin \
+        AnotherFilterPlugin JackPlugin"
 else
 	PLUGINLIST="AmpPlugin ControllerPlugin DelayPlugin EchoPlugin EnvFollowerPlugin \
 	EnvelopePlugin FilterPlugin MatrixPlugin MidiPlugin MixerPlugin MoogFilterPlugin \
@@ -52,6 +53,7 @@ else
 	SampleHoldPlugin ScopePlugin SmoothPlugin SplitterPlugin StereoMixerPlugin StreamPlugin\
 	WaveTablePlugin LADSPAPlugin XFadePlugin PoshSamplerPlugin SeqSelectorPlugin\
 	DistributorPlugin LFOPlugin KeyboardPlugin DiskWriterPlugin FormantFilterPlugin \
+        SplitSwitchPlugin MixSwitchPlugin MeterPlugin WaveShaperPlugin \
 	AnotherFilterPlugin"
 	
 	fi
@@ -126,8 +128,8 @@ SpiralSound/Plugins/ControllerPlugin/Makefile
 SpiralSound/Plugins/DelayPlugin/Makefile 
 SpiralSound/Plugins/DiskWriterPlugin/Makefile
 SpiralSound/Plugins/DistributorPlugin/Makefile
-SpiralSound/Plugins/EchoPlugin/Makefile 
-SpiralSound/Plugins/EnvFollowerPlugin/Makefile 
+SpiralSound/Plugins/EchoPlugin/Makefile
+SpiralSound/Plugins/EnvFollowerPlugin/Makefile
 SpiralSound/Plugins/EnvelopePlugin/Makefile
 SpiralSound/Plugins/FilterPlugin/Makefile
 SpiralSound/Plugins/FormantFilterPlugin/Makefile
@@ -136,6 +138,7 @@ SpiralSound/Plugins/KeyboardPlugin/Makefile
 SpiralSound/Plugins/LADSPAPlugin/Makefile
 SpiralSound/Plugins/LFOPlugin/Makefile
 SpiralSound/Plugins/MatrixPlugin/Makefile
+SpiralSound/Plugins/MeterPlugin/Makefile
 SpiralSound/Plugins/MidiPlugin/Makefile
 SpiralSound/Plugins/MixerPlugin/Makefile
 SpiralSound/Plugins/MoogFilterPlugin/Makefile
@@ -155,6 +158,8 @@ SpiralSound/Plugins/StreamPlugin/Makefile
 SpiralSound/Plugins/WaveShaperPlugin/Makefile
 SpiralSound/Plugins/WaveTablePlugin/Makefile
 SpiralSound/Plugins/XFadePlugin/Makefile
+SpiralSound/Plugins/SplitSwitchPlugin/Makefile
+SpiralSound/Plugins/MixSwitchPlugin/Makefile
 SpiralSynthPluginLocation.h
 Makefile
 )
