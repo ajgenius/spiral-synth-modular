@@ -66,7 +66,6 @@ inline void SplitSwitchPluginGUI::cb_Switch_i (Fl_Counter* o, void* v) {
   if (o->value()<1 || o->value() > m_Chans->value ())
     o->value (1);
   m_GUICH->Set ("Switch", int (o->value ()));
-  m_GUICH->SetCommand (SplitSwitchPlugin::SETSWITCH);
 }
 
 void SplitSwitchPluginGUI::cb_Switch (Fl_Counter* o, void* v) {

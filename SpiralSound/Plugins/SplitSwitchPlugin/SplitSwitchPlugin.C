@@ -75,8 +75,6 @@ void SplitSwitchPlugin::ExecuteCommands () {
     switch (m_AudioCH->GetCommand()) {
       case (SETCHANS)  : SetChans (m_GUIArgs.Chans);
                          break;
-      case (SETSWITCH) : SetSwitch (m_GUIArgs.Switch);
-                         break;
     }
   }
 }
@@ -101,13 +99,10 @@ void SplitSwitchPlugin::SetChans (int n) {
   UpdatePluginInfoWithHost ();
 }
 
-void SplitSwitchPlugin::SetSwitch (int n) {
-  m_SwitchPos=(m_GUIArgs.Switch - 1) % (m_PluginInfo.NumOutputs - 1);
-}
-
 void SplitSwitchPlugin::Execute() {
   int n;
   int NumChans = m_PluginInfo.NumOutputs - 1;
+  m_SwitchPos=(m_GUIArgs.Switch - 1) % (m_PluginInfo.NumOutputs - 1);
   for (n=1; n<m_PluginInfo.NumOutputs; n++) GetOutputBuf(n)->Zero();
   if (InputExists (2)) {
     for (n=0; n<m_HostInfo->BUFSIZE; n++) {

@@ -34,7 +34,7 @@ class SplitSwitchPlugin : public SpiralPlugin {
     virtual void StreamIn (istream &s);
     int GetSwitch (void) { return m_SwitchPos + 1; }
     int GetChans (void) { return m_PluginInfo.NumOutputs - 1; }
-    enum GUICommands {NONE, SETCHANS, SETSWITCH};
+    enum GUICommands {NONE, SETCHANS};
     struct GUIArgs {
       int Chans;
       int Switch;
