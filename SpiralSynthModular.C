@@ -192,11 +192,10 @@ void SynthModular::UpdatePluginGUIs()
 		
 		if (i->second->m_DeviceGUI->Killed())
 		{
+			PauseAudio();
 			if (i->second->m_Device) 
 			{
-				PauseAudio();
 				delete i->second->m_Device;
-				ResumeAudio();
 			}
 			
 			if (i->second->m_DeviceGUI->GetPluginWindow())
@@ -211,6 +210,7 @@ void SynthModular::UpdatePluginGUIs()
 			//delete i->second->m_DeviceGUI;			
 			
 			m_DeviceWinMap.erase(i);
+			ResumeAudio();
 			break;
 		}
 	}
