@@ -71,6 +71,9 @@ public:
 	int  Load(Sample &data);
 	int  Save(short *data, int Bytes);
 	int  Load(short *data);
+
+	int  Save(float *left, float *right, int Length);
+	
 	int  SeekToChunk(int Pos);
 	int  LoadChunk(int NumSamples, Sample &ldata, Sample &rdata);
 	int  GetSize(); // in samples

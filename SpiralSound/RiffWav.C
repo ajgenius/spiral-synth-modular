@@ -57,6 +57,37 @@ static void swap_be_to_le_float(float *a)
 	*a = tmp;
 }
 
+static void write_float_as_16bit_short(float v, FILE *file)
+{
+	short value=(short)(v*SHRT_MAX);
+	SWAPSHORT(value);
+	fwrite(((char*) &value),2,1,file);
+}
+
+static void write_float_as_24bit_int(float v, FILE *file)
+{
+	char data[3];
+
+	#if __BYTE_ORDER == BIG_ENDIAN
+		data[0] = (int)(v*0x7FFFFF) >> 16;
+		data[1] = ((int)(v*0x7FFFFF) >> 8);
+		data[2] = ((int)(v*0x7FFFFF));
+	#else
+		data[0] = (int)(v*0x7FFFFF);
+		data[1] = ((int)(v*0x7FFFFF) >> 8);
+		data[2] = ((int)(v*0x7FFFFF) >> 16);
+	#endif
+
+	fwrite(data,3,1,file);
+}
+
+static void write_float_as_32bit_float(float v, FILE *file)
+{
+	float value=v;
+	SWAPFLOAT(v);
+	fwrite(((char*) &v),4,1,file);
+}
+
 int WavFile::Open(string FileName, Mode mode, Channels channels)
 {
 	if (m_Stream!=NULL)
@@ -83,7 +114,7 @@ int WavFile::Open(string FileName, Mode mode, Channels channels)
 		m_Header.RiffName[2]='F';
 		m_Header.RiffName[3]='F';
 
-		m_Header.RiffFileLength=HEADERLEN; // bzzt - wrong
+		m_Header.RiffFileLength= 4 + 24 + (8 + m_Header.FmtChannels*m_Header.FmtBitsPerSample/8 * 1 + 1); // bzzt - wrong "1" should be total number of samples
 
 		m_Header.RiffTypeName[0]='W';
 		m_Header.RiffTypeName[1]='A';
@@ -96,12 +127,20 @@ int WavFile::Open(string FileName, Mode mode, Channels channels)
 		m_Header.FmtName[3]=' ';
 
 		m_Header.FmtLength=0x00000010; // length of fmt data (16 bytes)
-		m_Header.FmtTag=0x0001;        // Format tag: 1 = PCM
-		if (channels==STEREO) m_Header.FmtChannels=2;
-		else m_Header.FmtChannels=1;
+		
+		if (WavFile::m_BitsPerSample==32)
+			m_Header.FmtTag=0x0003;        // Format tag: 3 = IEEE FLOAT32
+		else
+			m_Header.FmtTag=0x0001;        // Format tag: 1 = PCM
+			
+		if (channels==STEREO) 
+			m_Header.FmtChannels=2;
+		else 
+			m_Header.FmtChannels=1;
+			
 		m_Header.FmtSamplerate=WavFile::m_Samplerate;
 
-		m_Header.FmtBitsPerSample=WavFile::m_BitsPerSample;
+		m_Header.FmtBitsPerSample=WavFile::m_BitsPerSample;//(WavFile::m_BitsPerSample==24)?32:WavFile::m_BitsPerSample;
 		m_Header.FmtBlockAlign=m_Header.FmtChannels*m_Header.FmtBitsPerSample/8;
 		m_Header.FmtBytesPerSec=m_Header.FmtSamplerate*m_Header.FmtBlockAlign;
 
@@ -123,6 +162,7 @@ int WavFile::Open(string FileName, Mode mode, Channels channels)
 		SWAPINT(m_DataHeader.DataLengthBytes);
 
 		fwrite(&m_Header,1,sizeof(CanonicalWavHeader),m_Stream);
+
 		fwrite(&m_DataHeader,1,sizeof(DataHeader),m_Stream);
 
 		return 1;
@@ -230,58 +270,31 @@ int WavFile::Save(Sample &data)
 		return 0;
 	}
 	
-        int Bps = m_Header.FmtBitsPerSample/8;
+	for (int n=0; n<data.GetLength(); n++)
+	{
+		float m=(float)data[n];
+		if (m<-1) m=-1; if (m>1) m=1;
 
-	// convert to integer for saving
-	if (Bps == 2) {
-		short *temp=new short[data.GetLength()];
-		for (int n=0; n<data.GetLength(); n++)
+		switch (WavFile::m_BitsPerSample)
 		{
-			//clip
-			float v=data[n];
-			if (v<-1) v=-1; if (v>1) v=1;
-			temp[n]=(short)(v*SHRT_MAX);
-			SWAPSHORT(temp[n]);
+			case 16:
+				write_float_as_16bit_short(m, m_Stream);
+			break;	
+
+			case 24:
+				write_float_as_24bit_int(m, m_Stream);
+			break;	
+
+			case 32:
+				write_float_as_32bit_float(m, m_Stream);
+			break;	
+
+			default: return 0;
 		}
-
-		m_DataHeader.DataLengthBytes+=data.GetLength()*Bps;
-		fwrite(temp,sizeof(&temp),data.GetLength()/Bps,m_Stream);
-
-		// leak!
-		delete[] temp;
-	} else if ((Bps == 3)) {
-		int *temp=new int[data.GetLength()];
-		for (int n=0; n<data.GetLength(); n++)
-		{
-			//clip
-			float v=data[n];
-			if (v<-1) v=-1; if (v>1) v=1;
-			temp[n]=(int)(v*INT_MAX);
-			SWAPINT(temp[n]);
-		}
-
-		m_DataHeader.DataLengthBytes+=data.GetLength()*Bps;
-		fwrite(temp,sizeof(&temp),data.GetLength()/Bps,m_Stream);
-
-		// leak!
-		delete[] temp;
-	} else if ((Bps == 4)) {
-		float *temp=new float[data.GetLength()];
-		for (int n=0; n<data.GetLength(); n++)
-		{
-			//clip
-			float v=data[n];
-			if (v<-1.0) v=-1.0; if (v>1.0) v=1.0;
-			temp[n]=v;
-			SWAPFLOAT(temp[n]);
-		}
-
-		m_DataHeader.DataLengthBytes+=data.GetLength()*Bps;
-		fwrite(temp,sizeof(&temp),data.GetLength()/Bps,m_Stream);
-
-		// leak!
-		delete[] temp;
 	}
+	
+	m_DataHeader.DataLengthBytes+=data.GetLength()*(WavFile::m_BitsPerSample/8);
+
 	return 1;
 }
 
@@ -297,10 +310,49 @@ int WavFile::Save(short *data, int Bytes)
 	return 1;
 }
 
+int WavFile::Save(float *left, float *right, int Length)
+{
+	if (m_Stream==NULL || left==NULL || right==NULL)
+	{
+		return 0;
+	}
+
+	for (int n=0; n<Length; n++)
+	{
+		float l=(float)left[n],r=(float)right[n];
+		if (l<-1) l=-1; if (l>1) l=1;
+		if (r<-1) r=-1; if (r>1) r=1;
+
+		switch (WavFile::m_BitsPerSample)
+		{
+			case 16:
+				write_float_as_16bit_short(l, m_Stream);
+				write_float_as_16bit_short(r, m_Stream);
+			break;	
+
+			case 24:
+				write_float_as_24bit_int(l, m_Stream);
+				write_float_as_24bit_int(r, m_Stream);
+			break;	
+
+			case 32:
+				write_float_as_32bit_float(l, m_Stream);
+				write_float_as_32bit_float(r, m_Stream);
+			break;	
+
+			default: return 0;
+		}
+	}
+	
+	m_DataHeader.DataLengthBytes+=Length*2*(WavFile::m_BitsPerSample/8);
+
+	return 1;
+}
+
 int WavFile::GetSize()
 {	
         int Bps = m_Header.FmtBitsPerSample/8;
-	if ((Bps<1) || (Bps>3))
+	if ((Bps<1) || (Bps>4))
 	{
 		cerr<<"WavFile Warning: FmtBitsPerSample="<<m_Header.FmtBitsPerSample<<" (can't cope, treating as 16)"<<endl;
 		m_Header.FmtBitsPerSample=16;
