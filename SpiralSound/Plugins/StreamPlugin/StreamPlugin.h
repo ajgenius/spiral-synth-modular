@@ -44,15 +44,12 @@ class StreamPlugin : public SpiralPlugin
 public:
 	enum Mode{PLAYM,STOPM};
 
-	enum GUICommands{LOAD,RESTART,STOP,PLAY,HALF,RESET,DOUBLE,NUDGE,SET_TIME};
-
  	StreamPlugin();
 	virtual ~StreamPlugin();
 	
 	virtual PluginInfo &Initialise(const HostInfo *Host);
 	virtual SpiralGUIType *CreateGUI();
 	virtual void Execute();
-	virtual void ExecuteCommands();
 	virtual void StreamOut(ostream &s);
 	virtual void StreamIn(istream &s);
 	
@@ -88,10 +85,6 @@ private:
 	float m_GlobalPos;
 	float m_Pitch;
 	Mode  m_Mode;
-
-	char m_FileNameArg[256];
-	float m_TimeArg;
-	float m_TimeOut;
 };
 
 #endif

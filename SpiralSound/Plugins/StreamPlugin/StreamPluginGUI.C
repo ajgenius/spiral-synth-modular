@@ -26,21 +26,15 @@ static const int GUIBG_COLOUR = 144;
 static const int GUIBG2_COLOUR = 145;
 char PitchLabel[256];
 
-bool StreamPluginGUI::TimerSet=false;
-vector<StreamPluginGUI*> StreamPluginGUI::PluginList;
-
 ////////////////////////////////////////////
 
-StreamPluginGUI::StreamPluginGUI(int w, int h,StreamPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
-SpiralPluginGUI(w,h,o,ch)
+StreamPluginGUI::StreamPluginGUI(int w, int h,StreamPlugin *o,const HostInfo *Info) :
+SpiralPluginGUI(w,h,o)
 {	
-
-	StartTimer(this);
+	m_Plugin=o;
+		
 	int Width=20;
 	int Height=100;
-	//What are Width and Height for.
-
-	m_PitchValue=1.0f;
 		
 	m_Load = new Fl_Button(2, 130, 30, 30, "Load");
     m_Load->labelsize(9);
@@ -164,17 +158,8 @@ SpiralPluginGUI(w,h,o,ch)
 	end();
 }
 
-StreamPluginGUI::~StreamPluginGUI()
+void StreamPluginGUI::SetTime(float t)
 {
-	cerr << "~StreamPluginGUI" << endl;
-	StopTimer(this);
-}
-
-void StreamPluginGUI::SetTime()
-{
-	cerr << "foo" << endl;
-	float t=m_GUICH->GetFloat("TimeOut");
-
 	m_Pos->value(t);
 
 	m_Display[5]->value((int)(t*100)%10);
@@ -189,13 +174,11 @@ void StreamPluginGUI::SetTime()
 }
 
 
-void StreamPluginGUI::UpdateValues(SpiralPlugin *o)
+void StreamPluginGUI::UpdateValues()
 {
-	StreamPlugin *Plugin = (StreamPlugin*)o;
-
-	m_Volume->value(Plugin->GetVolume());
-	m_Pitch->value(Plugin->GetPitch()+10);
-	m_Loop->value(Plugin->GetLoop());
+	m_Volume->value(m_Plugin->GetVolume());
+	m_Pitch->value(m_Plugin->GetPitch()+10);
+	m_Loop->value(m_Plugin->GetLoop());
 }
 	
 inline void StreamPluginGUI::cb_Load_i(Fl_Button* o, void* v)
@@ -204,36 +187,33 @@ inline void StreamPluginGUI::cb_Load_i(Fl_Button* o, void* v)
 		
 	if (fn && fn!='\0')
 	{
-		strcpy(m_TextBuf,fn);
-		m_GUICH->Set("FileName",m_TextBuf);
-		m_GUICH->SetCommand(StreamPlugin::LOAD);
+		m_Plugin->OpenStream(fn); 	
 	}
 }
 void StreamPluginGUI::cb_Load(Fl_Button* o, void* v)
 { ((StreamPluginGUI*)(o->parent()))->cb_Load_i(o,v);}
 
 inline void StreamPluginGUI::cb_Volume_i(Fl_Knob* o, void* v)
-{ m_GUICH->Set("Volume",(float)o->value()); }
+{ m_Plugin->SetVolume(o->value()); }
 void StreamPluginGUI::cb_Volume(Fl_Knob* o, void* v)
 { ((StreamPluginGUI*)(o->parent()))->cb_Volume_i(o,v);}
 
 inline void StreamPluginGUI::cb_Pitch_i(Fl_Slider* o, void* v)
 { 
-	m_GUICH->Set("Pitch",(float)o->value()-10); 
+	m_Plugin->SetPitch(o->value()-10); 
 	sprintf(PitchLabel,"%1.3f   ",o->value()-10);
 	m_Pitch->label(PitchLabel); 
-	m_PitchValue=o->value()-10;
 }
 void StreamPluginGUI::cb_Pitch(Fl_Slider* o, void* v)
 { ((StreamPluginGUI*)(o->parent()))->cb_Pitch_i(o,v);}
 
-inline void StreamPluginGUI::cb_Loop_i(Fl_Button* o, void* v) //Why is this function named so.
+inline void StreamPluginGUI::cb_Loop_i(Fl_Button* o, void* v)
 { 
-	m_PitchValue*=2.0f;
-	m_GUICH->SetCommand(StreamPlugin::DOUBLE);
-	sprintf(PitchLabel,"%1.3f   ",m_PitchValue);
+	float p=m_Plugin->GetPitch()*2;
+	m_Plugin->SetPitch(p);
+	sprintf(PitchLabel,"%1.3f   ",p);
 	m_Pitch->label(PitchLabel); 
-	m_Pitch->value(m_PitchValue+10); 
+	m_Pitch->value(p+10); 
 	redraw();
 }
 void StreamPluginGUI::cb_Loop(Fl_Button* o, void* v)
@@ -241,38 +221,37 @@ void StreamPluginGUI::cb_Loop(Fl_Button* o, void* v)
 
 inline void StreamPluginGUI::cb_Div_i(Fl_Button* o, void* v)
 { 
-	m_PitchValue/=2.0f;
-	m_GUICH->SetCommand(StreamPlugin::HALF);
-	sprintf(PitchLabel,"%1.3f   ",m_PitchValue);
+	float p=m_Plugin->GetPitch()/2.0f;
+	m_Plugin->SetPitch(p);
+	sprintf(PitchLabel,"%1.3f   ",p);
 	m_Pitch->label(PitchLabel); 
-	m_Pitch->value(m_PitchValue+10); 
+	m_Pitch->value(p+10); 
 	redraw();
 }
 void StreamPluginGUI::cb_Div(Fl_Button* o, void* v)
 { ((StreamPluginGUI*)(o->parent()))->cb_Div_i(o,v);}
 
 inline void StreamPluginGUI::cb_ToStart_i(Fl_Button* o, void* v)
-{ m_GUICH->SetCommand(StreamPlugin::RESTART); }
+{ m_Plugin->Restart(); }
 void StreamPluginGUI::cb_ToStart(Fl_Button* o, void* v)
 { ((StreamPluginGUI*)(o->parent()))->cb_ToStart_i(o,v);}
 
 inline void StreamPluginGUI::cb_Stop_i(Fl_Button* o, void* v)
-{ m_GUICH->SetCommand(StreamPlugin::STOP); }
+{ m_Plugin->Stop(); }
 void StreamPluginGUI::cb_Stop(Fl_Button* o, void* v)
 { ((StreamPluginGUI*)(o->parent()))->cb_Stop_i(o,v);}
 
 inline void StreamPluginGUI::cb_Play_i(Fl_Button* o, void* v)
-{ m_GUICH->SetCommand(StreamPlugin::PLAY); }
+{ m_Plugin->Play(); }
 void StreamPluginGUI::cb_Play(Fl_Button* o, void* v)
 { ((StreamPluginGUI*)(o->parent()))->cb_Play_i(o,v);}
 
 inline void StreamPluginGUI::cb_Reset_i(Fl_Button* o, void* v)
 { 
-	m_GUICH->SetCommand(StreamPlugin::RESET);
+	m_Plugin->SetPitch(1);
 	sprintf(PitchLabel,"%1.3f   ",1.0);
 	m_Pitch->label(PitchLabel); 
 	m_Pitch->value(11);
-	m_PitchValue=1.0f;
 	redraw();
 }
 void StreamPluginGUI::cb_Reset(Fl_Button* o, void* v)
@@ -280,50 +259,13 @@ void StreamPluginGUI::cb_Reset(Fl_Button* o, void* v)
 
 inline void StreamPluginGUI::cb_Nudge_i(Fl_Button* o, void* v)
 { 
-	m_GUICH->SetCommand(StreamPlugin::NUDGE); 
+	m_Plugin->Nudge(); 
 }
 void StreamPluginGUI::cb_Nudge(Fl_Button* o, void* v)
 { ((StreamPluginGUI*)(o->parent()))->cb_Nudge_i(o,v);}
 
 inline void StreamPluginGUI::cb_Pos_i(Fl_Slider* o, void* v)
-{
-	m_GUICH->Set("Time",(float)o->value());
-	m_GUICH->SetCommand(StreamPlugin::SET_TIME);
-}
+{ m_Plugin->SetTime(o->value()); }
 void StreamPluginGUI::cb_Pos(Fl_Slider* o, void* v)
 { ((StreamPluginGUI*)(o->parent()))->cb_Pos_i(o,v);}
 
-//The timer stuff
-
-#define TIME_OUT_DURATION 0.01
-//This is temparary, should use a variable, and let it be set from the command line ore something.
-
-void StreamPluginGUI::StartTimer(StreamPluginGUI* p)
-{
-	if (!TimerSet)
-	{
-		Fl::add_timeout(TIME_OUT_DURATION,&StreamPluginGUI::TimerCallBack);
-		TimerSet=True;
-	}
-	PluginList.push_back(p);
-}
-
-void StreamPluginGUI::StopTimer(StreamPluginGUI* p)
-{
-	cerr << "StopTimer" << endl;
-	for (vector<StreamPluginGUI*>::iterator i=PluginList.begin();i!=PluginList.end();i++)
-		if ((*i)==p)
-			i=PluginList.erase(i);
-}
-
-//If Spiral synth modular unloaded the .so file this is in, the timeout
-//would probably cause a problem
-void StreamPluginGUI::TimerCallBack(void* x)
-{
-	/*for(vector<const StreamPluginGUI*>::iterator i=PluginList.begin();
-		i!=PluginList.end();i++)
-	{*/
-	for (vector<StreamPluginGUI*>::iterator i=PluginList.begin();i!=PluginList.end();i++)
-		(*i)->SetTime();
-	Fl::add_timeout(TIME_OUT_DURATION,&StreamPluginGUI::TimerCallBack);
-}
