@@ -69,10 +69,10 @@ SpiralPluginGUI(w,h,o,ch),
 m_Bypass(false) 
 {	
     m_Scope = new ScopeWidget(5, 20, 210, 85, "Scope", Info->BUFSIZE);
- 	Bypass = new Fl_Button(175, 107, 40, 16, "Bypass");
+ 	/*Bypass = new Fl_Button(175, 107, 40, 16, "Bypass");
   	Bypass->labelsize(10);
     Bypass->type(1);
-  	Bypass->callback((Fl_Callback*)cb_Bypass);
+  	Bypass->callback((Fl_Callback*)cb_Bypass);*/
 	end();
 }
 

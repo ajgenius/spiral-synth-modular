@@ -55,6 +55,7 @@ m_Loop(true),
 m_NoteCut(false),
 m_Current(0),
 m_GUICurrent(0),
+m_CurPatSeq(0),
 m_CurrentNoteCV(0),
 m_CurrentTriggerCV(0),
 m_Triggered(false),
@@ -63,10 +64,10 @@ m_CopyPattern(0),
 m_PatAdvance(false),
 m_PatReset(false)
 {
-	m_Version=3;
+	m_Version=4;
 
 	m_PluginInfo.Name="Matrix";
-	m_PluginInfo.Width=560;
+	m_PluginInfo.Width=600;
 	m_PluginInfo.Height=270;
 	m_PluginInfo.NumInputs=5;
 	m_PluginInfo.NumOutputs=19;		
@@ -113,6 +114,11 @@ m_PatReset(false)
 		m_TriggerLevel[n]=0;
 	}
 	
+	for (int n=0; n<NUM_PATSEQ; n++)
+	{
+		m_PatSeq[n]=0;
+	}
+	
 	m_AudioCH->Register("NoteCut",&m_NoteCut,ChannelHandler::INPUT);
 	m_AudioCH->Register("Volume",&m_GUIArgs.Volume,ChannelHandler::INPUT);
 	m_AudioCH->Register("Current",&m_GUICurrent,ChannelHandler::INPUT);
@@ -124,6 +130,7 @@ m_PatReset(false)
 	m_AudioCH->Register("Y",&m_GUIArgs.Y,ChannelHandler::INPUT);
 	m_AudioCH->Register("Octave",&m_GUIArgs.Octave,ChannelHandler::INPUT);
 	m_AudioCH->Register("Step",&m_Step,ChannelHandler::OUTPUT);
+	m_AudioCH->Register("PatSeqStep",&m_CurPatSeq,ChannelHandler::OUTPUT);
 	m_AudioCH->RegisterData("Matrix",ChannelHandler::OUTPUT_REQUEST,&m_Matrix,sizeof(m_Matrix));
 }
 
@@ -220,42 +227,12 @@ void MatrixPlugin::Execute()
 			{
 				m_Step=-1;
 				ExternalClockTriggered=true;
+				m_CurPatSeq++;
+				if (m_PatSeq[m_CurPatSeq]==-1 || m_CurPatSeq==NUM_PATSEQ) m_CurPatSeq=0;
+				m_Current=m_PatSeq[m_CurPatSeq];
 			}
 		}
-/* not yet...			
-		// external pattern advance
-		if (GetInput(5,n)>0)
-		{
-			if (!m_PatAdvance)
-			{
-				m_Current++;
-				if (m_Current==16) m_Current=0;
-				m_PatAdvance=true;
-				m_Step=-1;
-				ExternalClockTriggered=true;
-			}
-		}
-		else
-		{
-			m_PatAdvance=false;
-		}
-		
-		// external pattern reset
-		if (GetInput(6,n)>0)
-		{
-			if (!m_PatReset)
-			{
-				m_Current=0;
-				m_PatReset=true;
-				m_Step=-1;
-				ExternalClockTriggered=true;
-			}
-		}
-		else
-		{
-			m_PatReset=false;
-		}	
-*/		
+	
 		// An external clock pulse overrides the internal timing
 		if ((!ExternalClock && m_Time>=m_StepTime*(1/m_Matrix[m_Current].Speed)) ||
 			(ExternalClock && ExternalClockTriggered)) 
@@ -263,11 +240,13 @@ void MatrixPlugin::Execute()
 			m_Time=0;
 			m_Step++;
 			
-			
 			if (m_Step >= m_Matrix[m_Current].Length) 
 			{
 				SetOutput(18, n, 1);
 				m_Step=0;
+				m_CurPatSeq++;
+				if (m_PatSeq[m_CurPatSeq]==-1 || m_CurPatSeq==NUM_PATSEQ) m_CurPatSeq=0;
+				m_Current=m_PatSeq[m_CurPatSeq];
 			}
 						
 			// Reset the values
@@ -284,7 +263,6 @@ void MatrixPlugin::Execute()
 			{
 				if (m_Matrix[m_Current].Matrix[m_Step][i])
 				{
-				
 					m_CurrentNoteCV=NoteTable[i+m_Matrix[m_Current].Octave*12];
 					m_CurrentTriggerCV=m_Matrix[m_Current].Volume[m_Step][i];
 					m_TriggerLevel[i]=m_Matrix[m_Current].Volume[m_Step][i];
@@ -343,6 +321,9 @@ void MatrixPlugin::ExecuteCommands()
 			break;
 			case SET_CURRENT : 
 				m_Current=m_GUIArgs.Num; 
+			break;
+			case SET_PATSEQ : 
+				m_PatSeq[m_GUIArgs.Y]=m_GUIArgs.Num;
 			break;
 		}
 	}
@@ -425,6 +406,12 @@ void MatrixPlugin::StreamOut(ostream &s)
 		}
 		s<<"-1 ";
 	}
+	s<<endl;
+	for (int n=0; n<NUM_PATSEQ; n++)	
+	{
+		s<<m_PatSeq[n]<<" ";
+	}
+
 }
 
 void MatrixPlugin::StreamIn(istream &s)
@@ -472,6 +459,7 @@ void MatrixPlugin::StreamIn(istream &s)
 		} break;
 		
 		case 3:
+		case 4:
 		{
 			s>>m_Current>>m_Time>>m_Step>>m_Loop>>m_NoteCut;
 	
@@ -495,6 +483,15 @@ void MatrixPlugin::StreamIn(istream &s)
 					}
 				}
 			}
+			
+			if (version>3)
+			{
+				for (int n=0; n<NUM_PATSEQ; n++)	
+				{
+					s>>m_PatSeq[n];
+				}
+			}
+			
 		} break;
 	}
 }

@@ -79,13 +79,13 @@ inline void SpiralPluginGUI::cb_Help_i(Fl_Button* o, void* v)
 { 
 	if (m_HelpWin==NULL)
 	{
-		int w=330,h=200;
+		int w=450,h=200;
 		m_HelpWin = new Fl_Double_Window(w,h,"Help");
 
 		Fl_Text_Display* text = new Fl_Text_Display(0,0,10,10);
 		text->buffer(new Fl_Text_Buffer);
 		text->insert(GetHelpText(SpiralInfo::LOCALE).c_str());
-		text->textsize(10);
+		text->textsize(12);
 		m_HelpWin->add(text);
 		m_HelpWin->resizable(text);
 		m_HelpWin->show();

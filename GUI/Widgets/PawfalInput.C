@@ -26,6 +26,7 @@ bool Pawfal_Input(const char *a, const char *b, char *out)
                 strcpy(out,pi.getText());
 		return true;
 	}
+	
 	return false;
 }
 

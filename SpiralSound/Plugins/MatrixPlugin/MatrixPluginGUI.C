@@ -101,7 +101,8 @@ void Fl_MatrixButton::cb_Vol(Fl_Slider* o, void* v)
 
 MatrixPluginGUI::MatrixPluginGUI(int w, int h,MatrixPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch),
-m_LastLight(0)
+m_LastLight(0),
+m_LastPatSeqLight(0)
 {	
 	//size_range(10,10);
 	m_NoteCut = new Fl_Button (5, h-30, 85, 20,"NoteCut");
@@ -236,6 +237,28 @@ m_LastLight(0)
 		add(m_Flash[x]);
 	}
 	
+	xoff=560;
+	yoff=40;
+	int height=12,gap=2;
+	
+	Fl_Box *patseqlabel = new Fl_Box(xoff,yoff-15,30,10,"Pat Seq");
+	patseqlabel->labelsize(10);
+	add(patseqlabel);
+	
+	for(int y=0; y<NUM_PATSEQ; y++)
+	{
+		m_PatSeq[y]= new Fl_Counter(xoff,yoff+y*(height+gap),25,height);
+		m_PatSeq[y]->type(FL_SIMPLE_COUNTER);
+		m_PatSeq[y]->step(1);
+		m_PatSeq[y]->textsize(8);
+		m_PatSeq[y]->callback((Fl_Callback*)cb_PatSeq,(void*)&Numbers[y]);
+		add(m_PatSeq[y]);
+		
+		m_PatSeqFlash[y] = new Fl_LED_Button(xoff+25,yoff+y*(height+gap),15,15,"");
+		m_PatSeqFlash[y]->selection_color(FL_WHITE);
+		add(m_PatSeqFlash[y]);
+	}
+	
 	end();
 }
 
@@ -247,6 +270,14 @@ void MatrixPluginGUI::Update()
 		m_Flash[Light]->value(1);
 		m_Flash[m_LastLight]->value(0);
 		m_LastLight=Light;
+		
+		int PatSeqLight=m_GUICH->GetInt("PatSeqStep");
+		if (PatSeqLight!=m_LastPatSeqLight)
+		{
+			m_PatSeqFlash[PatSeqLight]->value(1);
+			m_PatSeqFlash[m_LastPatSeqLight]->value(0);
+			m_LastPatSeqLight=PatSeqLight;
+		}			
 	}
 }
 
@@ -265,7 +296,12 @@ void MatrixPluginGUI::UpdateValues(SpiralPlugin *o)
 	{
 		m_Matrix[x][y]->value(Plugin->GetPattern()->Matrix[x][y]);
 		m_Matrix[x][y]->SetVolume(Plugin->GetPattern()->Volume[x][y]);
-	}        
+	}
+	        
+	for(int n=0; n<NUM_PATSEQ; n++)
+	{
+		m_PatSeq[n]->value(Plugin->GetPatSeq(n));
+	}
 }
 	
 void MatrixPluginGUI::UpdateMatrix()
@@ -441,6 +477,17 @@ void MatrixPluginGUI::cb_TransDnBtn (Fl_Button* o, void* v)
      ((MatrixPluginGUI*)(o->parent())) -> cb_TransDnBtn_i (o, v);
 }
 
+inline void MatrixPluginGUI::cb_PatSeq_i(Fl_Counter* o, void* v)
+{ 	
+	if (o->value()<-1) o->value(-1);
+	if (o->value()>NUM_PATTERNS-1) o->value(NUM_PATTERNS-1);
+	m_GUICH->Set("Num",(int)o->value());
+	m_GUICH->Set("Y",*(int*)v);
+	m_GUICH->SetCommand(MatrixPlugin::SET_PATSEQ);
+}
+void MatrixPluginGUI::cb_PatSeq(Fl_Counter* o, void* v)
+{ ((MatrixPluginGUI*)(o->parent()))->cb_PatSeq_i(o,v);}
+
 const string MatrixPluginGUI::GetHelpText(const string &loc){
     return string("")
     + "This is a matrix style step sequencer for techno purists. Great for\n" 
@@ -465,5 +512,10 @@ const string MatrixPluginGUI::GetHelpText(const string &loc){
 	+ "oscillator clock. To allow you to sync these matrixes, the matrix is\n"
 	+ "provided with a Reset Trigger, which when plugged into the Play Trigger\n"
 	+ "of another matrix, will synch the two so they start at the same clock\n" 
-	+ "pulse.";
+	+ "pulse.\n\n"
+	+ "On the right hand side of the matrix you will find the pattern sequencer\n"
+	+ "this will advance each time a full pattern is played, and you can use it\n"
+	+ "to select which pattern will be played next. There are a maximum of 16\n"
+	+ "patterns to the sequence, but you can use less by setting a slot to -1\n"
+	+ "this will cause the sequence to loop back to zero";
 }

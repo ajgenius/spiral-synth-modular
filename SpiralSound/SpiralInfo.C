@@ -95,7 +95,8 @@ void SpiralInfo::StreamOutPrefs(ostream &s)
 
 void SpiralInfo::Alert(string Text)
 {
-	fl_message(Text.c_str());
+	//fl_message(Text.c_str());
+	cerr<<"Spiral alert: "<<Text<<endl;
 }
 
 void SpiralInfo::Log(string Text)

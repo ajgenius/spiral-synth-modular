@@ -25,6 +25,7 @@
 static const int MATX         = 64;
 static const int MATY         = 32;
 static const int NUM_PATTERNS = 16;
+static const int NUM_PATSEQ   = 16;
 
 struct Pattern
 {
@@ -52,9 +53,11 @@ public:
 	int   GetCurrent()               { return m_Current; }
 	float GetStepTime()              { return m_StepTime; }
 	Pattern* GetPattern() 			 { return &m_Matrix[m_Current]; }
+	int   GetPatSeq(int n)           { return m_PatSeq[n]; }
 		
 	enum GUICommands{NONE,MAT_LENGTH,MAT_SPEED,MAT_ACTIVATE,MAT_DEACTIVATE,
-						MAT_OCTAVE,COPY,PASTE,CLEAR,TUP,TDOWN,MAT_VOLUME,SET_CURRENT};
+					 MAT_OCTAVE,COPY,PASTE,CLEAR,TUP,TDOWN,MAT_VOLUME,
+					 SET_CURRENT,SET_PATSEQ};
 	
 	struct GUIArgs
 	{
@@ -89,6 +92,8 @@ private:
 	int   m_GUICurrent;
 	Pattern m_Matrix[NUM_PATTERNS];
 	float m_TriggerLevel[MATY];
+	int   m_PatSeq[NUM_PATSEQ];
+	int   m_CurPatSeq;
 	
 	float m_CurrentNoteCV;
 	float m_CurrentTriggerCV;

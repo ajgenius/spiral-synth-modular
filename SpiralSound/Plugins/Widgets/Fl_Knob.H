@@ -3,7 +3,7 @@
 #ifndef Fl_Knob_H
 #define Fl_Knob_H
 #include <FL/Fl.H>
-#include <Fl/Fl_Valuator.H>
+#include <FL/Fl_Valuator.H>
 
 class Fl_Knob : public Fl_Valuator {
 public:

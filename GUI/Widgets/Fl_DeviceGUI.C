@@ -135,7 +135,7 @@ int  Fl_DeviceGUI::handle(int event)
 		m_IconButton->show();
 	}
 	
-	return t;
+	return 1;
 }
 
 void  Fl_DeviceGUI::Minimise()
@@ -159,6 +159,7 @@ void  Fl_DeviceGUI::Maximise()
 	
 	m_PluginWindow->show();
 	m_IconButton->hide();
+	((Fl_Canvas*)parent())->ToTop(this);
 }
 
 void  Fl_DeviceGUI::Resize(int width, int height)
@@ -173,7 +174,11 @@ void  Fl_DeviceGUI::Resize(int width, int height)
 		m_PortVec[n]->position(x()+width-8,m_PortVec[n]->y());
 	}
 	
-	position(x()+(oldw-w())/2,y()+(oldh-h())/2);
+	position(x()+(oldw-w())/2,y()+(oldh-h())/2);	
+	
+	int Centx=x()+w()/2;
+	int Centy=y()+h()/2;
+	m_IconButton->position(Centx-m_Icon->w()/2,Centy-m_Icon->h()/2);
 }
 
 void Fl_DeviceGUI::Setup(const DeviceGUIInfo& Info, bool FirstTime)

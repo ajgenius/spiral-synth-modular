@@ -81,6 +81,7 @@ private:
 	int Numbers[MATX*MATY];
 	Pattern m_GUIMatrix[NUM_PATTERNS];
 	int m_LastLight;
+	int m_LastPatSeqLight;
 	
 	Fl_Button*  m_NoteCut;
 	Fl_Counter* m_Pattern;
@@ -97,6 +98,9 @@ private:
 	Fl_Box* m_TransLbl;
     Fl_Button* m_TransUpBtn;
 	Fl_Button* m_TransDnBtn;
+
+	Fl_Counter* m_PatSeq[NUM_PATSEQ];
+	Fl_LED_Button* m_PatSeqFlash[NUM_PATSEQ];
 	
 	//// Callbacks ////
 	inline void cb_Matrix_i(Fl_Button* o, void* v);
@@ -127,6 +131,8 @@ private:
 	static void cb_TransUpBtn (Fl_Button* o, void* v);
     inline void cb_TransDnBtn_i (Fl_Button* o, void* v);
 	static void cb_TransDnBtn (Fl_Button* o, void* v);
+	inline void cb_PatSeq_i(Fl_Counter* o, void* v);
+	static void cb_PatSeq(Fl_Counter* o, void* v); 
 };
 
 #endif

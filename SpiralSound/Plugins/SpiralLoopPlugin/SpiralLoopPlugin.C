@@ -62,9 +62,6 @@ m_LoopPoint(0),
 m_Speed(1.0f),
 m_Volume(1.0f),
 m_RecordingSource(NULL),
-m_Balance(1.0f),
-m_LeftVol(1.0f),
-m_RightVol(1.0f),
 m_FirstRecord(true),
 m_FixedRecord(false),
 m_RecLength(0),
@@ -225,14 +222,30 @@ void SpiralLoopPlugin::ExecuteCommands()
 
 void SpiralLoopPlugin::StreamOut(ostream &s)
 {
-	
+	s<<m_Version; 
+	s<<m_LoopPoint<<" "<<m_Speed<<" "<<m_Volume<<" "<<m_TicksPerLoop<<" ";
+	s<<m_TriggerVec.size()<<" ";
+	for (vector<TriggerInfo>::iterator i=m_TriggerVec.begin();
+		 i!=m_TriggerVec.end(); i++)
+	{
+		s<<i->Channel<<" "<<i->Time<<" ";
+	}
 }
 
 void SpiralLoopPlugin::StreamIn(istream &s)
 {
 	int version;
 	s>>version;
+	s>>m_LoopPoint>>m_Speed>>m_Volume>>m_TicksPerLoop;
+	int size;
+	s>>size;
 	
+	for (int n=0; n<size; n++)
+	{
+		TriggerInfo t;
+		s>>t.Channel>>t.Time;
+		m_TriggerVec.push_back(t);
+	}
 }
 	
 bool SpiralLoopPlugin::SaveExternalFiles(const string &Dir)

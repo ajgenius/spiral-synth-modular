@@ -223,6 +223,13 @@ SpiralPluginGUI(w,h,o,ch)
 
 void SpiralLoopPluginGUI::UpdateValues(SpiralPlugin *o)
 {
+	SpiralLoopPlugin *Plugin=(SpiralLoopPlugin *)o;
+	m_SampleSize=Plugin->GetStoreBuffer()->GetLength();
+	m_LoopGUI->SetData((float*)Plugin->GetStoreBuffer()->GetBuffer(),m_SampleSize);
+	
+	m_Volume->value(Plugin->GetVolume());
+	m_Speed->value(Plugin->GetSpeed());
+	m_Length->value(Plugin->GetLoopLength()/m_SampleSize);
 }
 
 void SpiralLoopPluginGUI::Update()

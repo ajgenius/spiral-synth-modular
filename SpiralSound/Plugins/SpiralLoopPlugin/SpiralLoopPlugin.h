@@ -79,10 +79,8 @@ public:
 	void SetRecordingSource(const float *s) { m_RecordingSource=s; }
 	void Record(bool r) 					{ m_Recording=r; if (!r) EndRecordBuf(); }
 	void DelMe()              				{ m_DelMe=true; }
-	void SetBalance(float s) 	 			{ m_Balance=s; m_LeftVol=(2-s)/2; m_RightVol=(1+s-1.0f)/2;}	
 	void Trigger()							{ m_Pos=0; SetPlaying(true); }
 	
-	const float  GetBalance() 				{return m_Balance;}
 	const bool   IsPlaying() 				{return m_Playing;}
 	const float *GetLoopPtr() 				{return m_StoreBuffer.GetBuffer();}
 	const int    GetId() 					{return m_Id;}
@@ -91,8 +89,7 @@ public:
 	const int    GetTotalLength() 			{assert(m_StoreBuffer.GetLength()==m_DubBuffer.GetLength()); return m_StoreBuffer.GetLength();}
 	const bool   Delete()   				{return m_DelMe; }
 	const float  GetSpeed() 				{return m_Speed;}
-	const float  GetLeftVol()     			{ return m_LeftVol; }
-	const float  GetRightVol()     			{ return m_RightVol; }
+	const float  GetVolume()     			{ return m_Volume; }
 	const float  GetCurrentAngle() 			{ return m_LoopPoint?(m_Pos/m_LoopPoint)*360.0f:0; }
 	const string& GetSampleName()  			{ return m_Sample; }
 	
@@ -106,6 +103,8 @@ public:
 	void Halve();
 	void SelectAll();
 	void Move(int Start);
+	
+	Sample *GetStoreBuffer() { return &m_StoreBuffer; }
 		
 private:
 
@@ -138,8 +137,6 @@ private:
 	Sample m_RecBuffer;
 	Sample m_CopyBuffer;
 	int    m_RecPos;
-	float  m_Balance;
-	float  m_LeftVol,m_RightVol;
 	
 	bool   m_FirstRecord;
 	bool   m_FixedRecord;

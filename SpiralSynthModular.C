@@ -869,9 +869,11 @@ istream &operator>>(istream &s, SynthModular &o)
 				temp->m_Device->SetUpdateInfoCallback(ID,o.cb_UpdatePluginInfo);					
 				o.m_DeviceWinMap[ID]=temp;
 				o.m_DeviceWinMap[ID]->m_Device->StreamIn(s); // load the plugin
+				// load external files
+				o.m_DeviceWinMap[ID]->m_Device->LoadExternalFiles(o.m_FilePath+"_files/");
  				
 				if (ver>1 && o.m_DeviceWinMap[ID]->m_DeviceGUI->GetPluginWindow()) 
-				{
+				{					
 					// set the GUI up with the loaded values
 					// looks messy, but if we do it here, the plugin and it's gui can remain
 					// totally seperated.
@@ -887,9 +889,6 @@ istream &operator>>(istream &s, SynthModular &o)
 						
 					if (ps) o.m_DeviceWinMap[ID]->m_DeviceGUI->Maximise();
 					else o.m_DeviceWinMap[ID]->m_DeviceGUI->Minimise();
-					
-					// load external files
-					o.m_DeviceWinMap[ID]->m_Device->LoadExternalFiles(o.m_FilePath+"_files/");
 				}
 
 				if (o.m_NextID<=ID) o.m_NextID=ID+1;

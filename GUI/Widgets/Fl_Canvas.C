@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */ 
 
-#include "Fl/fl_draw.H"
+#include "FL/fl_draw.H"
 #include "Fl_Canvas.h"
 #include "Fl_DeviceGUI.h"
 #include <iostream>
@@ -36,10 +36,10 @@ cb_AddDevice(NULL),
 m_ToolMenu(false),
 m_UpdateTimer(0)
 {
-	m_IncompleteWire.OutputChild=-1;
+	m_IncompleteWire.OutputID=-1;
 	m_IncompleteWire.OutputPort=-1;
 	m_IncompleteWire.OutputTerminal=false;
-	m_IncompleteWire.InputChild=-1;
+	m_IncompleteWire.InputID=-1;
 	m_IncompleteWire.InputPort=-1;
 	m_IncompleteWire.InputTerminal=false;
 	
@@ -183,17 +183,9 @@ void Fl_Canvas::DrawWires()
 {
 	for(vector<CanvasWire>::iterator i=m_WireVec.begin();
 		i!=m_WireVec.end(); i++)
-	{
-		if (i->OutputChild>children() || i->InputChild>children())
-		{
-			cerr<<"wire output child = "<<i->OutputChild<<endl;
-			cerr<<"wire input child = "<<i->InputChild<<endl;
-			SpiralInfo::Alert("Wire drawing mismatch!");
-			return;
-		}
-			   
-		Fl_DeviceGUI* SourceDevice = (Fl_DeviceGUI*)(child(i->OutputChild));
-		Fl_DeviceGUI* DestDevice   = (Fl_DeviceGUI*)(child(i->InputChild));
+	{  
+		Fl_DeviceGUI* SourceDevice = FindDevice(i->OutputID);
+		Fl_DeviceGUI* DestDevice   = FindDevice(i->InputID);
 			 
 		if (!SourceDevice || !DestDevice) 
 		{
@@ -225,7 +217,7 @@ void Fl_Canvas::DrawWires()
 
 bool Fl_Canvas::UserMakingConnection()
 {
-	return 	(m_IncompleteWire.InputChild!=-1 || m_IncompleteWire.OutputChild!=-1);
+	return 	(m_IncompleteWire.InputID!=-1 || m_IncompleteWire.OutputID!=-1);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -233,9 +225,9 @@ bool Fl_Canvas::UserMakingConnection()
 void Fl_Canvas::DrawIncompleteWire()
 {	
 	// draw the wire we are currently connecting
-	if(m_IncompleteWire.InputChild!=-1)
+	if(m_IncompleteWire.InputID!=-1)
 	{
-		Fl_DeviceGUI* Device = (Fl_DeviceGUI*)(child(m_IncompleteWire.InputChild));
+		Fl_DeviceGUI* Device = FindDevice(m_IncompleteWire.InputID);
 		
 		if (!Device) 
 		{
@@ -261,9 +253,9 @@ void Fl_Canvas::DrawIncompleteWire()
 				Fl::event_y());	
 	}
 	
-	if(m_IncompleteWire.OutputChild!=-1)
+	if(m_IncompleteWire.OutputID!=-1)
 	{
-		Fl_DeviceGUI* Device = (Fl_DeviceGUI*)(child(m_IncompleteWire.OutputChild));
+		Fl_DeviceGUI* Device = FindDevice(m_IncompleteWire.OutputID);
 		
 		if (!Device) 
 		{
@@ -295,15 +287,14 @@ void Fl_Canvas::DrawIncompleteWire()
 void Fl_Canvas::ClearIncompleteWire()
 {
 	// Turn off both ports
-	if (m_IncompleteWire.OutputChild!=-1)
+	if (m_IncompleteWire.OutputID!=-1)
 	{
-		((Fl_DeviceGUI*)(child(m_IncompleteWire.OutputChild)))->RemoveConnection(m_IncompleteWire.OutputPort+
-			((Fl_DeviceGUI*)(child(m_IncompleteWire.OutputChild)))->GetInfo()->NumInputs);
+		FindDevice(m_IncompleteWire.OutputID)->RemoveConnection(m_IncompleteWire.OutputPort+FindDevice(m_IncompleteWire.OutputID)->GetInfo()->NumInputs);
 	}
 	
-	if (m_IncompleteWire.InputChild!=-1)
+	if (m_IncompleteWire.InputID!=-1)
 	{
-		((Fl_DeviceGUI*)(child(m_IncompleteWire.InputChild)))->RemoveConnection(m_IncompleteWire.InputPort);
+		FindDevice(m_IncompleteWire.InputID)->RemoveConnection(m_IncompleteWire.InputPort);
 	}
 	m_IncompleteWire.Clear();
 }
@@ -313,10 +304,20 @@ void Fl_Canvas::ClearIncompleteWire()
 int Fl_Canvas::handle(int event)
 {
 	if (Fl_Group::handle(event)) return 1;
-	
+				
 	if (event==FL_PUSH) 
 	{
 		ClearIncompleteWire();
+		redraw();
+		m_DragX=Fl::event_x();
+		m_DragY=Fl::event_y();
+	}
+	
+	if (Fl::event_button()==1 && event==FL_DRAG)
+	{
+		position(x()+(Fl::event_x()-m_DragX),y()+(Fl::event_y()-m_DragY));	
+		m_DragX=Fl::event_x();
+		m_DragY=Fl::event_y();	
 		redraw();
 	}
 	
@@ -349,37 +350,20 @@ int Fl_Canvas::handle(int event)
 
 	return 1;
 }
-	
+
 ////////////////////////////////////////////////////////////////////////
 
 void Fl_Canvas::PortClicked(Fl_DeviceGUI* Device, int Type, int Port, bool Value)
 {
-	// find out which child this comes from.
-	int ChildNum=-1;	
-	for(int n=0; n<children(); n++)
-	{
-		if(child(n)==Device)
-		{
-			ChildNum=n;
-		}
-	}
-	
-	if (ChildNum==-1) 
-	{
-		SpiralInfo::Alert("Port clicked callback can't find source child.");
-		return;
-	}
-	
 	if(Value) // Turned on the port
 	{
-		if(m_IncompleteWire.InputChild==-1 || m_IncompleteWire.OutputChild==-1)
+		if(m_IncompleteWire.InputID==-1 || m_IncompleteWire.OutputID==-1)
 		{
 			if (Type==Fl_DeviceGUI::OUTPUT)
 			{
 				// make sure we don't make a output->output connection
-				if (m_IncompleteWire.OutputChild==-1)
+				if (m_IncompleteWire.OutputID==-1)
 				{	
-					m_IncompleteWire.OutputChild=ChildNum;
 					m_IncompleteWire.OutputPort=Port;
 					m_IncompleteWire.OutputID=Device->GetID();
 					m_IncompleteWire.OutputTerminal=Device->IsTerminal();
@@ -392,9 +376,8 @@ void Fl_Canvas::PortClicked(Fl_DeviceGUI* Device, int Type, int Port, bool Value
 			else
 			{
 				// make sure we don't make a input->input connection
-				if (m_IncompleteWire.InputChild==-1)				
+				if (m_IncompleteWire.InputID==-1)				
 				{					
-					m_IncompleteWire.InputChild=ChildNum;
 					m_IncompleteWire.InputPort=Port;
 					m_IncompleteWire.InputID=Device->GetID();
 					m_IncompleteWire.InputTerminal=Device->IsTerminal();
@@ -406,7 +389,7 @@ void Fl_Canvas::PortClicked(Fl_DeviceGUI* Device, int Type, int Port, bool Value
 			}
 
 			// if both have now been set...
-			if (m_IncompleteWire.InputChild!=-1 && m_IncompleteWire.OutputChild!=-1)
+			if (m_IncompleteWire.InputID!=-1 && m_IncompleteWire.OutputID!=-1)
 			{
 				m_WireVec.push_back(m_IncompleteWire);	
 	
@@ -416,12 +399,11 @@ void Fl_Canvas::PortClicked(Fl_DeviceGUI* Device, int Type, int Port, bool Value
 									  m_IncompleteWire.InputID,m_IncompleteWire.InputTerminal);
 				
 				// Turn on both ports
-				Fl_DeviceGUI* ODGUI = (Fl_DeviceGUI*)(child(m_IncompleteWire.OutputChild));
+				Fl_DeviceGUI* ODGUI = FindDevice(m_IncompleteWire.OutputID);
 				ODGUI->AddConnection(m_IncompleteWire.OutputPort+ODGUI->GetInfo()->NumInputs);
 					
-				Fl_DeviceGUI* IDGUI = (Fl_DeviceGUI*)(child(m_IncompleteWire.InputChild));
+				Fl_DeviceGUI* IDGUI = FindDevice(m_IncompleteWire.InputID);
 				IDGUI->AddConnection(m_IncompleteWire.InputPort);
-				
 				
 				m_IncompleteWire.Clear();
 				
@@ -441,14 +423,14 @@ void Fl_Canvas::PortClicked(Fl_DeviceGUI* Device, int Type, int Port, bool Value
 			for(vector<CanvasWire>::iterator i=m_WireVec.begin();
 				i!=m_WireVec.end(); i++)
 			{
-				if ((Type==Fl_DeviceGUI::OUTPUT && i->OutputChild==ChildNum && i->OutputPort==Port) ||
-					(Type==Fl_DeviceGUI::INPUT && i->InputChild==ChildNum && i->InputPort==Port))
+				if ((Type==Fl_DeviceGUI::OUTPUT && i->OutputID==Device->GetID() && i->OutputPort==Port) ||
+					(Type==Fl_DeviceGUI::INPUT && i->InputID==Device->GetID() && i->InputPort==Port))
 				{
 					// Turn off both ports
-					Fl_DeviceGUI* ODGUI = (Fl_DeviceGUI*)(child(i->OutputChild));
+					Fl_DeviceGUI* ODGUI = FindDevice(i->OutputID);
 					ODGUI->RemoveConnection(i->OutputPort+ODGUI->GetInfo()->NumInputs);
 					
-					Fl_DeviceGUI* IDGUI = (Fl_DeviceGUI*)(child(i->InputChild));
+					Fl_DeviceGUI* IDGUI = FindDevice(i->InputID);
 					IDGUI->RemoveConnection(i->InputPort);
 									
 					// send the unconnect callback	
@@ -475,22 +457,6 @@ void Fl_Canvas::PortClicked(Fl_DeviceGUI* Device, int Type, int Port, bool Value
 
 void Fl_Canvas::ClearConnections(Fl_DeviceGUI* Device)
 {
-	// find out which child this comes from.
-	int ChildNum=-1;	
-	for(int n=0; n<children(); n++)
-	{
-		if(child(n)==Device)
-		{
-			ChildNum=n;
-		}
-	}
-	
-	if (ChildNum==-1) 
-	{
-		SpiralInfo::Alert("Clear connections callback can't find source child.");
-		return;
-	}
-	
 	bool removedall=false;
 		
 	while (!removedall)
@@ -500,13 +466,12 @@ void Fl_Canvas::ClearConnections(Fl_DeviceGUI* Device)
 		for (vector<CanvasWire>::iterator i=m_WireVec.begin();
 			 i!=m_WireVec.end(); i++)
 		{	
-			if (i->OutputChild==ChildNum ||
-			    i->InputChild==ChildNum)
+			if (i->OutputID==Device->GetID() ||
+			    i->InputID==Device->GetID())
 			{
 				// Turn off both ports
-				((Fl_DeviceGUI*)(child(i->OutputChild)))->RemoveConnection(i->OutputPort+
-					((Fl_DeviceGUI*)(child(i->OutputChild)))->GetInfo()->NumInputs);
-				((Fl_DeviceGUI*)(child(i->InputChild)))->RemoveConnection(i->InputPort);
+				FindDevice(i->OutputID)->RemoveConnection(i->OutputPort+FindDevice(i->OutputID)->GetInfo()->NumInputs);
+				FindDevice(i->InputID)->RemoveConnection(i->InputPort);
 
 				// send the unconnect callback
 				cb_Unconnect(this,(void*)&(*i));
@@ -524,32 +489,8 @@ void Fl_Canvas::ClearConnections(Fl_DeviceGUI* Device)
 	
 void Fl_Canvas::RemoveDevice(Fl_DeviceGUI* Device)
 {
-	// find out which child this comes from.
-	int ChildNum=-1;	
-	for(int n=0; n<children(); n++)
-	{
-		if(child(n)==Device)
-		{
-			ChildNum=n;
-		}
-	}
-	
-	if (ChildNum==-1) 
-	{
-		SpiralInfo::Alert("Remove device callback can't find source child.");
-		return;
-	}
-
 	ClearConnections(Device);
-
-	for (vector<CanvasWire>::iterator i=m_WireVec.begin();
-		 i!=m_WireVec.end(); i++)
-	{	
-		if (i->OutputChild>ChildNum) i->OutputChild--;		
-		if (i->InputChild>ChildNum)	 i->InputChild--;
-	}
-	
-	remove(child(ChildNum));
+	remove(Device);
 	redraw(); 
 }
 
@@ -579,7 +520,82 @@ void Fl_Canvas::Rename(Fl_DeviceGUI* Device)
 }
 
 ////////////////////////////////////////////////////////////////////////
+
+Fl_DeviceGUI *Fl_Canvas::FindDevice(int ID)
+{
+	for(int n=0; n<children(); n++)
+	{
+		if(((Fl_DeviceGUI*)child(n))->GetID()==ID)
+		{
+			return (Fl_DeviceGUI*)child(n);
+		}
+	}
+	return NULL;
+}
 	
+/////////////////////////////////////////////////////////////////////////
+
+void Fl_Canvas::ToTop(Fl_DeviceGUI *o)
+{
+	if (children()<2) return; //no need to do anything
+
+	// cast away the const :P
+	Fl_Widget** a=(Fl_Widget**)array();
+	int p=find(o);
+
+	if (p<0) 
+	{
+		cerr<<"ToTop couldn't find widget!"<<endl;
+		return;
+	}
+	
+	Fl_Widget *temp=a[0];
+	Fl_Widget *last=a[0];
+	
+	for(int n=1; n<children(); n++)
+	{
+		if (n>p) // after the widget in the list
+		{	
+			// move the widgets up
+			a[n-1]=a[n];
+		}
+	}
+	
+	a[children()-1]=o; // put the raised one at the top of the list
+}
+
+void Fl_Canvas::ToBot(Fl_DeviceGUI *o)
+{
+	if (children()<2) return; //no need to do anything
+	
+	// cast away the const :P
+	Fl_Widget** a=(Fl_Widget**)array();
+	int p=find(o);
+
+	if (p<0) 
+	{
+		cerr<<"ToBot couldn't find widget!"<<endl;
+		return;
+	}
+	
+	Fl_Widget *temp=a[0];
+	Fl_Widget *last=a[0];
+	
+	for(int n=1; n<children(); n++)
+	{
+		if (n<=p) // before the widget in the list
+		{	
+			// move the widgets down
+			temp=a[n];
+			a[n]=last;
+			last=temp;
+		}
+	}
+	
+	a[0]=o; // put the lowered one at the top of the list	
+}
+
+/////////////////////////////////////////////////////////////////////////
 	
 istream &operator>>(istream &s, Fl_Canvas &o)
 {
@@ -596,20 +612,21 @@ istream &operator>>(istream &s, Fl_Canvas &o)
 		for(int n=0; n<NumWires; n++)
 		{
 			CanvasWire NewWire;
+			int dummy;
 			
 			s>>NewWire.OutputID;
-			s>>NewWire.OutputChild;
+			s>>dummy;
 			s>>NewWire.OutputPort;
 			s>>NewWire.OutputTerminal;
 			s>>NewWire.InputID;
-			s>>NewWire.InputChild;
+			s>>dummy;
 			s>>NewWire.InputPort;	
 			s>>NewWire.InputTerminal;
 			
 			// if we can turn on both ports
-			if (((Fl_DeviceGUI*)(o.child(NewWire.OutputChild)))->AddConnection(NewWire.OutputPort+
-					((Fl_DeviceGUI*)(o.child(NewWire.OutputChild)))->GetInfo()->NumInputs) &&
-				((Fl_DeviceGUI*)(o.child(NewWire.InputChild)))->AddConnection(NewWire.InputPort))
+			if (o.FindDevice(NewWire.OutputID)->AddConnection(NewWire.OutputPort+
+					o.FindDevice(NewWire.OutputID)->GetInfo()->NumInputs) &&
+				o.FindDevice(NewWire.InputID)->AddConnection(NewWire.InputPort))
 			{
 				o.m_WireVec.push_back(NewWire);	
 
@@ -625,18 +642,19 @@ istream &operator>>(istream &s, Fl_Canvas &o)
 		for(int n=0; n<NumWires; n++)
 		{
 			CanvasWire NewWire;
+			int dummy;
 			
 			s>>NewWire.OutputID;
-			s>>NewWire.OutputChild;
+			s>>dummy;
 			s>>NewWire.OutputPort;
 			s>>NewWire.InputID;
-			s>>NewWire.InputChild;
+			s>>dummy;
 			s>>NewWire.InputPort;	
-	
+		
 			// if we can turn on both ports
-			if (((Fl_DeviceGUI*)(o.child(NewWire.OutputChild)))->AddConnection(NewWire.OutputPort+
-					((Fl_DeviceGUI*)(o.child(NewWire.OutputChild)))->GetInfo()->NumInputs) &&
-				((Fl_DeviceGUI*)(o.child(NewWire.InputChild)))->AddConnection(NewWire.InputPort))
+			if (o.FindDevice(NewWire.OutputID)->AddConnection(NewWire.OutputPort+
+					o.FindDevice(NewWire.OutputID)->GetInfo()->NumInputs) &&
+				o.FindDevice(NewWire.InputID)->AddConnection(NewWire.InputPort))
 			{
 				o.m_WireVec.push_back(NewWire);	
 
@@ -662,11 +680,11 @@ ostream &operator<<(ostream &s, Fl_Canvas &o)
 		i!=o.m_WireVec.end(); i++)
 	{
 		s<<i->OutputID<<" ";
-		s<<i->OutputChild<<" ";
+		s<<0<<" ";
 		s<<i->OutputPort<<" ";
 		s<<i->OutputTerminal<<" ";
 		s<<i->InputID<<" ";
-		s<<i->InputChild<<" ";
+		s<<0<<" ";
 		s<<i->InputPort<<" ";	
 		s<<i->InputTerminal<<endl;
 	}

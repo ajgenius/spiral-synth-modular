@@ -37,11 +37,9 @@ public:
 	
 	void Clear() 
 	{
-		OutputChild=-1;
 		OutputPort=-1;
 		OutputID=-1;
 		OutputTerminal=false;
-		InputChild=-1;
 		InputPort=-1;
 		InputID=-1;
 		InputTerminal=false;
@@ -49,11 +47,9 @@ public:
 	}
 
 	int OutputID;
-	int OutputChild;
 	int OutputPort;
 	bool OutputTerminal;
 	int InputID;
-	int InputChild;
 	int InputPort;
 	bool InputTerminal;
 	bool DelMe;
@@ -84,13 +80,17 @@ public:
 	
 	void Poll();
 
+	void ToTop(Fl_DeviceGUI *o);
+	void ToBot(Fl_DeviceGUI *o);
+
 private:
 
 	void DrawWires();
 	void ClearIncompleteWire();
 	void DrawIncompleteWire();
 	bool UserMakingConnection();
-	
+	Fl_DeviceGUI *FindDevice(int ID);
+
 	Fl_Image  *m_BG;
 	char      *m_BGData;
 	
@@ -108,6 +108,7 @@ private:
 
 	GraphSort m_Graph;
 	int m_UpdateTimer;
+	int m_DragX,m_DragY;
 
 	friend istream &operator>>(istream &s, Fl_Canvas &o);
 	friend ostream &operator<<(ostream &s, Fl_Canvas &o);	
