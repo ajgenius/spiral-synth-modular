@@ -142,7 +142,7 @@ m_LastPatSeqLight(0)
     m_Speed->labelsize(10);
     m_Speed->maximum(200);
     m_Speed->step(0.01);
-    m_Speed->value(1.0);   
+    m_Speed->value(1.0);
 	m_Speed->callback((Fl_Callback*)cb_Speed);
 	add(m_Speed);
 	
@@ -270,48 +270,50 @@ void MatrixPluginGUI::Update()
 		m_Flash[Light]->value(1);
 		m_Flash[m_LastLight]->value(0);
 		m_LastLight=Light;
-		
+
+                m_PlayPattern->value (m_GUICH->GetInt("EchoCur"));
+
 		int PatSeqLight=m_GUICH->GetInt("PatSeqStep");
 		if (PatSeqLight!=m_LastPatSeqLight)
 		{
 			m_PatSeqFlash[PatSeqLight]->value(1);
 			m_PatSeqFlash[m_LastPatSeqLight]->value(0);
 			m_LastPatSeqLight=PatSeqLight;
-		}			
+		}
 	}
 }
 
 void MatrixPluginGUI::UpdateValues(SpiralPlugin *o)
 {
 	MatrixPlugin *Plugin = (MatrixPlugin*)o;
-	
+
 	m_Pattern->value(Plugin->GetCurrent());
 	m_Length->value(Plugin->GetPattern()->Length);
 	m_Speed->value(Plugin->GetPattern()->Speed*8);
 	m_SpeedVal->value((int)m_Speed->value());
 	m_Octave->value(Plugin->GetPattern()->Octave);
-	
+
 	for(int x=0; x<MATX; x++)
 	for(int y=0; y<MATY; y++)
 	{
 		m_Matrix[x][y]->value(Plugin->GetPattern()->Matrix[x][y]);
 		m_Matrix[x][y]->SetVolume(Plugin->GetPattern()->Volume[x][y]);
 	}
-	        
+
 	for(int n=0; n<NUM_PATSEQ; n++)
 	{
 		m_PatSeq[n]->value(Plugin->GetPatSeq(n));
 	}
 }
-	
+
 void MatrixPluginGUI::UpdateMatrix()
 {
 	m_GUICH->Wait();
 	m_GUICH->RequestChannelAndWait("Matrix");
 	m_GUICH->GetData("Matrix",(void*)m_GUIMatrix);
-	
+
 	Pattern *p=&m_GUIMatrix[(int)m_Pattern->value()];
-	
+
 	m_Length->value(p->Length);
 	m_Speed->value(p->Speed*8);
 	m_SpeedVal->value((int)m_Speed->value());
@@ -322,25 +324,25 @@ void MatrixPluginGUI::UpdateMatrix()
 	{
 		m_Matrix[x][y]->value(p->Matrix[x][y]);
 		m_Matrix[x][y]->SetVolume(p->Volume[x][y]);
-	}        
+	}
 
 }
 
 inline void MatrixPluginGUI::cb_NoteCut_i(Fl_Button* o, void* v)
-{ 
+{
 	m_GUICH->Set("NoteCut",o->value());
 }
 void MatrixPluginGUI::cb_NoteCut(Fl_Button* o, void* v)
 { ((MatrixPluginGUI*)(o->parent()))->cb_NoteCut_i(o,v);}
 
 inline void  MatrixPluginGUI::cb_Matrix_i(Fl_Button* o, void* v)
-{ 
+{
 	m_GUICH->Set("X",*(int*)v/MATY);
 	m_GUICH->Set("Y",*(int*)v%MATY);
 
 	if (o->value())	m_GUICH->SetCommand(MatrixPlugin::MAT_ACTIVATE);
 	else m_GUICH->SetCommand(MatrixPlugin::MAT_DEACTIVATE);
-	
+
 	m_GUICH->Wait();
 }
 void  MatrixPluginGUI::cb_Matrix(Fl_Button* o, void* v)

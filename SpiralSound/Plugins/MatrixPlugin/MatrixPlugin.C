@@ -70,7 +70,7 @@ m_PatReset(false)
 	m_PluginInfo.Width=600;
 	m_PluginInfo.Height=270;
 	m_PluginInfo.NumInputs=5;
-	m_PluginInfo.NumOutputs=19;		
+	m_PluginInfo.NumOutputs=19;
 	m_PluginInfo.PortTips.push_back("Play Trigger");	
 	m_PluginInfo.PortTips.push_back("StepTime CV");	
 	m_PluginInfo.PortTips.push_back("Input Pitch CV");	
@@ -110,15 +110,15 @@ m_PatReset(false)
 			m_Matrix[n].Matrix[x][y]=false;
 			m_Matrix[n].Volume[x][y]=1;
 		}
-		
+
 		m_TriggerLevel[n]=0;
 	}
-	
+
 	for (int n=0; n<NUM_PATSEQ; n++)
 	{
 		m_PatSeq[n]=0;
 	}
-	
+
 	m_AudioCH->Register("NoteCut",&m_NoteCut,ChannelHandler::INPUT);
 	m_AudioCH->Register("Volume",&m_GUIArgs.Volume,ChannelHandler::INPUT);
 	m_AudioCH->Register("Current",&m_GUICurrent,ChannelHandler::INPUT);
@@ -131,6 +131,7 @@ m_PatReset(false)
 	m_AudioCH->Register("Octave",&m_GUIArgs.Octave,ChannelHandler::INPUT);
 	m_AudioCH->Register("Step",&m_Step,ChannelHandler::OUTPUT);
 	m_AudioCH->Register("PatSeqStep",&m_CurPatSeq,ChannelHandler::OUTPUT);
+	m_AudioCH->Register("EchoCur", &m_Current, ChannelHandler::OUTPUT);
 	m_AudioCH->RegisterData("Matrix",ChannelHandler::OUTPUT_REQUEST,&m_Matrix,sizeof(m_Matrix));
 }
 
