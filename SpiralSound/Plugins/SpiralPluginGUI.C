@@ -42,17 +42,18 @@ m_HelpWin(NULL)
 	m_DragBar->type(Fl_DragBar::FLDRAG);
 	add(m_DragBar);
   	
-  	m_Hide = new Fl_Button(0,0,18,16,"X");
+  	m_Hide = new Fl_Button(2,2,10,10,"X");
 	m_Hide->labeltype(FL_ENGRAVED_LABEL);
 	m_Hide->labelsize(10);	
 	m_Hide->box(FL_NO_BOX);
 	m_Hide->callback((Fl_Callback*)cb_Hide);
 	add(m_Hide);
 	
-  	m_Help = new Fl_Button(w-15,0,18,16,"?");
+  	m_Help = new Fl_Button(w-11,2,10,10,"?");
 	m_Help->labeltype(FL_ENGRAVED_LABEL);
 	m_Help->labelsize(10);	
 	m_Help->box(FL_NO_BOX);
+	m_Help->down_box(FL_NO_BOX);
 	m_Help->callback((Fl_Callback*)cb_Help);
 	add(m_Help);
 }

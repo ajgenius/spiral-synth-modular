@@ -78,10 +78,12 @@ SpiralSynthModularInfo::SpiralSynthModularInfo()
 	PLUGINVEC.push_back("ControllerPlugin.so");	
 	PLUGINVEC.push_back("MatrixPlugin.so");	
 	PLUGINVEC.push_back("SeqSelectorPlugin.so");	
+	PLUGINVEC.push_back("SequencerPlugin.so");	
 	PLUGINVEC.push_back("PoshSamplerPlugin.so");
 	PLUGINVEC.push_back("WaveTablePlugin.so");	
 	PLUGINVEC.push_back("OscillatorPlugin.so");	
 	PLUGINVEC.push_back("LFOPlugin.so");
+	PLUGINVEC.push_back("NoisePlugin.so");
 	PLUGINVEC.push_back("EnvelopePlugin.so");	
 	PLUGINVEC.push_back("SampleHoldPlugin.so");
 	PLUGINVEC.push_back("NoteSnapPlugin.so");	
@@ -92,6 +94,8 @@ SpiralSynthModularInfo::SpiralSynthModularInfo()
 	PLUGINVEC.push_back("FilterPlugin.so");	
 	PLUGINVEC.push_back("SVFilterPlugin.so");	
 	PLUGINVEC.push_back("MoogFilterPlugin.so");	
+	PLUGINVEC.push_back("FormantPlugin.so");
+	PLUGINVEC.push_back("AnotherFilterPlugin.so");
 	PLUGINVEC.push_back("EchoPlugin.so");	
 	PLUGINVEC.push_back("DelayPlugin.so");	
 	PLUGINVEC.push_back("EnvFollowerPlugin.so");	
@@ -101,6 +105,12 @@ SpiralSynthModularInfo::SpiralSynthModularInfo()
 	PLUGINVEC.push_back("DistributorPlugin.so");
 	PLUGINVEC.push_back("SplitterPlugin.so");
 	PLUGINVEC.push_back("StreamPlugin.so");
+	PLUGINVEC.push_back("OperatorPlugin.so");
+	PLUGINVEC.push_back("CounterPlugin.so");
+	PLUGINVEC.push_back("FlipflopPlugin.so");
+	PLUGINVEC.push_back("SwitchPlugin.so");
+	PLUGINVEC.push_back("BeatMatchPlugin.so");
+	PLUGINVEC.push_back("LogicPlugin.so");
 }
 
 void SpiralSynthModularInfo::StreamInPrefs(istream &s)

@@ -27,6 +27,11 @@ SpiralPlugin* CreateInstance() { return new LFOPlugin; }
 char** GetIcon() { return SpiralIcon_xpm; }
 
 int GetID() { return 124; }
+
+string GetGroupName()
+{
+	return "SpiralSound";
+}
 }
 
 ///////////////////////////////////////////////////////

@@ -44,8 +44,9 @@ if test $ac_arg_jack = "Y" ; then
 	SampleHoldPlugin ScopePlugin SmoothPlugin SplitterPlugin StereoMixerPlugin StreamPlugin\
 	WaveTablePlugin LADSPAPlugin XFadePlugin PoshSamplerPlugin SeqSelectorPlugin\
 	DistributorPlugin LFOPlugin KeyboardPlugin DiskWriterPlugin FormantFilterPlugin \
-        SplitSwitchPlugin MixSwitchPlugin MeterPlugin WaveShaperPlugin \
-        AnotherFilterPlugin JackPlugin"
+	AnotherFilterPlugin OperatorPlugin CounterPlugin FlipflopPlugin SwitchPlugin \
+	BeatMatchPlugin NoisePlugin SequencerPlugin LogicPlugin SplitSwitchPlugin \
+	MixSwitchPlugin JackPlugin"
 else
 	PLUGINLIST="AmpPlugin ControllerPlugin DelayPlugin EchoPlugin EnvFollowerPlugin \
 	EnvelopePlugin FilterPlugin MatrixPlugin MidiPlugin MixerPlugin MoogFilterPlugin \
@@ -53,8 +54,8 @@ else
 	SampleHoldPlugin ScopePlugin SmoothPlugin SplitterPlugin StereoMixerPlugin StreamPlugin\
 	WaveTablePlugin LADSPAPlugin XFadePlugin PoshSamplerPlugin SeqSelectorPlugin\
 	DistributorPlugin LFOPlugin KeyboardPlugin DiskWriterPlugin FormantFilterPlugin \
-        SplitSwitchPlugin MixSwitchPlugin MeterPlugin WaveShaperPlugin \
-	AnotherFilterPlugin"
+	AnotherFilterPlugin OperatorPlugin CounterPlugin FlipflopPlugin SwitchPlugin \
+	BeatMatchPlugin NoisePlugin SequencerPlugin LogicPlugin SplitSwitchPlugin MixSwitchPlugin"
 	
 	fi
 echo "$PLUGINLIST" > SpiralSound/PluginList.txt
@@ -158,6 +159,14 @@ SpiralSound/Plugins/StreamPlugin/Makefile
 SpiralSound/Plugins/WaveShaperPlugin/Makefile
 SpiralSound/Plugins/WaveTablePlugin/Makefile
 SpiralSound/Plugins/XFadePlugin/Makefile
+SpiralSound/Plugins/OperatorPlugin/Makefile
+SpiralSound/Plugins/CounterPlugin/Makefile
+SpiralSound/Plugins/FlipflopPlugin/Makefile
+SpiralSound/Plugins/SwitchPlugin/Makefile
+SpiralSound/Plugins/BeatMatchPlugin/Makefile
+SpiralSound/Plugins/NoisePlugin/Makefile
+SpiralSound/Plugins/SequencerPlugin/Makefile
+SpiralSound/Plugins/LogicPlugin/Makefile
 SpiralSound/Plugins/SplitSwitchPlugin/Makefile
 SpiralSound/Plugins/MixSwitchPlugin/Makefile
 SpiralSynthPluginLocation.h

@@ -35,6 +35,11 @@ int GetID()
 {
 	return 0x0033;
 }
+
+string GetGroupName()
+{
+	return "SpiralSound";
+}
 }
 
 ///////////////////////////////////////////////////////

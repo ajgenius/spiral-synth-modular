@@ -72,6 +72,14 @@ PluginID PluginManager::LoadPlugin(const char *PluginName)
     {
 		SpiralInfo::Alert("Error linking to plugin "+string(PluginName)+"\n"+string(error));
         return PluginError;
+    }  
+	     
+	NewPlugin->GetGroupName  = (string(*)()) dlsym(NewPlugin->Handle, "GetGroupName"); 	
+			
+    if ((error = dlerror()) != NULL)
+    {
+		SpiralInfo::Alert("Error linking to plugin "+string(PluginName)+"\n"+string(error));
+        return PluginError;
     }       
 		
 	// We've succesfully open and linked the

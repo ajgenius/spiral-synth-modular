@@ -301,17 +301,6 @@ SpiralWindowType *SynthModular::CreateWindow()
 	m_Options->callback((Fl_Callback*)cb_Rload);
 	m_MainButtons->add(m_Options);
 	n++;
-	
-	/*m_OpenEditor = new Fl_Button(5+xoff, n*gap+yoff, but, but, "");
-	m_OpenEditor->box(FL_NO_BOX);
-	tPix = new Fl_Pixmap(edit_xpm);
-	m_OpenEditor->image(tPix->copy(tPix->w(),tPix->h()));	
-	delete tPix;	
-	m_OpenEditor->selection_color(SpiralSynthModularInfo::GUICOL_Tool);	
-	m_OpenEditor->tooltip("Open/Close Editor");		 
-	m_OpenEditor->callback((Fl_Callback*)cb_OpenEditor);
-	m_MainButtons->add(m_OpenEditor);
-	n++;*/
 			
 	/////////////////
 
@@ -321,10 +310,29 @@ SpiralWindowType *SynthModular::CreateWindow()
 	
 	int edy = MAIN_HEIGHT;
 	Fl_Group *Left = new Fl_Group(0,MAIN_HEIGHT,TOOLBOX_WIDTH,MAIN_HEIGHT);
+	Left->box(FL_FLAT_BOX);
+	Left->color(SpiralSynthModularInfo::GUICOL_Tool);
+	Left->user_data((void*)(this));
 	m_EditorWindow->add(Left); 
 	m_EditorWindow->resizable(Left);
 	
-	m_ToolBox = new Fl_Scroll(0,0+edy,TOOLBOX_WIDTH, TOOLBOX_HEIGHT, "");
+	m_GroupName = new Fl_Box(0,MAIN_HEIGHT,TOOLBOX_WIDTH,16,"");
+	m_GroupName->labelsize(12);
+	m_GroupName->color(SpiralSynthModularInfo::GUICOL_Canvas);
+	m_GroupName->align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE);
+	m_GroupName->box(FL_BORDER_BOX);
+	Left->add(m_GroupName);
+	
+	m_PluginGroupLeft = new Fl_Button(0, MAIN_HEIGHT, 16, 16, "@<");
+	m_PluginGroupLeft->callback((Fl_Callback*)cb_PluginGroupLeft);
+	Left->add(m_PluginGroupLeft);
+
+	m_PluginGroupRight = new Fl_Button(TOOLBOX_WIDTH-16, MAIN_HEIGHT, 16, 16, "@>");
+	m_PluginGroupRight->callback((Fl_Callback*)cb_PluginGroupRight);
+	Left->add(m_PluginGroupRight);
+	
+	
+	m_ToolBox = new Fl_Scroll(0,0+edy+16,TOOLBOX_WIDTH, TOOLBOX_HEIGHT-16, "");
     m_ToolBox->type(Fl_Scroll::VERTICAL_ALWAYS);
 	m_ToolBox->box(FL_FLAT_BOX);
     m_ToolBox->labeltype(FL_ENGRAVED_LABEL);
@@ -333,15 +341,6 @@ SpiralWindowType *SynthModular::CreateWindow()
 	m_ToolBox->color(SpiralSynthModularInfo::GUICOL_Tool);
 	m_ToolBox->user_data((void*)(this));
 	Left->add(m_ToolBox);  
-//	m_EditorWindow->resizable(m_ToolBox);
-		
-	m_ToolPack = new Fl_Pack(SLIDER_WIDTH+5,5+edy,TOOLBOX_WIDTH-10, TOOLBOX_HEIGHT-40,"");
-    m_ToolPack->type(FL_VERTICAL);
-	m_ToolPack->box(FL_NO_BOX);
-	m_ToolPack->color(SpiralSynthModularInfo::GUICOL_Tool);
-    m_ToolPack->user_data((void*)(this));
-	m_ToolBox->add(m_ToolPack);  
-	//m_EditorWindow->resizable(m_ToolBox); 
 	
 	xoff=0; yoff=MAIN_HEIGHT+TOOLBOX_HEIGHT;
 	m_Buttons = new Fl_Group(xoff, yoff, TOOLBOX_WIDTH, MAIN_HEIGHT*2-TOOLBOX_HEIGHT, "");
@@ -390,6 +389,45 @@ SpiralWindowType *SynthModular::CreateWindow()
 
 //////////////////////////////////////////////////////////
 
+SynthModular::ToolBox::ToolBox(Fl_Scroll *parent, void* user)
+{
+	int Width  = 40;
+	int Height = 40;
+	m_Icon=0;
+	
+	m_ToolPack = new Fl_Pack(SLIDER_WIDTH+5,25+MAIN_HEIGHT,TOOLBOX_WIDTH-10, TOOLBOX_HEIGHT-60,"");
+    m_ToolPack->type(FL_VERTICAL);
+	m_ToolPack->box(FL_NO_BOX);
+	m_ToolPack->color(SpiralSynthModularInfo::GUICOL_Tool);
+    m_ToolPack->user_data(user);
+	parent->add(m_ToolPack);  
+	
+	m_IconPack = new Fl_Pack(0,0,TOOLBOX_WIDTH-SLIDER_WIDTH,Height,"");
+    m_IconPack->type(FL_HORIZONTAL);
+	m_IconPack->color(SpiralSynthModularInfo::GUICOL_Tool);
+	m_IconPack->user_data(m_ToolPack->user_data());  
+	m_ToolPack->add(m_IconPack);
+}
+
+void SynthModular::ToolBox::AddIcon(Fl_Button *Icon)
+{	
+	int Width  = 40;
+	int Height = 40;
+	
+	if (m_Icon>=ICON_DEPTH)
+	{
+		m_Icon=0;
+		m_IconPack = new Fl_Pack(0,0,TOOLBOX_WIDTH-SLIDER_WIDTH,Height,"");
+    	m_IconPack->type(FL_HORIZONTAL);
+		m_IconPack->color(SpiralSynthModularInfo::GUICOL_Tool);
+		m_IconPack->user_data(m_ToolPack->user_data());  
+		m_ToolPack->add(m_IconPack);
+	}
+	
+	m_IconPack->add(Icon);
+	m_Icon++;
+}
+
 void SynthModular::LoadPlugins(string pluginPath)
 {
 
@@ -418,14 +456,6 @@ void SynthModular::LoadPlugins(string pluginPath)
 	Splash->show();
 
 	int ID=-1;
-	int Icon=0;
-	Fl_Pack *IconPack;
-
-	IconPack = new Fl_Pack(0,0,TOOLBOX_WIDTH-SLIDER_WIDTH,Height,"");
-    IconPack->type(FL_HORIZONTAL);
-	IconPack->color(SpiralSynthModularInfo::GUICOL_Tool);
-	IconPack->user_data((void*)(this));  
-	m_ToolPack->add(IconPack);
 
 	for (vector<string>::iterator i=SpiralSynthModularInfo::PLUGINVEC.begin();
 		 i!=SpiralSynthModularInfo::PLUGINVEC.end(); i++)
@@ -446,17 +476,7 @@ void SynthModular::LoadPlugins(string pluginPath)
 			#ifdef DEBUG_PLUGINS
 			cerr<<"Plugin ["<<*i<<"] = "<<ID<<endl;
 			#endif
-			
-			if (Icon>=ICON_DEPTH)
-			{
-				Icon=0;
-				IconPack = new Fl_Pack(0,0,TOOLBOX_WIDTH-SLIDER_WIDTH,Height,"");
-	   	 		IconPack->type(FL_HORIZONTAL);
-				IconPack->color(SpiralSynthModularInfo::GUICOL_Tool);
-				IconPack->user_data((void*)(this));
-				m_ToolPack->add(IconPack); 
-			}
-		
+					
 			Fl_Button *NewButton = new Fl_Button(0,0,Width,Height,"");
 			NewButton->labelsize(10);
 			
@@ -464,7 +484,23 @@ void SynthModular::LoadPlugins(string pluginPath)
 			NewButton->image(tPix->copy(tPix->w(),tPix->h()));		
 			delete tPix;	
 			
-			IconPack->add(NewButton);
+			string GroupName = PluginManager::Get()->GetPlugin(ID)->GetGroupName();
+			ToolBox* Tool=NULL;
+			
+			map<string,ToolBox*>::iterator ti=m_PluginGroupMap.find(GroupName);
+			if (ti==m_PluginGroupMap.end())
+			{
+				if (Tool) Tool->GetToolPack()->hide();
+				Tool = new ToolBox(m_ToolBox,(void*)(this));
+				m_PluginGroupMap[GroupName]=Tool;
+				Tool->GetToolPack()->hide();
+			}
+			else
+			{
+				Tool=ti->second;
+			}
+			Tool->AddIcon(NewButton);
+			
 			NewButton->type(0);	
 			NewButton->box(FL_PLASTIC_UP_BOX);				
 			NewButton->align(FL_ALIGN_INSIDE|FL_ALIGN_TOP);
@@ -487,7 +523,6 @@ void SynthModular::LoadPlugins(string pluginPath)
 			NewButton->callback((Fl_Callback*)cb_NewDevice,&Numbers[ID]);			
 			NewButton->show();
 			m_DeviceVec.push_back(NewButton);			
-			Icon++;
 		
 			m_ToolBox->redraw();
 		
@@ -495,6 +530,19 @@ void SynthModular::LoadPlugins(string pluginPath)
 			Fl::check();
 		}
 	}
+	
+	// try to show the SpiralSound group
+	m_CurrentGroup=m_PluginGroupMap.find("SpiralSound");
+	if (m_CurrentGroup==m_PluginGroupMap.end())
+	{
+		// can't find it - show the first plugin group
+		m_CurrentGroup=m_PluginGroupMap.begin();
+		m_CurrentGroup->second->GetToolPack()->show();
+		m_GroupName->label(m_CurrentGroup->first.c_str());
+	}
+	
+	m_CurrentGroup->second->GetToolPack()->show();
+	m_GroupName->label(m_CurrentGroup->first.c_str());
 	
 	Splash->hide();
 	delete Splash;
@@ -1018,13 +1066,29 @@ void SynthModular::cb_NewComment(Fl_Button* o, void* v)
 
 //////////////////////////////////////////////////////////
 
-inline void SynthModular::cb_OpenEditor_i(Fl_Button* o, void* v)
+inline void SynthModular::cb_PluginGroupLeft_i(Fl_Button* o, void* v)
 {
-	//if (m_EditorWindow->shown()) m_EditorWindow->hide();
-	//else m_EditorWindow->show();
+	m_CurrentGroup->second->GetToolPack()->hide();
+	m_CurrentGroup++;
+	if (m_CurrentGroup==m_PluginGroupMap.end()) m_CurrentGroup=m_PluginGroupMap.begin();
+	m_CurrentGroup->second->GetToolPack()->show();
+	m_GroupName->label(m_CurrentGroup->first.c_str());
 }
-void SynthModular::cb_OpenEditor(Fl_Button* o, void* v)
-{((SynthModular*)(o->parent()->user_data()))->cb_OpenEditor_i(o,v);}
+void SynthModular::cb_PluginGroupLeft(Fl_Button* o, void* v)
+{((SynthModular*)(o->parent()->user_data()))->cb_PluginGroupLeft_i(o,v);}
+
+//////////////////////////////////////////////////////////
+
+inline void SynthModular::cb_PluginGroupRight_i(Fl_Button* o, void* v)
+{
+	m_CurrentGroup->second->GetToolPack()->hide();
+	m_CurrentGroup++;
+	if (m_CurrentGroup==m_PluginGroupMap.end()) m_CurrentGroup=m_PluginGroupMap.begin();
+	m_CurrentGroup->second->GetToolPack()->show();
+	m_GroupName->label(m_CurrentGroup->first.c_str());
+}
+void SynthModular::cb_PluginGroupRight(Fl_Button* o, void* v)
+{((SynthModular*)(o->parent()->user_data()))->cb_PluginGroupRight_i(o,v);}
 
 //////////////////////////////////////////////////////////
 

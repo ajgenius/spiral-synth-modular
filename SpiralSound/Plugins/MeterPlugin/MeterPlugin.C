@@ -27,6 +27,10 @@ char** GetIcon() { return SpiralIcon_xpm; }
 
 int GetID() { return 123; }
 
+string GetGroupName()
+{
+	return "SpiralSound";
+}
 }
 
 MeterPlugin::MeterPlugin() {

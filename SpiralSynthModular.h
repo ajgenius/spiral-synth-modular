@@ -23,6 +23,7 @@
 #include <FL/x.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Group.H>
+#include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Scroll.H>
@@ -126,9 +127,31 @@ private:
 	Fl_Canvas 		*m_Canvas;	
 	Fl_Scroll		*m_CanvasScroll;
 	Fl_Scroll 		*m_ToolBox;
-	Fl_Pack 		*m_ToolPack;
 	Fl_Group 		*m_Buttons;		
 	Fl_Button       *m_NewComment;
+		
+	Fl_Box          *m_GroupName;
+	Fl_Button       *m_PluginGroupLeft;
+	Fl_Button       *m_PluginGroupRight;
+
+	class ToolBox
+	{
+	public:
+		ToolBox(Fl_Scroll *parent, void* user);
+		~ToolBox() {}
+		
+		void AddIcon(Fl_Button *Icon);
+		Fl_Pack *GetToolPack() { return m_ToolPack; }
+		
+	private:
+		Fl_Pack *m_ToolPack;
+		Fl_Pack *m_IconPack;
+		int m_Icon;
+	
+	};
+	
+	map<string,ToolBox*> m_PluginGroupMap;
+	map<string,ToolBox*>::iterator m_CurrentGroup;
 	
 	SettingsWindow  *m_SettingsWindow;
 	
@@ -161,9 +184,10 @@ private:
 	static void cb_Unconnect(Fl_Canvas* o, void* v);
 	inline void cb_Close_i(Fl_Window* o, void* v);
 	static void cb_Close(Fl_Window* o, void* v);
-	inline void cb_OpenEditor_i(Fl_Button* o, void* v);
-    static void cb_OpenEditor(Fl_Button* o, void* v);
-
+	inline void cb_PluginGroupLeft_i(Fl_Button* o, void* v);
+    static void cb_PluginGroupLeft(Fl_Button* o, void* v);
+	inline void cb_PluginGroupRight_i(Fl_Button* o, void* v);
+    static void cb_PluginGroupRight(Fl_Button* o, void* v);
 	
 	inline void cb_Rload_i(Fl_Button* o, void* v);
     static void cb_Rload(Fl_Button* o, void* v);

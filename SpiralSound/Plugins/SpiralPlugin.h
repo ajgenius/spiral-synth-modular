@@ -108,7 +108,7 @@ public:
 	bool IsTerminal() { return m_IsTerminal; }
 	 
     ChannelHandler *GetChannelHandler() { return m_AudioCH; }
-	
+		
 protected:
 	
     ChannelHandler *m_AudioCH;

@@ -33,7 +33,10 @@ char** GetIcon() {
 int GetID() {
   return 0x0032;
 }
-
+string GetGroupName()
+{
+	return "SpiralSound";
+}
 }
 
 ///////////////////////////////////////////////////////

@@ -4,6 +4,7 @@ for file in `cat PluginList.txt`
 do
 echo $file
 cd $file/
-nedit Makefile.in
+chmod +w $file.C
+nedit $file.C
 cd ..
 done

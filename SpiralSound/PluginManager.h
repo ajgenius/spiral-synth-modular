@@ -29,6 +29,7 @@ struct HostsideInfo
 	char **(*GetIcon)(void);
 	SpiralPlugin *(*CreateInstance)(void);
 	int           (*GetID)(void);
+	string        (*GetGroupName)(void);
 };
 
 //////////////////////////////////////////////////////////
