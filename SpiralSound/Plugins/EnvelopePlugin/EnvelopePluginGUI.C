@@ -36,7 +36,7 @@ SpiralPluginGUI(w,h,o,ch)
     Thresh->labelsize(10);
 	Thresh->maximum(1.0);
     Thresh->step(0.01);
-    Thresh->value(0.98f);
+    Thresh->value(0.99f);
     Thresh->callback((Fl_Callback*)cb_Thresh);
 	add(Thresh);
 	
@@ -46,7 +46,7 @@ SpiralPluginGUI(w,h,o,ch)
     Attack->labelsize(10);
 	Attack->maximum(TIMED_SLIDER_MAX);
     Attack->step(0.01);
-    Attack->value(1.0f);
+    Attack->value(3.0f);
     Attack->callback((Fl_Callback*)cb_Attack);
 	add(Attack);
 	
@@ -56,7 +56,7 @@ SpiralPluginGUI(w,h,o,ch)
     Decay->labelsize(10);
 	Decay->maximum(TIMED_SLIDER_MAX);
     Decay->step(0.01);
-    Decay->value(0.1);
+    Decay->value(2.29);
     Decay->callback((Fl_Callback*)cb_Decay);
 	add(Decay);
 	
@@ -66,7 +66,7 @@ SpiralPluginGUI(w,h,o,ch)
     Sustain->labelsize(10);
 	Sustain->maximum(1);
     Sustain->step(0.01);
-    Sustain->value(0.5);
+    Sustain->value(0.0);
     Sustain->callback((Fl_Callback*)cb_Sustain);
 	add(Sustain);
 		 
@@ -76,7 +76,7 @@ SpiralPluginGUI(w,h,o,ch)
     Release->labelsize(10);
 	Release->maximum(TIMED_SLIDER_MAX);
     Release->step(0.01);
-    Release->value(0.5);
+    Release->value(2.0);
     Release->callback((Fl_Callback*)cb_Release);	  
 	add(Release);
 	      
@@ -156,7 +156,7 @@ void EnvelopePluginGUI::UpdateValues(SpiralPlugin *o)
 {
 	EnvelopePlugin *Plugin = (EnvelopePlugin*)o;
 
-	Thresh->value(1.0f-sqrt(Plugin->GetAttack()));
+	Thresh->value(1.0f-Plugin->GetTrigThresh());
 	Attack->value(TIMED_SLIDER_MAX-sqrt(Plugin->GetAttack()));
 	Decay->value(TIMED_SLIDER_MAX-sqrt(Plugin->GetDecay()));
 	Sustain->value(1.0f-Plugin->GetSustain());
