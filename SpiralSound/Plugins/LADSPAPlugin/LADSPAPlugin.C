@@ -26,10 +26,10 @@
 
 #ifdef USE_POSIX_SHM
 // All this, just for SHM
+#include <sys/types.h>
+#include <sys/mman.h>        // shm_*
 #include <unistd.h>          // For ftruncate
 #include <fcntl.h>           // For O_CREAT, O_RDONLY etc
-#include <sys/types.h>       // shm_*
-#include <sys/mman.h>        // shm_*
 #endif
 
 #include "SpiralIcon.xpm"
@@ -72,55 +72,88 @@ LADSPAPlugin::LADSPAPlugin()
 //  2. A pointer to the database. We can get away with just a pointer as
 //     all instances are in the same address space (SSM audio thread)
 
-	int shm_rc_fd;
-	int shm_db_fd;
+	unsigned long pid;
+	int len;
+	char pidstr[21]; // Enough to store 64 bit number as text
+	int bplen;
+	int rplen;
+	int dplen;
 
-	shm_rc_fd = shm_open(m_SHMRefCountPath, O_RDWR, 0644);
-	if (shm_rc_fd > 0) {
-	// Got an existing refcount
-		m_SHMRefCount = (unsigned long *)mmap(0, sizeof(unsigned long), PROT_READ | PROT_WRITE, MAP_SHARED,
-		                                      shm_rc_fd, 0);
+// Get our process id
+	pid = (unsigned long)getpid();
+	len = snprintf(pidstr,21,"%ld",pid);
+	bplen = strlen(m_SHMPath);
+	rplen = strlen(m_SHMPathRC);
+	dplen = strlen(m_SHMPathDB);
 
-		(*m_SHMRefCount)++;
+	m_SHMRefCountPath = (char *)malloc(bplen+len+rplen+1);
+	m_SHMDatabasePath = (char *)malloc(bplen+len+dplen+1);
 
-		shm_db_fd = shm_open(m_SHMLDBPath, O_RDONLY, 0644);
-		if (shm_db_fd > 0) {
-		// Got LADSPA Database
-			m_SHMLDB = (LADSPAInfo **)mmap(0, sizeof(LADSPAInfo *), PROT_READ, MAP_SHARED,
-			                               shm_db_fd, 0);
+	if (m_SHMRefCountPath && m_SHMDatabasePath) {
+	// Got paths - concatenate to form full paths
+		strncpy(m_SHMRefCountPath, m_SHMPath, bplen);
+		strncpy(m_SHMRefCountPath + bplen, pidstr, len);
+		strncpy(m_SHMRefCountPath + bplen + len, m_SHMPathRC, rplen);
+		m_SHMRefCountPath[bplen + len + rplen] = '\0';
 
-			m_LADSPAInfo = *m_SHMLDB;
-		} else {
-			std::cerr << "LADSPAPlugin: ERROR: Could not open SHM file '" << m_SHMLDBPath << std::cerr;
-		}
-	} else {
-	// Need to create a new SHM file for ref counter
-		shm_rc_fd = shm_open(m_SHMRefCountPath, O_CREAT | O_RDWR, 0644);
+		strncpy(m_SHMDatabasePath, m_SHMPath, bplen);
+		strncpy(m_SHMDatabasePath + bplen, pidstr, len);
+		strncpy(m_SHMDatabasePath + bplen + len, m_SHMPathDB, dplen);
+		m_SHMDatabasePath[bplen + len + dplen] = '\0';
+
+		int shm_rc_fd = shm_open((const char *)m_SHMRefCountPath, O_RDWR, 0644);
 		if (shm_rc_fd > 0) {
-			ftruncate(shm_rc_fd, sizeof(unsigned long));
+		// Got an existing refcount
 			m_SHMRefCount = (unsigned long *)mmap(0, sizeof(unsigned long), PROT_READ | PROT_WRITE, MAP_SHARED,
 			                                      shm_rc_fd, 0);
 
-		// Initilise to 1 (this instance)
-			*m_SHMRefCount = 1;
+			(*m_SHMRefCount)++;
 
-			shm_db_fd = shm_open(m_SHMLDBPath, O_CREAT | O_RDWR, 0644);
+			int shm_db_fd = shm_open((const char *)m_SHMDatabasePath, O_RDONLY, 0644);
 			if (shm_db_fd > 0) {
-			// Create LADSPA Plugin Database
-				m_LADSPAInfo = new LADSPAInfo(false, "");
+			// Got LADSPA Database
+				m_SHMDatabase = (LADSPAInfo **)mmap(0, sizeof(LADSPAInfo *), PROT_READ, MAP_SHARED,
+				                                    shm_db_fd, 0);
 
-				ftruncate(shm_db_fd, sizeof(LADSPAInfo *));
-				m_SHMLDB = (LADSPAInfo **)mmap(0, sizeof(LADSPAInfo *), PROT_READ | PROT_WRITE, MAP_SHARED,
-				                               shm_db_fd, 0);
-
-				*m_SHMLDB = m_LADSPAInfo;
+				m_LADSPAInfo = *m_SHMDatabase;
 			} else {
-				std::cerr << "LADSPAPlugin: ERROR: Could not create SHM file '" << m_SHMLDBPath << "'" << std::endl;
+				std::cerr << "LADSPAPlugin: ERROR: Could not open SHM file '" << m_SHMDatabasePath << std::cerr;
+				m_LADSPAInfo = new LADSPAInfo(false, "");
 			}
 		} else {
-			std::cerr << "LADSPAPlugin: ERROR: Could not create SHM file '" << m_SHMRefCountPath << "'" << std::endl;
+		// Create LADSPA Plugin Database
+			m_LADSPAInfo = new LADSPAInfo(false, "");
+
+		// Need to create a new SHM file for ref counter
+			shm_rc_fd = shm_open((const char *)m_SHMRefCountPath, O_CREAT | O_RDWR, 0644);
+			if (shm_rc_fd > 0) {
+				ftruncate(shm_rc_fd, sizeof(unsigned long));
+				m_SHMRefCount = (unsigned long *)mmap(0, sizeof(unsigned long), PROT_READ | PROT_WRITE, MAP_SHARED,
+				                                      shm_rc_fd, 0);
+
+			// Initilise to 1 (this instance)
+				*m_SHMRefCount = 1;
+
+				int shm_db_fd = shm_open((const char *)m_SHMDatabasePath, O_CREAT | O_RDWR, 0644);
+				if (shm_db_fd > 0) {
+				// Share database via pointer
+					ftruncate(shm_db_fd, sizeof(LADSPAInfo *));
+					m_SHMDatabase = (LADSPAInfo **)mmap(0, sizeof(LADSPAInfo *), PROT_READ | PROT_WRITE, MAP_SHARED,
+					                                    shm_db_fd, 0);
+
+					*m_SHMDatabase = m_LADSPAInfo;
+				} else {
+					std::cerr << "LADSPAPlugin: ERROR: Could not create SHM file '" << m_SHMDatabasePath << "'" << std::endl;
+				}
+			} else {
+				std::cerr << "LADSPAPlugin: ERROR: Could not create SHM file '" << m_SHMRefCountPath << "'" << std::endl;
+			}
 		}
+	} else {
+	// Dang. Just create new database
+		m_LADSPAInfo = new LADSPAInfo(false, "");
 	}
+
 #else
 // No POSIX SHM, just create a new database
 	m_LADSPAInfo = new LADSPAInfo(false, "");
@@ -130,7 +163,7 @@ LADSPAPlugin::LADSPAPlugin()
 
 	ClearPlugin();
 
-	m_Version=8;
+	m_Version=9;
 
 	m_PluginInfo.Name="LADSPA";
 	m_PluginInfo.Width=500;
@@ -143,7 +176,7 @@ LADSPAPlugin::LADSPAPlugin()
 
 // For receiving from GUI
 	m_AudioCH->RegisterData("SetUniqueID", ChannelHandler::INPUT,&(m_InData.UniqueID), sizeof(m_InData.UniqueID));
-	m_AudioCH->RegisterData("SetTabIndex", ChannelHandler::INPUT,&(m_InData.TabIndex), sizeof(m_InData.TabIndex));
+	m_AudioCH->RegisterData("SetPage", ChannelHandler::INPUT,&(m_InData.Page), sizeof(m_InData.Page));
 	m_AudioCH->RegisterData("SetUpdateInputs", ChannelHandler::INPUT,&(m_InData.UpdateInputs),sizeof(m_InData.UpdateInputs));
 	m_AudioCH->RegisterData("SetInputPortIndex", ChannelHandler::INPUT, &(m_InData.InputPortIndex), sizeof(m_InData.InputPortIndex));
 	m_AudioCH->RegisterData("SetInputPortDefault", ChannelHandler::INPUT, &(m_InData.InputPortDefault), sizeof(m_InData.InputPortDefault));
@@ -194,14 +227,14 @@ LADSPAPlugin::~LADSPAPlugin()
 	// Last instance, so unmap and unlink
 		munmap(m_SHMRefCount, sizeof(unsigned long));
 		shm_unlink(m_SHMRefCountPath);
-		munmap(m_SHMLDB, sizeof(LADSPAInfo *));
-		shm_unlink(m_SHMLDBPath);
+		munmap(m_SHMDatabase, sizeof(LADSPAInfo *));
+		shm_unlink(m_SHMDatabasePath);
 	// Delete the database itself
 		delete m_LADSPAInfo;
 	} else {
 	// Other instances still out there, so just unmap
 		munmap(m_SHMRefCount, sizeof(unsigned long));
-		munmap(m_SHMLDB, sizeof(LADSPAInfo *));
+		munmap(m_SHMDatabase, sizeof(LADSPAInfo *));
 	}
 #else
 	delete m_LADSPAInfo;
@@ -289,9 +322,9 @@ void LADSPAPlugin::ExecuteCommands()
 	{
 		switch(m_AudioCH->GetCommand())
 		{
-			case (SETTABINDEX):
+			case (SETPAGE):
 			{
-				m_TabIndex = m_InData.TabIndex;
+				m_Page = m_InData.Page;
 			}
 			break;
 			case (SELECTPLUGIN):
@@ -363,12 +396,19 @@ void LADSPAPlugin::StreamOut(ostream &s)
 
 	switch (m_Version)
 	{
-		case 8:
+		case 9:
 		{
-			s<<m_TabIndex<<" ";
+		// Get number of unconnected inputs
+			m_UnconnectedInputs = m_PluginInfo.NumInputs;
+			for (int p = 0; p < m_PluginInfo.NumInputs; p++) {
+				if (m_OutData.InputPortValues[p].Connected) m_UnconnectedInputs--;
+			}
+
+			s<<m_Page<<" ";
 			s<<m_UpdateInputs<<" ";
 			s<<m_UniqueID<<" ";
 			s<<m_InputPortMin.size()<<" ";
+			s<<m_UnconnectedInputs<<" ";
 			assert(m_InputPortMin.size()==m_InputPortMax.size());
 			assert(m_InputPortMin.size()==m_InputPortClamp.size());
 			assert(m_InputPortMin.size()==m_InputPortDefault.size());
@@ -398,11 +438,44 @@ void LADSPAPlugin::StreamOut(ostream &s)
 			}
 		}
 		break;
+		case 8:
+		{
+//			s<<m_Page<<" ";
+//			s<<m_UpdateInputs<<" ";
+//			s<<m_UniqueID<<" ";
+//			s<<m_InputPortMin.size()<<" ";
+//			assert(m_InputPortMin.size()==m_InputPortMax.size());
+//			assert(m_InputPortMin.size()==m_InputPortClamp.size());
+//			assert(m_InputPortMin.size()==m_InputPortDefault.size());
+//			for (vector<float>::iterator i=m_InputPortMin.begin();
+//			     i!=m_InputPortMin.end(); i++)
+//			{
+//				float f = finite(*i)?(*i):0.0f;
+//				s<< f <<" ";
+//			}
+//			for (vector<float>::iterator i=m_InputPortMax.begin();
+//			     i!=m_InputPortMax.end(); i++)
+//			{
+//				float f = finite(*i)?(*i):0.0f;
+//				s<< f <<" ";
+//			}
+//			for (vector<bool>::iterator i=m_InputPortClamp.begin();
+//			     i!=m_InputPortClamp.end(); i++)
+//			{
+//				float f = finite(*i)?(*i):0.0f;
+//				s<< f <<" ";
+//			}
+//			for (vector<float>::iterator i=m_InputPortDefault.begin();
+//			     i!=m_InputPortDefault.end(); i++)
+//			{
+//				float f = finite(*i)?(*i):0.0f;
+//				s<< f <<" ";
+//			}
+		}
+		break;
 		case 7:
 		{
-// Here for consistency - should never actually happen, as
-// version is always 8!
-//			s<<m_TabIndex<<" ";
+//			s<<m_Page<<" ";
 //			s<<m_UniqueID<<" ";
 //			s<<m_InputPortMin.size()<<" ";
 //			assert(m_InputPortMin.size()==m_InputPortMax.size());
@@ -584,9 +657,40 @@ void LADSPAPlugin::StreamIn(istream &s)
 
 	switch (Version)
 	{
+		case 9:
+		{
+			s >> m_Page;
+			s >> m_UpdateInputs;
+			s >> UniqueID;
+			s >> PortCount;
+			s >> m_UnconnectedInputs;
+
+			for (int n=0; n<PortCount; n++)
+			{
+				s >> Min;
+				m_InputPortMin.push_back(Min);
+			}
+
+			for (int n=0; n<PortCount; n++)
+			{
+				s >> Max;
+				m_InputPortMax.push_back(Max);
+			}
+			for (int n=0; n<PortCount; n++)
+			{
+				s >> Clamp;
+				m_InputPortClamp.push_back(Clamp);
+			}
+			for (int n=0; n<PortCount; n++)
+			{
+				s >> Default;
+				m_InputPortDefault.push_back(Default);
+			}
+		}
+		break;
 		case 8:
 		{
-			s >> m_TabIndex;
+			s >> m_Page;
 			s >> m_UpdateInputs;
 			s >> UniqueID;
 			s >> PortCount;
@@ -616,7 +720,7 @@ void LADSPAPlugin::StreamIn(istream &s)
 		break;
 		case 7:
 		{
-			s >> m_TabIndex;
+			s >> m_Page;
 			s >> UniqueID;
 			s >> PortCount;
 
@@ -832,7 +936,15 @@ void LADSPAPlugin::StreamIn(istream &s)
 	// Need to reset ports - none will have been saved
 		UpdatePlugin(UniqueID);
 	} else {
+	// Versions prior to 9 have 'Setup' page as page 1
+	// This is now page 2, as the sliders are page 1
+		if (Version < 9 && m_Page == 1) m_Page = 2;
+
 		if (SelectPlugin(UniqueID)) {
+		// Versions prior to 9 will not have the unconnected inupts saved
+		// Default to the number of input ports.
+			if (Version < 9) m_UnconnectedInputs = m_InputPortCount;
+
 			SetGUIExports();
 		} else {
 			ClearPlugin();
@@ -981,10 +1093,11 @@ void LADSPAPlugin::ClearPlugin(void)
 		m_LADSPAInfo->DiscardDescriptorByID(m_UniqueID);
 	}
 
-	m_TabIndex = 1;
+	m_Page = 1;
 	m_UpdateInputs = true;
 	m_UniqueID = 0;
 	m_InputPortCount = 0;
+	m_UnconnectedInputs = 0;
 	strncpy(m_Name, "None\0", 5);
 	strncpy(m_Maker, "None\0", 5);
 

@@ -30,6 +30,7 @@
 
 #include "LADSPAPluginGUI.h"
 #include "LADSPAInfo.h"
+#include "../../../SpiralSynthModularInfo.h"
 
 LADSPAPluginGUI::LADSPAPluginGUI(int w, int h,
                                  LADSPAPlugin *o,
@@ -55,41 +56,61 @@ SpiralPluginGUI(w,h,o,ch)
 		cerr<<"LADSPA Plugin (GUI): Memory allocation error\n"<<endl;
 	}
 
+	m_InputPortCount = 0;
+	m_UnconnectedInputs = 0;
+	m_PortIndex = 0;
+
 // Set up widgets
-	m_NameLabel = new Fl_Box(10,20,480,15,"None");
-	m_NameLabel->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
-	m_NameLabel->labelcolor(Info->GUI_COLOUR);
-	m_NameLabel->labelsize(12);
-	add(m_NameLabel);
+	m_BKnob = new Fl_Button(5,15,50,20,"Knobs");
+	m_BKnob->labelsize (10);
+	m_BKnob->type(FL_TOGGLE_BUTTON);
+	m_BKnob->box(FL_PLASTIC_UP_BOX);
+	m_BKnob->color(Info->GUI_COLOUR);
+	m_BKnob->selection_color(m_GUIColour);
+	m_BKnob->callback((Fl_Callback *)cb_BKnob);
+	add(m_BKnob);
 
-	m_MakerLabel = new Fl_Box(10,40,480,15,"None");
-	m_MakerLabel->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
-	m_MakerLabel->labelcolor(Info->GUI_COLOUR);
-	m_MakerLabel->labelsize(12);
-	add(m_MakerLabel);
+	m_BSlider = new Fl_Button(60,15,50,20,"Sliders");
+	m_BSlider->labelsize (10);
+	m_BSlider->type(FL_TOGGLE_BUTTON);
+	m_BSlider->box(FL_PLASTIC_UP_BOX);
+	m_BSlider->color(m_GUIColour);
+	m_BSlider->selection_color(m_GUIColour);
+	m_BSlider->callback((Fl_Callback *)cb_BSlider);
+	add(m_BSlider);
 
-	m_Tab = new Fl_Tabs (5, 60, 490, 250, "");
-	m_Tab->box (FL_PLASTIC_DOWN_BOX);
-	m_Tab->callback((Fl_Callback *)cb_TabChange);
-	add(m_Tab);
+	m_BSetup = new Fl_Button(w - 55,15,50,20,"Setup...");
+	m_BSetup->labelsize (10);
+	m_BSetup->type(FL_TOGGLE_BUTTON);
+	m_BSetup->box(FL_PLASTIC_UP_BOX);
+	m_BSetup->color(m_GUIColour);
+	m_BSetup->selection_color(m_GUIColour);
+	m_BSetup->callback((Fl_Callback *)cb_BSetup);
+	add(m_BSetup);
 
-	m_ControlGroup = new Fl_Group (5, 80, 490, 230, "Control");
-	m_ControlGroup->box (FL_PLASTIC_UP_BOX);
-	m_ControlGroup->labelsize(12);
+	m_KnobGroup = new Fl_Group(5, 35, w - 10, h - 40, "");
+	add(m_KnobGroup);
 
-	m_ControlScroll = new Fl_Scroll (10, 85, 480, 220, "");
-	m_ControlScroll->align(FL_ALIGN_TOP_LEFT);
-	m_ControlScroll->type(Fl_Scroll::VERTICAL);
-	m_ControlGroup->add(m_ControlScroll);
+	m_SliderGroup = new Fl_Group(5, 35, 490, 275, "");
+	add(m_SliderGroup);
 
-	m_ControlPack = new Fl_Pack (10, 85, 480, 220, "");
-	m_ControlScroll->add(m_ControlPack);
-
-	m_SetupGroup = new Fl_Group (5, 80, 490, 230, "Setup");
-	m_SetupGroup->box (FL_PLASTIC_UP_BOX);
+	m_SetupGroup = new Fl_Group(5, 35, 490, 275, "");
+	m_SetupGroup->box(FL_PLASTIC_UP_BOX);
 	m_SetupGroup->labelsize(12);
 
-	m_Browser = new Fl_Choice(50,85,440,22,"Plugin:");
+	m_NameLabel = new Fl_Box(10,45,480,15,"None");
+	m_NameLabel->align(FL_ALIGN_LEFT|FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
+	m_NameLabel->labelcolor(Info->GUI_COLOUR);
+	m_NameLabel->labelsize(12);
+	m_SetupGroup->add(m_NameLabel);
+
+	m_MakerLabel = new Fl_Box(10,65,480,15,"None");
+	m_MakerLabel->align(FL_ALIGN_LEFT|FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
+	m_MakerLabel->labelcolor(m_GUIColour);
+	m_MakerLabel->labelsize(12);
+	m_SetupGroup->add(m_MakerLabel);
+
+	m_Browser = new Fl_Choice(50, 90, 440, 22,"Plugin:");
 	m_Browser->labelsize(12);
 	m_Browser->textsize(12);
 	m_Browser->callback((Fl_Callback *)cb_Select);
@@ -125,38 +146,44 @@ SpiralPluginGUI(w,h,o,ch)
 
 	m_SetupGroup->add(m_Browser);
 
-	m_InputScroll = new Fl_Scroll(10,130,480,145);
+	m_InputScroll = new Fl_Scroll(10,135,480,145);
 	m_InputScroll->labelsize(12);
 	m_InputScroll->align(FL_ALIGN_TOP_LEFT);
 	m_InputScroll->type(Fl_Scroll::VERTICAL);
 	m_InputScroll->box(FL_DOWN_BOX);
 
-	m_InputPack = new Fl_Pack(5,135,460,26,"");
+	m_InputPack = new Fl_Pack(15,140,470,135,"");
 	m_InputScroll->add(m_InputPack);
 
 	m_SetupGroup->add(m_InputScroll);
 
-	m_ValueLabel = new Fl_Box(15,115,60,15,"Value");
+	m_ValueLabel = new Fl_Box(15,120,60,15,"Value");
+	m_ValueLabel->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 	m_ValueLabel->labelsize(12);
 	m_SetupGroup->add(m_ValueLabel);
 
-	m_DefaultLabel = new Fl_Box(77,115,60,15,"Default");
+	m_DefaultLabel = new Fl_Box(77,120,60,15,"Default");
+	m_DefaultLabel->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 	m_DefaultLabel->labelsize(12);
 	m_SetupGroup->add(m_DefaultLabel);
 
-	m_MinLabel = new Fl_Box(139,115,60,15,"Min");
+	m_MinLabel = new Fl_Box(139,120,60,15,"Min");
+	m_MinLabel->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 	m_MinLabel->labelsize(12);
 	m_SetupGroup->add(m_MinLabel);
 
-	m_MaxLabel = new Fl_Box(201,115,60,15,"Max");
+	m_MaxLabel = new Fl_Box(201,120,60,15,"Max");
+	m_MaxLabel->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 	m_MaxLabel->labelsize(12);
 	m_SetupGroup->add(m_MaxLabel);
 
-	m_ClampLabel = new Fl_Box(280,115,10,15,"Clamp?");
+	m_ClampLabel = new Fl_Box(275,120,10,15,"Clamp?");
+	m_ClampLabel->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 	m_ClampLabel->labelsize(12);
 	m_SetupGroup->add(m_ClampLabel);
 
-	m_PortLabel = new Fl_Box(325,115,60,15,"Port Name");
+	m_PortLabel = new Fl_Box(335,120,60,15,"Port Name");
+	m_PortLabel->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 	m_PortLabel->labelsize(12);
 	m_SetupGroup->add(m_PortLabel);
 
@@ -167,12 +194,11 @@ SpiralPluginGUI(w,h,o,ch)
 
 	m_SetupGroup->add(m_UpdateInputs);
 
-	m_Tab->add(m_ControlGroup);
-	m_Tab->add(m_SetupGroup);
-	m_Tab->value(m_SetupGroup);
+	add(m_SetupGroup);
 
-	m_TabIndex = 1;
 	m_PortIndex = 0;
+
+	SetPage(2);
 
 	end();
 }
@@ -189,50 +215,74 @@ LADSPAPluginGUI::~LADSPAPluginGUI(void)
 	Fl::check();
 }
 
-// Rearrange knobs depending on connections
-// Knobs corresponding to connected ports are hidden,
-// the rest are shown
-void LADSPAPluginGUI::UpdatePortControlKnobs(void)
+// This is done all the time
+void LADSPAPluginGUI::Update(void)
 {
-	int column = 0;
+	char temp[256];
+	bool state_changed = false;
 
-// First, clear out all groups in Pack
-// We need to remove all the knobs first, or they'll go
-// with the group. Which would be bad.
-	while (m_ControlPack->children() > 0) {
-		Fl_Group *Group = (Fl_Group *)m_ControlPack->child(0);
-		while (Group->children() > 0) {
-			Fl_Knob *Knob = (Fl_Knob *)Group->child(0);
-			Group->remove(Knob);
-		}
-		m_ControlPack->remove(Group);
-	}
+	m_GUICH->GetData("GetInputPortCount", &(m_InputPortCount));
+	m_GUICH->GetData("GetInputPortValues", m_InputPortValues);
+	m_GUICH->GetData("GetInputPortDefaults", m_InputPortDefaults);
 
-	Fl_Group *NewGroup = new Fl_Group(0,0,460,65,"");
-	NewGroup->box(FL_FLAT_BOX);
-	m_ControlPack->add(NewGroup);
-
-	for (unsigned long p = 0; p < m_InputPortCount; p++)
-	{
-		if (!m_InputPortValues[p].Connected) {
-			m_PortControlKnobs[p]->position(50 + column * 105, 0);
-			m_PortControlKnobs[p]->show();
-			NewGroup->add(m_PortControlKnobs[p]);
-
-			column++;
-			if ((column > 3) && (p < m_InputPortCount - 1)) {
-				NewGroup = new Fl_Group(0,0,460,65,"");
-				NewGroup->box(FL_FLAT_BOX);
-				m_ControlPack->add(NewGroup);
-
-				column = 0;
+// Need to show that a connection is present
+// regardless of Refresh being set
+	for (unsigned long p = 0; p < m_InputPortCount; p++) {
+	// Check if plugin connect state is different to GUI state
+	// A readonly default implies connection
+		if ((m_InputPortValues[p].Connected &&
+		     !(m_PortDefault[p]->readonly())) ||
+		    (m_PortDefault[p]->readonly() &&
+		     !(m_InputPortValues[p].Connected))) {
+			if (m_InputPortValues[p].Connected) {
+			// Disable
+				m_PortDefault[p]->readonly(1);
+				m_PortDefault[p]->color(FL_BACKGROUND_COLOR);
+			} else {
+			// Enable
+				m_PortDefault[p]->readonly(0);
+				m_PortDefault[p]->color(FL_BACKGROUND2_COLOR);
+			// Update knob and slider inputs to new value
+				sprintf(temp,"%.4f", m_InputPortDefaults[p]);
+				m_KnobDefaults[p]->value(temp);
+				m_SliderDefaults[p]->value(temp);
 			}
-		} else {
-			m_PortControlKnobs[p]->hide();
+
+			sprintf(temp,"%.4f", m_InputPortDefaults[p]);
+			m_PortDefault[p]->value(temp);
+
+			SetControlValue(p, BOTH);
+
+			state_changed = true;
+		}
+
+	// Only update values if Refresh is set
+		if (m_UpdateInputs->value()) {
+			sprintf(temp,"%.4f", m_InputPortValues[p].Value);
+			m_PortValue[p]->value(temp);
+
+			if (m_InputPortValues[p].Connected) {
+				sprintf(temp,"%.4f", m_InputPortDefaults[p]);
+				m_PortDefault[p]->value(temp);
+			}
 		}
 	}
 
-	m_ControlScroll->redraw();
+// If a connection has been added/removed, we need to
+// rearrange the knobs
+	if (state_changed) {
+	// Count the unconnected ports
+		m_UnconnectedInputs = 0;
+		for (unsigned long p = 0; p < m_InputPortCount; p++) {
+			if (!(m_InputPortValues[p].Connected)) m_UnconnectedInputs++;
+		}
+		UpdateKnobs();
+		UpdateSliders();
+
+		m_BKnob->resize(x()+5, y()+15, 50, 20);
+		m_BSlider->resize(x()+60, y()+15, 50, 20);
+		m_BSetup->resize(x() + w() - 55, y()+15, 50, 20);
+	}
 }
 
 // This lot is only done on patch load
@@ -242,10 +292,11 @@ void LADSPAPluginGUI::UpdateValues(SpiralPlugin *o)
 	SetUniqueID(Plugin->GetUniqueID());
 	SetName(Plugin->GetName());
 	SetMaker(Plugin->GetMaker());
-	SetTabIndex(Plugin->GetTabIndex());
 	SetUpdateInputs(Plugin->GetUpdateInputs());
-
 	m_InputPortCount = Plugin->GetInputPortCount();
+
+	m_UnconnectedInputs = Plugin->GetUnconnectedInputs();
+
 	const char *name;
 
 	for (unsigned long p = 0; p < m_InputPortCount; p++) {
@@ -254,13 +305,14 @@ void LADSPAPluginGUI::UpdateValues(SpiralPlugin *o)
 
 		m_InputPortSettings[p] = Plugin->GetInputPortSetting(p);
 		m_InputPortDefaults[p] = Plugin->GetInputPortDefault(p);
+		m_InputPortValues[p] = Plugin->GetInputPortValue(p);
 
 		AddPortInfo(p);
 		SetPortSettings(p);
-		SetPortControlKnobValue(p);
+		SetControlValue(p, BOTH);
 	}
 
-	UpdatePortControlKnobs();
+	SetPage(Plugin->GetPage());
 
 	m_PortIndex = m_InputPortCount;
 }
@@ -317,20 +369,157 @@ const string LADSPAPluginGUI::GetHelpText(const string &loc)
 // **                      Private Member Functions                          **
 // ****************************************************************************
 
-void LADSPAPluginGUI::SetTabIndex(int index)
+// Clear plugin selection and all related stuff
+void LADSPAPluginGUI::ClearPlugin(void)
 {
-	m_TabIndex = index;
-	if (m_TabIndex == 0) {
-		m_Tab->value(m_ControlGroup);
-	} else {
-		m_Tab->value(m_SetupGroup);
+	m_InputPortCount = 0;
+	m_UnconnectedInputs = 0;
+	m_PortIndex = 0;
+
+	m_GUICH->SetCommand(LADSPAPlugin::CLEARPLUGIN);
+	m_GUICH->Wait();
+
+// Clear out setup scroll
+	while (m_InputPack->children() > 0) {
+		Fl_Group *g = (Fl_Group *)m_InputPack->child(0);
+		while (g->children() > 0) {
+			Fl_Widget *w = g->child(0);
+			g->remove(w);
+		}
+		m_InputPack->remove(g);
+		delete g;
 	}
+
+// Clear out Knob and Slider groups
+	while (m_KnobGroup->children() > 0) m_KnobGroup->remove(m_KnobGroup->child(0));
+	while (m_SliderGroup->children() > 0) m_SliderGroup->remove(m_SliderGroup->child(0));
+
+// Clear out all port widgets
+	for (vector<Fl_Output *>::iterator i = m_PortValue.begin(); i != m_PortValue.end(); i++) delete *i;
+	m_PortValue.clear();
+	for (vector<Fl_Input *>::iterator i = m_PortMin.begin(); i != m_PortMin.end(); i++) delete *i;
+	m_PortMin.clear();
+	for (vector<Fl_Input *>::iterator i = m_PortMax.begin(); i != m_PortMax.end(); i++) delete *i;
+	m_PortMax.clear();
+	for (vector<Fl_Check_Button *>::iterator i = m_PortClamp.begin(); i != m_PortClamp.end(); i++) delete *i;
+	m_PortClamp.clear();
+	for (vector<Fl_Input *>::iterator i = m_PortDefault.begin(); i != m_PortDefault.end(); i++) delete *i;
+	m_PortDefault.clear();
+	for (vector<Fl_Knob *>::iterator i = m_Knobs.begin(); i != m_Knobs.end(); i++) delete *i;
+	m_Knobs.clear();
+	for (vector<Fl_Slider *>::iterator i = m_Sliders.begin(); i != m_Sliders.end(); i++) delete *i;
+	m_Sliders.clear();
+	for (vector<Fl_Input *>::iterator i = m_KnobDefaults.begin(); i != m_KnobDefaults.end(); i++) delete *i;
+	m_KnobDefaults.clear();
+	for (vector<Fl_Input *>::iterator i = m_SliderDefaults.begin(); i != m_SliderDefaults.end(); i++) delete *i;
+	m_SliderDefaults.clear();
+	for (vector<Fl_Box *>::iterator i = m_KnobLabels.begin(); i != m_KnobLabels.end(); i++) delete *i;
+	m_KnobLabels.clear();
+	for (vector<Fl_Box *>::iterator i = m_SliderLabels.begin(); i != m_SliderLabels.end(); i++) delete *i;
+	m_SliderLabels.clear();
+
+// Free label buffers
+	for (vector<char *>::iterator i = m_KnobLabelBuffers.begin(); i != m_KnobLabelBuffers.end(); i++) {
+		if (*i) free (*i);
+	}
+	m_KnobLabelBuffers.clear();
+	for (vector<char *>::iterator i = m_SliderLabelBuffers.begin(); i != m_SliderLabelBuffers.end(); i++) {
+		if (*i) free (*i);
+	}
+	m_SliderLabelBuffers.clear();
+
+	m_SetupGroup->redraw();
 }
 
-void LADSPAPluginGUI::SetUpdateInputs(bool state)
+// Setup from selected plugin
+void LADSPAPluginGUI::SelectPlugin(void)
 {
-	m_UpdateInputState = state;
-	m_UpdateInputs->value(m_UpdateInputState);
+// Now get the new values to populate GUI controls
+	m_GUICH->GetData("GetName", m_Name);
+	m_GUICH->GetData("GetMaker", m_Maker);
+	m_GUICH->GetData("GetInputPortCount", &(m_InputPortCount));
+	m_GUICH->GetData("GetInputPortNames", m_InputPortNames);
+	m_GUICH->GetData("GetInputPortSettings", m_InputPortSettings);
+	m_GUICH->GetData("GetInputPortDefaults", m_InputPortDefaults);
+
+	SetName((const char *)m_Name);
+	SetMaker((const char *)m_Maker);
+
+	for (unsigned long p = 0; p < m_InputPortCount; p++) {
+		AddPortInfo(p);
+		SetPortSettings(p);
+		SetControlValue(p, BOTH);
+	}
+
+	m_PortIndex = m_InputPortCount;
+	m_UnconnectedInputs = m_InputPortCount;
+
+	m_SetupGroup->redraw();
+}
+
+// Change current page (Knobs/Sliders/Setup), resizing window
+// to fit the contents
+void LADSPAPluginGUI::SetPage(int index)
+{
+	m_Page = index;
+
+	switch (m_Page) {
+		case 0:
+		{
+			m_BKnob->value(1);
+			m_BKnob->deactivate();
+			m_BSlider->value(0);
+			m_BSlider->activate();
+			m_BSetup->value(0);
+			m_BSetup->activate();
+
+			m_KnobGroup->show();
+			m_SliderGroup->hide();
+			m_SetupGroup->hide();
+
+			UpdateKnobs();
+			break;
+		}
+		case 1:
+		{
+			m_BKnob->value(0);
+			m_BKnob->activate();
+			m_BSlider->value(1);
+			m_BSlider->deactivate();
+			m_BSetup->value(0);
+			m_BSetup->activate();
+
+			m_KnobGroup->hide();
+			m_SliderGroup->show();
+			m_SetupGroup->hide();
+
+			UpdateSliders();
+			break;
+		}
+		default:
+		{
+			m_BKnob->value(0);
+			m_BKnob->activate();
+			m_BSlider->value(0);
+			m_BSlider->activate();
+			m_BSetup->value(1);
+			m_BSetup->deactivate();
+
+			m_KnobGroup->hide();
+			m_SliderGroup->hide();
+			m_SetupGroup->show();
+
+			resize(x(), y(), 500, 320);
+
+			m_KnobGroup->resize(x()+5, y()+35, w()-10, h()-40);
+			m_SliderGroup->resize(x()+5, y()+35, w()-10, h()-40);
+			m_SetupGroup->resize(x()+5, y()+35, w()-10, h()-40);
+		}
+	}
+
+	m_BKnob->resize(x()+5, y()+15, 50, 20);
+	m_BSlider->resize(x()+60, y()+15, 50, 20);
+	m_BSetup->resize(x() + w() - 55, y()+15, 50, 20);
 }
 
 void LADSPAPluginGUI::SetUniqueID(unsigned long n)
@@ -382,11 +571,348 @@ void LADSPAPluginGUI::SetPortSettings(unsigned long p)
 
 	sprintf(temp, "%.4f", m_InputPortDefaults[p]);
 	m_PortDefault[p]->value(temp);
+	m_KnobDefaults[p]->value(temp);
+	m_SliderDefaults[p]->value(temp);
 }
 
-void LADSPAPluginGUI::SetPortControlKnobValue(unsigned long p)
+void LADSPAPluginGUI::SetUpdateInputs(bool state)
 {
-// Set default adjust knob
+	m_UpdateInputState = state;
+	m_UpdateInputs->value(m_UpdateInputState);
+}
+
+// Setup all controls (Knob, Slider, Settings) for given port
+void LADSPAPluginGUI::AddPortInfo(unsigned long p)
+{
+	Fl_Group* NewGroup = new Fl_Group(0,0,460,24,"");
+	NewGroup->box(FL_FLAT_BOX);
+	m_InputPack->add(NewGroup);
+
+// Value
+	Fl_Output* NewOutput = new Fl_Output(0,0,60,18,"");
+	NewOutput->value(0);
+	NewOutput->textsize(10);
+	NewOutput->color(FL_BACKGROUND_COLOR);
+	NewOutput->readonly(1);
+	NewGroup->add(NewOutput);
+	m_PortValue.push_back(NewOutput);
+
+// Fixed Value/Default
+	Fl_Input* NewInput = new Fl_Input(62,0,60,18,"");
+	NewInput->value(0);
+	NewInput->textsize(10);
+	NewInput->callback((Fl_Callback *)cb_Default);
+	NewGroup->add(NewInput);
+	m_PortDefault.push_back(NewInput);
+
+// Min
+	NewInput = new Fl_Input(124,0,60,18,"");
+	NewInput->value(0);
+	NewInput->textsize(10);
+	NewInput->callback((Fl_Callback *)cb_Min);
+	NewGroup->add(NewInput);
+	m_PortMin.push_back(NewInput);
+
+// Max
+	NewInput = new Fl_Input(186,0,60,18,"");
+	NewInput->value(0);
+	NewInput->textsize(10);
+	NewInput->callback((Fl_Callback *)cb_Max);
+	NewGroup->add(NewInput);
+	m_PortMax.push_back(NewInput);
+
+// Clamp
+	Fl_Check_Button* NewCheckButton = new Fl_Check_Button(255,0,10,18,"");
+	NewCheckButton->value(0);
+	NewCheckButton->callback((Fl_Callback *)cb_Clamp);
+	NewGroup->add(NewCheckButton);
+	m_PortClamp.push_back(NewCheckButton);
+
+// Port Name
+	Fl_Box* NewText = new Fl_Box(315,0,10,18,"");
+	NewText->label((const char *)(m_InputPortNames + p * 256));
+	NewText->labelsize(10);
+	NewText->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+	NewGroup->add(NewText);
+
+	NewGroup->redraw();
+	m_InputPack->redraw();
+	m_InputScroll->redraw();
+
+// Control knobs and sliders - these aren't positoned or displayed yet,
+// as this will depend on what is connected. All that is decided in
+// UpdateKnobs()
+
+// Knob
+	Fl_Knob* NewKnob = new Fl_Knob(0,0,40,40,"");
+	NewKnob->color(m_GUIColour);
+	NewKnob->callback((Fl_Callback *)cb_Knob);
+	NewKnob->hide();
+	m_KnobGroup->add(NewKnob);
+	m_Knobs.push_back(NewKnob);
+
+// Direct input box for knob
+	NewInput = new Fl_Input(0,0,60,16);
+	NewInput->box(FL_PLASTIC_DOWN_BOX);
+	NewInput->value(0);
+	NewInput->textsize(10);
+	NewInput->callback((Fl_Callback *)cb_KnobValue);
+	NewInput->hide();
+	m_KnobGroup->add(NewInput);
+	m_KnobDefaults.push_back(NewInput);
+
+// Knob Label
+// Get maximum 19 characters (excluding "(AU)"/"(CV)" bit)
+	size_t len = strlen((const char *)(m_InputPortNames + p * 256));
+	len = len > 24 ? 19 : len - 5;
+	char *kl = (char *)malloc(len+1);
+	if (kl) {
+		strncpy(kl, (const char *)(m_InputPortNames + p * 256), len);
+		kl[len] = '\0';
+		m_KnobLabelBuffers.push_back(kl);
+	}
+	NewText = new Fl_Box(0,0,100,12,(const char *)kl);
+	NewText->align(FL_ALIGN_CENTER|FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
+	NewText->labelfont(FL_COURIER);
+	NewText->labelsize(9);
+	NewText->hide();
+	m_KnobGroup->add(NewText);
+	m_KnobLabels.push_back(NewText);
+
+// Slider
+	Fl_Slider* NewSlider = new Fl_Slider(0,0,20,100,"");
+	NewSlider->type(FL_VERT_NICE_SLIDER);
+	NewSlider->box(FL_PLASTIC_DOWN_BOX);
+	NewSlider->selection_color(m_GUIColour);
+	NewSlider->callback((Fl_Callback *)cb_Slider);
+	NewSlider->hide();
+	m_SliderGroup->add(NewSlider);
+	m_Sliders.push_back(NewSlider);
+
+// Direct input box for slider
+	NewInput = new Fl_Input(0,0,56,16);
+	NewInput->box(FL_PLASTIC_DOWN_BOX);
+	NewInput->value(0);
+	NewInput->textsize(10);
+	NewInput->callback((Fl_Callback *)cb_SliderValue);
+	NewInput->hide();
+	m_SliderGroup->add(NewInput);
+	m_SliderDefaults.push_back(NewInput);
+
+// Slider Label
+// Copy and truncate knob label to 9 chars for slider
+	len = len > 9 ? 9 : len;
+	char *sl = (char *)malloc(len+1);
+	if (kl && sl) {
+		strncpy(sl, (const char *)kl, len);
+		sl[len] = '\0';
+		m_SliderLabelBuffers.push_back(sl);
+	}
+	NewText = new Fl_Box(0,0,60,12,(const char *)sl);
+	NewText->align(FL_ALIGN_CENTER|FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
+	NewText->labelfont(FL_COURIER);
+	NewText->labelsize(9);
+	NewText->hide();
+	m_SliderGroup->add(NewText);
+	m_SliderLabels.push_back(NewText);
+
+// Set up range for knob (integer, logarithmic etc)
+	SetControlRange(p, m_InputPortSettings[p].Min, m_InputPortSettings[p].Max);
+}
+
+// Rearrange knobs depending on connections
+// Knobs corresponding to connected ports are hidden,
+// the rest are shown
+void LADSPAPluginGUI::UpdateKnobs(void)
+{
+	float sqrcount = sqrtf((float)m_UnconnectedInputs);
+	float fsqrcount = floorf(sqrcount);
+	float diff = sqrcount - fsqrcount;
+	int cols = (int)fsqrcount;
+	int rows = (int)fsqrcount;
+
+	rows += diff > 0.0f ? 1 : 0;
+	cols += diff > 0.5f ? 1 : 0;
+
+	if (m_Page == 0) {
+	// Size window to fit if current page is showing knobs
+		int width;
+		int height;
+
+		if (m_UnconnectedInputs == 0) {
+		// No knobs - minimal size
+			width = 170;
+			height = 80;
+		} else if (m_UnconnectedInputs < 3) {
+		// Single row for one or two knobs
+			width = 10+m_UnconnectedInputs*100;
+			height = 45+80;
+			width = width < 170 ? 170 : width;
+		} else {
+		// Auto arrange
+			width = 10+cols*100;
+			height = 45+rows*80;
+			width = width < 170 ? 170 : width;
+		}
+		resize(x(), y(), width, height);
+
+	// Resize all groups to fit
+		m_KnobGroup->resize(x()+5, y()+35, w()-10, h()-40);
+		m_SliderGroup->resize(x()+5, y()+35, w()-10, h()-40);
+		m_SetupGroup->resize(x()+5, y()+35, w()-10, h()-40);
+
+		redraw();
+	}
+
+// Add knobs into group
+	int column = 0;
+	int row = 0;
+	for (unsigned long p = 0; p < m_InputPortCount; p++)
+	{
+		if (!m_InputPortValues[p].Connected) {
+			if (m_UnconnectedInputs == 1) {
+			// Single knob - centre
+				m_Knobs[p]->resize(x()+35+30,y()+45,40,40);
+				m_KnobDefaults[p]->resize(x()+35+20,y()+45+40,60,16);
+				m_KnobLabels[p]->resize(x()+5+30,y()+45+55,100,15);
+			} else if (m_UnconnectedInputs == 2) {
+			// Two knobs - put in single row
+				column = row;
+				m_Knobs[p]->resize(x()+35+column*100,y()+45,40,40);
+				m_KnobDefaults[p]->resize(x()+25+column*100,y()+45+40,60,16);
+				m_KnobLabels[p]->resize(x()+5+column*100,y()+45+55,100,15);
+			} else {
+			// Auto arrange
+				m_Knobs[p]->resize(x()+35+column*100, y()+45+row*80,40,40);
+				m_KnobDefaults[p]->resize(x()+25+column*100,y()+45+40+row*80,60,16);
+				m_KnobLabels[p]->resize(x()+5+column*100,y()+45+55+row*80,100,15);
+			}
+
+			if (++column==cols) {
+				column = 0;
+				row++;
+			}
+
+			m_Knobs[p]->show();
+			m_KnobDefaults[p]->show();
+			m_KnobLabels[p]->show();
+		} else {
+			m_Knobs[p]->hide();
+			m_KnobDefaults[p]->hide();
+			m_KnobLabels[p]->hide();
+		}
+	}
+}
+
+// Rearrange sliders depending on connections
+// Sliders corresponding to connected ports are hidden,
+// the rest are shown
+void LADSPAPluginGUI::UpdateSliders(void)
+{
+	int cols;
+	int rows;
+	int fullrows = 0;
+
+	if (m_UnconnectedInputs < 9) {
+		cols = m_UnconnectedInputs;
+		rows = 1;
+		fullrows = 1;
+	} else {
+		float sqrcount = sqrt((float)m_UnconnectedInputs);
+		float aspect;
+		int diff;
+
+		cols = (int)floorf(sqrcount * 2.0f);
+		rows = (int)floorf(sqrcount * 0.5f);
+		aspect = (float)cols / (float)rows;
+		diff = cols * rows - m_UnconnectedInputs;
+
+		if (diff < 0) {
+			if (aspect > 4.0f) {
+				rows++;
+				diff += cols;
+			}
+			if (diff > rows - 1) {
+				cols -= (int)floorf((float)diff / (float)rows);
+			} else if (diff < 0) {
+				cols += (int)ceilf(fabsf((float)diff) / (float)rows);
+			}
+		}
+		fullrows = rows - (cols * rows - m_UnconnectedInputs);
+	}
+
+	if (m_Page == 1) {
+	// Size window to fit if current page is showing sliders
+		int width;
+		int height;
+
+		if (m_UnconnectedInputs == 0) {
+		// No sliders - minimal size
+			width = 170;
+			height = 80;
+		} else if (m_UnconnectedInputs < 3) {
+		// Single row of centred sliders if less than three
+			width = 170;
+			height = 45+140;
+		} else if (m_UnconnectedInputs < 9) {
+		// Single row for up to eight sliders
+			width = 10+m_UnconnectedInputs*60;
+			height = 45+140;
+			width = width < 170 ? 170 : width;
+		} else {
+		// Auto arrange
+			width = 10+cols*60;
+			height = 45+rows*140;
+			width = width < 170 ? 170 : width;
+		}
+		resize(x(), y(), width, height);
+
+	// Resize all groups to fit
+		m_KnobGroup->resize(x()+5, y()+35, w()-10, h()-40);
+		m_SliderGroup->resize(x()+5, y()+35, w()-10, h()-40);
+		m_SetupGroup->resize(x()+5, y()+35, w()-10, h()-40);
+	}
+
+// Add sliders into group
+	int column = 0;
+	int row = 0;
+	for (unsigned long p = 0; p < m_InputPortCount; p++)
+	{
+		if (!m_InputPortValues[p].Connected) {
+			if (m_UnconnectedInputs == 0) {
+			// Nothing
+			} else if (m_UnconnectedInputs < 3) {
+			// Single row of centred sliders if less than three
+			// Width is 170, with 5 pixel 'border'
+				int offset=(160-m_UnconnectedInputs*60)/2;
+				m_Sliders[p]->resize(x()+25+offset+column*60, y()+45,20,100);
+				m_SliderDefaults[p]->resize(x()+7+offset+column*60,y()+45+100,56,16);
+				m_SliderLabels[p]->resize(x()+5+offset+column*60, y()+45+115,60,15);
+			} else {
+			// Arrange as per columns and rows
+				m_Sliders[p]->resize(x()+25+column*60, y()+45+row*140,20,100);
+				m_SliderDefaults[p]->resize(x()+7+column*60,y()+45+100+row*140,56,16);
+				m_SliderLabels[p]->resize(x()+5+column*60, y()+45+115+row*140,60,15);
+			}
+
+			if (++column==(cols - (row < fullrows ? 0 : 1))) {
+				column = 0;
+				row++;
+			}
+			m_Sliders[p]->show();
+			m_SliderDefaults[p]->show();
+			m_SliderLabels[p]->show();
+		} else {
+			m_Sliders[p]->hide();
+			m_SliderDefaults[p]->hide();
+			m_SliderLabels[p]->hide();
+		}
+	}
+}
+
+// Set value of slider and/or knob (both use the same settings)
+void LADSPAPluginGUI::SetControlValue(unsigned long p, WhichControl wc)
+{
 	float min = atof(m_PortMin[p]->value());
 	float max = atof(m_PortMax[p]->value());
 	float value = atof(m_PortDefault[p]->value());
@@ -400,25 +926,50 @@ void LADSPAPluginGUI::SetPortControlKnobValue(unsigned long p)
 		// Inverse, negated log
 			value = -logf(-value) / logf(m_InputPortSettings[p].LogBase);
 		} else {
-		// Linear if asymptote present
-		// Do nothing
+		// Have asymptote
+			float linthr;
+			float linrng;
+			float logbase = logf(m_InputPortSettings[p].LogBase);
+
+			linrng = (max > -min) ?  logf( max) / logbase
+			                      :  logf(-min) / logbase;
+
+			linthr = powf(m_InputPortSettings[p].LogBase, linrng - 10.0f);
+
+			if (fabsf(value) > linthr) {
+			// Log/Inverted negated log
+				value = value > 0.0f ? logf(value) / logbase
+				                     : -logf(-value) / logbase;
+			} else {
+			// Linear scale across asymptote
+				value /= linthr;
+				value *= linrng;
+			}
 		}
 	}
 
-	m_PortControlKnobs[p]->value(value);
+	if (wc == KNOB   || wc == BOTH) m_Knobs[p]->value(value);
+
+// Invert slider value, as sliders are upside down
+	if (wc == SLIDER || wc == BOTH) m_Sliders[p]->value(max - value + min);
 }
 
-void LADSPAPluginGUI::SetPortControlKnobRange(unsigned long p, float min, float max)
+// Set range of slider and knob (both use the same settings)
+void LADSPAPluginGUI::SetControlRange(unsigned long p, float min, float max)
 {
 	if (m_InputPortSettings[p].Integer) {
 	// Integer control - integer steps between minimum and maximum
 		min = floorf(min + 0.5f);
 		max = floorf(max + 0.5f);
 
-		m_PortControlKnobs[p]->minimum(min);
-		m_PortControlKnobs[p]->maximum(max);
-		m_PortControlKnobs[p]->step(1.0f);
-		m_PortControlKnobs[p]->scaleticks((int)(max - min));
+		m_Knobs[p]->minimum(min);
+		m_Knobs[p]->maximum(max);
+		m_Knobs[p]->step(1.0f);
+		m_Knobs[p]->scaleticks((int)(max - min));
+
+		m_Sliders[p]->minimum(min);
+		m_Sliders[p]->maximum(max);
+		m_Sliders[p]->step(1.0f);
 	} else {
 		if (m_InputPortSettings[p].LogBase > 1.0f) {
 		// Continuous logarithmic control
@@ -431,286 +982,37 @@ void LADSPAPluginGUI::SetPortControlKnobRange(unsigned long p, float min, float 
 				min = -logf(-min) / logf(m_InputPortSettings[p].LogBase);
 				max = -logf(-max) / logf(m_InputPortSettings[p].LogBase);
 			} else {
-			// Linear if asymptote present
-			// Do nothing
+			// Have asymptote at value == 0
+			// We follow a linear scale when close to this, and logarithmic
+			// otherwise. See SetControlValue() and cbKnob_i(), cb_Slider_i()
+			// for handling this.
+				min = -logf(-min) / logf(m_InputPortSettings[p].LogBase);
+				max = logf(max) / logf(m_InputPortSettings[p].LogBase);
 			}
-			m_PortControlKnobs[p]->minimum(min);
-			m_PortControlKnobs[p]->maximum(max);
-			m_PortControlKnobs[p]->step((max - min) / 10000.0f);
+			m_Knobs[p]->minimum(min);
+			m_Knobs[p]->maximum(max);
+			m_Knobs[p]->step((max - min) / 10000.0f);
+
+			m_Sliders[p]->minimum(min);
+			m_Sliders[p]->maximum(max);
+			m_Sliders[p]->step((max - min) / 10000.0f);
 		} else {
 		// Continuous linear control - 10000 steps between min and max
-			m_PortControlKnobs[p]->minimum(min);
-			m_PortControlKnobs[p]->maximum(max);
-			m_PortControlKnobs[p]->step((max - min) / 10000.0f);
+			m_Knobs[p]->minimum(min);
+			m_Knobs[p]->maximum(max);
+			m_Knobs[p]->step((max - min) / 10000.0f);
+
+			m_Sliders[p]->minimum(min);
+			m_Sliders[p]->maximum(max);
+			m_Sliders[p]->step((max - min) / 10000.0f);
 		}
 	}
 }
 
-void LADSPAPluginGUI::AddPortInfo(unsigned long p)
+// The current value ('Default') can be changed from all three pages
+void LADSPAPluginGUI::SetPortValue(unsigned long p, float value, int frompage)
 {
-	Fl_Group* NewGroup = new Fl_Group(0,0,460,24,"");
-	NewGroup->box(FL_FLAT_BOX);
-	m_InputPack->add(NewGroup);
-
-// Value
-	Fl_Output* NewOutput = new Fl_Output(10,0,60,18,"");
-	NewOutput->value(0);
-	NewOutput->textsize(10);
-	NewOutput->color(FL_BACKGROUND_COLOR);
-	NewOutput->readonly(1);
-	NewGroup->add(NewOutput);
-	m_PortValue.push_back(NewOutput);
-
-// Fixed Value/Default
-	Fl_Input* NewInput = new Fl_Input(72,0,60,18,"");
-	NewInput->value(0);
-	NewInput->textsize(10);
-	NewInput->callback((Fl_Callback *)cb_Default);
-	NewGroup->add(NewInput);
-	m_PortDefault.push_back(NewInput);
-
-// Min
-	NewInput = new Fl_Input(134,0,60,18,"");
-	NewInput->value(0);
-	NewInput->textsize(10);
-	NewInput->callback((Fl_Callback *)cb_Min);
-	NewGroup->add(NewInput);
-	m_PortMin.push_back(NewInput);
-
-// Max
-	NewInput = new Fl_Input(196,0,60,18,"");
-	NewInput->value(0);
-	NewInput->textsize(10);
-	NewInput->callback((Fl_Callback *)cb_Max);
-	NewGroup->add(NewInput);
-	m_PortMax.push_back(NewInput);
-
-// Clamp
-	Fl_Check_Button* NewCheckButton = new Fl_Check_Button(265,0,10,18,"");
-	NewCheckButton->value(0);
-	NewCheckButton->callback((Fl_Callback *)cb_Clamp);
-	NewGroup->add(NewCheckButton);
-	m_PortClamp.push_back(NewCheckButton);
-
-// Port Name
-	Fl_Box* NewText = new Fl_Box(320,0,10,18,"");
-	NewText->label((const char *)(m_InputPortNames + p * 256));
-	NewText->labelsize(10);
-	NewText->tooltip((const char *)(m_InputPortNames + p * 256));
-	NewText->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
-	NewGroup->add(NewText);
-
-	NewGroup->redraw();
-	m_InputPack->redraw();
-	m_InputScroll->redraw();
-
-// Control knobs - these aren't displayed yet, as their display will depend
-// on what is connected. All that is decided in UpdateControlKnobs()
-	int len = strlen((const char *)(m_InputPortNames + p * 256));
-	len -= 5;                  // Get rid of (CV), (AU) bit
-	len = len > 20 ? 20 : len; // Truncate to fit
-	char *label = (char *)malloc(len + 1);
-	if (label)
-	{
-		strncpy(label, (const char *)(m_InputPortNames + p * 256), len);
-		label[len] = '\0';
-	}
-	m_PortControlLabels.push_back(label);
-
-	Fl_Knob* NewKnob = new Fl_Knob(0,0,40,40,"");
-	NewKnob->label(m_PortControlLabels[m_PortControlLabels.size() - 1]);
-	NewKnob->labelsize(10);
-	NewKnob->color(m_GUIColour);
-	NewKnob->callback((Fl_Callback *)cb_DefaultAdjust);
-	NewKnob->hide();
-	m_PortControlKnobs.push_back(NewKnob);
-
-// Set up range for knob (integer, logarithmic etc)
-	SetPortControlKnobRange(p, m_InputPortSettings[p].Min, m_InputPortSettings[p].Max);
-}
-
-// This is done all the time
-void LADSPAPluginGUI::Update(void)
-{
-	char temp[256];
-	bool state_changed = false;
-
-	m_GUICH->GetData("GetInputPortCount", &(m_InputPortCount));
-	m_GUICH->GetData("GetInputPortValues", m_InputPortValues);
-	m_GUICH->GetData("GetInputPortDefaults", m_InputPortDefaults);
-
-// Need to show that a connection is present
-// regardless of Refresh being set
-	for (unsigned long p = 0; p < m_InputPortCount; p++) {
-	// Check if plugin connect state is different to GUI state
-	// A readonly default implies connection
-		if ((m_InputPortValues[p].Connected &&
-		     !(m_PortDefault[p]->readonly())) ||
-		    (m_PortDefault[p]->readonly() &&
-		     !(m_InputPortValues[p].Connected))) {
-			if (m_InputPortValues[p].Connected) {
-			// Disable
-				m_PortDefault[p]->readonly(1);
-				m_PortDefault[p]->color(FL_BACKGROUND_COLOR);
-			} else {
-			// Enable
-				m_PortDefault[p]->readonly(0);
-				m_PortDefault[p]->color(FL_BACKGROUND2_COLOR);
-			}
-
-			sprintf(temp,"%.4f", m_InputPortDefaults[p]);
-			m_PortDefault[p]->value(temp);
-			m_PortDefault[p]->redraw();
-
-			SetPortControlKnobValue(p);
-
-			state_changed = true;
-		}
-
-	// Only update values if Refresh is set
-		if (m_UpdateInputs->value()) {
-			sprintf(temp,"%.4f", m_InputPortValues[p].Value);
-			m_PortValue[p]->value(temp);
-
-			if (m_InputPortValues[p].Connected) {
-				sprintf(temp,"%.4f", m_InputPortDefaults[p]);
-				m_PortDefault[p]->value(temp);
-			}
-		}
-	}
-
-// If a connection has been added/removed, we need to
-// rearrange the knobs
-	if (state_changed) UpdatePortControlKnobs();
-}
-
-void LADSPAPluginGUI::ClearPlugin(void)
-{
-	m_InputPortCount = 0;
-	m_PortIndex = 0;
-
-	m_GUICH->SetCommand(LADSPAPlugin::CLEARPLUGIN);
-	m_GUICH->Wait();
-
-// Clear out port info, and refresh
-	m_InputScroll->remove(m_InputPack);
-	delete m_InputPack;
-	m_InputPack = new Fl_Pack(x()+5,y()+135,460,26,"");
-	m_InputScroll->add(m_InputPack);
-
-// Oh, and the knobs...
-	m_ControlScroll->remove(m_ControlPack);
-	delete m_ControlPack;
-	m_ControlPack = new Fl_Pack(x()+5,y()+90,460,50,"");
-	m_ControlScroll->add(m_ControlPack);
-
-	m_PortValue.clear();
-	m_PortMin.clear();
-	m_PortMax.clear();
-	m_PortClamp.clear();
-	m_PortDefault.clear();
-	m_PortControlKnobs.clear();
-
-	for (vector<char *>::iterator i = m_PortControlLabels.begin();
-	     i != m_PortControlLabels.end(); i++)
-	{
-		if (*i) free (*i);
-	}
-	m_PortControlLabels.clear();
-
-	redraw();
-}
-
-void LADSPAPluginGUI::SelectPlugin(void)
-{
-// Now get the new values to populate GUI controls
-	m_GUICH->GetData("GetName", m_Name);
-	m_GUICH->GetData("GetMaker", m_Maker);
-	m_GUICH->GetData("GetInputPortCount", &(m_InputPortCount));
-	m_GUICH->GetData("GetInputPortNames", m_InputPortNames);
-	m_GUICH->GetData("GetInputPortSettings", m_InputPortSettings);
-	m_GUICH->GetData("GetInputPortDefaults", m_InputPortDefaults);
-
-	SetName((const char *)m_Name);
-	SetMaker((const char *)m_Maker);
-
-	for (unsigned long p = 0; p < m_InputPortCount; p++) {
-		AddPortInfo(p);
-		SetPortSettings(p);
-		SetPortControlKnobValue(p);
-	}
-
-	UpdatePortControlKnobs();
-	m_PortIndex = m_InputPortCount;
-
-	redraw();
-}
-
-// ****************************************************************************
-// **                     Widget Callback Functions                          **
-// ****************************************************************************
-
-inline void LADSPAPluginGUI::cb_TabChange_i(Fl_Tabs *o)
-{
-	m_TabIndex = o->find(o->value());
-
-	m_GUICH->SetData("SetTabIndex", &m_TabIndex);
-	m_GUICH->SetCommand(LADSPAPlugin::SETTABINDEX);
-}
-void LADSPAPluginGUI::cb_TabChange(Fl_Tabs *o)
-{       //                     GUI
-	((LADSPAPluginGUI*)(o->parent()))->cb_TabChange_i(o);
-}
-
-inline void LADSPAPluginGUI::cb_Select_i(Fl_Choice* o)
-{
-	ClearPlugin();
-
-    unsigned long m_UniqueID = m_PluginIDLookup[o->value()];
-
-	if (m_UniqueID != 0) {
-	// Plugin selected
-		m_GUICH->SetData("SetUniqueID",&m_UniqueID);
-		m_GUICH->SetCommand(LADSPAPlugin::SELECTPLUGIN);
-		m_GUICH->Wait();
-	}
-	SelectPlugin();
-
-//	redraw();
-}
-void LADSPAPluginGUI::cb_Select(Fl_Choice* o)
-{   //                     Group     Tab       GUI
-	((LADSPAPluginGUI*)(o->parent()->parent()->parent()))->cb_Select_i(o);
-}
-
-inline void LADSPAPluginGUI::cb_UpdateInputs_i(Fl_LED_Button* o)
-{
-	m_UpdateInputState = (bool)(o->value());
-
-	m_GUICH->SetData("SetUpdateInputs", &m_UpdateInputState);
-	m_GUICH->SetCommand(LADSPAPlugin::SETUPDATEINPUTS);
-}
-void LADSPAPluginGUI::cb_UpdateInputs(Fl_LED_Button* o)
-{   //                     Group     Tab       GUI
-	((LADSPAPluginGUI*)(o->parent()->parent()->parent()))->cb_UpdateInputs_i(o);
-}
-
-inline void LADSPAPluginGUI::cb_Default_i(Fl_Input* o)
-{
-// Which Default was changed?
-	bool do_search = false;
-	if (m_PortIndex == m_PortDefault.size()) { do_search = true; }
-	if (!do_search) { do_search = (o != (m_PortDefault[m_PortIndex])) ? true : false; }
-
-	if (do_search) {
-	// Only bother to re-query if it is different from last one changed
-		vector<Fl_Input *>::iterator i = std::find(m_PortDefault.begin(),
-		                                           m_PortDefault.end(),
-		                                           o);
-		m_PortIndex = distance(m_PortDefault.begin(), i);
-	}
-
-	m_Default = atof(o->value());
+	m_Default = value;
 	m_Min = atof(m_PortMin[m_PortIndex]->value());
 	m_Max = atof(m_PortMax[m_PortIndex]->value());
 
@@ -729,7 +1031,7 @@ inline void LADSPAPluginGUI::cb_Default_i(Fl_Input* o)
 		m_GUICH->Wait();
 
 	// Reconfigure knob range
-		SetPortControlKnobRange(m_PortIndex, m_Min, m_Max);
+		SetControlRange(m_PortIndex, m_Min, m_Max);
 	} else if (m_Default > m_Max) {
 		m_PortMax[m_PortIndex]->value(m_PortDefault[m_PortIndex]->value());
 		m_PortMax[m_PortIndex]->redraw();
@@ -740,20 +1042,138 @@ inline void LADSPAPluginGUI::cb_Default_i(Fl_Input* o)
 		m_GUICH->SetCommand(LADSPAPlugin::SETMAX);
 		m_GUICH->Wait();
 
-	// Reconfigure knob range
-		SetPortControlKnobRange(m_PortIndex, m_Min, m_Max);
+	// Reconfigure knob and slider range
+		SetControlRange(m_PortIndex, m_Min, m_Max);
 	}
 
 // Pass new default to plugin
 	m_GUICH->SetData("SetInputPortDefault", &m_Default);
 	m_GUICH->SetCommand(LADSPAPlugin::SETDEFAULT);
 
-// Set knob to corresponding position
-	SetPortControlKnobValue(m_PortIndex);
+// Set knob and slider to corresponding position
+	SetControlValue(m_PortIndex, BOTH);
+
+// Update other two default input boxes
+	char temp[256];
+	sprintf(temp, "%.4f", m_Default);
+
+	switch (frompage)
+	{
+		case 0:
+		{
+		// Set from knob page - update slider and setup defaults
+			m_SliderDefaults[m_PortIndex]->value(temp);
+			m_PortDefault[m_PortIndex]->value(temp);
+			break;
+		}
+		case 1:
+		{
+		// Set from slider page - update knob and setup defaults
+			m_KnobDefaults[m_PortIndex]->value(temp);
+			m_PortDefault[m_PortIndex]->value(temp);
+			break;
+		}
+		default:
+		{
+		// Set from setup page - update knob and slider defaults
+			m_KnobDefaults[m_PortIndex]->value(temp);
+			m_SliderDefaults[m_PortIndex]->value(temp);
+		}
+	}
+}
+
+// ****************************************************************************
+// **                     Widget Callback Functions                          **
+// ****************************************************************************
+
+inline void LADSPAPluginGUI::cb_BKnob_i(Fl_Button* o)
+{
+	SetPage(0);
+
+	m_GUICH->SetData("SetPage", &m_Page);
+	m_GUICH->SetCommand(LADSPAPlugin::SETPAGE);
+}
+void LADSPAPluginGUI::cb_BKnob(Fl_Button* o)
+{   //                     GUI
+	((LADSPAPluginGUI*)(o->parent()))->cb_BKnob_i(o);
+}
+
+inline void LADSPAPluginGUI::cb_BSlider_i(Fl_Button* o)
+{
+	SetPage(1);
+
+	m_GUICH->SetData("SetPage", &m_Page);
+	m_GUICH->SetCommand(LADSPAPlugin::SETPAGE);
+}
+void LADSPAPluginGUI::cb_BSlider(Fl_Button* o)
+{   //                     GUI
+	((LADSPAPluginGUI*)(o->parent()))->cb_BSlider_i(o);
+}
+
+inline void LADSPAPluginGUI::cb_BSetup_i(Fl_Button* o)
+{
+	SetPage(2);
+
+	m_GUICH->SetData("SetPage", &m_Page);
+	m_GUICH->SetCommand(LADSPAPlugin::SETPAGE);
+}
+void LADSPAPluginGUI::cb_BSetup(Fl_Button* o)
+{   //                     GUI
+	((LADSPAPluginGUI*)(o->parent()))->cb_BSetup_i(o);
+}
+
+inline void LADSPAPluginGUI::cb_Select_i(Fl_Choice* o)
+{
+	ClearPlugin();
+
+	unsigned long m_UniqueID = m_PluginIDLookup[o->value()];
+
+	if (m_UniqueID != 0) {
+	// Plugin selected
+		m_GUICH->SetData("SetUniqueID",&m_UniqueID);
+		m_GUICH->SetCommand(LADSPAPlugin::SELECTPLUGIN);
+		m_GUICH->Wait();
+	}
+	SelectPlugin();
+}
+void LADSPAPluginGUI::cb_Select(Fl_Choice* o)
+{   //                     Group     GUI
+	((LADSPAPluginGUI*)(o->parent()->parent()))->cb_Select_i(o);
+}
+
+inline void LADSPAPluginGUI::cb_UpdateInputs_i(Fl_LED_Button* o)
+{
+	m_UpdateInputState = (bool)(o->value());
+
+	m_GUICH->SetData("SetUpdateInputs", &m_UpdateInputState);
+	m_GUICH->SetCommand(LADSPAPlugin::SETUPDATEINPUTS);
+}
+void LADSPAPluginGUI::cb_UpdateInputs(Fl_LED_Button* o)
+{   //                     Group     GUI
+	((LADSPAPluginGUI*)(o->parent()->parent()))->cb_UpdateInputs_i(o);
+}
+
+inline void LADSPAPluginGUI::cb_Default_i(Fl_Input* o)
+{
+// Which Default was changed?
+	bool do_search = false;
+	if (m_PortIndex == m_PortDefault.size()) { do_search = true; }
+	if (!do_search) { do_search = (o != (m_PortDefault[m_PortIndex])) ? true : false; }
+
+	if (do_search) {
+	// Only bother to re-query if it is different from last one changed
+		vector<Fl_Input *>::iterator i = std::find(m_PortDefault.begin(),
+		                                           m_PortDefault.end(),
+		                                           o);
+		m_PortIndex = distance(m_PortDefault.begin(), i);
+	}
+
+	float value = atof(o->value());
+	SetPortValue(m_PortIndex, value, 2);
 }
 void LADSPAPluginGUI::cb_Default(Fl_Input* o)
-{   //                  Group        Pack      Scroll    Group     Tab       GUI
-	((LADSPAPluginGUI*)(o->parent()->parent()->parent()->parent()->parent()->parent()))->cb_Default_i(o);
+{   //                  Group        Pack      Scroll    Group     GUI
+	((LADSPAPluginGUI*)(o->parent()->parent()->parent()->parent()->parent()))->cb_Default_i(o);
 }
 
 inline void LADSPAPluginGUI::cb_Min_i(Fl_Input* o)
@@ -808,20 +1228,22 @@ inline void LADSPAPluginGUI::cb_Min_i(Fl_Input* o)
 		m_GUICH->Wait();
 		m_GUICH->SetCommand(LADSPAPlugin::SETDEFAULT);
 
-	// Print to displayed default
+	// Print to default input box, and the input boxes on the
+	// knob and slider pages
 		char temp[256];
 		sprintf(temp, "%.4f", m_Default);
 		m_PortDefault[m_PortIndex]->value(temp);
-		m_PortDefault[m_PortIndex]->redraw();
+		m_KnobDefaults[m_PortIndex]->value(temp);
+		m_SliderDefaults[m_PortIndex]->value(temp);
 	}
 
-// Reposition and reconfigure knob to reflect new range
-	SetPortControlKnobValue(m_PortIndex);
-	SetPortControlKnobRange(m_PortIndex, m_Min, m_Max);
+// Reposition and reconfigure knob and slider to reflect new range
+	SetControlValue(m_PortIndex, BOTH);
+	SetControlRange(m_PortIndex, m_Min, m_Max);
 }
 void LADSPAPluginGUI::cb_Min(Fl_Input* o)
-{   //                  Group        Pack      Scroll    Group     Tab       GUI
-	((LADSPAPluginGUI*)(o->parent()->parent()->parent()->parent()->parent()->parent()))->cb_Min_i(o);
+{   //                  Group        Pack      Scroll    Group     GUI
+	((LADSPAPluginGUI*)(o->parent()->parent()->parent()->parent()->parent()))->cb_Min_i(o);
 }
 
 inline void LADSPAPluginGUI::cb_Max_i(Fl_Input* o)
@@ -881,16 +1303,17 @@ inline void LADSPAPluginGUI::cb_Max_i(Fl_Input* o)
 		char temp[256];
 		sprintf(temp, "%.4f", m_Default);
 		m_PortDefault[m_PortIndex]->value(temp);
-		m_PortDefault[m_PortIndex]->redraw();
+		m_KnobDefaults[m_PortIndex]->value(temp);
+		m_SliderDefaults[m_PortIndex]->value(temp);
 	}
 
 // Reposition and reconfigure knob to reflect new range
-	SetPortControlKnobValue(m_PortIndex);
-	SetPortControlKnobRange(m_PortIndex, m_Min, m_Max);
+	SetControlValue(m_PortIndex, BOTH);
+	SetControlRange(m_PortIndex, m_Min, m_Max);
 }
 void LADSPAPluginGUI::cb_Max(Fl_Input* o)
-{   //                  Group        Pack      Scroll    Group     Tab       GUI
-	((LADSPAPluginGUI*)(o->parent()->parent()->parent()->parent()->parent()->parent()))->cb_Max_i(o);
+{   //                  Group        Pack      Scroll    Group     GUI
+	((LADSPAPluginGUI*)(o->parent()->parent()->parent()->parent()->parent()))->cb_Max_i(o);
 }
 
 inline void LADSPAPluginGUI::cb_Clamp_i(Fl_Check_Button* o)
@@ -916,23 +1339,23 @@ inline void LADSPAPluginGUI::cb_Clamp_i(Fl_Check_Button* o)
 	m_GUICH->SetCommand(LADSPAPlugin::SETCLAMP);
 }
 void LADSPAPluginGUI::cb_Clamp(Fl_Check_Button* o)
-{   //                  Group        Pack      Scroll    Group     Tab       GUI
-	((LADSPAPluginGUI*)(o->parent()->parent()->parent()->parent()->parent()->parent()))->cb_Clamp_i(o);
+{   //                  Group        Pack      Scroll    Group     GUI
+	((LADSPAPluginGUI*)(o->parent()->parent()->parent()->parent()->parent()))->cb_Clamp_i(o);
 }
 
-inline void LADSPAPluginGUI::cb_DefaultAdjust_i(Fl_Knob *o)
+inline void LADSPAPluginGUI::cb_Knob_i(Fl_Knob *o)
 {
 // First, find which knob is being adjusted
 	bool do_search = false;
-	if (m_PortIndex == m_PortControlKnobs.size()) { do_search = true; }
-	if (!do_search) { do_search = (o != (m_PortControlKnobs[m_PortIndex])) ? true : false; }
+	if (m_PortIndex == m_Knobs.size()) { do_search = true; }
+	if (!do_search) { do_search = (o != (m_Knobs[m_PortIndex])) ? true : false; }
 
 	if (do_search) {
 	// Only bother to re-query knob if it is different from last one adjusted
-		vector<Fl_Knob *>::iterator i = std::find(m_PortControlKnobs.begin(),
-		                                          m_PortControlKnobs.end(),
+		vector<Fl_Knob *>::iterator i = std::find(m_Knobs.begin(),
+		                                          m_Knobs.end(),
 		                                          o);
-		m_PortIndex = distance(m_PortControlKnobs.begin(), i);
+		m_PortIndex = distance(m_Knobs.begin(), i);
 	}
 
 // Get value
@@ -940,8 +1363,8 @@ inline void LADSPAPluginGUI::cb_DefaultAdjust_i(Fl_Knob *o)
 
 	if (m_InputPortSettings[m_PortIndex].LogBase > 1.0f) {
 	// Logarithmic control - convert back to actual value
-		float min = o->minimum();
-		float max = o->maximum();
+		float min = atof(m_PortMin[m_PortIndex]->value());
+		float max = atof(m_PortMax[m_PortIndex]->value());
 
 		if (min > 0.0f && max > 0.0f) {
 		// Straight exp
@@ -950,8 +1373,24 @@ inline void LADSPAPluginGUI::cb_DefaultAdjust_i(Fl_Knob *o)
 		// Inverse, negated exp
 			m_Default = -powf(m_InputPortSettings[m_PortIndex].LogBase, -m_Default);
 		} else {
-		// Linear if asymptote present
-		// Do nothing
+		// Have asymptote
+			float linrng;
+			float logbase = logf(m_InputPortSettings[p].LogBase);
+
+			linrng = (max > -min) ?  logf( max) / logbase
+			                      :  logf(-min) / logbase;
+
+			if (fabsf(m_Default) > linrng) {
+			// Log/Inverted negated exp
+				m_Default = m_Default > 0.0f ? powf(m_InputPortSettings[m_PortIndex].LogBase, m_Default)
+				                             : -powf(m_InputPortSettings[m_PortIndex].LogBase, -m_Default)
+			} else {
+			// Linear scale across asymptote
+				float linthr = powf(m_InputPortSettings[p].LogBase, linrng - 10.0f);
+
+				m_Default *= linthr;
+				m_Default /= linrng;
+			}
 		}
 	}
 
@@ -964,9 +1403,130 @@ inline void LADSPAPluginGUI::cb_DefaultAdjust_i(Fl_Knob *o)
 	char temp[256];
 	sprintf(temp, "%.4f", m_Default);
 	m_PortDefault[m_PortIndex]->value(temp);
+	m_KnobDefaults[m_PortIndex]->value(temp);
+	m_SliderDefaults[m_PortIndex]->value(temp);
+
+// Set corresponding slider
+	SetControlValue(m_PortIndex, SLIDER);
+}
+void LADSPAPluginGUI::cb_Knob(Fl_Knob *o)
+{   //                     Group     GUI
+	((LADSPAPluginGUI*)(o->parent()->parent()))->cb_Knob_i(o);
 }
 
-void LADSPAPluginGUI::cb_DefaultAdjust(Fl_Knob *o)
-{   //                     Group     Pack      Scroll    Group     Tab       GUI
-	((LADSPAPluginGUI*)(o->parent()->parent()->parent()->parent()->parent()->parent()))->cb_DefaultAdjust_i(o);
+inline void LADSPAPluginGUI::cb_KnobValue_i(Fl_Input *o)
+{
+// Which Knob Value was changed?
+	bool do_search = false;
+	if (m_PortIndex == m_KnobDefaults.size()) { do_search = true; }
+	if (!do_search) { do_search = (o != (m_KnobDefaults[m_PortIndex])) ? true : false; }
+
+	if (do_search) {
+	// Only bother to re-query if it is different from last one changed
+		vector<Fl_Input *>::iterator i = std::find(m_KnobDefaults.begin(),
+		                                           m_KnobDefaults.end(),
+		                                           o);
+		m_PortIndex = distance(m_KnobDefaults.begin(), i);
+	}
+
+	float value = atof(o->value());
+	SetPortValue(m_PortIndex, value, 0);
+}
+void LADSPAPluginGUI::cb_KnobValue(Fl_Input *o)
+{   //                     Group     GUI
+	((LADSPAPluginGUI*)(o->parent()->parent()))->cb_KnobValue_i(o);
+}
+
+inline void LADSPAPluginGUI::cb_Slider_i(Fl_Slider *o)
+{
+// First, find which slider is being adjusted
+	bool do_search = false;
+	if (m_PortIndex == m_Sliders.size()) { do_search = true; }
+	if (!do_search) { do_search = (o != (m_Sliders[m_PortIndex])) ? true : false; }
+
+	if (do_search) {
+	// Only bother to re-query slider if it is different from last one adjusted
+		vector<Fl_Slider *>::iterator i = std::find(m_Sliders.begin(),
+		                                            m_Sliders.end(),
+		                                            o);
+		m_PortIndex = distance(m_Sliders.begin(), i);
+	}
+
+// Get value (Invert it, as sliders are upside down)
+	m_Default = o->maximum() - o->value() + o->minimum();
+
+	if (m_InputPortSettings[m_PortIndex].LogBase > 1.0f) {
+	// Logarithmic control - convert back to actual value
+		float min = atof(m_PortMin[m_PortIndex]->value());
+		float max = atof(m_PortMax[m_PortIndex]->value());
+
+		if (min > 0.0f && max > 0.0f) {
+		// Straight exp
+			m_Default = powf(m_InputPortSettings[m_PortIndex].LogBase, m_Default);
+		} else if (min < 0.0f && max < 0.0f) {
+		// Inverse, negated exp
+			m_Default = -powf(m_InputPortSettings[m_PortIndex].LogBase, -m_Default);
+		} else {
+		// Have asymptote
+			float linrng;
+			float logbase = logf(m_InputPortSettings[p].LogBase);
+
+			linrng = (max > -min) ?  logf( max) / logbase
+			                      :  logf(-min) / logbase;
+
+			if (fabsf(m_Default) > linrng) {
+			// Log/Inverted negated exp
+				m_Default = m_Default > 0.0f ? powf(m_InputPortSettings[m_PortIndex].LogBase, m_Default)
+				                             : -powf(m_InputPortSettings[m_PortIndex].LogBase, -m_Default)
+			} else {
+			// Linear scale across asymptote
+				float linthr = powf(m_InputPortSettings[p].LogBase, linrng - 10.0f);
+
+				m_Default *= linthr;
+				m_Default /= linrng;
+			}
+		}
+	}
+
+// Pass value to plugin
+	m_GUICH->SetData("SetInputPortIndex", &m_PortIndex);
+	m_GUICH->SetData("SetInputPortDefault", &m_Default);
+	m_GUICH->SetCommand(LADSPAPlugin::SETDEFAULT);
+
+// Copy to Default field in Port Setup list
+	char temp[256];
+	sprintf(temp, "%.4f", m_Default);
+	m_PortDefault[m_PortIndex]->value(temp);
+	m_KnobDefaults[m_PortIndex]->value(temp);
+	m_SliderDefaults[m_PortIndex]->value(temp);
+
+// Set corresponding knob
+	SetControlValue(m_PortIndex, KNOB);
+}
+void LADSPAPluginGUI::cb_Slider(Fl_Slider *o)
+{   //                     Group     GUI
+	((LADSPAPluginGUI*)(o->parent()->parent()))->cb_Slider_i(o);
+}
+
+inline void LADSPAPluginGUI::cb_SliderValue_i(Fl_Input *o)
+{
+// Which Slider Value was changed?
+	bool do_search = false;
+	if (m_PortIndex == m_SliderDefaults.size()) { do_search = true; }
+	if (!do_search) { do_search = (o != (m_SliderDefaults[m_PortIndex])) ? true : false; }
+
+	if (do_search) {
+	// Only bother to re-query if it is different from last one changed
+		vector<Fl_Input *>::iterator i = std::find(m_SliderDefaults.begin(),
+		                                           m_SliderDefaults.end(),
+		                                           o);
+		m_PortIndex = distance(m_SliderDefaults.begin(), i);
+	}
+
+	float value = atof(o->value());
+	SetPortValue(m_PortIndex, value, 1);
+}
+void LADSPAPluginGUI::cb_SliderValue(Fl_Input *o)
+{   //                     Group     GUI
+	((LADSPAPluginGUI*)(o->parent()->parent()))->cb_SliderValue_i(o);
 }

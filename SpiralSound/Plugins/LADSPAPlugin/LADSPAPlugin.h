@@ -64,9 +64,10 @@ public:
 	unsigned long  GetUniqueID() { return m_UniqueID; }
 	const char    *GetName() { return (const char *)m_Name; }
 	const char    *GetMaker() { return (const char *)m_Maker; }
-	int            GetTabIndex() { return m_TabIndex; }
+	int            GetPage() { return m_Page; }
 	bool           GetUpdateInputs() { return m_UpdateInputs; }
 	unsigned long  GetInputPortCount() { return m_InputPortCount; }
+	unsigned long  GetUnconnectedInputs() { return m_UnconnectedInputs; }
 	const char    *GetInputPortName(unsigned long p)
 	{
 		return (const char *)(m_OutData.InputPortNames + p * 256);
@@ -79,11 +80,15 @@ public:
 	{
 		return m_OutData.InputPortDefaults[p];
 	}
+	PortValue GetInputPortValue(unsigned long p)
+	{
+		return m_OutData.InputPortValues[p];
+	}
 
 	enum GUICommands
 	{
 		NONE,
-		SETTABINDEX,
+		SETPAGE,
 		SELECTPLUGIN,
 		CLEARPLUGIN,
 		SETUPDATEINPUTS,
@@ -117,13 +122,18 @@ private:
 
 	unsigned long   m_PluginIndex;
 	unsigned long   m_UniqueID;
-	int             m_TabIndex;
+	int             m_Page;
 	bool            m_UpdateInputs;
 
 	unsigned long   m_MaxInputPortCount;
 	unsigned long   m_InputPortCount;
- char            m_Name[256];
+	char            m_Name[256];
 	char            m_Maker[256];
+
+// This is stored in the patch file, and retreived by the GUI
+// on patch load, since we won't know this until the whole patch
+// is loaded and connected.
+	unsigned long   m_UnconnectedInputs;
 
 	// Data sent to GUI
 	struct OutputChannelData
@@ -132,13 +142,13 @@ private:
 		PortSetting  *InputPortSettings;
 		PortValue    *InputPortValues;
 		float        *InputPortDefaults;
- };
+	};
 
 	// Data received from GUI
 	struct InputChannelData
 	{
 		unsigned long UniqueID;
-		int           TabIndex;
+		int           Page;
 		bool          UpdateInputs;
 		unsigned long InputPortIndex;
 		float         InputPortDefault;
@@ -152,11 +162,19 @@ private:
 
 #ifdef USE_POSIX_SHM
 // SHM stuff - for sharing the LADSPA Plugin database
-	static const char * const m_SHMRefCountPath = "/SpiralSynthModular-LADSPAPlugin-RefCount";
-	static const char * const m_SHMLDBPath = "/SpiralSynthModular-LADSPAPlugin-Database";
+// The actual paths are combined with the Process ID for the current SSM audio thread
+// to allow multiple instances of SSM to run, and to avoid picking up stale SHMs
+// from crashed instances.
+	static const char * const m_SHMPath = "/SSM-LADSPAPlugin-";
+	static const char * const m_SHMPathRC = "-RefCount";
+	static const char * const m_SHMPathDB = "-Database";
 
+	char *m_SHMRefCountPath;
+	char *m_SHMDatabasePath;
+
+	pid_t         *m_SHMPID;
 	unsigned long *m_SHMRefCount;
-	LADSPAInfo   **m_SHMLDB;
+	LADSPAInfo   **m_SHMDatabase;
 #endif
 };
 
