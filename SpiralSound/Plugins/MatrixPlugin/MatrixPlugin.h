@@ -85,7 +85,7 @@ private:
 	
 	int   m_Current;
 	Pattern m_Matrix[NUM_PATTERNS];
-	float m_TriggerLevel[NUM_PATTERNS];
+	float m_TriggerLevel[MATY];
 	
 	float m_CurrentNoteCV;
 	float m_CurrentTriggerCV;

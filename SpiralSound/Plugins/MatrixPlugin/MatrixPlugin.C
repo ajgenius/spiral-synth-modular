@@ -184,6 +184,7 @@ void MatrixPlugin::Execute()
 		// set the individual triggers
 		for (int t=0; t<NUM_PATTERNS; t++) SetOutput(t+2,n,m_TriggerLevel[t]);
 
+
 		bool ExternalClock = InputExists(4);
 		bool ExternalClockTriggered=false;
 		
@@ -206,6 +207,8 @@ void MatrixPlugin::Execute()
 				}
 			}
 		}
+			
+			
 				
 		// An external clock pulse overrides the internal timing
 		if ((!ExternalClock && m_Time>=m_StepTime*(1/m_Matrix[m_Current].Speed)) ||
@@ -233,6 +236,7 @@ void MatrixPlugin::Execute()
 			{
 				if (m_Matrix[m_Current].Matrix[m_Step][i])
 				{
+				
 					m_CurrentNoteCV=NoteTable[i+m_Matrix[m_Current].Octave*12];
 					m_CurrentTriggerCV=1;
 					m_TriggerLevel[i]=1;
@@ -243,7 +247,7 @@ void MatrixPlugin::Execute()
 			// otherwise consecutive events wont get triggered
 			SetOutput(1,n,0);
 			for (int t=0; t<NUM_PATTERNS; t++) SetOutput(t+2,n,0);
-		}		
+		}
 	}
 }
 
@@ -254,7 +258,6 @@ void MatrixPlugin::ExecuteCommands()
 		switch (m_AudioCH->GetCommand())
 		{
 			case MAT_LENGTH   :
-				cerr<<m_GUIArgs.Length<<endl;
 				m_Matrix[m_Current].Length=m_GUIArgs.Length; 
 			break;
 			
