@@ -25,10 +25,12 @@ Fl_CommentGUI::Fl_CommentGUI(const DeviceGUIInfo& Info, SpiralGUIType *PW, Fl_Pi
 Fl_DeviceGUI(Info,PW,Icon),
 m_Comment("double click to edit.")
 {
-	box(FL_NO_BOX);
-	m_DragBar->box(FL_NO_BOX);
+        // If you comment this out - it makes the comment look nice, or does it?
+        box(FL_NO_BOX);
+        //m_DragBar->box(FL_NO_BOX);
 	m_DragBar->label(m_Comment.c_str());
 	m_DragBar->color(SpiralInfo::GUICOL_Device);
+        NewText();
 //	m_DragBar->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
 }
 
@@ -42,25 +44,17 @@ int Fl_CommentGUI::handle(int event)
 			string temp(t);
 			if (temp!="")
 			{
-				m_Comment=temp;	
-				m_DragBar->label(m_Comment.c_str());
-				int width,height;
-				fl_font(fl_font(),10);
-				fl_measure(m_Comment.c_str(),width,height);
-				m_DragBar->size(width,height);
-				resize(x(),y(),width,height);
+				m_Comment=temp;
+                                NewText();
 				redraw();
-				parent()->redraw();
-				//int x,y;
-				//fl_measure(m_Comment.c_str(),x,y);
-				//m_DragBar->size(x,y);
+				//parent()->redraw();
 			}
 		}
 	}
-	
+
 	return Fl_DeviceGUI::handle(event);
-}			
-	
+}
+
 void Fl_CommentGUI::Setup(const DeviceGUIInfo& Info, bool FirstTime)
 {
 	Fl_DeviceGUI::Setup(Info,FirstTime);
@@ -70,6 +64,17 @@ void Fl_CommentGUI::Clear()
 {
 	Fl_DeviceGUI::Clear();
 }
+
+void Fl_CommentGUI::NewText(void) {
+	m_DragBar->label(m_Comment.c_str());
+	int width=0, height=0;
+	fl_font(fl_font(),10);
+	fl_measure(m_Comment.c_str(),width,height);
+        width+=10;
+	m_DragBar->size(width,height);
+	resize(x(),y(),width,height);
+}
+
 
 void Fl_CommentGUI::StreamOut(ostream &s)
 {
@@ -82,7 +87,7 @@ void Fl_CommentGUI::StreamIn(istream &s)
 {
 	unsigned int size,version;
 	string temp;
-	
+
 	s>>version;
 	s>>size;
 	size++; // see below
@@ -92,13 +97,7 @@ void Fl_CommentGUI::StreamIn(istream &s)
 	// have to move the pointer on by one, as the string
 	// starts with " ", as the file pointer starts on
 	// a blank space (after streaming the size)
-	m_Comment=str+1; 
+	m_Comment=str+1;
 	delete[] str;
-	
-	m_DragBar->label(m_Comment.c_str());
-	int width,height;
-	fl_font(fl_font(),10);
-	fl_measure(m_Comment.c_str(),width,height);
-	m_DragBar->size(width,height);
-	resize(x(),y(),width,height);
+        NewText();
 }

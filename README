@@ -1,9 +1,11 @@
 ** SpiralSynthModular **
 
-Last changed Saturday December 11 2002.
+Last changed Saturday 20-December-2003.
 
 SpiralSynthModular is open source software, distributed under the General
 Public License (GPL). See the file COPYING.
+
+See www.pawfal.org or sourceforge.net/projects/spiralmodular for more details.
 
 
 ** Dependancies **
@@ -15,7 +17,6 @@ LADSPA plugins  (www.ladspa.org)
 
 Sound output can be provided by either OSS or JACK (and therefore alsa).
 
-See www.pawfal.org or sourceforge.net/projects/spiralmodular for more details.
 
 ** Installing **
 
@@ -41,6 +42,7 @@ options list:
 --Realtime : spawn audio thread with FIFO scheduling (run as root)
 --PluginPath <PATH> : look for plugins in the specified directory
 
+
 *** LRDF support for LADSPA plugins ***
 
 http://plugin.org.uk/releases/lrdf/
@@ -58,14 +60,32 @@ plugin database to be shared between instances.
 To disable detection of this, use the configure option:
 ./configure --disable-posiz-shm
 
+
 *** Jack support ***
 
 http://jackit.sourceforge.net
 
-To build the JackPlugin, use the configure option:
-./configure --enable-jack
+If you have jack installed on your system, you can use it via the
+JackPlugin.
 
-To load the plugin, add it to .SpiralSynthModular's plugin list.
+To load the plugin, add it to .SpiralSynthModular's plugin list after
+installation.
+
+To disable detection of jack, use the configure option:
+./configure --disable-jack
+
+
+*** LibSndFile Support ***
+
+http://www.zip.com.au/~erikd/libsndfile/
+
+If you have libsndfile installed on you system; PoshSampler, Streamer,
+and SpiralLoops load any audio format/file that libsndfile can, though
+the Open Dialog Filter currently doesn't reflect this.
+
+To disable detection of jack, use the configure option:
+./configure --disable-sndfile
+
 
 *** Setting up your .SpiralSynthModular file ***
 
@@ -90,5 +110,7 @@ for any purpose. This software is provided "as is" without express
 or implied warranty.
 (Damage to ears, speakers or buildings are not my fault :))
 
-Dave Griffiths - dave@pawfal.org
+Dave Griffiths (Headmaster) - dave@pawfal.org
+Andy Preston (Caretaker) - edgeeffect@sourceforge.net
+
 www.pawfal.org

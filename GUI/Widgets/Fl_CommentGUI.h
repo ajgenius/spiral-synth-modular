@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #ifndef COMMENTGUI
 #define COMMENTGUI
@@ -26,16 +26,15 @@ class Fl_CommentGUI : public Fl_DeviceGUI
 {
 public:
 	Fl_CommentGUI(const DeviceGUIInfo& Info, SpiralGUIType *PW, Fl_Pixmap *Icon);
-
 	virtual int  handle(int event);
-	virtual void Setup(const DeviceGUIInfo& Info, bool FirstTime = false); 
+	virtual void Setup(const DeviceGUIInfo& Info, bool FirstTime = false);
 	virtual void Clear();
-	
 	virtual void	    StreamOut(ostream &s);
 	virtual void	    StreamIn(istream &s);
 protected:
-
 	string m_Comment;
+private:
+        void NewText(void);
 };
 
 #endif
