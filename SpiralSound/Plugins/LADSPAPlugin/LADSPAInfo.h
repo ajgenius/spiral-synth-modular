@@ -62,7 +62,8 @@ public:
 		std::string                 Name;
 	};
 
-	// Get a list of plugins ordered by name
+	// Get a list of plugins ordered by name (duplicate names are
+	// appended with a (number)
 	const std::vector<PluginEntry>  GetPluginList(void);
 
 	// Get the index in the above list for given Unique ID

@@ -21,6 +21,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <sstream>
 #include <map>
 #include <algorithm>
 
@@ -102,6 +103,23 @@ LADSPAInfo::RescanPlugins(void)
 
 // Sort list by name
 	sort(m_OrderedPluginList.begin(), m_OrderedPluginList.end(), PluginEntrySortAsc());
+
+// Deal with duplicates by numbering them
+	for (vector<PluginEntry>::iterator i = m_OrderedPluginList.begin();
+	     i != m_OrderedPluginList.end(); ) {
+		string name = i->Name;
+
+		i++;
+		unsigned long n = 2;
+		while ((i != m_OrderedPluginList.end()) && (i->Name == name)) {
+			stringstream s;
+			s << n;
+			i->Name = name + " (" + s.str() + ")";
+			cerr << "  " << n << endl;
+			n++;
+			i++;
+		}
+	}
 }
 
 void
@@ -260,6 +278,7 @@ LADSPAInfo::ExaminePath(const char *path)
 	bool path_added = false;
 	bool library_added;
 	string fullpath;
+	vector<string> temp_names;
 
 	dp = opendir(path);
 	if (!dp) {
