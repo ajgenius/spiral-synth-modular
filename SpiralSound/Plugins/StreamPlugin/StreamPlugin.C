@@ -19,8 +19,16 @@
 #include "StreamPluginGUI.h"
 #include <FL/Fl_Button.h>
 #include "SpiralIcon.xpm"
-#include "../../RiffWav.h"
 #include "../../NoteTable.h"
+#include <stdio.h>
+
+#include "../../../config.h"
+
+#ifdef USE_LIBSNDFILE
+#include <sndfile.h>
+#endif
+
+#include "../../RiffWav.h"
 
 using namespace std;
 
@@ -52,6 +60,9 @@ string SpiralPlugin_GetGroupName()
 ///////////////////////////////////////////////////////
 
 StreamPlugin::StreamPlugin() :
+#ifdef USE_LIBSNDFILE
+m_File (NULL),
+#endif
 m_SampleRate (44100),
 m_SampleSize (256),
 m_StreamPos (0),
@@ -87,6 +98,11 @@ m_Mode(STOPM)
 
 StreamPlugin::~StreamPlugin()
 {
+#ifdef USE_LIBSNDFILE
+	if (m_File)
+	  sf_close(m_File); 
+	m_File = NULL;
+#endif
 }
 
 PluginInfo &StreamPlugin::Initialise(const HostInfo *Host)
@@ -100,6 +116,93 @@ SpiralGUIType *StreamPlugin::CreateGUI() {
 }
 
 void StreamPlugin::Execute() {
+#ifdef USE_LIBSNDFILE
+     if (m_File) {
+        for (int n=0; n<m_HostInfo->BUFSIZE; n++) {
+            bool FinTrig = false;
+            float CVPitch = GetInput(0, n)*10.0f;
+            if (GetInput (1, n) > 0) m_Mode = PLAYM;
+            if (GetInput (2, n) > 0) {
+               m_Mode = STOPM;
+               m_Pos = 0;
+               m_GlobalPos = 0;
+               m_StreamPos = 0;
+            }
+
+             bool DoLoadChunk = false;
+
+            if (m_Pos<0) {
+               m_Pos = m_SampleSize - 1;
+               m_StreamPos -= m_SampleSize;
+               FinTrig = m_StreamPos < 0;
+               if (FinTrig) {
+                  m_StreamPos = m_FileInfo.frames - m_SampleSize;
+                  m_GlobalPos = m_StreamPos;
+               }
+               DoLoadChunk = true;
+            }
+            else if (m_Pos >= m_SampleSize) {
+               m_Pos = 0;
+               m_StreamPos += m_SampleSize;
+               FinTrig = m_StreamPos >= m_FileInfo.frames;
+               if (FinTrig) {
+                  m_StreamPos = 0;
+                  m_GlobalPos = 0;
+               }
+               DoLoadChunk = true;
+            }
+
+            if (DoLoadChunk) {
+              if ((m_FileInfo.frames - m_StreamPos) < 256)
+		m_SampleSize = m_FileInfo.frames - m_StreamPos;
+	      else
+		m_SampleSize = 256;	
+	
+
+              if (sf_seek(m_File, m_StreamPos, SEEK_SET)==-1)
+              {
+                 cerr<<"StreamPlugin: File ["<<m_GUIArgs.FileName<<"] Seek error"<<endl;
+              }
+                
+              float *TempBuf = new float[m_SampleSize * m_FileInfo.channels];
+  	      int ChunkSize = 0;
+  	    
+  	      ChunkSize = (int)sf_read_float(m_File, TempBuf, m_SampleSize);
+  	    
+              if (m_SampleSize!=ChunkSize)
+              {
+                cerr<<"StreamPlugin: Only recieved "<<ChunkSize<<" of "<<m_SampleSize<<": Read chunk error"<<endl;
+              } else {
+                // Extract and scale samples to float range +/-1.0
+                for (int n=0; n<m_SampleSize; n++)
+                {
+                   m_SampleL.Set(n,TempBuf[n*m_FileInfo.channels]);
+  
+                   if (m_FileInfo.channels>1)
+                     m_SampleR.Set(n,TempBuf[n*m_FileInfo.channels+1]);
+                }
+              }
+
+              delete[] TempBuf;
+            }
+            
+            if (FinTrig) SetOutput (2, n, 1);
+            else SetOutput (2, n, 0);
+            if (m_Mode==PLAYM) {
+              SetOutput (0, n, m_SampleL[m_Pos] * m_GUIArgs.Volume);
+              SetOutput (1, n, m_SampleR[m_Pos] * m_GUIArgs.Volume);
+              m_Pos += m_GUIArgs.PitchMod + CVPitch;
+              m_GlobalPos += m_GUIArgs.PitchMod + CVPitch;
+            }
+            else {
+              SetOutput (0, n, 0);
+              SetOutput (1, n, 0);
+            }
+        }
+        m_GUIArgs.TimeOut = m_GlobalPos / (float)m_SampleRate;
+        m_GUIArgs.PlayOut = m_Mode==PLAYM;
+     }
+#else
      if (m_File.IsOpen()) {
         for (int n=0; n<m_HostInfo->BUFSIZE; n++) {
             bool FinTrig = false;
@@ -149,6 +252,7 @@ void StreamPlugin::Execute() {
         m_GUIArgs.TimeOut = m_GlobalPos / (float)m_SampleRate;
         m_GUIArgs.PlayOut = m_Mode==PLAYM;
      }
+#endif
 }
 
 void StreamPlugin::ExecuteCommands() {
@@ -183,6 +287,36 @@ void StreamPlugin::SetTime (void) {
 void StreamPlugin::OpenStream (void) {
      m_StreamPos = 0;
      m_GlobalPos = 0;
+#ifdef USE_LIBSNDFILE
+     m_FileInfo.format = 0;
+	
+     if (m_File != NULL) 
+     {
+        sf_close(m_File); 
+        m_File = NULL;
+     }
+     
+     m_File = sf_open (m_GUIArgs.FileName, SFM_READ, &m_FileInfo);
+
+     if (m_File == NULL)
+     {
+        cerr<<"StreamPlugin: File ["<<m_GUIArgs.FileName<<"] does not exist"<<endl;
+	return;
+     }
+     if (m_FileInfo.frames < 256)
+        m_SampleSize = m_FileInfo.frames;
+     else
+        m_SampleSize = 256;	
+
+     m_SampleL.Allocate (m_SampleSize);
+     m_SampleR.Allocate (m_SampleSize);
+     m_Pitch = m_SampleRate / (float)m_HostInfo->SAMPLERATE;
+     if (m_FileInfo.channels>1) {
+        m_Pitch *= 2;
+        m_GUIArgs.MaxTime = m_FileInfo.frames;
+     }
+     else m_GUIArgs.MaxTime = m_FileInfo.frames / 2;
+#else
      if (m_File.IsOpen ()) m_File.Close ();
      m_File.Open (m_GUIArgs.FileName, WavFile::READ);
      m_SampleL.Allocate (m_SampleSize);
@@ -193,11 +327,17 @@ void StreamPlugin::OpenStream (void) {
         m_GUIArgs.MaxTime = GetLength();
      }
      else m_GUIArgs.MaxTime = GetLength() / 2;
+#endif
 }
 
 float StreamPlugin::GetLength (void) {
+#ifdef USE_LIBSNDFILE
+      if (m_FileInfo.channels>1) return m_FileInfo.frames / (float)m_FileInfo.samplerate;
+                        else return m_FileInfo.frames / (float)m_FileInfo.samplerate * 2;
+#else
       if (m_File.IsStereo()) return m_File.GetSize() / (float)m_File.GetSamplerate ();
                         else return m_File.GetSize() / (float)m_File.GetSamplerate () * 2;
+#endif
 }
 
 void StreamPlugin::StreamOut (ostream &s) {
