@@ -79,10 +79,10 @@ void MixerPluginGUI::AddChan (bool SendData, bool ResizeIt) {
         m_GUICH->Set ("Num", num);
         m_GUICH->Set ("Value", (float)(2.0f - NewSlide->value ()));
         m_GUICH->SetCommand(MixerPlugin::SETCH);
-     }
-     if (ResizeIt) {
         m_GUICH->Wait ();
-        if (w() < num*20) resize (x(), y(), w()+20, h());
+     }
+     if (ResizeIt && num > 3) {
+        resize (x(), y(), w()+20, h());
      }
 }
 
@@ -92,12 +92,13 @@ void MixerPluginGUI::DeleteChan (bool SendData) {
      m_MainPack->remove (*i);
      delete *i;
      m_SlidVec.erase (i);
+     int num = (int)m_SlidVec.size();
      if (SendData) {
-        m_GUICH->Set ("Num", (int)m_SlidVec.size());
+        m_GUICH->Set ("Num", num);
         m_GUICH->SetCommand (MixerPlugin::SETNUM);
-     }
-     if (w() > 60) {
         m_GUICH->Wait ();
+     }
+     if (num > 2) {
         resize (x(), y(), w()-20, h());
      }
 }
