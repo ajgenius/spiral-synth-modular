@@ -43,16 +43,16 @@ if test $ac_arg_jack = "Y" ; then
 	NoteSnapPlugin OscillatorPlugin OutputPlugin RingModPlugin SVFilterPlugin \
 	SampleHoldPlugin ScopePlugin SmoothPlugin SplitterPlugin \
 	StereoMixerPlugin WaveTablePlugin LADSPAPlugin \
-    XFadePlugin JackPlugin PoshSamplerPlugin\
-	DistributorPlugin LFOPlugin KeyboardPlugin"
+	XFadePlugin JackPlugin PoshSamplerPlugin\
+	DistributorPlugin LFOPlugin KeyboardPlugin StreamPlugin"
 else
 	PLUGINLIST="AmpPlugin ControllerPlugin DelayPlugin EchoPlugin EnvFollowerPlugin \
 	EnvelopePlugin FilterPlugin MatrixPlugin MidiPlugin MixerPlugin MoogFilterPlugin \
 	NoteSnapPlugin OscillatorPlugin OutputPlugin RingModPlugin SVFilterPlugin \
 	SampleHoldPlugin ScopePlugin SmoothPlugin SplitterPlugin \
 	StereoMixerPlugin WaveTablePlugin LADSPAPlugin \
-    XFadePlugin PoshSamplerPlugin\
-	DistributorPlugin LFOPlugin KeyboardPlugin"
+	XFadePlugin PoshSamplerPlugin\
+	DistributorPlugin LFOPlugin KeyboardPlugin StreamPlugin"
 	fi
 echo "$PLUGINLIST" > SpiralSound/PluginList.txt
 
@@ -88,10 +88,12 @@ else
   FLTK_CXXFLAGS=`$FLTK_CONFIG $fltk_config_args --cxxflags`
   FLTK_CFLAGS=`$FLTK_CONFIG $fltk_config_args --cxxflags`
   FLTK_LIBS=`$FLTK_CONFIG $fltk_config_args --ldflags`
-  if test "${FLTK_LIBS/*-rpath*/yes}" != "yes"; then
-    echo "*** FLTK needs to be configured with --enable-shared"
-    exit 1
-  fi
+dnl This caused problems for debian users,
+dnl It would be nice to find a more robust way of doing it.
+dnl  if test "${FLTK_LIBS/*-rpath*/yes}" != "yes"; then
+dnl    echo "*** FLTK needs to be configured with --enable-shared"
+dnl   exit 1
+dnl  fi
 fi
 AC_SUBST(FLTK_CXXFLAGS)
 AC_SUBST(FLTK_CFLAGS)
