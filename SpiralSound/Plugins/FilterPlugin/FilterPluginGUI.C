@@ -1,0 +1,101 @@
+/*  SpiralPlugin
+ *  Copyleft (C) 2000 David Griffiths <dave@pawfal.org>
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+*/ 
+
+#include "FilterPluginGUI.h"
+#include <FL/fl_draw.h>
+#include <FL/fl_draw.H>
+
+static const int GUI_COLOUR = 179;
+static const int GUIBG_COLOUR = 144;
+static const int GUIBG2_COLOUR = 145;
+
+////////////////////////////////////////////
+
+FilterPluginGUI::FilterPluginGUI(int w, int h,FilterPlugin *o,const HostInfo *Info) :
+SpiralPluginGUI(w,h,o)
+{	
+	m_Plugin=o;
+	
+	Cutoff = new Fl_Slider(15, 20, 20, 70, "Cutoff");
+	Cutoff->type(4);
+	Cutoff->selection_color(GUI_COLOUR);
+    Cutoff->labelsize(10);
+	Cutoff->maximum(100);
+    Cutoff->step(0.01);
+    Cutoff->value(10);
+    Cutoff->callback((Fl_Callback*)cb_Cutoff);
+	
+	Resonance = new Fl_Knob(58, 28, 45, 45, "Emphasis");
+    Resonance->color(GUI_COLOUR);
+	Resonance->type(Fl_Knob::DOTLIN);
+    Resonance->labelsize(10);
+    Resonance->maximum(10);
+    Resonance->step(0.1);
+    Resonance->value(0);   
+	Resonance->callback((Fl_Callback*)cb_Resonance);
+
+	RevCutoff = new Fl_Button(57, 72, 50, 15, "RvCMod");
+    RevCutoff->type(1);
+    RevCutoff->down_box(FL_DOWN_BOX);
+    RevCutoff->labelsize(10);
+    RevCutoff->callback((Fl_Callback*)cb_RevCutoff);   
+	 
+	RevResonance = new Fl_Button(57, 88, 50, 15, "RvRMod");
+    RevResonance->type(1);
+    RevResonance->down_box(FL_DOWN_BOX);
+    RevResonance->labelsize(10);
+    RevResonance->callback((Fl_Callback*)cb_RevResonance);
+	
+	end();
+}
+
+void FilterPluginGUI::UpdateValues()
+{
+	Cutoff->value(100.0f-sqrt(m_Plugin->GetCutoff()-10.0f));
+	Resonance->value(m_Plugin->GetResonance()-1.0f);
+
+	RevCutoff->value(0);
+	RevResonance->value(0);
+	
+	if (m_Plugin->GetRevCutoffMod()) RevCutoff->value(1);
+	if (m_Plugin->GetRevResonanceMod()) RevResonance->value(1);
+}
+
+inline void FilterPluginGUI::cb_Cutoff_i(Fl_Slider* o, void* v) 
+{ 
+	float value=100.0f-o->value();
+	m_Plugin->SetCutoff((value*value)+10.0f); 
+}
+void FilterPluginGUI::cb_Cutoff(Fl_Slider* o, void* v) 
+{ ((FilterPluginGUI*)(o->parent()))->cb_Cutoff_i(o,v); }
+
+inline void FilterPluginGUI::cb_Resonance_i(Fl_Knob* o, void* v) 
+{ m_Plugin->SetResonance(o->value()+1.0f); }
+void FilterPluginGUI::cb_Resonance(Fl_Knob* o, void* v) 
+{ ((FilterPluginGUI*)(o->parent()))->cb_Resonance_i(o,v); }
+
+inline void FilterPluginGUI::cb_RevCutoff_i(Fl_Button* o, void* v) 
+{ m_Plugin->SetRevCutoffMod(o->value()); }
+void FilterPluginGUI::cb_RevCutoff(Fl_Button* o, void* v) 
+{ ((FilterPluginGUI*)(o->parent()))->cb_RevCutoff_i(o,v); }
+
+inline void FilterPluginGUI::cb_RevResonance_i(Fl_Button* o, void* v) 
+{ m_Plugin->SetRevResonanceMod(o->value()); }
+void FilterPluginGUI::cb_RevResonance(Fl_Button* o, void* v) 
+{ ((FilterPluginGUI*)(o->parent()))->cb_RevResonance_i(o,v); }
+	

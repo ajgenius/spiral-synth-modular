@@ -1,0 +1,95 @@
+/*  SpiralSound
+ *  Copyleft (C) 2001 David Griffiths <dave@pawfal.org>
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+*/ 
+
+#include "../SpiralPlugin.h"
+#include "../../RiffWav.h"
+#include <FL/Fl_Pixmap.H>
+
+#ifndef OscillatorPLUGIN
+#define OscillatorPLUGIN
+
+class OSSOutput
+{
+public:
+	static OSSOutput *Get()       { if(!m_Singleton) m_Singleton=new OSSOutput; return m_Singleton; }
+	static void PackUpAndGoHome() { if(m_Singleton)  { delete m_Singleton; m_Singleton=NULL; } }
+	~OSSOutput(); 
+	
+	void    AllocateBuffer();
+	void    SendStereo(const Sample *ldata,const Sample *rdata);
+	void    GetStereo(Sample *ldata,Sample *rdata);
+	void    SetVolume(float s) {m_Amp=s;}
+	void    SetNumChannels(int s) {m_Channels=s;}
+	float   GetVolume() {return m_Amp;}
+	void    Play();
+	void    Read();
+	void    WavOpen(char* name) {m_Wav.Open(name,WavFile::WRITE, WavFile::STEREO);}
+	void    WavClose() {m_Wav.Close();}
+	short  *GetBuffer() {return m_Buffer[m_WriteBufferNum];}
+	
+	void 	OpenReadWrite();
+	void    OpenWrite();
+	void    OpenRead();
+	void    Close();
+	
+private:
+	static OSSOutput* m_Singleton;
+
+ 	OSSOutput(); 
+	
+	short  *m_Buffer[2];
+	short  *m_InBuffer[2];
+	int     m_BufSizeBytes;
+	int     m_Dspfd;
+	float   m_Amp;
+	int     m_Channels;
+	WavFile m_Wav;
+	int    	m_ReadBufferNum;
+	int     m_WriteBufferNum;
+	bool    m_OutputOk;
+};
+
+
+class OutputPlugin : public SpiralPlugin
+{
+public:
+	enum Mode{INPUT,OUTPUT,DUPLEX};
+
+ 	OutputPlugin();
+	virtual ~OutputPlugin();
+
+	virtual PluginInfo& Initialise(const HostInfo *Host);
+	virtual SpiralGUIType*   CreateGUI();
+	virtual void 		Execute();
+	virtual void	    StreamOut(ostream &s) {}
+	virtual void	    StreamIn(istream &s)  {}
+	
+	// has to be defined in the plugin	
+	virtual void UpdateGUI() { Fl::check(); }
+	
+	void SetMode(Mode s) { m_Mode=s; }
+	
+private:
+	static int m_RefCount;
+	static int m_NoExecuted;
+	Mode m_Mode;
+	bool m_CheckedAlready;
+	bool m_Recmode;
+};
+
+#endif

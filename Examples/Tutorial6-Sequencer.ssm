@@ -1,0 +1,101 @@
+SpiralSynthModular File Ver 3
+291 68 724 461 289 564 724 420
+SectionList
+15
+
+Device 0 Plugin 23
+300 144 0 100 100 
+1 3 0 1 1 
+
+Device 1 Plugin 2
+152 170 0 100 100 
+2 0 0 0
+
+
+Device 2 Plugin 5
+299 208 0 100 100 
+1 0.0529 0.8281 0.49 0.3844 0.5 0.01
+
+Device 3 Plugin 13
+367 153 1 350 26 
+1 0 0.30583 
+
+Device 4 Plugin 0
+628 151 0 100 100 
+
+
+Device 6 Plugin 1
+498 151 1 105 19 
+
+
+Device 25 Plugin 6
+563 151 0 0 0
+
+
+Device 31 Plugin 14
+432 152 1 491 28 
+1 0.321 0.56 
+
+Device 32 Plugin 17
+222 162 1 107 147 
+2 1.73101 8.82 1 1 0 0 EventMap 1 2 0 10 50 1 8.82 86 0 100 8 19 5.48 63 0.1 1 5.96 66 0.1 1 6.4 70 0.14 1 6.92 63 0.14 1 7.46 66 0.14 1 7.94 70 0.2 1 0.1 63 0.14 1 0.46 66 0.1 1 0.86 70 0.1 1 1.5 63 0.2 1 2.14 66 0.14 1 2.58 70 0.2 1 3.74 63 0.1 1 4.02 66 0.14 1 4.46 70 0.14 1 8.34 39 0.2 1 1.24 39 0.14 1 3 46 0.3 1 4.86 42 0.2 1 
+ EventMap 1 1 0 10 100 1 2 0 0 100 8 0 
+ EventMap 1 1 0 10 100 1 2 0 0 100 8 0 
+ EventMap 1 1 0 10 100 1 2 0 0 100 8 0 
+ EventMap 1 1 0 10 100 1 2 0 0 100 8 0 
+ EventMap 1 1 0 10 100 1 2 0 0 100 8 0 
+ EventMap 1 1 0 10 100 1 2 0 0 100 8 0 
+ EventMap 1 1 0 10 100 1 2 0 0 100 8 0 
+ EventMap 1 1 0 10 100 1 2 0 0 100 8 0 
+ EventMap 1 1 0 10 100 1 2 0 0 100 8 0 
+ EventMap 1 1 0 10 100 1 2 0 0 100 8 0 
+ EventMap 1 1 0 10 100 1 2 0 0 100 8 0 
+ EventMap 1 1 0 10 100 1 2 0 0 100 8 0 
+ EventMap 1 1 0 10 100 1 2 0 0 100 8 0 
+ EventMap 1 1 0 10 100 1 2 0 0 100 8 0 
+ EventMap 1 1 0 10 100 1 2 0 0 100 8 0 
+ 
+
+Device 33 Plugin -1
+357 33 0 0 0
+1 32 Tutorial 5 - Using the sequencer
+
+
+Device 34 Plugin -1
+368 58 0 0 0
+1 96 This is the same synth design as in tutorial 2, but with a sequencer controlling it's behavoiur.
+
+
+Device 35 Plugin -1
+364 72 0 0 0
+1 93 (and some echo) This sequencer is quite different to the matrix, in that it is much better at
+
+
+Device 36 Plugin -1
+374 86 0 0 0
+1 96 playing back melodies. The sequencer also records input, so keys you press while the midi plugin
+
+
+Device 37 Plugin -1
+358 100 0 0 0
+1 89 is connected, will be played back. Open up the Sequencer plugin and scroll the piano roll
+
+
+Device 38 Plugin -1
+363 113 0 0 0
+1 87 down, you should see the events. These can be moved, deleted or resized with the mouse.
+
+
+11
+2 2 0 3 3 1
+0 0 0 3 3 0
+6 5 0 25 6 0
+25 6 0 4 4 0
+25 6 1 4 4 1
+3 3 0 31 7 0
+31 7 0 6 5 0
+1 1 0 32 8 2
+1 1 1 32 8 3
+32 8 0 0 0 0
+32 8 1 2 2 0
+
