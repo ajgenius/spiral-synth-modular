@@ -289,6 +289,7 @@ SpiralWindowType *SynthModular::CreateWindow()
 
 	m_CanvasScroll = new Fl_Scroll(TOOLBOX_WIDTH, 0+edy, MAIN_WIDTH-TOOLBOX_WIDTH, MAIN_HEIGHT, "");	
 	m_EditorWindow->add(m_CanvasScroll);
+	m_EditorWindow->resizable(m_CanvasScroll);
 	
 	m_Canvas = new Fl_Canvas(-5000, -5000, 10000, 10000, "Canvas");
     m_Canvas->type(1);
@@ -315,7 +316,7 @@ SpiralWindowType *SynthModular::CreateWindow()
 	m_NewComment->tooltip("New comment in editor");		 
 	m_NewComment->user_data((void*)(this));
 	m_NewComment->callback((Fl_Callback*)cb_NewComment);
-	m_EditorWindow->add(m_NewComment);
+	m_Buttons->add(m_NewComment);
 
 	m_SettingsWindow = new SettingsWindow;
 	m_SettingsWindow->RegisterApp(this);
