@@ -42,8 +42,8 @@ m_Triggered (false)
   m_GUIArgs.Switch = 1;
   m_GUIArgs.Echo = 1;
   m_PluginInfo.Name = "SplitSwitch";
-  m_PluginInfo.Width = 93;
-  m_PluginInfo.Height = 55;
+  m_PluginInfo.Width = 80;
+  m_PluginInfo.Height = 80;
   m_PluginInfo.NumInputs = 3;
   m_PluginInfo.NumOutputs = 3;
   // Inputs

@@ -49,7 +49,7 @@ NoteSnapPlugin::NoteSnapPlugin() :
 m_Out(0)
 {
 	m_PluginInfo.Name="Note Snap";
-	m_PluginInfo.Width=90;
+	m_PluginInfo.Width=80;
 	m_PluginInfo.Height=80;
 	m_PluginInfo.NumInputs=1;
 	m_PluginInfo.NumOutputs=2;

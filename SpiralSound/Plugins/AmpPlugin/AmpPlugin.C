@@ -53,7 +53,7 @@ m_DC(0.0f)
 {
 	m_PluginInfo.Name="Amp";
 	m_PluginInfo.Width = 120;
-	m_PluginInfo.Height = 146;
+	m_PluginInfo.Height = 140;
 	m_PluginInfo.NumInputs=3;
 	m_PluginInfo.NumOutputs=1;
 	m_PluginInfo.PortTips.push_back("Input");

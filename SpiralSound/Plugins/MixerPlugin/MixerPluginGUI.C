@@ -27,14 +27,14 @@ SpiralPluginGUI(w,h,o,ch)
 {
         m_GUIColour=(Fl_Color)Info->GUI_COLOUR;
         for (int n=0; n<MAX_CHANNELS; n++) Numbers[n]=n;
-	m_MainPack = new Fl_Pack(0, 20, w, 100);
+	m_MainPack = new Fl_Pack(0, 15, w, 100);
 	m_MainPack->type (FL_HORIZONTAL);
         add (m_MainPack);
 
         // start with four...
 	AddChan(); AddChan(); AddChan(); AddChan();
 
-        m_Buttons = new Fl_Pack (0, 122, 45, 20);
+        m_Buttons = new Fl_Pack (0, 118, 45, 20);
         m_Buttons->type (FL_HORIZONTAL);
         add (m_Buttons);
         m_Delete = new Fl_Button (2, 0, 20, 20, "-");

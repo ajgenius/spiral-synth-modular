@@ -27,7 +27,18 @@
 MixSwitchPluginGUI::MixSwitchPluginGUI (int w, int h, MixSwitchPlugin *o, ChannelHandler *ch, const HostInfo *Info) :
 SpiralPluginGUI (w, h, o, ch)
 {
-  m_Chans = new Fl_Counter (5, 20, 40, 20, "Channels");
+  m_Switch = new Fl_Counter (15, 14, 50, 20, "Select");
+  m_Switch->labelsize (10);
+  m_Switch->type (FL_SIMPLE_COUNTER);
+  m_Switch->box (FL_PLASTIC_UP_BOX);
+  m_Switch->color (Info->GUI_COLOUR);
+  m_Switch->selection_color (Info->GUI_COLOUR);
+  m_Switch->step (1);
+  m_Switch->value (1);
+  m_Switch->callback ((Fl_Callback*) cb_Switch);
+  add (m_Switch);
+
+  m_Chans = new Fl_Counter (15, 46, 50, 20, "Channels");
   m_Chans->labelsize (10);
   m_Chans->type (FL_SIMPLE_COUNTER);
   m_Chans->box (FL_PLASTIC_UP_BOX);
@@ -38,16 +49,7 @@ SpiralPluginGUI (w, h, o, ch)
   m_Chans->callback ((Fl_Callback*) cb_Chans);
   add (m_Chans);
 
-  m_Switch = new Fl_Counter (49, 20, 40, 20, "Select");
-  m_Switch->labelsize (10);
-  m_Switch->type (FL_SIMPLE_COUNTER);
-  m_Switch->box (FL_PLASTIC_UP_BOX);
-  m_Switch->color (Info->GUI_COLOUR);
-  m_Switch->selection_color (Info->GUI_COLOUR);
-  m_Switch->step (1);
-  m_Switch->value (1);
-  m_Switch->callback ((Fl_Callback*) cb_Switch);
-  add (m_Switch);
+  end();
 }
 
 inline void MixSwitchPluginGUI::cb_Chans_i (Fl_Counter* o, void* v) {

@@ -54,7 +54,7 @@ m_WriteHeadPos(0)
 {
 	m_PluginInfo.Name="Delay";
 	m_PluginInfo.Width=120;
-	m_PluginInfo.Height=112;
+	m_PluginInfo.Height=110;
 	m_PluginInfo.NumInputs=3;
 	m_PluginInfo.NumOutputs=1;
 	m_PluginInfo.PortTips.push_back("Input");

@@ -48,7 +48,7 @@ m_Amount(0),
 m_Out(0.0)
 {
     m_PluginInfo.Name = "Transpose";
-    m_PluginInfo.Width = 70;
+    m_PluginInfo.Width = 80;
     m_PluginInfo.Height = 60;
     m_PluginInfo.NumInputs = 2;
     m_PluginInfo.NumOutputs = 1;

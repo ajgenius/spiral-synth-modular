@@ -49,7 +49,7 @@ SwitchPlugin::SwitchPlugin() :
 m_Mix(false)
 {
 	m_PluginInfo.Name="Switch";
-	m_PluginInfo.Width=60;
+	m_PluginInfo.Width=80;
 	m_PluginInfo.Height=50;
 	m_PluginInfo.NumInputs=3;
 	m_PluginInfo.NumOutputs=1;

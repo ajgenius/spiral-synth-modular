@@ -26,8 +26,8 @@ MasherPluginGUI::MasherPluginGUI(int w, int h,MasherPlugin *o,ChannelHandler *ch
 SpiralPluginGUI(w,h,o,ch)
 {	
 	m_Plugin=o;
-	
-	m_Pitch = new Fl_Knob(5,15,40,40,"GrainPitch");
+
+	m_Pitch = new Fl_Knob (5, 20, 40, 40, "GrainPitch");
 	m_Pitch->type(Fl_Knob::DOTLIN);
 	m_Pitch->color(Info->GUI_COLOUR);
     m_Pitch->labelsize(10);
@@ -35,8 +35,8 @@ SpiralPluginGUI(w,h,o,ch)
     m_Pitch->step(0.001);
     m_Pitch->value(1);
     m_Pitch->callback((Fl_Callback*)cb_Pitch);
-		
-	m_Random = new Fl_Knob(70,15,40,40,"Randomness");
+
+	m_Random = new Fl_Knob (70, 20, 40, 40, "Randomness");
 	m_Random->type(Fl_Knob::DOTLIN);
 	m_Random->color(Info->GUI_COLOUR);
     m_Random->labelsize(10);
@@ -45,7 +45,7 @@ SpiralPluginGUI(w,h,o,ch)
     m_Random->value(1);
     m_Random->callback((Fl_Callback*)cb_Random);
 
-	m_GrainStoreSize = new Fl_Knob(5,70,40,40,"Num Grains");
+	m_GrainStoreSize = new Fl_Knob (5, 80, 40, 40, "Num Grains");
 	m_GrainStoreSize->type(Fl_Knob::DOTLIN);
 	m_GrainStoreSize->color(Info->GUI_COLOUR);
     m_GrainStoreSize->labelsize(10);
@@ -54,7 +54,7 @@ SpiralPluginGUI(w,h,o,ch)
     m_GrainStoreSize->value(1);
     m_GrainStoreSize->callback((Fl_Callback*)cb_GrainStoreSize);
 
-	m_Density = new Fl_Knob(70,70,40,40,"Density");
+	m_Density = new Fl_Knob (70, 80, 40, 40, "Density");
 	m_Density->type(Fl_Knob::DOTLIN);
 	m_Density->color(Info->GUI_COLOUR);
     m_Density->labelsize(10);
@@ -62,11 +62,11 @@ SpiralPluginGUI(w,h,o,ch)
     m_Density->step(1);
     m_Density->value(1);
     m_Density->callback((Fl_Callback*)cb_Density);
-	
+
 	end();
 }
 
-extern "C" int sprintf(char *,const char *,...);	
+extern "C" int sprintf(char *,const char *,...);
 
 void MasherPluginGUI::UpdateValues(SpiralPlugin *o)
 {

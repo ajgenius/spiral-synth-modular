@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include "MidiPluginGUI.h"
 #include <FL/fl_draw.h>
@@ -30,41 +30,41 @@ int OptionsList(const vector<string> &List)
 	Fl_Button *Ok            = new Fl_Button(10,275,40,20,"Ok");
 	Ok->labelsize(10);
 	Fl_Button *Cancel        = new Fl_Button(50,275,40,20,"Cancel");
-	Cancel->labelsize(10);	
+	Cancel->labelsize(10);
 	Fl_Hold_Browser* Browser = new Fl_Hold_Browser(5,5,290,265,"");
-	
+
 	for (vector<string>::const_iterator i = List.begin();
 		 i!=List.end(); i++)
 	{
 		Browser->add(i->c_str());
 	}
-	
+
 	Win->show();
 
 	int Choice=-1;
-	
-	for (;;) 
+
+	for (;;)
 	{
     	Fl::wait();
     	Fl_Widget* o = Fl::readqueue();
-    	if (o==Ok || o==Browser) 
-		{ 			
+    	if (o==Ok || o==Browser)
+		{
 			Choice=Browser->value();
 			Win->hide();
 			delete Win;
-			break; 
+			break;
 		}
-		if (o==Cancel) 
-		{ 
-			Choice=-1; 
+		if (o==Cancel)
+		{
+			Choice=-1;
 			Win->hide();
 			delete Win;
-			break; 
+			break;
 		}
-		
-		if (o==Win) break; 		
+
+		if (o==Win) break;
   	}
-	
+
 	return Choice;
 }
 
@@ -73,7 +73,7 @@ int OptionsList(const vector<string> &List)
 MidiPluginGUI::MidiPluginGUI(int w, int h,MidiPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
 {
-	m_DeviceNum = new Fl_Counter (15, 30, 55, 20, "Channel");
+	m_DeviceNum = new Fl_Counter (12, 15, 56, 20, "Channel");
 	m_DeviceNum->type (FL_SIMPLE_COUNTER);
         m_DeviceNum->box (FL_PLASTIC_UP_BOX);
         m_DeviceNum->color (Info->GUI_COLOUR);
@@ -81,7 +81,7 @@ SpiralPluginGUI(w,h,o,ch)
 	m_DeviceNum->value(1);
 	m_DeviceNum->callback((Fl_Callback*)cb_DeviceNum, NULL);
 
-	m_NoteCut = new Fl_Button (2, 70, 81, 20, "Note Cut");
+	m_NoteCut = new Fl_Button (0, 52, 80, 20, "Note Cut");
 	m_NoteCut->type (FL_TOGGLE_BUTTON);
         m_NoteCut->box (FL_PLASTIC_UP_BOX);
         m_NoteCut->color (Info->GUI_COLOUR);
@@ -89,7 +89,7 @@ SpiralPluginGUI(w,h,o,ch)
 	m_NoteCut->labelsize(10);
 	m_NoteCut->callback((Fl_Callback*)cb_NoteCut, NULL);
 
-	m_ContinuousNotes = new Fl_Button (2, 90, 81, 20, "Cont Notes");
+	m_ContinuousNotes = new Fl_Button (0, 72, 80, 20, "Cont Notes");
 	m_ContinuousNotes->type (FL_TOGGLE_BUTTON);
         m_ContinuousNotes->box (FL_PLASTIC_UP_BOX);
         m_ContinuousNotes->color (Info->GUI_COLOUR);
@@ -97,14 +97,14 @@ SpiralPluginGUI(w,h,o,ch)
 	m_ContinuousNotes->labelsize(10);
 	m_ContinuousNotes->callback((Fl_Callback*)cb_ContinuousNotes, NULL);
 
-	m_AddControl = new Fl_Button (2, 110, 81, 20, "Add Control");
+	m_AddControl = new Fl_Button (0, 92, 80, 20, "Add Control");
         m_AddControl->box (FL_PLASTIC_UP_BOX);
         m_AddControl->color (Info->GUI_COLOUR);
         m_AddControl->selection_color (Info->GUI_COLOUR);
 	m_AddControl->labelsize(10);
 	m_AddControl->callback((Fl_Callback*)cb_AddControl, NULL);
 
-	m_RemoveControl = new Fl_Button (2, 130, 81, 20, "Remove Control");
+	m_RemoveControl = new Fl_Button (0, 112, 80, 20, "Remove Control");
         m_RemoveControl->box (FL_PLASTIC_UP_BOX);
         m_RemoveControl->color (Info->GUI_COLOUR);
         m_RemoveControl->selection_color (Info->GUI_COLOUR);
@@ -120,7 +120,7 @@ void MidiPluginGUI::UpdateValues(SpiralPlugin *o)
 
 //// Callbacks ////
 inline void MidiPluginGUI::cb_DeviceNum_i(Fl_Counter* o, void* v)
-{ 
+{
 	if (o->value()<1) o->value(1);
 	if (o->value()>128) o->value(128);
 	

@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include "../SpiralPlugin.h"
 #include <FL/Fl_Pixmap.H>
@@ -33,14 +33,14 @@ public:
 	virtual void 		Execute();
 	virtual void	    StreamOut(ostream &s);
 	virtual void	    StreamIn(istream &s);
-	
+
 	typedef char Type;
 	enum {NONE,SQUARE,SAW,NOISE};
-	
+
 	void ModulateFreq(Sample *data) {m_FreqModBuf=data;}
 	void ModulatePulseWidth(Sample *data) {m_PulseWidthModBuf=data;}
 	void ModulateSHLen(Sample *data) {m_SHModBuf=data;}
-	
+
 	void NoteTrigger(int V,int s,int v);
 	int   GetOctave() {return m_Octave;}
 	float GetFineFreq() {return m_FineFreq;}
@@ -48,29 +48,29 @@ public:
 	Type  GetType() {return m_Type;}
 	float GetSHLen() {return m_SHLen;}
 	float GetModAmount() {return m_ModAmount;}
-	
+
 private:
 
 	// Voice specific parameter
 	int   m_Note;
 	int   m_CyclePos;
 	float m_LastFreq;
-	
-	// Common voice parameters
+
+        // Common voice parameters
 	Type   m_Type;
 	int    m_Octave;
 	float  m_FineFreq;
-	float  m_PulseWidth; 
-	float  m_SHLen; 
+	float  m_PulseWidth;
+	float  m_SHLen;
 	float  m_ModAmount;
 	short  m_Noisev;
-	
+
 	Sample *m_FreqModBuf;
 	Sample *m_PulseWidthModBuf;
 	Sample *m_SHModBuf;
-	
+
 	static const int FIXED;
-	
+
 	friend istream &operator>>(istream &s, OscillatorPlugin &o);
 	friend ostream &operator<<(ostream &s, OscillatorPlugin &o);
 };

@@ -52,7 +52,7 @@ m_NumChannels(0)
         m_Version = 2;
         m_PluginInfo.Name="Mixer";
 	m_PluginInfo.Width=80;
-	m_PluginInfo.Height=145;
+	m_PluginInfo.Height=140;
         CreatePorts ();
 	for (int n=0; n<MAX_CHANNELS; n++) m_ChannelVal[n]=1.0f;
 	m_AudioCH->Register("Value", &m_GUIArgs.Value);

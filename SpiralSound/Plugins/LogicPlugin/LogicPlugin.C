@@ -51,8 +51,8 @@ m_Operator(AND)
 {
         m_Version = 2;
         m_PluginInfo.Name="Logic";
-	m_PluginInfo.Width=75;
-	m_PluginInfo.Height=130;
+	m_PluginInfo.Width=80;
+	m_PluginInfo.Height=140;
 
         CreatePorts ();
 	m_AudioCH->Register("Operator",(int*)&m_Operator);

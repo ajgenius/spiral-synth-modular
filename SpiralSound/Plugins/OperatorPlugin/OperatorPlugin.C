@@ -52,7 +52,7 @@ m_Constant(0)
 	m_Version=2;
 
 	m_PluginInfo.Name="Operator";
-	m_PluginInfo.Width=90;
+	m_PluginInfo.Width=120;
 	m_PluginInfo.Height=80;
 	m_PluginInfo.NumInputs=2;
 	m_PluginInfo.NumOutputs=1;
@@ -83,7 +83,6 @@ SpiralGUIType *OperatorPlugin::CreateGUI()
 void OperatorPlugin::Execute()
 {	
 	float Freq=0, OldFreq=0;
-	
 	switch (m_Operator) 
 	{
 		case ADD : 
@@ -136,30 +135,32 @@ void OperatorPlugin::Execute()
 				} 
 			}
 			break;
-		case MUL : 
+		case MUL :
 			if (InputExists(1))
 			{
 				for (int n=0; n<m_HostInfo->BUFSIZE; n++)
 				{
 					SetOutput(0,n,GetInput(0,n)*GetInput(1,n));
-				} 
+				}
 			}
 			else
 			{
 				for (int n=0; n<m_HostInfo->BUFSIZE; n++)
 				{
 					SetOutput(0,n,GetInput(0,n)*m_Constant);
-				} 
+				}
 			}
 			break;
+                default:
+                        break;
 	}
 }
 
 void OperatorPlugin::ExecuteCommands()
 {
 }
-	
-void OperatorPlugin::StreamOut(ostream &s) 
+
+void OperatorPlugin::StreamOut(ostream &s)
 {
 	s<<m_Version<<endl;
 	s<<m_Constant<<" ";

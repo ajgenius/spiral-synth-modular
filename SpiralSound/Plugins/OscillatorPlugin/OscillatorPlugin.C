@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 #include "OscillatorPlugin.h"
 #include "OscillatorPluginGUI.h"
 #include <FL/Fl_Button.h>
@@ -56,6 +56,7 @@ m_Type(SQUARE),
 m_Octave(0),
 m_FineFreq(1.0f),
 m_PulseWidth(0.5f),
+m_SHLen (0.1f),
 m_ModAmount(1.0f),
 m_Noisev(0),
 m_FreqModBuf(NULL),
@@ -63,20 +64,20 @@ m_PulseWidthModBuf(NULL),
 m_SHModBuf(NULL)
 {
 
-	m_CyclePos=0;	
+	m_CyclePos=0;
 	m_Note=0;
 	m_LastFreq=0;
-	
+
 	m_PluginInfo.Name="Oscillator";
-	m_PluginInfo.Width=245;
-	m_PluginInfo.Height=110;
+	m_PluginInfo.Width=210;
+	m_PluginInfo.Height=140;
 	m_PluginInfo.NumInputs=3;
 	m_PluginInfo.NumOutputs=1;
 	m_PluginInfo.PortTips.push_back("Frequency CV");
 	m_PluginInfo.PortTips.push_back("PulseWidth CV");
 	m_PluginInfo.PortTips.push_back("Sample & Hold length CV");
 	m_PluginInfo.PortTips.push_back("Output");
-	
+
 	m_AudioCH->Register("Octave",&m_Octave);
 	m_AudioCH->Register("FineFreq",&m_FineFreq);
 	m_AudioCH->Register("PulseWidth",&m_PulseWidth);
@@ -90,7 +91,7 @@ OscillatorPlugin::~OscillatorPlugin()
 }
 
 PluginInfo &OscillatorPlugin::Initialise(const HostInfo *Host)
-{	
+{
 	return SpiralPlugin::Initialise(Host);
 }
 
@@ -98,7 +99,7 @@ SpiralGUIType *OscillatorPlugin::CreateGUI()
 {
 	return new OscillatorPluginGUI(m_PluginInfo.Width,
 										  m_PluginInfo.Height,
-										  this,m_AudioCH,m_HostInfo);									  
+										  this,m_AudioCH,m_HostInfo);
 }
 
 void OscillatorPlugin::Execute()
@@ -107,57 +108,57 @@ void OscillatorPlugin::Execute()
 	float Freq=0;
 	float CycleLen=0;
 	int samplelen, PW;
-		
+
 	switch (m_Type)
 	{
 	case SQUARE:
 		for (int n=0; n<m_HostInfo->BUFSIZE; n++)
 		{
 			if (InputExists(0)) Freq=GetInputPitch(0,n);
-			else Freq=110;		
-			Freq*=m_FineFreq;	
+			else Freq=110;
+			Freq*=m_FineFreq;
 			if (m_Octave>0) Freq*=1<<(m_Octave);
 			if (m_Octave<0) Freq/=1<<(-m_Octave);
 			CycleLen = m_HostInfo->SAMPLERATE/Freq;
 			PW = (int)((m_PulseWidth+GetInput(IN_PW,n)*m_ModAmount) * CycleLen);
- 	
+
 			// calculate square wave pattern
 			m_CyclePos++;
-			if (m_CyclePos>CycleLen) m_CyclePos=0;	
-				
+			if (m_CyclePos>CycleLen) m_CyclePos=0;
+
 			if (m_CyclePos<PW) SetOutput(OUT_MAIN,n,1);
-			else SetOutput(OUT_MAIN,n,-1);							
+			else SetOutput(OUT_MAIN,n,-1);
 		}
 		break;
-			
+
 	case SAW:
 		for (int n=0; n<m_HostInfo->BUFSIZE; n++)
 		{
 			if (InputExists(0)) Freq=GetInputPitch(0,n);
-			else Freq=110;		
+			else Freq=110;
 			Freq*=m_FineFreq;
 			if (m_Octave>0) Freq*=1<<(m_Octave);
-			if (m_Octave<0) Freq/=1<<(-m_Octave);			
+			if (m_Octave<0) Freq/=1<<(-m_Octave);
 			CycleLen = m_HostInfo->SAMPLERATE/Freq;
 			PW = (int)((m_PulseWidth+GetInput(IN_PW,n)*m_ModAmount) * CycleLen);
 
-			// get normailise position between cycle 			
+			// get normailise position between cycle
 			m_CyclePos++;
-			if (m_CyclePos>CycleLen) m_CyclePos=0;		
-			
-			if (m_CyclePos<PW) 
+			if (m_CyclePos>CycleLen) m_CyclePos=0;
+
+			if (m_CyclePos<PW)
 			{
 				// before pw -1->1
 				SetOutput(OUT_MAIN,n,Linear(0,PW,m_CyclePos,-1,1));
 			}
-			else 
+			else
 			{
 				// after pw 1->-1
 				SetOutput(OUT_MAIN,n,Linear(PW,CycleLen,m_CyclePos,1,-1));
-			}		
-		}					
+			}
+		}
 		break;
-		
+
 	case NOISE:
 		for (int n=0; n<m_HostInfo->BUFSIZE; n++)
 		{
@@ -165,7 +166,7 @@ void OscillatorPlugin::Execute()
 
 			//modulate the sample & hold length
 			samplelen = (int)((m_SHLen+GetInput(IN_SHLEN,n)*m_ModAmount)*m_HostInfo->SAMPLERATE);
-		
+
 			// do sample & hold on the noise
 			if (m_CyclePos>samplelen)
 			{
@@ -175,7 +176,7 @@ void OscillatorPlugin::Execute()
 			SetOutput(OUT_MAIN,n,m_Noisev/(float)SHRT_MAX);
 		}
 		break;
-		
+
 	case NONE: break;
 	}
 }

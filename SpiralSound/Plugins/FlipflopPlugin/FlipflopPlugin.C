@@ -55,7 +55,7 @@ m_TriggerSamples(0)
 {
 	m_Version = 2;
 	m_PluginInfo.Name="Flipflop";
-	m_PluginInfo.Width=70;
+	m_PluginInfo.Width=80;
 	m_PluginInfo.Height=100;
 	m_PluginInfo.NumInputs=1;
 	m_PluginInfo.NumOutputs=1;

@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include "TrigPluginGUI.h"
 #include <FL/fl_draw.h>
@@ -26,7 +26,7 @@
 TrigPluginGUI::TrigPluginGUI(int w, int h,TrigPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
 {
-	m_Sin = new Fl_Button (5, 15, 50, 20, "Sin");
+	m_Sin = new Fl_Button (10, 15, 60, 20, "Sin");
 	m_Sin->labelsize (8);
         m_Sin->type (FL_TOGGLE_BUTTON);
         m_Sin->box (FL_PLASTIC_UP_BOX);
@@ -35,7 +35,7 @@ SpiralPluginGUI(w,h,o,ch)
         m_Sin->selection_color (Info->GUI_COLOUR);
  	m_Sin->callback ((Fl_Callback*)cb_Sin);
 
-	m_Cos = new Fl_Button (5, 35, 50, 20, "Cos");
+	m_Cos = new Fl_Button (10, 35, 60, 20, "Cos");
 	m_Cos->labelsize (8);
         m_Cos->type (FL_TOGGLE_BUTTON);
         m_Cos->box (FL_PLASTIC_UP_BOX);
@@ -43,14 +43,14 @@ SpiralPluginGUI(w,h,o,ch)
         m_Cos->selection_color (Info->GUI_COLOUR);
 	m_Cos->callback ((Fl_Callback*)cb_Cos);
 
-	m_Tan = new Fl_Button (5, 55, 50, 20, "Tan");
+	m_Tan = new Fl_Button (10, 55, 60, 20, "Tan");
 	m_Tan->labelsize (8);
         m_Tan->type (FL_TOGGLE_BUTTON);
         m_Tan->box (FL_PLASTIC_UP_BOX);
         m_Tan->color (Info->GUI_COLOUR);
         m_Tan->selection_color (Info->GUI_COLOUR);
  	m_Tan->callback ((Fl_Callback*)cb_Tan);
-	
+
 	end();
 }
 

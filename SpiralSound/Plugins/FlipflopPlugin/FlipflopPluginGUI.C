@@ -25,7 +25,7 @@
 FlipflopPluginGUI::FlipflopPluginGUI(int w, int h,FlipflopPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
 {	
-	m_TriggerTime = new Fl_Knob (15, 15, 40, 40, "Trigger Time");
+	m_TriggerTime = new Fl_Knob (20, 15, 40, 40, "Trigger Time");
         m_TriggerTime->color (Info->GUI_COLOUR);
     m_TriggerTime->labelsize(8);
     m_TriggerTime->maximum(1.0f);
@@ -34,7 +34,7 @@ SpiralPluginGUI(w,h,o,ch)
 	m_TriggerTime->labelsize(8);
 	m_TriggerTime->callback((Fl_Callback*)cb_TriggerTime);
 
-	m_Monostable = new Fl_Button (5, 70, 60, 20, "Monostable");
+	m_Monostable = new Fl_Button (10, 70, 60, 20, "Monostable");
         m_Monostable->color (Info->GUI_COLOUR);
         m_Monostable->selection_color (Info->GUI_COLOUR);
         m_Monostable->box (FL_PLASTIC_UP_BOX);

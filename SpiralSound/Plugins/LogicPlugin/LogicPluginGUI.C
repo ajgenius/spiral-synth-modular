@@ -26,7 +26,7 @@
 LogicPluginGUI::LogicPluginGUI(int w, int h,LogicPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
 {
-	int Width=36, Depth=20/*, Pos=0, Count=0*/;
+	int Width=38, Depth=20;
 
 	m_AND = new Fl_Button (2, 15, Width, Depth, "AND");
         m_AND->type (FL_TOGGLE_BUTTON);
@@ -37,7 +37,7 @@ SpiralPluginGUI(w,h,o,ch)
         m_AND->selection_color (Info->GUI_COLOUR);
  	m_AND->callback ((Fl_Callback*)cb_AND);
 
-	m_OR = new Fl_Button(2, 35, Width, Depth, "OR");
+	m_OR = new Fl_Button(2, 36, Width, Depth, "OR");
         m_OR->type (FL_TOGGLE_BUTTON);
 	m_OR->labelsize (10);
 	m_OR->box (FL_PLASTIC_UP_BOX);
@@ -45,7 +45,7 @@ SpiralPluginGUI(w,h,o,ch)
         m_OR->selection_color (Info->GUI_COLOUR);
 	m_OR->callback ((Fl_Callback*)cb_OR);
 
-	m_NOT = new Fl_Button (2, 55, Width, Depth, "NOT");
+	m_NOT = new Fl_Button (2, 57, Width, Depth, "NOT");
         m_NOT->type (FL_TOGGLE_BUTTON);
 	m_NOT->labelsize (10);
 	m_NOT->box (FL_PLASTIC_UP_BOX);
@@ -53,7 +53,7 @@ SpiralPluginGUI(w,h,o,ch)
         m_NOT->selection_color (Info->GUI_COLOUR);
  	m_NOT->callback ((Fl_Callback*)cb_NOT);
 
-	m_NAND = new Fl_Button(2, 75, Width, Depth, "NAND");
+	m_NAND = new Fl_Button(2, 78, Width, Depth, "NAND");
         m_NAND->type (FL_TOGGLE_BUTTON);
  	m_NAND->labelsize (10);
  	m_NAND->box (FL_PLASTIC_UP_BOX);
@@ -61,7 +61,7 @@ SpiralPluginGUI(w,h,o,ch)
   	m_NAND->selection_color (Info->GUI_COLOUR);
 	m_NAND->callback ((Fl_Callback*)cb_NAND);
 
-	m_NOR = new Fl_Button (38, 15, Width, Depth, "NOR");
+	m_NOR = new Fl_Button (41, 15, Width, Depth, "NOR");
         m_NOR->type (FL_TOGGLE_BUTTON);
 	m_NOR->labelsize (10);
 	m_NOR->box (FL_PLASTIC_UP_BOX);
@@ -69,7 +69,7 @@ SpiralPluginGUI(w,h,o,ch)
         m_NOR->selection_color (Info->GUI_COLOUR);
 	m_NOR->callback ((Fl_Callback*)cb_NOR);
 
-	m_XOR = new Fl_Button (38, 35, Width, Depth, "XOR");
+	m_XOR = new Fl_Button (41, 36, Width, Depth, "XOR");
         m_XOR->type (FL_TOGGLE_BUTTON);
 	m_XOR->labelsize (10);
 	m_XOR->box (FL_PLASTIC_UP_BOX);
@@ -77,7 +77,7 @@ SpiralPluginGUI(w,h,o,ch)
         m_XOR->selection_color (Info->GUI_COLOUR);
  	m_XOR->callback ((Fl_Callback*)cb_XOR);
 
-	m_XNOR = new Fl_Button (38, 55, Width, Depth, "XNOR");
+	m_XNOR = new Fl_Button (41, 57, Width, Depth, "XNOR");
         m_XNOR->type (FL_TOGGLE_BUTTON);
 	m_XNOR->labelsize (10);
 	m_XNOR->box (FL_PLASTIC_UP_BOX);
@@ -85,7 +85,7 @@ SpiralPluginGUI(w,h,o,ch)
         m_XNOR->selection_color (Info->GUI_COLOUR);
 	m_XNOR->callback ((Fl_Callback*)cb_XNOR);
 
-        m_Inputs = new Fl_Counter (7, 97, 60, 20, "Inputs");
+        m_Inputs = new Fl_Counter (10, 104, 60, 20, "Inputs");
         m_Inputs->labelsize (10);
         m_Inputs->type (FL_SIMPLE_COUNTER);
         m_Inputs->box (FL_PLASTIC_UP_BOX);

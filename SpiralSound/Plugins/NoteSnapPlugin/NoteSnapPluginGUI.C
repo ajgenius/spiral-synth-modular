@@ -24,21 +24,21 @@
 
 NoteSnapPluginGUI::NoteSnapPluginGUI(int w, int h,NoteSnapPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
-{	
+{
 	int KeyWidth=10,Note,Pos=0,Count=0;
-	
+
 	for (int n=0; n<NUM_KEYS; n++)
 	{
 		m_Num[n]=n;
-		
+
 		Note = n%12;
-		if (Note!=1 && Note!=3 && Note!=6 && Note!=8 && Note!=10) 
+		if (Note!=1 && Note!=3 && Note!=6 && Note!=8 && Note!=10)
 		{
-			Count++;
 			Pos=Count*KeyWidth;
-			m_Key[n] = new Fl_Button(Pos,20,KeyWidth,50,"");
+			Count++;
+			m_Key[n] = new Fl_Button (Pos+5, 20, KeyWidth, 50, "");
 			m_Key[n]->type(1);
-			m_Key[n]->selection_color(FL_RED);		
+			m_Key[n]->selection_color(FL_RED);
 			m_Key[n]->box(FL_THIN_UP_BOX);
 			m_Key[n]->labelsize(10);
 			m_Key[n]->when(FL_WHEN_CHANGED);
@@ -46,18 +46,18 @@ SpiralPluginGUI(w,h,o,ch)
 			m_Key[n]->color(FL_WHITE);
 			m_Key[n]->callback((Fl_Callback*)cb_Key, &m_Num[n]);
 			add(m_Key[n]);
-		}	
+		}
 	}
-	
+
 	Count=0;
 	for (int n=0; n<NUM_KEYS; n++)
 	{
 		Note = n%12;
-		if (Note==1 || Note==3 || Note==6 || Note==8 || Note==10) 
+		if (Note==1 || Note==3 || Note==6 || Note==8 || Note==10)
 		{
-			m_Key[n] = new Fl_Button(Pos+5,20,KeyWidth,30,"");
+			m_Key[n] = new Fl_Button (Pos+10, 20, KeyWidth, 30, "");
 			m_Key[n]->type(1);
-			m_Key[n]->selection_color(FL_RED);		
+			m_Key[n]->selection_color(FL_RED);
 			m_Key[n]->box(FL_THIN_UP_BOX);
 			m_Key[n]->labelsize(10);
 			m_Key[n]->when(FL_WHEN_CHANGED);
@@ -67,11 +67,11 @@ SpiralPluginGUI(w,h,o,ch)
 		}
 		else
 		{
-			Count++;
 			Pos=Count*KeyWidth;
+			Count++;
 		}
 	}
-	
+
 	end();
 }
 

@@ -57,7 +57,7 @@ m_Buf1 (1)
         m_Version = 2;
         m_PluginInfo.Name = "Echo";
 	m_PluginInfo.Width = 120;
-	m_PluginInfo.Height = 132;
+	m_PluginInfo.Height = 140;
 	m_PluginInfo.NumInputs = 3;
 	m_PluginInfo.NumOutputs = 2;
 	m_PluginInfo.PortTips.push_back ("Input");

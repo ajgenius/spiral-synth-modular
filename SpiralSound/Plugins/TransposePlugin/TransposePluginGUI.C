@@ -24,7 +24,7 @@
 TransposePluginGUI::TransposePluginGUI (int w, int h,TransposePlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI (w, h, o, ch)
 {
-     m_Amount = new Fl_Counter (10, 20, 50, 20, "Amount");
+     m_Amount = new Fl_Counter (15, 20, 50, 20, "Amount");
      m_Amount->color (Info->GUI_COLOUR);
      m_Amount->type (FL_SIMPLE_COUNTER);
      m_Amount->box (FL_PLASTIC_UP_BOX);

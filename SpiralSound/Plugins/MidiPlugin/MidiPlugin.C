@@ -65,8 +65,8 @@ m_CurrentNote(0)
 	m_RefCount++;
 
 	m_PluginInfo.Name="Midi";
-	m_PluginInfo.Width=85;
-	m_PluginInfo.Height=155;
+	m_PluginInfo.Width=80;
+	m_PluginInfo.Height=140;
 	m_PluginInfo.NumInputs=2;
 	m_PluginInfo.NumOutputs=6;
 	m_PluginInfo.PortTips.push_back("Note CV");

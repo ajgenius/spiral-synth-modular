@@ -26,7 +26,7 @@
 CounterPluginGUI::CounterPluginGUI(int w, int h,CounterPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
 {	
-	m_Count = new Fl_Input(5, 20, 50, 20, "Count");
+	m_Count = new Fl_Input(15, 20, 50, 20, "Count");
     m_Count->color(Info->GUI_COLOUR);
     m_Count->labelsize(8);
 	m_Count->align(FL_ALIGN_BOTTOM|FL_ALIGN_CENTER);

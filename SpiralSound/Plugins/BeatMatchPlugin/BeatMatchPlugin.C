@@ -54,7 +54,7 @@ m_OutputLevel(1.0f),
 m_Sensitivity(0.5f)
 {
 	m_PluginInfo.Name="BeatMatch";
-	m_PluginInfo.Width=90;
+	m_PluginInfo.Width=80;
 	m_PluginInfo.Height=80;
 	m_PluginInfo.NumInputs=1;
 	m_PluginInfo.NumOutputs=1;

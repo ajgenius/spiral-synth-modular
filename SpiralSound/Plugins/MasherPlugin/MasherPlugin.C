@@ -62,7 +62,7 @@ m_WriteGrain(0)
 {
 	m_PluginInfo.Name="Masher";
 	m_PluginInfo.Width=120;
-	m_PluginInfo.Height=130;
+	m_PluginInfo.Height=140;
 	m_PluginInfo.NumInputs=3;
 	m_PluginInfo.NumOutputs=1;
 	m_PluginInfo.PortTips.push_back("Input");

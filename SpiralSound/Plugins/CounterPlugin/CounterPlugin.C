@@ -52,7 +52,7 @@ m_Triggered(false),
 m_CurrentLevel(1.0f)
 {
 	m_PluginInfo.Name="Counter";
-	m_PluginInfo.Width=60;
+	m_PluginInfo.Width=80;
 	m_PluginInfo.Height=50;
 	m_PluginInfo.NumInputs=1;
 	m_PluginInfo.NumOutputs=1;

@@ -90,7 +90,7 @@ SpiralPluginGUI(w,h,o,ch)
         m_NumDC->callback ((Fl_Callback*)cb_NumDC);
         m_NumGroup->add (m_NumDC);
 
-        m_Reset = new Fl_Button (64, 120, 56, 20, "Reset");
+        m_Reset = new Fl_Button (64, 119, 56, 18, "Reset");
         m_Reset->user_data ((void*)(this));
         m_Reset->labelsize (10);
         m_Reset->box (FL_PLASTIC_UP_BOX);

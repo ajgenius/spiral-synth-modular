@@ -19,106 +19,10 @@
 #include "LFOPluginGUI.h"
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
-
-static unsigned char *image_Sine[] = {
-(unsigned char*)"20 20 2 1",
-(unsigned char*)" \tc None",
-(unsigned char*)".\tc #000000",
-(unsigned char*)"                    ",
-(unsigned char*)"                    ",
-(unsigned char*)"      ..            ",
-(unsigned char*)"     .  .           ",
-(unsigned char*)"    .    .          ",
-(unsigned char*)"    .    .          ",
-(unsigned char*)"    .    .          ",
-(unsigned char*)"    .     .         ",
-(unsigned char*)"   .      .         ",
-(unsigned char*)"   .      .       . ",
-(unsigned char*)"  .       .      .  ",
-(unsigned char*)"          .      .  ",
-(unsigned char*)"          .     .   ",
-(unsigned char*)"          .     .   ",
-(unsigned char*)"           .    .   ",
-(unsigned char*)"           .    .   ",
-(unsigned char*)"            .  .    ",
-(unsigned char*)"             ..     ",
-(unsigned char*)"                    ",
-(unsigned char*)"                    "};
-
-static unsigned char *image_Tri[] = {
-(unsigned char*)"20 20 2 1",
-(unsigned char*)" \tc None",
-(unsigned char*)".\tc #000000",
-(unsigned char*)"                    ",
-(unsigned char*)"                    ",
-(unsigned char*)"       .            ",
-(unsigned char*)"       .            ",
-(unsigned char*)"      . .           ",
-(unsigned char*)"      . .           ",
-(unsigned char*)"     .   .          ",
-(unsigned char*)"     .   .          ",
-(unsigned char*)"    .     .         ",
-(unsigned char*)"    .     .         ",
-(unsigned char*)"   .       .      . ",
-(unsigned char*)"           .     .  ",
-(unsigned char*)"            .   .   ",
-(unsigned char*)"            .   .   ",
-(unsigned char*)"             . .    ",
-(unsigned char*)"             . .    ",
-(unsigned char*)"              .     ",
-(unsigned char*)"              .     ",
-(unsigned char*)"                    ",
-(unsigned char*)"                    "};
-
-static unsigned char *image_Square[] = {
-(unsigned char*)"20 20 2 1",
-(unsigned char*)" \tc None",
-(unsigned char*)".\tc #000000",
-(unsigned char*)"                    ",
-(unsigned char*)"                    ",
-(unsigned char*)"     ......         ",
-(unsigned char*)"     .    .         ",
-(unsigned char*)"     .    .         ",
-(unsigned char*)"     .    .         ",
-(unsigned char*)"     .    .         ",
-(unsigned char*)"     .    .         ",
-(unsigned char*)"     .    .         ",
-(unsigned char*)"     .    .         ",
-(unsigned char*)"   ...    .    ...  ",
-(unsigned char*)"          .    .    ",
-(unsigned char*)"          .    .    ",
-(unsigned char*)"          .    .    ",
-(unsigned char*)"          .    .    ",
-(unsigned char*)"          .    .    ",
-(unsigned char*)"          .    .    ",
-(unsigned char*)"          ......    ",
-(unsigned char*)"                    ",
-(unsigned char*)"                    "};
-
-static unsigned char *image_Saw[] = {
-(unsigned char*)"20 20 2 1",
-(unsigned char*)" \tc None",
-(unsigned char*)".\tc #000000",
-(unsigned char*)"                    ",
-(unsigned char*)"                    ",
-(unsigned char*)"         ..         ",
-(unsigned char*)"         ..         ",
-(unsigned char*)"        . .         ",
-(unsigned char*)"        . .         ",
-(unsigned char*)"       .  .         ",
-(unsigned char*)"       .  .         ",
-(unsigned char*)"      .   .         ",
-(unsigned char*)"      .   .         ",
-(unsigned char*)"   ...    .   ....  ",
-(unsigned char*)"          .   .     ",
-(unsigned char*)"          .  .      ",
-(unsigned char*)"          .  .      ",
-(unsigned char*)"          . .       ",
-(unsigned char*)"          . .       ",
-(unsigned char*)"          ..        ",
-(unsigned char*)"          ..        ",
-(unsigned char*)"                    ",
-(unsigned char*)"                    "};
+#include "../GUI/WS_Sine.h"
+#include "../GUI/WS_Tri.h"
+#include "../GUI/WS_Square.h"
+#include "../GUI/WS_Saw.h"
 
 LFOPluginGUI::LFOPluginGUI (int w, int h, LFOPlugin *o, ChannelHandler *ch, const HostInfo *Info) :
 SpiralPluginGUI (w, h, o, ch),
@@ -127,37 +31,37 @@ m_PixmapTri (image_Tri),
 m_PixmapSquare (image_Square),
 m_PixmapSaw (image_Saw) {
 
-        m_ShapeSine = new Fl_LED_Button (0, 15, 23, 23);
+        m_ShapeSine = new Fl_LED_Button (0, 10, 23, 23);
         m_ShapeSine->type (FL_RADIO_BUTTON);
         m_PixmapSine.label (m_ShapeSine);
 	m_ShapeSine->set();
         m_ShapeSine->callback ((Fl_Callback*)cb_Sine);
 
-	m_ShapeTri = new Fl_LED_Button (0, 35, 23, 23);
+	m_ShapeTri = new Fl_LED_Button (0, 31, 23, 23);
         m_ShapeTri->type (FL_RADIO_BUTTON);
         m_PixmapTri.label (m_ShapeTri);
         m_ShapeTri->callback ((Fl_Callback*)cb_Tri);
 
-        m_ShapeSquare = new Fl_LED_Button (0, 55, 23, 23);
+        m_ShapeSquare = new Fl_LED_Button (0, 53, 23, 23);
         m_ShapeSquare->type (FL_RADIO_BUTTON);
         m_PixmapSquare.label (m_ShapeSquare);
 	m_ShapeSquare->callback ((Fl_Callback*)cb_Square);
 
-        m_ShapeSaw = new Fl_LED_Button (0, 75, 23, 23);
+        m_ShapeSaw = new Fl_LED_Button (0, 74, 23, 23);
         m_ShapeSaw->type (FL_RADIO_BUTTON);
         m_PixmapSaw.label (m_ShapeSaw);
         m_ShapeSaw->callback ((Fl_Callback*)cb_Saw);
 
-       	m_TheTabs = new Fl_Tabs (40, 14, 119, 90, "");
+       	m_TheTabs = new Fl_Tabs (50, 10, 119, 88, "");
 	m_TheTabs->box (FL_PLASTIC_DOWN_BOX);
 	m_TheTabs->color (Info->GUI_COLOUR);
 	add (m_TheTabs);
 
-	m_CtlGroup = new Fl_Group (40, 28, 119, 66, "Control");
+	m_CtlGroup = new Fl_Group (50, 24, 119, 64, "Control");
 	m_CtlGroup->labelsize (10);
         m_TheTabs->add (m_CtlGroup);
 
-        m_Perd = new Fl_Knob (70, 30, 60, 60, "Period");
+        m_Perd = new Fl_Knob (85, 30, 50, 50, "Period");
         m_Perd->user_data ((void*)(this));
         m_Perd->color (Info->GUI_COLOUR);
 	m_Perd->type (Fl_Knob::LINELIN);
@@ -170,11 +74,11 @@ m_PixmapSaw (image_Saw) {
 	m_Perd->callback ((Fl_Callback*)cb_Perd);
         m_CtlGroup->add (m_Perd);
 
-        m_NumGroup = new Fl_Group (40, 28, 119, 66, "Numbers");
+        m_NumGroup = new Fl_Group (50, 24, 119, 64, "Numbers");
 	m_NumGroup->labelsize (10);
         m_TheTabs->add (m_NumGroup);
 
-        m_NumPerd = new Fl_Counter (45, 35, 110, 20, "Period (Secs)");
+        m_NumPerd = new Fl_Counter (55, 30, 110, 20, "Period (Secs)");
         m_NumPerd->user_data ((void*)(this));
         m_NumPerd->textsize (10);
         m_NumPerd->labelsize (10);
@@ -188,7 +92,7 @@ m_PixmapSaw (image_Saw) {
         m_NumPerd->callback ((Fl_Callback*)cb_NumPerd);
         m_NumGroup->add (m_NumPerd);
 
-        m_NumFreq = new Fl_Counter (45, 70, 110, 20, "Freq (Hz)");
+        m_NumFreq = new Fl_Counter (55, 64, 110, 20, "Freq (Hz)");
         m_NumFreq->user_data ((void*)(this));
         m_NumFreq->textsize (10);
         m_NumFreq->labelsize (10);

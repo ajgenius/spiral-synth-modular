@@ -14,211 +14,19 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include "WaveTablePluginGUI.h"
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
-
-static unsigned char *image_Square[] = {
-(unsigned char*)"20 20 2 1",
-(unsigned char*)" \tc None",
-(unsigned char*)".\tc #000000",
-(unsigned char*)"                    ",
-(unsigned char*)"                    ",
-(unsigned char*)"     ......         ",
-(unsigned char*)"     .    .         ",
-(unsigned char*)"     .    .         ",
-(unsigned char*)"     .    .         ",
-(unsigned char*)"     .    .         ",
-(unsigned char*)"     .    .         ",
-(unsigned char*)"     .    .         ",
-(unsigned char*)"     .    .         ",
-(unsigned char*)"   ...    .    ...  ",
-(unsigned char*)"          .    .    ",
-(unsigned char*)"          .    .    ",
-(unsigned char*)"          .    .    ",
-(unsigned char*)"          .    .    ",
-(unsigned char*)"          .    .    ",
-(unsigned char*)"          .    .    ",
-(unsigned char*)"          ......    ",
-(unsigned char*)"                    ",
-(unsigned char*)"                    "};
-
-static unsigned char *image_Saw[] = {
-(unsigned char*)"20 20 2 1",
-(unsigned char*)" \tc None",
-(unsigned char*)".\tc #000000",
-(unsigned char*)"                    ",
-(unsigned char*)"                    ",
-(unsigned char*)"         ..         ",
-(unsigned char*)"         ..         ",
-(unsigned char*)"        . .         ",
-(unsigned char*)"        . .         ",
-(unsigned char*)"       .  .         ",
-(unsigned char*)"       .  .         ",
-(unsigned char*)"      .   .         ",
-(unsigned char*)"      .   .         ",
-(unsigned char*)"   ...    .   ....  ",
-(unsigned char*)"          .   .     ",
-(unsigned char*)"          .  .      ",
-(unsigned char*)"          .  .      ",
-(unsigned char*)"          . .       ",
-(unsigned char*)"          . .       ",
-(unsigned char*)"          ..        ",
-(unsigned char*)"          ..        ",
-(unsigned char*)"                    ",
-(unsigned char*)"                    "};
-
-static unsigned char *image_RevSaw[] = {
-(unsigned char*)"20 20 2 1",
-(unsigned char*)" \tc None",
-(unsigned char*)".\tc #000000",
-(unsigned char*)"                    ",
-(unsigned char*)"                    ",
-(unsigned char*)"          ..        ",
-(unsigned char*)"          ..        ",
-(unsigned char*)"          . .       ",
-(unsigned char*)"          . .       ",
-(unsigned char*)"          .  .      ",
-(unsigned char*)"          .  .      ",
-(unsigned char*)"          .   .     ",
-(unsigned char*)"          .   .     ",
-(unsigned char*)"   ...    .   ....  ",
-(unsigned char*)"      .   .         ",
-(unsigned char*)"      .   .         ",
-(unsigned char*)"       .  .         ",
-(unsigned char*)"       .  .         ",
-(unsigned char*)"        . .         ",
-(unsigned char*)"        . .         ",
-(unsigned char*)"         ..         ",
-(unsigned char*)"                    ",
-(unsigned char*)"                    "};
-
-static unsigned char *image_Tri[] = {
-(unsigned char*)"20 20 2 1",
-(unsigned char*)" \tc None",
-(unsigned char*)".\tc #000000",
-(unsigned char*)"                    ",
-(unsigned char*)"                    ",
-(unsigned char*)"       .            ",
-(unsigned char*)"       .            ",
-(unsigned char*)"      . .           ",
-(unsigned char*)"      . .           ",
-(unsigned char*)"     .   .          ",
-(unsigned char*)"     .   .          ",
-(unsigned char*)"    .     .         ",
-(unsigned char*)"    .     .         ",
-(unsigned char*)"   .       .      . ",
-(unsigned char*)"           .     .  ",
-(unsigned char*)"            .   .   ",
-(unsigned char*)"            .   .   ",
-(unsigned char*)"             . .    ",
-(unsigned char*)"             . .    ",
-(unsigned char*)"              .     ",
-(unsigned char*)"              .     ",
-(unsigned char*)"                    ",
-(unsigned char*)"                    "};
-
-static unsigned char *image_Sine[] = {
-(unsigned char*)"20 20 2 1",
-(unsigned char*)" \tc None",
-(unsigned char*)".\tc #000000",
-(unsigned char*)"                    ",
-(unsigned char*)"                    ",
-(unsigned char*)"      ..            ",
-(unsigned char*)"     .  .           ",
-(unsigned char*)"    .    .          ",
-(unsigned char*)"    .    .          ",
-(unsigned char*)"    .    .          ",
-(unsigned char*)"    .     .         ",
-(unsigned char*)"   .      .         ",
-(unsigned char*)"   .      .       . ",
-(unsigned char*)"  .       .      .  ",
-(unsigned char*)"          .      .  ",
-(unsigned char*)"          .     .   ",
-(unsigned char*)"          .     .   ",
-(unsigned char*)"           .    .   ",
-(unsigned char*)"           .    .   ",
-(unsigned char*)"            .  .    ",
-(unsigned char*)"             ..     ",
-(unsigned char*)"                    ",
-(unsigned char*)"                    "};
-
-static unsigned char *image_Pulse1[] = {
-(unsigned char*)"20 20 2 1",
-(unsigned char*)" \tc None",
-(unsigned char*)".\tc #000000",
-(unsigned char*)"                    ",
-(unsigned char*)"                    ",
-(unsigned char*)"     ....           ",
-(unsigned char*)"     .  .           ",
-(unsigned char*)"     .  .           ",
-(unsigned char*)"     .  .           ",
-(unsigned char*)"     .  .           ",
-(unsigned char*)"     .  .           ",
-(unsigned char*)"     .  .           ",
-(unsigned char*)"     .  .           ",
-(unsigned char*)"   ...  .      ...  ",
-(unsigned char*)"        .      .    ",
-(unsigned char*)"        .      .    ",
-(unsigned char*)"        .      .    ",
-(unsigned char*)"        .      .    ",
-(unsigned char*)"        .      .    ",
-(unsigned char*)"        .      .    ",
-(unsigned char*)"        ........    ",
-(unsigned char*)"                    ",
-(unsigned char*)"                    "};
-
-static unsigned char *image_Pulse2[] = {
-(unsigned char*)"20 20 2 1",
-(unsigned char*)" \tc None",
-(unsigned char*)".\tc #000000",
-(unsigned char*)"                    ",
-(unsigned char*)"                    ",
-(unsigned char*)"     ........       ",
-(unsigned char*)"     .      .       ",
-(unsigned char*)"     .      .       ",
-(unsigned char*)"     .      .       ",
-(unsigned char*)"     .      .       ",
-(unsigned char*)"     .      .       ",
-(unsigned char*)"     .      .       ",
-(unsigned char*)"     .      .       ",
-(unsigned char*)"   ...      .  ...  ",
-(unsigned char*)"            .  .    ",
-(unsigned char*)"            .  .    ",
-(unsigned char*)"            .  .    ",
-(unsigned char*)"            .  .    ",
-(unsigned char*)"            .  .    ",
-(unsigned char*)"            .  .    ",
-(unsigned char*)"            ....    ",
-(unsigned char*)"                    ",
-(unsigned char*)"                    "};
-
-static unsigned char *image_InvSine[] = {
-(unsigned char*)"20 20 2 1",
-(unsigned char*)" \tc None",
-(unsigned char*)".\tc #000000",
-(unsigned char*)"                    ",
-(unsigned char*)"                    ",
-(unsigned char*)"   .      .         ",
-(unsigned char*)"   .      .         ",
-(unsigned char*)"   .      .         ",
-(unsigned char*)"   ..    ..         ",
-(unsigned char*)"   ..    ..         ",
-(unsigned char*)"   . .  . .         ",
-(unsigned char*)"   .  ..  .         ",
-(unsigned char*)"   .      .         ",
-(unsigned char*)"   .      .      .  ",
-(unsigned char*)"          .      .  ",
-(unsigned char*)"          .  ..  .  ",
-(unsigned char*)"          . .  . .  ",
-(unsigned char*)"          ..    ..  ",
-(unsigned char*)"          ..    ..  ",
-(unsigned char*)"          .      .  ",
-(unsigned char*)"          .      .  ",
-(unsigned char*)"                    ",
-(unsigned char*)"                    "};
+#include "../GUI/WS_Square.h"
+#include "../GUI/WS_Saw.h"
+#include "../GUI/WS_RevSaw.h"
+#include "../GUI/WS_Tri.h"
+#include "../GUI/WS_Sine.h"
+#include "../GUI/WS_Pulse1.h"
+#include "../GUI/WS_Pulse2.h"
+#include "../GUI/WS_InvSine.h"
 
 WaveTablePluginGUI::WaveTablePluginGUI(int w, int h, SpiralPlugin *o, ChannelHandler *ch, const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch),
@@ -232,7 +40,7 @@ pixmap_Pulse2(image_Pulse2),
 pixmap_InvSine(image_InvSine),
 m_FineFreq(0),
 m_Octave(0)
-{	
+{
 	ShapeSine = new Fl_Check_Button(5, 15, 55, 30);
     ShapeSine->type(102);
     ShapeSine->down_box(FL_DIAMOND_DOWN_BOX);

@@ -54,7 +54,7 @@ m_Operator(SIN)
 	m_Version=1;
 
 	m_PluginInfo.Name="Trig";
-	m_PluginInfo.Width=60;
+	m_PluginInfo.Width=80;
 	m_PluginInfo.Height=80;
 	m_PluginInfo.NumInputs=1;
 	m_PluginInfo.NumOutputs=1;

@@ -49,7 +49,7 @@ RingModPlugin::RingModPlugin() :
 m_Amount(1.0f)
 {
 	m_PluginInfo.Name="Ring Mod";
-	m_PluginInfo.Width=90;
+	m_PluginInfo.Width=80;
 	m_PluginInfo.Height=80;
 	m_PluginInfo.NumInputs=2;
 	m_PluginInfo.NumOutputs=1;

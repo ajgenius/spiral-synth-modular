@@ -6,14 +6,14 @@
 
 CC	=	gcc
 CXX	=	g++
-CFLAGS	=	@CFLAGS@ 
-CXXFLAGS=	@CXXFLAGS@ 
+CFLAGS	=	@CFLAGS@
+CXXFLAGS=	@CXXFLAGS@
 INCPATH	=	-I/usr/X11R6/include
 LINK	=	g++ -shared
-LFLAGS	=	
+LFLAGS	=
 LIBS	=   -L/usr/X11R6/lib @FLTK_LIBS@ -lGL -lXext -lX11  -ldl
 MOC     = moc
-UIC	=	
+UIC	=
 
 TAR	=	tar -cf
 GZIP	=	gzip -9f
@@ -40,28 +40,32 @@ mandir = @mandir@
 
 HEADERS =	../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
-		../../ChannelHandler.h \
 		../Widgets/Fl_Knob.H \
 		../Widgets/Fl_LED_Button.H \
 		../Widgets/Fl_DragBar.H \
-		../../Sample.h \
+                ../GUI/WS_Sine.h \
+                ../GUI/WS_Tri.h \
+                ../GUI/WS_Square.h \
+                ../GUI/WS_Saw.h \
+                ../../Sample.h \
+		../../ChannelHandler.h \
 		LFOPlugin.h \
 		LFOPluginGUI.h
 SOURCES =	../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
-		../../ChannelHandler.C \
 		../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_LED_Button.cxx \
 		../Widgets/Fl_DragBar.cxx \
+		../../ChannelHandler.C \
 		../../Sample.C \
 		LFOPlugin.C \
 		LFOPluginGUI.C
 OBJECTS =	../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../../ChannelHandler.o \
 		../Widgets/Fl_Knob.o \
 		../Widgets/Fl_LED_Button.o \
 		../Widgets/Fl_DragBar.o \
+		../../ChannelHandler.o \
 		../../Sample.o \
 		LFOPlugin.o \
 		LFOPluginGUI.o
@@ -130,10 +134,8 @@ install:
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
-		../Widgets/Fl_DragBar.H \
-		../Widgets/Fl_LED_Button.H \
-		../Widgets/Fl_Knob.H \
 		../SpiralPlugin.h \
+		../Widgets/Fl_DragBar.H \
 		../../Sample.h
 
 ../Widgets/Fl_Knob.o: ../Widgets/Fl_Knob.cxx \
@@ -151,25 +153,26 @@ install:
 
 LFOPlugin.o: LFOPlugin.C \
 		LFOPlugin.h \
+		LFOPluginGUI.h \
+		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
 		../../Sample.h \
 		../../SpiralInfo.h \
 		../../Sample.h \
-		LFOPluginGUI.h \
-		../Widgets/Fl_Knob.H \
-		../Widgets/Fl_LED_Button.H \
-		../SpiralPluginGUI.h \
-		../Widgets/Fl_DragBar.H \
 		SpiralIcon.xpm
 
 LFOPluginGUI.o: LFOPluginGUI.C \
 		LFOPluginGUI.h \
-		../Widgets/Fl_Knob.H \
-		../Widgets/Fl_LED_Button.H \
-		../SpiralPluginGUI.h \
-		../Widgets/Fl_DragBar.H \
 		LFOPlugin.h \
 		../SpiralPlugin.h \
+		../SpiralPluginGUI.h \
+		../Widgets/Fl_DragBar.H \
+		../Widgets/Fl_LED_Button.H \
+		../Widgets/Fl_Knob.H \
+                ../GUI/WS_Sine.h \
+                ../GUI/WS_Tri.h \
+                ../GUI/WS_Square.h \
+                ../GUI/WS_Saw.h \
 		../../Sample.h \
 		../../SpiralInfo.h \
 		../../Sample.h
