@@ -17,7 +17,6 @@
 */ 
 
 #include "Midi.h"
-#include "NoteTable.h"
 #include "unistd.h"
 #include "sys/types.h"
 #include "signal.h"
@@ -44,31 +43,27 @@ static int NKEYS = 30;
 							
 MidiDevice *MidiDevice::m_Singleton;
 string MidiDevice::m_DeviceName;
- 
+string MidiDevice::m_AppName; 
+
 #if __APPLE__
 #define read	AppleRead
 #endif
 
-MidiDevice::MidiDevice() :
+void MidiDevice::Init(const string &name, Type t) 
+{ 
+	if (!m_Singleton) 
+	{
+		m_AppName=name;
+		m_Singleton=new MidiDevice(t); 
+	}
+}
+	
+MidiDevice::MidiDevice(Type t) :
 m_Poly(1),
 m_Clock(1.0f),
 m_ClockCount(0)
 {
-#ifdef ALSA_MIDI
-	seq_handle=AlsaOpen();
-#else
-	Open();
-#endif	
-
-#ifdef KEYBOARD_SUPPORT
-	m_Oct=4;
-	m_CurrentVoice=0;
-	
-	for (int n=0; n<256; n++)
-	{	
-		m_KeyVoice[n]=' ';
-	}
-#endif
+	Open(t);
 }
 
 MidiDevice::~MidiDevice() 
@@ -97,10 +92,13 @@ void MidiDevice::Close()
 }
 
 
-void MidiDevice::Open()
+void MidiDevice::Open(Type t)
 {
 #if __APPLE__
 	AppleOpen();
+#else
+#ifdef ALSA_MIDI
+	seq_handle=AlsaOpen(t);
 #else
 	//if (!SpiralInfo::WANTMIDI) return;
 	
@@ -119,11 +117,16 @@ void MidiDevice::Open()
 	}
 	
 	cerr<<"Opened midi device ["<<m_DeviceName<<"]"<<endl;
+#endif
 #endif // !__APPLE__
 	
 	m_Mutex = new pthread_mutex_t;
     pthread_mutex_init(m_Mutex, NULL);
-    int ret=pthread_create(&m_MidiReader,NULL,(void*(*)(void*))MidiDevice::MidiReaderCallback,(void*)this);	
+#ifdef ALSA_MIDI
+    pthread_create(&m_MidiReader,NULL,(void*(*)(void*))MidiDevice::AlsaMidiReaderCallback,(void*)this);	
+#else
+    pthread_create(&m_MidiReader,NULL,(void*(*)(void*))MidiDevice::MidiReaderCallback,(void*)this);	
+#endif
 }
 
 
@@ -137,18 +140,6 @@ MidiEvent MidiDevice::GetEvent(int Device)
 		return MidiEvent(MidiEvent::NONE,0,0);
 	}
 
-#ifdef ALSA_MIDI
-	AlsaCallback();
-	
-	if (m_EventVec[Device].size()==0)
-	{
-		return MidiEvent(MidiEvent::NONE,0,0);
-	}
-	
-	MidiEvent event(m_EventVec[Device].front());
-	m_EventVec[Device].pop();
-#else
-
 	pthread_mutex_lock(m_Mutex);
 	if (m_EventVec[Device].size()==0)
 	{
@@ -159,13 +150,32 @@ MidiEvent MidiDevice::GetEvent(int Device)
 	MidiEvent event(m_EventVec[Device].front());
 	m_EventVec[Device].pop();
 	pthread_mutex_unlock(m_Mutex);
-#endif
+
 	return event;
 }
 
 void MidiDevice::SendEvent(int Device,const MidiEvent &Event)
 {
-#ifndef ALSA_MIDI
+#ifdef ALSA_MIDI
+	snd_seq_event_t ev;
+	snd_seq_ev_clear      (&ev);
+  	snd_seq_ev_set_direct (&ev);
+	snd_seq_ev_set_subs   (&ev);
+    snd_seq_ev_set_source (&ev, 0);
+  	
+	switch (Event.GetType())
+	{
+		case MidiEvent::ON : ev.type = SND_SEQ_EVENT_NOTEON;
+		case MidiEvent::OFF : ev.type = SND_SEQ_EVENT_NOTEOFF;
+	}
+		
+	ev.data.note.velocity = (char)Event.GetVolume()*127;
+	ev.data.control.channel = Device;
+	ev.data.note.note=Event.GetNote();
+	
+	int ret=snd_seq_event_output(seq_handle, &ev);
+	snd_seq_drain_output(seq_handle);
+#else
 	if (Device<0 || Device>15)
 	{
 		cerr<<"SendEvent: Invalid Midi device "<<Device<<endl;		
@@ -358,67 +368,104 @@ void MidiDevice::AddEvent(unsigned char* midi)
 #ifdef ALSA_MIDI
 // code taken and modified from jack_miniFMsynth
 
-int MidiDevice::AlsaCallback() 
+void MidiDevice::AlsaCollectEvents() 
 {
-    snd_seq_event_t *ev;
-    int l1;
-	
-	MidiEvent::type MessageType=MidiEvent::NONE;
-	int Volume=0,Note=0,EventDevice=0;	
+    int seq_nfds, l1;
+    struct pollfd *pfds;
+	seq_nfds = snd_seq_poll_descriptors_count(seq_handle, POLLIN);
+    pfds = (struct pollfd *)alloca(sizeof(struct pollfd) * seq_nfds);
+    snd_seq_poll_descriptors(seq_handle, pfds, seq_nfds, POLLIN);
+  
+	for(;;)
+	{   
+		cerr<<"poll"<<endl;
+		if (poll (pfds, seq_nfds, 1000) > 0) 
+		{
+    		for (l1 = 0; l1 < seq_nfds; l1++) 
+			{
+    	    	if (pfds[l1].revents > 0)
+				{				
+					snd_seq_event_t *ev;
+    				int l1;
+					MidiEvent::type MessageType=MidiEvent::NONE;
+					int Volume=0,Note=0,EventDevice=0;	
+					cerr<<"found an event!"<<endl;
+    				do 
+					{
+        				snd_seq_event_input(seq_handle, &ev);
 
-    do {
-        snd_seq_event_input(seq_handle, &ev);
-        if ((ev->type == SND_SEQ_EVENT_NOTEON) && (ev->data.note.velocity == 0)) 
-        {
-			ev->type = SND_SEQ_EVENT_NOTEOFF;      
+        				if ((ev->type == SND_SEQ_EVENT_NOTEON) && (ev->data.note.velocity == 0)) 
+        				{
+							ev->type = SND_SEQ_EVENT_NOTEOFF;      
+						}
+
+        				switch (ev->type) {
+            				case SND_SEQ_EVENT_PITCHBEND:
+                				MessageType=MidiEvent::CHANNELPRESSURE;		
+								Volume = (char)((ev->data.control.value / 8192.0)*256);
+                				break;
+            				case SND_SEQ_EVENT_CONTROLLER:
+								MessageType=MidiEvent::PARAMETER;
+								Note = ev->data.control.param;
+								Volume = ev->data.control.value;
+                				break;
+            				case SND_SEQ_EVENT_NOTEON:
+								MessageType=MidiEvent::ON;
+                				EventDevice = ev->data.control.channel;
+                				Note = ev->data.note.note;
+                				Volume = ev->data.note.velocity;
+                				break;        
+            				case SND_SEQ_EVENT_NOTEOFF:
+								MessageType=MidiEvent::ON;
+                				EventDevice = ev->data.control.channel;
+                				Note = ev->data.note.note;
+                				break;        
+        				}
+						pthread_mutex_lock(m_Mutex);
+						m_EventVec[EventDevice].push(MidiEvent(MessageType,Note,Volume));
+						pthread_mutex_unlock(m_Mutex);
+						
+						snd_seq_free_event(ev);
+    				} while (snd_seq_event_input_pending(seq_handle, 0) > 0);
+				}
+			}
 		}
-		    
-        switch (ev->type) {
-            case SND_SEQ_EVENT_PITCHBEND:
-                MessageType=MidiEvent::CHANNELPRESSURE;		
-				Volume = (char)((ev->data.control.value / 8192.0)*256);
-                break;
-            case SND_SEQ_EVENT_CONTROLLER:
-				MessageType=MidiEvent::PARAMETER;
-				Note = ev->data.control.param;
-				Volume = ev->data.control.value;
-                break;
-            case SND_SEQ_EVENT_NOTEON:
-				MessageType=MidiEvent::ON;
-                EventDevice = ev->data.control.channel;
-                Note = ev->data.note.note;
-                Volume = ev->data.note.velocity;
-                break;        
-            case SND_SEQ_EVENT_NOTEOFF:
-				MessageType=MidiEvent::ON;
-                EventDevice = ev->data.control.channel;
-                Note = ev->data.note.note;
-                break;        
-        }
-		
-		m_EventVec[EventDevice].push(MidiEvent(MessageType,Note,Volume));
-        
-		snd_seq_free_event(ev);
-    } while (snd_seq_event_input_pending(seq_handle, 0) > 0);
-    return (0);
+	}
 }
 
-snd_seq_t *MidiDevice::AlsaOpen() 
+snd_seq_t *MidiDevice::AlsaOpen(Type t) 
 {
     snd_seq_t *seq_handle;
     int client_id, port_id;
-    
-    if (snd_seq_open(&seq_handle, "default", SND_SEQ_OPEN_INPUT, 0) < 0) {
-        fprintf(stderr, "Error opening ALSA sequencer.\n");
-        exit(1);
-    }
-    snd_seq_set_client_name(seq_handle, "spiralmodular");
-    client_id = snd_seq_client_id(seq_handle);
-    if ((port_id = snd_seq_create_simple_port(seq_handle, "spiralmodular",
-        SND_SEQ_PORT_CAP_WRITE|SND_SEQ_PORT_CAP_SUBS_WRITE,
-        SND_SEQ_PORT_TYPE_APPLICATION) < 0)) {
-        fprintf(stderr, "Error creating sequencer port.\n");
-    }
+	
+    if (t==WRITE)
+	{
+    	if (snd_seq_open(&seq_handle, "default", SND_SEQ_OPEN_OUTPUT, 0) < 0) {
+    	    fprintf(stderr, "Error opening ALSA sequencer.\n");
+    	    exit(1);
+    	}
+    	snd_seq_set_client_name(seq_handle, m_AppName.c_str());
+    	client_id = snd_seq_client_id(seq_handle);
+    	if ((port_id = snd_seq_create_simple_port(seq_handle, m_AppName.c_str(),
+    	    SND_SEQ_PORT_CAP_READ|SND_SEQ_PORT_CAP_SUBS_READ,
+    	    SND_SEQ_PORT_TYPE_APPLICATION) < 0)) {
+    	    fprintf(stderr, "Error creating sequencer port.\n");
+    	}
+	}
+	else
+	{
+		if (snd_seq_open(&seq_handle, "default", SND_SEQ_OPEN_INPUT, 0) < 0) {
+    	    fprintf(stderr, "Error opening ALSA sequencer.\n");
+    	    exit(1);
+    	}
+    	snd_seq_set_client_name(seq_handle, m_AppName.c_str());
+    	client_id = snd_seq_client_id(seq_handle);
+    	if ((port_id = snd_seq_create_simple_port(seq_handle, m_AppName.c_str(),
+    	    SND_SEQ_PORT_CAP_WRITE|SND_SEQ_PORT_CAP_SUBS_WRITE,
+    	    SND_SEQ_PORT_TYPE_APPLICATION) < 0)) {
+    	    fprintf(stderr, "Error creating sequencer port.\n");
+    	}
+	}
     return(seq_handle);
 }
 
