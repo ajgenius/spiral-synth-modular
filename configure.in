@@ -43,14 +43,17 @@ if test $ac_arg_jack = "Y" ; then
 	NoteSnapPlugin OscillatorPlugin OutputPlugin RingModPlugin SVFilterPlugin \
 	SampleHoldPlugin ScopePlugin SmoothPlugin SplitterPlugin StereoMixerPlugin StreamPlugin\
 	WaveTablePlugin LADSPAPlugin XFadePlugin PoshSamplerPlugin SeqSelectorPlugin\
-	DistributorPlugin LFOPlugin KeyboardPlugin DiskWriterPlugin JackPlugin"
+	DistributorPlugin LFOPlugin KeyboardPlugin DiskWriterPlugin FormantFilterPlugin \
+	AnotherFilterPlugin JackPlugin"
 else
 	PLUGINLIST="AmpPlugin ControllerPlugin DelayPlugin EchoPlugin EnvFollowerPlugin \
 	EnvelopePlugin FilterPlugin MatrixPlugin MidiPlugin MixerPlugin MoogFilterPlugin \
 	NoteSnapPlugin OscillatorPlugin OutputPlugin RingModPlugin SVFilterPlugin \
 	SampleHoldPlugin ScopePlugin SmoothPlugin SplitterPlugin StereoMixerPlugin StreamPlugin\
 	WaveTablePlugin LADSPAPlugin XFadePlugin PoshSamplerPlugin SeqSelectorPlugin\
-	DistributorPlugin LFOPlugin KeyboardPlugin DiskWriterPlugin"
+	DistributorPlugin LFOPlugin KeyboardPlugin DiskWriterPlugin FormantFilterPlugin \
+	AnotherFilterPlugin"
+	
 	fi
 echo "$PLUGINLIST" > SpiralSound/PluginList.txt
 
@@ -118,6 +121,7 @@ dnl Modify the output files.
 
 AC_OUTPUT(
 SpiralSound/Plugins/AmpPlugin/Makefile 
+SpiralSound/Plugins/AnotherFilterPlugin/Makefile 
 SpiralSound/Plugins/ControllerPlugin/Makefile 
 SpiralSound/Plugins/DelayPlugin/Makefile 
 SpiralSound/Plugins/DiskWriterPlugin/Makefile
@@ -126,6 +130,7 @@ SpiralSound/Plugins/EchoPlugin/Makefile
 SpiralSound/Plugins/EnvFollowerPlugin/Makefile 
 SpiralSound/Plugins/EnvelopePlugin/Makefile
 SpiralSound/Plugins/FilterPlugin/Makefile
+SpiralSound/Plugins/FormantFilterPlugin/Makefile
 SpiralSound/Plugins/JackPlugin/Makefile
 SpiralSound/Plugins/KeyboardPlugin/Makefile
 SpiralSound/Plugins/LADSPAPlugin/Makefile
