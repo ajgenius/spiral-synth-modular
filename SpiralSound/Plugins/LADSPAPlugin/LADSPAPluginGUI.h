@@ -61,7 +61,7 @@ public:
 
 	void ClearPortInfo();
 	void AddPortInfo(const char *Info);
-	void UpdatePortDisplay(int n, PortValues pv);
+	void UpdatePortDisplay(int n, PortValues pv, float defolt);
 	void SetPortSettings(unsigned long n, float min, float max, bool clamp, float defolt);
 
 private:
@@ -105,6 +105,7 @@ private:
 		char           *InputPortNames;
 		PortSettings   *InputPortSettings;
 		PortValues     *InputPortValues;
+		float          *InputPortDefaults;
 	};
 
 	InChannelData  m_InData;

@@ -32,7 +32,6 @@ struct PortSettings
 	float   Min;
 	float   Max;
 	bool    Clamp;
-	float   Default;
 };
 struct PortValues
 {
@@ -66,8 +65,11 @@ public:
 		settings.Min = m_PortMin[p];
 		settings.Max = m_PortMax[p];
 		settings.Clamp = m_PortClamp[p];
-		settings.Default = m_PortDefault[p];
 		return settings;
+	}
+	float GetPortDefault(unsigned long p) 
+	{
+		return m_PortDefault[p];
 	}
 
 	enum GUICommands{NONE,SETPORTSETTINGS,SELECTPLUGIN,CLEARPLUGIN};
@@ -113,6 +115,7 @@ private:
 		char         *InputPortNames;
 		PortSettings *InputPortSettings;
 		PortValues   *InputPortValues;
+		float        *InputPortDefaults;
 	};
 
 	// Data received from GUI
@@ -120,6 +123,7 @@ private:
 	{
 		unsigned long PluginIndex;
 		PortSettings *InputPortSettings;
+		float        *InputPortDefaults;
 	};
 
 	OutputChannelData     m_OutData;

@@ -52,7 +52,7 @@ LADSPAPlugin::LADSPAPlugin()
 
 	ClearPlugin();
 
-	m_Version=5;
+	m_Version=6;
 
 	m_PluginInfo.Name="LADSPA";
 	m_PluginInfo.Width=500;
@@ -76,15 +76,21 @@ LADSPAPlugin::LADSPAPlugin()
 	m_OutData.InputPortNames = (char *)malloc(256 * m_MaxInputPortCount);
 	m_OutData.InputPortSettings = (PortSettings *)malloc(sizeof(PortSettings) * m_MaxInputPortCount);
 	m_OutData.InputPortValues = (PortValues *)calloc(m_MaxInputPortCount, sizeof(PortValues));
-	m_InData.InputPortSettings = (PortSettings *)malloc(sizeof(PortSettings) * m_MaxInputPortCount);
+	m_OutData.InputPortDefaults = (float *)calloc(m_MaxInputPortCount, sizeof(float));
+	m_InData.InputPortSettings = (PortSettings *)calloc(m_MaxInputPortCount, sizeof(PortSettings));
+	m_InData.InputPortDefaults = (float *)calloc(m_MaxInputPortCount, sizeof(float));
 
 	if (m_OutData.InputPortNames &&
+	    m_OutData.InputPortDefaults &&
 	    m_OutData.InputPortSettings &&
-	    m_InData.InputPortSettings) {
+	    m_InData.InputPortSettings &&
+	    m_InData.InputPortDefaults) {
 		m_AudioCH->RegisterData("GetInputPortNames", ChannelHandler::OUTPUT, m_OutData.InputPortNames, 256 * m_MaxInputPortCount);
 		m_AudioCH->RegisterData("GetInputPortSettings", ChannelHandler::OUTPUT, m_OutData.InputPortSettings, sizeof(PortSettings) * m_MaxInputPortCount);
 		m_AudioCH->RegisterData("GetInputPortValues", ChannelHandler::OUTPUT, m_OutData.InputPortValues, sizeof(PortValues) * m_MaxInputPortCount);
+		m_AudioCH->RegisterData("GetInputPortDefaults", ChannelHandler::OUTPUT, m_OutData.InputPortDefaults, sizeof(float) * m_MaxInputPortCount);
 		m_AudioCH->RegisterData("SetInputPortSettings", ChannelHandler::INPUT, m_InData.InputPortSettings, sizeof(PortSettings) * m_MaxInputPortCount);
+		m_AudioCH->RegisterData("SetInputPortDefaults", ChannelHandler::INPUT, m_InData.InputPortDefaults, sizeof(float) * m_MaxInputPortCount);
 	} else {
 		cerr<<"Memory allocation error"<<endl;
 	}
@@ -145,16 +151,22 @@ void LADSPAPlugin::Execute()
 					}
 				}
 				m_OutData.InputPortValues[n].Connected = true;
+				m_PortDefault[n] = m_OutData.InputPortValues[n].Value;
 			}
 			else // Use default
 			{
 				for (int i=0; i<m_HostInfo->BUFSIZE; i++) {
 					m_LADSPABufVec[n][i]=m_PortDefault[n];
 				}
-				m_OutData.InputPortValues[n].Connected = false;
+				if (m_OutData.InputPortValues[n].Connected) {
+					m_OutData.InputPortValues[n].Connected = false;
+					m_PortDefault[n] = m_OutData.InputPortValues[n].Value;
+				}
 			}
 			// Copy values into OutData value buffer for display in GUI
 			m_OutData.InputPortValues[n].Value = m_LADSPABufVec[n][0];
+			// Ditto for default, which may have been set to value
+			m_OutData.InputPortDefaults[n] = m_PortDefault[n];
 		}
 
 		// run plugin
@@ -386,6 +398,7 @@ void LADSPAPlugin::StreamIn(istream &s)
 				ClearPlugin();
 			}
 		}
+		break;
 		case 5:
 		{
 			ClearPlugin();
@@ -714,6 +727,7 @@ void LADSPAPlugin::ClearPlugin(void)
 		PlugDesc = NULL;
 	}
 
+	m_UniqueID = 0;
 	m_PluginIndex = 0;
 	m_InputPortCount = 0;
 	strncpy(m_Name, "None\0", 5);
@@ -881,7 +895,7 @@ void LADSPAPlugin::SetGUIExports(void)
 		m_OutData.InputPortSettings[n].Min = m_PortMin[n];
 		m_OutData.InputPortSettings[n].Max = m_PortMax[n];
 		m_OutData.InputPortSettings[n].Clamp = m_PortClamp[n];
-		m_OutData.InputPortSettings[n].Default = m_PortDefault[n];
+		m_OutData.InputPortDefaults[n] = m_PortDefault[n];
 	}
 }
 
@@ -891,6 +905,6 @@ void LADSPAPlugin::SetPortSettings(void)
 		m_PortMin[n] = m_InData.InputPortSettings[n].Min;
 		m_PortMax[n] = m_InData.InputPortSettings[n].Max;
 		m_PortClamp[n] = m_InData.InputPortSettings[n].Clamp;
-		m_PortDefault[n] = m_InData.InputPortSettings[n].Default;
+		m_PortDefault[n] = m_InData.InputPortDefaults[n];
 	}
 }

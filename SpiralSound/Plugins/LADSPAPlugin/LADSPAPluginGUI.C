@@ -51,8 +51,10 @@ SpiralPluginGUI(w,h,o,ch)
 	m_InData.InputPortNames = (char *)malloc(256 * m_InData.MaxInputPortCount);
 	m_InData.InputPortSettings = (PortSettings *)malloc(sizeof(PortSettings) * m_InData.MaxInputPortCount);
 	m_InData.InputPortValues = (PortValues *)calloc(m_InData.MaxInputPortCount, sizeof(PortValues));
+	m_InData.InputPortDefaults = (float *)calloc(m_InData.MaxInputPortCount, sizeof(float));
 
-	if (!(m_InData.InputPortNames && m_InData.InputPortSettings)) {
+	if (!(m_InData.InputPortNames && m_InData.InputPortSettings &&
+	      m_InData.InputPortValues && m_InData.InputPortDefaults)) {
 		cerr<<"Memory allocation error\n"<<endl;
 	}
 
@@ -129,30 +131,9 @@ LADSPAPluginGUI::~LADSPAPluginGUI(void)
 {
 	if (m_InData.InputPortNames)  free(m_InData.InputPortNames);
 	if (m_InData.InputPortSettings) free(m_InData.InputPortSettings);
+	if (m_InData.InputPortValues) free(m_InData.InputPortValues);
+	if (m_InData.InputPortDefaults) free(m_InData.InputPortDefaults);
 	Fl::check();
-}
-
-void LADSPAPluginGUI::UpdatePortDisplay(int n, PortValues pv)
-{
-// Need to show that a connection is present
-// regardless of Refresh being set
-	if (pv.Connected) {
-	// Disable
-		m_PortDefault[n]->readonly(1);
-		m_PortDefault[n]->color(FL_BACKGROUND_COLOR);
-	} else {
-	// Enable
-		m_PortDefault[n]->readonly(0);
-		m_PortDefault[n]->color(FL_BACKGROUND2_COLOR);
-	}
-	m_PortDefault[n]->redraw();
-
-// Only update values if Refresh is set
-	if (!m_UpdateInputs->value()) return;
-
-	char temp[256];
-	sprintf(temp,"%.4f",pv.Value);
-	m_PortOutput[n]->value(temp);
 }
 
 void LADSPAPluginGUI::SetPortSettings(unsigned long n, float min, float max, bool clamp, float defolt)
@@ -257,6 +238,40 @@ void LADSPAPluginGUI::AddPortInfo(const char *Info)
 	m_InputScroll->redraw();
 }
 
+void LADSPAPluginGUI::UpdatePortDisplay(int n, PortValues pv, float defolt)
+{
+	char temp[256];
+
+// Need to show that a connection is present
+// regardless of Refresh being set
+	if (!(pv.Connected && m_PortDefault[n]->readonly())) {
+		if (pv.Connected) {
+		// Disable
+			m_PortDefault[n]->readonly(1);
+			m_PortDefault[n]->color(FL_BACKGROUND_COLOR);
+
+			sprintf(temp,"%.4f",defolt);
+			m_PortDefault[n]->value(temp);
+		} else {
+		// Enable
+			m_PortDefault[n]->readonly(0);
+			m_PortDefault[n]->color(FL_BACKGROUND2_COLOR);
+		}
+		m_PortDefault[n]->redraw();
+	}
+
+// Only update values if Refresh is set
+	if (!m_UpdateInputs->value()) return;
+
+	sprintf(temp,"%.4f",pv.Value);
+	m_PortOutput[n]->value(temp);
+
+	if (pv.Connected) {
+		sprintf(temp,"%.4f",defolt);
+		m_PortDefault[n]->value(temp);
+	}
+}
+
 void LADSPAPluginGUI::UpdateValues(SpiralPlugin *o)
 {
 	LADSPAPlugin* Plugin = (LADSPAPlugin*)o;
@@ -266,12 +281,14 @@ void LADSPAPluginGUI::UpdateValues(SpiralPlugin *o)
 	unsigned long n = Plugin->GetInputPortCount();
 	const char *name;
 	PortSettings settings;
+	float defolt;
 
 	for (unsigned long p = 0; p < n; p++) {
 		name = Plugin->GetPortName(p);
 		settings = Plugin->GetPortSettings(p);
+		defolt = Plugin->GetPortDefault(p);
 		AddPortInfo(name);
-		SetPortSettings(p, settings.Min, settings.Max, settings.Clamp, settings.Default);
+		SetPortSettings(p, settings.Min, settings.Max, settings.Clamp, defolt);
 	}
 }
 
@@ -280,11 +297,12 @@ void LADSPAPluginGUI::Update(void)
 	m_GUICH->GetData("GetPluginIndex", &(m_InData.PluginIndex));
 	m_GUICH->GetData("GetInputPortCount", &(m_InData.InputPortCount));
 	m_GUICH->GetData("GetInputPortValues", m_InData.InputPortValues);
+	m_GUICH->GetData("GetInputPortDefaults", m_InData.InputPortDefaults);
 
 	m_Browser->value(m_InData.PluginIndex);
 
 	for (unsigned long n=0; n < m_InData.InputPortCount; n++) {
-		UpdatePortDisplay(n, m_InData.InputPortValues[n]);
+		UpdatePortDisplay(n, m_InData.InputPortValues[n], m_InData.InputPortDefaults[n]);
 	}
 }
 
@@ -308,6 +326,7 @@ inline void LADSPAPluginGUI::cb_Select_i(Fl_Choice* o)
 	m_GUICH->GetData("GetInputPortCount", &(m_InData.InputPortCount));
 	m_GUICH->GetData("GetInputPortNames", m_InData.InputPortNames);
 	m_GUICH->GetData("GetInputPortSettings", m_InData.InputPortSettings);
+	m_GUICH->GetData("GetInputPortDefaults", m_InData.InputPortDefaults);
 
 	SetName((const char *)m_InData.Name);
 	SetMaker((const char *)m_InData.Maker);
@@ -320,7 +339,7 @@ inline void LADSPAPluginGUI::cb_Select_i(Fl_Choice* o)
 		SetPortSettings(n, m_InData.InputPortSettings[n].Min,
 				m_InData.InputPortSettings[n].Max,
 				m_InData.InputPortSettings[n].Clamp,
-				m_InData.InputPortSettings[n].Default);
+				m_InData.InputPortDefaults[n]);
 	}
 
 	redraw();
@@ -357,11 +376,12 @@ inline void LADSPAPluginGUI::cb_PortSettings_i(Fl_Button* o, void* v)
 	for (vector<Fl_Input*>::iterator i=m_PortDefault.begin();
 		 i!=m_PortDefault.end(); i++)
 	{
-		m_InData.InputPortSettings[n].Default = atof((*i)->value());
+		m_InData.InputPortDefaults[n] = atof((*i)->value());
 		n++;
 	}
 
 	m_GUICH->SetData("SetInputPortSettings", m_InData.InputPortSettings);
+	m_GUICH->SetData("SetInputPortDefaults", m_InData.InputPortDefaults);
 	m_GUICH->SetCommand(LADSPAPlugin::SETPORTSETTINGS);
 }
 void LADSPAPluginGUI::cb_PortSettings(Fl_Button* o, void* v)

@@ -115,7 +115,6 @@ LADSPAInfo::RescanPlugins(void)
 			stringstream s;
 			s << n;
 			i->Name = name + " (" + s.str() + ")";
-			cerr << "  " << n << endl;
 			n++;
 			i++;
 		}
