@@ -48,17 +48,17 @@ bool GUI = true;
 /////////////////////////////////////////////////////////////
 
 void watchdog (void *arg)
-{	
+{
 	pthread_setcanceltype (PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 
 	watchdog_check = 0;
 	gui_watchdog_check = 0;
-	
+
 	while (1)
 	{
 		usleep (10000000);
 		// gui watchdog goes off with modal dialog boxes
-		if (watchdog_check == 0)// || gui_watchdog_check== 0) 
+		if (watchdog_check == 0)// || gui_watchdog_check== 0)
 		{
 			cerr<<"ssm watchdog: timeout - killing ssm"<<endl;
 			if (watchdog_check==0) cerr<<"diagnosis: audio hung?"<<endl;
@@ -75,15 +75,15 @@ void watchdog (void *arg)
 void audioloop(void* o)
 {
 	while(1)
-	{		
-		if (!synth->CallbackMode()) 
+	{
+		if (!synth->CallbackMode())
 		{
 			// do funky stuff
 			synth->Update();
 
 			// put the brakes on if there is no blocking output running
 			if (!synth->IsBlockingOutputPluginReady()||
-				 synth->IsPaused()) 
+				 synth->IsPaused())
 			{
 				usleep(10000);
 			}
@@ -91,10 +91,10 @@ void audioloop(void* o)
 		else
 		{
 			// the engine is currently in callback mode, so we don't
-			// need to do anything unless we are switched back 
+			// need to do anything unless we are switched back
 			usleep(1000000);
 		}
-		
+
 		watchdog_check = 1;
 	}
 }
@@ -125,14 +125,13 @@ int main(int argc, char **argv)
 	} else
 		printf("No base pathname\n");
 #endif
-	srand(time(NULL));
+        srand(time(NULL));
 	SpiralInfo::Get()->LoadPrefs();
 
 	// get args
     string cmd_filename="";
     bool cmd_specd = false;
 	string cmd_pluginPath="";
-
 	// parse the args
     if (argc>1)
 	{
