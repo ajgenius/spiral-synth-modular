@@ -40,7 +40,7 @@ class StreamPluginGUI : public SpiralPluginGUI {
       const string GetHelpText (const string &loc);
    private:
       float m_PitchValue;
-      char m_TextBuf[256];
+      char m_TextBuf[256], m_PitchLabel[256];
       void SetMaxTime (float t) { m_Pos->maximum(t); }
       void UpdatePitch (bool UpdateIt = true, bool DrawIt = true, bool SendIt = true);
       // Widgets

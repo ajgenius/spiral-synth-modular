@@ -30,13 +30,14 @@ XFadePluginGUI::XFadePluginGUI(int w, int h,XFadePlugin *o,ChannelHandler *ch,co
 SpiralPluginGUI(w,h,o,ch)
 {	
 	m_Mix = new Fl_Slider(5, 20, 200, 20, "");
-	m_Mix->type(FL_HORIZONTAL);
+	m_Mix->type(FL_HOR_NICE_SLIDER);
+        m_Mix->box (FL_PLASTIC_DOWN_BOX);
 	m_Mix->selection_color(GUI_COLOUR);
-    m_Mix->labelsize(10);
+        m_Mix->labelsize(10);
 	m_Mix->maximum(1);
-    m_Mix->step(0.0001);
-    m_Mix->value(0.5);
-    m_Mix->callback((Fl_Callback*)cb_Mix);
+        m_Mix->step(0.0001);
+        m_Mix->value(0.5);
+        m_Mix->callback((Fl_Callback*)cb_Mix);
 	
 	end();
 }

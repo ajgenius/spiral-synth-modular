@@ -6,38 +6,19 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Widget.H>
 
-// Andy Preston
 enum dp_type { off, point, colon };
 
-
-
-
 class Fl_SevenSeg : public Fl_Widget {
-
-  // Andy Preston changed
-  // int digit,decpt,segwidth;
-  // to
   int digit, segwidth;
   dp_type decpt;
-
-
 public:
   Fl_SevenSeg(int x,int y,int w,int h);
   ~Fl_SevenSeg(void);
   void value(int v);
   void value(char c);
   const int value(void);
-
-  // Andy Preston changed
-  // void dp (int onoff);
-  // to
   void dp (dp_type state);
-
-  // Andy Preston changed
-  // const int dp(void);
-  // to
   const dp_type dp (void);
-
   const int bar_width(void);
   void bar_width(int w);
 private:
@@ -49,8 +30,6 @@ private:
   void draw_seg_e(int xx,int yy,int ww,int hh);
   void draw_seg_f(int xx,int yy,int ww,int hh);
   void draw_seg_g(int xx,int yy,int ww,int hh);
-
-  // Andy Preston
   void draw_seg_dp (int xx, int yy, int ww, int hh);
   void draw_seg_col (int xx, int yy, int ww, int hh);
 

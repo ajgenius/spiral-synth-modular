@@ -27,8 +27,11 @@ void Fl_VU_Meter::draw() {
         int block = 0;
         for (int block_pos = 0; block_pos < progress; block_pos += block_width) {
             Fl_Color colour;
-            if (++block == 16) colour = FL_RED;
-            else if (block > 10) colour = FL_YELLOW;
+            if (m_VUMode) {
+               if (++block == 16) colour = FL_RED;
+               else if (block > 10) colour = FL_YELLOW;
+               else colour = FL_GREEN;
+            }
             else colour = FL_GREEN;
             if (!active_r()) colour = fl_inactive (colour);
             fl_push_clip (x() + block_pos, y(), block_width - 2, h());

@@ -25,8 +25,6 @@ static const int GUI_COLOUR = 179;
 static const int GUIBG_COLOUR = 144;
 static const int GUIBG2_COLOUR = 145;
 
-char PitchLabel[256];
-
 ////////////////////////////////////////////
 
 StreamPluginGUI::StreamPluginGUI(int w, int h,StreamPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
@@ -37,8 +35,8 @@ m_PitchValue (1.0f)
         for (int dis=0; dis<6; dis++) {
             m_Display[dis] = new Fl_SevenSeg (5 + 28*dis, 20, 28, 60);
             m_Display[dis] -> bar_width (4);
-            m_Display[dis] -> color (FL_WHITE);
-	    m_Display[dis] -> color2 (GUI_COLOUR);
+            m_Display[dis] -> color (FL_BLACK);
+	    m_Display[dis] -> color2 (FL_GRAY);
             if (dis > 0 && dis % 2 == 0) m_Display[dis] -> dp (colon);
             add (m_Display[dis]);
         }
@@ -55,9 +53,11 @@ m_PitchValue (1.0f)
         // pitch indicator
 	m_Pitch = new Fl_Slider (5, 85, 235, 20, "");
         m_Pitch->type (FL_HORIZONTAL);
-	m_Pitch->align (FL_ALIGN_INSIDE | FL_ALIGN_RIGHT);
         m_Pitch->labelsize (10);
 	m_Pitch->labelcolor (GUI_COLOUR);
+        m_Pitch->label (m_PitchLabel);
+	m_Pitch->selection_color (GUI_COLOUR);
+        m_Pitch->box (FL_PLASTIC_DOWN_BOX);
 	m_Pitch->maximum (20);
         m_Pitch->step (0.001);
         UpdatePitch (true, false, false);
@@ -66,51 +66,78 @@ m_PitchValue (1.0f)
         // position indicator
 	m_Pos = new Fl_Slider (5, 108, 235, 20, "");
 	m_Pos->type (FL_HORIZONTAL);
+        m_Pos->box (FL_PLASTIC_DOWN_BOX);
+	m_Pos->labelcolor (GUI_COLOUR);
+	m_Pos->selection_color (GUI_COLOUR);
 	m_Pos->maximum (1);
 	m_Pos->callback ((Fl_Callback*)cb_Pos);
 	add (m_Pos);
         // load btn
         m_Load = new Fl_Button (2, 130, 30, 30, "Load");
         m_Load->labelsize (9);
+        m_Load->box (FL_PLASTIC_UP_BOX);
+	m_Load->color (GUI_COLOUR);
+	m_Load->selection_color (GUI_COLOUR);
 	m_Load->callback ((Fl_Callback*)cb_Load);
 	add (m_Load);
         // reset btn
 	m_ToStart = new Fl_Button (32, 130, 30, 30, "@|<");
         m_ToStart->labelsize (10);
 	m_ToStart->labeltype (FL_SYMBOL_LABEL);
+        m_ToStart->box (FL_PLASTIC_UP_BOX);
+	m_ToStart->color (GUI_COLOUR);
+	m_ToStart->selection_color (GUI_COLOUR);
 	m_ToStart->callback ((Fl_Callback*)cb_ToStart);
 	add (m_ToStart);
         // stop btn
 	m_Stop = new Fl_Button (62, 130, 30, 30, "@||");
         m_Stop->labelsize (10);
 	m_Stop->labeltype (FL_SYMBOL_LABEL);
+        m_Stop->box (FL_PLASTIC_UP_BOX);
+	m_Stop->color (GUI_COLOUR);
+	m_Stop->selection_color (GUI_COLOUR);
 	m_Stop->callback ((Fl_Callback*)cb_Stop);
 	add (m_Stop);
         // play btn
 	m_Play = new Fl_Button (92, 130, 30, 30, "@>");
         m_Play->labelsize (10);
 	m_Play->labeltype (FL_SYMBOL_LABEL);
+        m_Play->box (FL_PLASTIC_UP_BOX);
+	m_Play->color (GUI_COLOUR);
+	m_Play->selection_color (GUI_COLOUR);
 	m_Play->callback ((Fl_Callback*)cb_Play);
 	add (m_Play);
         // 1/2 speed btn
 	m_Div = new Fl_Button (122, 130, 30, 30, "/2");
         m_Div->labelsize (9);
+        m_Div->box (FL_PLASTIC_UP_BOX);
+	m_Div->color (GUI_COLOUR);
+	m_Div->selection_color (GUI_COLOUR);
 	m_Div->callback ((Fl_Callback*)cb_Div);
 	add (m_Div);
         // normal speed btn
 	m_Reset = new Fl_Button (152, 130, 30, 30, "Reset");
         m_Reset->labelsize (9);
+        m_Reset->box (FL_PLASTIC_UP_BOX);
+	m_Reset->color (GUI_COLOUR);
+	m_Reset->selection_color (GUI_COLOUR);
 	m_Reset->callback ((Fl_Callback*)cb_Reset);
 	add (m_Reset);
         // dbl speed btn
 	m_Dbl = new Fl_Button (182, 130, 30, 30, "X2");
         m_Dbl->labelsize (9);
+        m_Dbl->box (FL_PLASTIC_UP_BOX);
+	m_Dbl->color (GUI_COLOUR);
+	m_Dbl->selection_color (GUI_COLOUR);
 	m_Dbl->callback ((Fl_Callback*)cb_Dbl);
 	add (m_Dbl);
         // nudge btn
 	m_Nudge = new Fl_Repeat_Button (212, 130, 30, 30, "Nudge");
         m_Nudge->labelsize (9);
-	m_Nudge->callback ((Fl_Callback*)cb_Nudge);
+        m_Nudge->box (FL_PLASTIC_UP_BOX);
+       	m_Nudge->color (GUI_COLOUR);
+	m_Nudge->selection_color (GUI_COLOUR);
+        m_Nudge->callback ((Fl_Callback*)cb_Nudge);
 	add (m_Nudge);
 }
 
@@ -137,7 +164,8 @@ void StreamPluginGUI::Update() {
 void StreamPluginGUI::UpdateValues (SpiralPlugin *o) {
      StreamPlugin *Plugin = (StreamPlugin*)o;
      m_Volume->value (Plugin->GetVolume());
-     m_Pitch->value (Plugin->GetPitch()+10);
+     m_PitchValue = Plugin->GetPitch();
+     UpdatePitch (true, true, false);
 }
 
 // volume
@@ -153,8 +181,9 @@ void StreamPluginGUI::cb_Volume (Fl_Knob* o, void* v) {
 // pitch
 
 void StreamPluginGUI::UpdatePitch (bool UpdateIt, bool DrawIt, bool SendIt) {
-     sprintf( PitchLabel, "%1.3f   ", m_PitchValue);
-     m_Pitch->label (PitchLabel);
+     if (m_PitchValue<0) m_Pitch->align (FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
+     else  m_Pitch->align (FL_ALIGN_INSIDE | FL_ALIGN_RIGHT);
+     sprintf (m_PitchLabel, "    %1.3f   ", m_PitchValue);
      if (UpdateIt) m_Pitch->value (m_PitchValue+10);
      if (DrawIt) redraw();
      if (SendIt) m_GUICH->Set ("Pitch", m_PitchValue);

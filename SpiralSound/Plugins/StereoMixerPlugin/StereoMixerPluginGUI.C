@@ -39,6 +39,7 @@ SpiralPluginGUI(w,h,o,ch) {
     m_Chan[n] = new Fl_Slider (20 + (2 + Width * 2) * n, 22, Width, Height, "");
     m_Chan[n]->type (4);
     m_Chan[n]->selection_color (GUI_COLOUR);
+    m_Chan[n]->box (FL_PLASTIC_DOWN_BOX);
     m_Chan[n]->labelsize (10);
     m_Chan[n]->maximum (2);
     m_Chan[n]->step (0.01);
@@ -54,9 +55,6 @@ SpiralPluginGUI(w,h,o,ch) {
     m_Pan[n]->step (0.01);
     m_Pan[n]->value (0.5);
     m_Pan[n]->callback ((Fl_Callback*)cb_Pan, (void*)&Numbers[n]);
-    // This line used to be
-    //        add (m_Chan[n]);
-    // I'm guessing this an error, but I could be wrong there
     add (m_Pan[n]);
   }
 
