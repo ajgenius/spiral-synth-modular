@@ -25,22 +25,22 @@ static const float PI=3.141592654;
 static const float RAD=(PI/180)*360;
 
 extern "C" {
-SpiralPlugin* CreateInstance()
+SpiralPlugin* SpiralPlugin_CreateInstance()
 {
 	return new TrigPlugin;
 }
 
-char** GetIcon()
+char** SpiralPlugin_GetIcon()
 {
 	return SpiralIcon_xpm;
 }
 
-int GetID()
+int SpiralPlugin_GetID()
 {
 	return 53;
 }
 
-string GetGroupName()
+string SpiralPlugin_GetGroupName()
 {
 	return "Maths/Logic";
 }

@@ -59,6 +59,14 @@ public:
 	Fl_DeviceGUI* m_DeviceGUI;
 };
 
+class Fl_ToolButton : public Fl_Button
+{
+public:
+	Fl_ToolButton(int x, int y, int w, int h, const char *n=NULL) : 
+		Fl_Button(x,y,w,h,n) {}
+	virtual void draw() { draw_label(); }
+};
+
 class SynthModular
 {
 public:

@@ -26,22 +26,22 @@ static const float TRIG_THRESH = 0.1;
 static const float BUFSECONDS = 1.0f;
 
 extern "C" {
-SpiralPlugin* CreateInstance()
+SpiralPlugin* SpiralPlugin_CreateInstance()
 {
 	return new StreamPlugin;
 }
 
-char** GetIcon()
+char** SpiralPlugin_GetIcon()
 {
 	return SpiralIcon_xpm;
 }
 
-int GetID()
+int SpiralPlugin_GetID()
 {
 	return 0x0119;
 }
 
-string GetGroupName()
+string SpiralPlugin_GetGroupName()
 {
 	return "Delay/Sampling";
 }

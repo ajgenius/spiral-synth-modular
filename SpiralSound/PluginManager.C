@@ -50,7 +50,7 @@ PluginID PluginManager::LoadPlugin(const char *PluginName)
 	// Link the neccesary functions 
 	char *error;
 	
-	NewPlugin->CreateInstance  = (SpiralPlugin*(*)()) dlsym(NewPlugin->Handle, "CreateInstance"); 	
+	NewPlugin->CreateInstance  = (SpiralPlugin*(*)()) dlsym(NewPlugin->Handle, "SpiralPlugin_CreateInstance"); 	
 	
 	if ((error = dlerror()) != NULL)
     {
@@ -58,7 +58,7 @@ PluginID PluginManager::LoadPlugin(const char *PluginName)
          return PluginError;
     }
 	
-	NewPlugin->GetIcon = (char **(*)()) dlsym(NewPlugin->Handle, "GetIcon");
+	NewPlugin->GetIcon = (char **(*)()) dlsym(NewPlugin->Handle, "SpiralPlugin_GetIcon");
 
     if ((error = dlerror()) != NULL)
     {
@@ -66,7 +66,7 @@ PluginID PluginManager::LoadPlugin(const char *PluginName)
          return PluginError;
     }
 
-	NewPlugin->GetID  = (int(*)()) dlsym(NewPlugin->Handle, "GetID"); 	
+	NewPlugin->GetID  = (int(*)()) dlsym(NewPlugin->Handle, "SpiralPlugin_GetID"); 	
 			
     if ((error = dlerror()) != NULL)
     {
@@ -74,7 +74,7 @@ PluginID PluginManager::LoadPlugin(const char *PluginName)
         return PluginError;
     }  
 	     
-	NewPlugin->GetGroupName  = (string(*)()) dlsym(NewPlugin->Handle, "GetGroupName"); 	
+	NewPlugin->GetGroupName  = (string(*)()) dlsym(NewPlugin->Handle, "SpiralPlugin_GetGroupName"); 	
 			
     if ((error = dlerror()) != NULL)
     {

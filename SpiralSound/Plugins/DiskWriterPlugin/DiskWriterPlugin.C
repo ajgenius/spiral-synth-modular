@@ -45,22 +45,22 @@ static const HostInfo* host;
 
 extern "C"
 {
-SpiralPlugin* CreateInstance()
+SpiralPlugin* SpiralPlugin_CreateInstance()
 {
 	return new DiskWriterPlugin;
 }
 
-char** GetIcon()
+char** SpiralPlugin_GetIcon()
 {	
 	return SpiralIcon_xpm;
 }
 
-int GetID()
+int SpiralPlugin_GetID()
 {
 	return 41;
 }
 
-string GetGroupName()
+string SpiralPlugin_GetGroupName()
 {
 	return "InputOutput";
 }

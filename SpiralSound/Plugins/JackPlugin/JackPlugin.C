@@ -314,22 +314,22 @@ void JackClient::SetOutputBuf(int ID, float* s)
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 extern "C" {
-SpiralPlugin* CreateInstance()
+SpiralPlugin* SpiralPlugin_CreateInstance()
 {
 	return new JackPlugin;
 }
 
-char** GetIcon()
+char** SpiralPlugin_GetIcon()
 {	
 	return SpiralIcon_xpm;
 }
 
-int GetID()
+int SpiralPlugin_GetID()
 {
 	return 31;
 }
 
-string GetGroupName()
+string SpiralPlugin_GetGroupName()
 {
 	return "InputOutput";
 }

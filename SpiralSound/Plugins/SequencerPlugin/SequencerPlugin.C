@@ -418,22 +418,22 @@ ostream &operator<<(ostream &s, Track &o)
 ////////////////////////////////////////////////////////////////////////////////////
 
 extern "C" {
-SpiralPlugin* CreateInstance()
+SpiralPlugin* SpiralPlugin_CreateInstance()
 {
 	return new SequencerPlugin;
 }
 
-char** GetIcon()
+char** SpiralPlugin_GetIcon()
 {
 	return SpiralIcon_xpm;
 }
 
-int GetID()
+int SpiralPlugin_GetID()
 {
 	return 0x0011;
 }
 
-string GetGroupName()
+string SpiralPlugin_GetGroupName()
 {
 	return "Sequencing";
 }

@@ -26,22 +26,22 @@
 static const int GRANULARITY = 10;
 
 extern "C" {
-SpiralPlugin* CreateInstance()
+SpiralPlugin* SpiralPlugin_CreateInstance()
 {
 	return new AnotherFilterPlugin;
 }
 
-char** GetIcon()
+char** SpiralPlugin_GetIcon()
 {
 	return SpiralIcon_xpm;
 }
 
-int GetID()
+int SpiralPlugin_GetID()
 {
 	return 43;
 }
 
-string GetGroupName()
+string SpiralPlugin_GetGroupName()
 {
 	return "Filters/FX";
 }

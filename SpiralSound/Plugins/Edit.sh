@@ -5,6 +5,6 @@ do
 echo $file
 cd $file/
 chmod +w $file.C
-nedit $file.C
+python ../sr.py $file.C ../sr.csv
 cd ..
 done

@@ -66,22 +66,22 @@ OutputPlugin::Mode OutputPlugin::m_Mode=NO_MODE;
 
 extern "C"
 {
-SpiralPlugin* CreateInstance()
+SpiralPlugin* SpiralPlugin_CreateInstance()
 {
 	return new OutputPlugin;
 }
 
-char** GetIcon()
+char** SpiralPlugin_GetIcon()
 {	
 	return SpiralIcon_xpm;
 }
 
-int GetID()
+int SpiralPlugin_GetID()
 {
 	return 0x0000;
 }
 
-string GetGroupName()
+string SpiralPlugin_GetGroupName()
 {
 	return "InputOutput";
 }

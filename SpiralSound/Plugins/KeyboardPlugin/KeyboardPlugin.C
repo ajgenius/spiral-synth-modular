@@ -22,22 +22,22 @@
 #include "SpiralIcon.xpm"
 
 extern "C" {
-SpiralPlugin* CreateInstance()
+SpiralPlugin* SpiralPlugin_CreateInstance()
 {
 	return new KeyboardPlugin;
 }
 
-char** GetIcon()
+char** SpiralPlugin_GetIcon()
 {
 	return SpiralIcon_xpm;
 }
 
-int GetID()
+int SpiralPlugin_GetID()
 {
 	return 40;
 }
 
-string GetGroupName()
+string SpiralPlugin_GetGroupName()
 {
 	return "InputOutput";
 }

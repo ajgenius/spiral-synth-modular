@@ -21,22 +21,22 @@
 #include "SpiralIcon.xpm"
 
 extern "C" {
-SpiralPlugin* CreateInstance()
+SpiralPlugin* SpiralPlugin_CreateInstance()
 {
 	return new ComplexEnvelopePlugin;
 }
 
-char** GetIcon()
+char** SpiralPlugin_GetIcon()
 {
 	return SpiralIcon_xpm;
 }
 
-int GetID()
+int SpiralPlugin_GetID()
 {
 	return 33;
 }
 
-string GetGroupName()
+string SpiralPlugin_GetGroupName()
 {
 	return "SpiralSound";
 }

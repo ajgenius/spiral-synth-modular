@@ -26,22 +26,22 @@
 int MidiPlugin::m_RefCount = 0;
 
 extern "C" {
-SpiralPlugin* CreateInstance()
+SpiralPlugin* SpiralPlugin_CreateInstance()
 {
 	return new MidiPlugin;
 }
 
-char** GetIcon()
+char** SpiralPlugin_GetIcon()
 {
 	return SpiralIcon_xpm;
 }
 
-int GetID()
+int SpiralPlugin_GetID()
 {
 	return 0x0002;
 }
 
-string GetGroupName()
+string SpiralPlugin_GetGroupName()
 {
 	return "InputOutput";
 }

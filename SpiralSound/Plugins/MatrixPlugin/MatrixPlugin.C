@@ -23,22 +23,22 @@
 #include "../../NoteTable.h"
 
 extern "C" {
-SpiralPlugin* CreateInstance()
+SpiralPlugin* SpiralPlugin_CreateInstance()
 {
 	return new MatrixPlugin;
 }
 
-char** GetIcon()
+char** SpiralPlugin_GetIcon()
 {
 	return SpiralIcon_xpm;
 }
 
-int GetID()
+int SpiralPlugin_GetID()
 {
 	return 0x0012;
 }
 
-string GetGroupName()
+string SpiralPlugin_GetGroupName()
 {
 	return "Sequencing";
 }

@@ -27,22 +27,22 @@ static const float MIN_CUTOFF = 500;
 static const int   FILTERGRAN = 50;
 
 extern "C" {
-SpiralPlugin* CreateInstance()
+SpiralPlugin* SpiralPlugin_CreateInstance()
 {
 	return new FilterPlugin;
 }
 
-char** GetIcon()
+char** SpiralPlugin_GetIcon()
 {
 	return SpiralIcon_xpm;
 }
 
-int GetID()
+int SpiralPlugin_GetID()
 {
 	return 0x000b;
 }
 
-string GetGroupName()
+string SpiralPlugin_GetGroupName()
 {
 	return "Filters/FX";
 }

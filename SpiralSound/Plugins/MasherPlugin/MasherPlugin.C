@@ -29,22 +29,22 @@ float RandRange(float L, float H)
 }
 
 extern "C" {
-SpiralPlugin* CreateInstance()
+SpiralPlugin* SpiralPlugin_CreateInstance()
 {
 	return new MasherPlugin;
 }
 
-char** GetIcon()
+char** SpiralPlugin_GetIcon()
 {
 	return SpiralIcon_xpm;
 }
 
-int GetID()
+int SpiralPlugin_GetID()
 {
 	return 54;
 }
 
-string GetGroupName()
+string SpiralPlugin_GetGroupName()
 {
 	return "Filters/FX";
 }

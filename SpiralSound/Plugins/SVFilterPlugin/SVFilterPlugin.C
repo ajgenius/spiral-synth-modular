@@ -24,22 +24,22 @@ static const double PI = 3.141592654;
 static const int GRANULARITY = 10;
 
 extern "C" {
-SpiralPlugin* CreateInstance()
+SpiralPlugin* SpiralPlugin_CreateInstance()
 {
 	return new SVFilterPlugin;
 }
 
-char** GetIcon()
+char** SpiralPlugin_GetIcon()
 {
 	return SpiralIcon_xpm;
 }
 
-int GetID()
+int SpiralPlugin_GetID()
 {
 	return 0x000c;
 }
 
-string GetGroupName()
+string SpiralPlugin_GetGroupName()
 {
 	return "Filters/FX";
 }

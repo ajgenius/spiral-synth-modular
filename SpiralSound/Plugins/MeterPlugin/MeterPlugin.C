@@ -21,13 +21,13 @@
 
 extern "C" {
 
-SpiralPlugin* CreateInstance() { return new MeterPlugin; }
+SpiralPlugin* SpiralPlugin_CreateInstance() { return new MeterPlugin; }
 
-char** GetIcon() { return SpiralIcon_xpm; }
+char** SpiralPlugin_GetIcon() { return SpiralIcon_xpm; }
 
-int GetID() { return 123; }
+int SpiralPlugin_GetID() { return 123; }
 
-string GetGroupName()
+string SpiralPlugin_GetGroupName()
 {
 	return "Control";
 }

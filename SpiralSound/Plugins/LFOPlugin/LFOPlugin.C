@@ -22,13 +22,13 @@
 #include "SpiralIcon.xpm"
 
 extern "C" {
-SpiralPlugin* CreateInstance() { return new LFOPlugin; }
+SpiralPlugin* SpiralPlugin_CreateInstance() { return new LFOPlugin; }
 
-char** GetIcon() { return SpiralIcon_xpm; }
+char** SpiralPlugin_GetIcon() { return SpiralIcon_xpm; }
 
-int GetID() { return 124; }
+int SpiralPlugin_GetID() { return 124; }
 
-string GetGroupName()
+string SpiralPlugin_GetGroupName()
 {
 	return "Oscillators";
 }

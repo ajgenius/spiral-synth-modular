@@ -31,22 +31,22 @@ static const int   S2_INPUT   = 19;
 static const int   S3_INPUT   = 20;
 
 extern "C" {
-SpiralPlugin* CreateInstance()
+SpiralPlugin* SpiralPlugin_CreateInstance()
 {
 	return new PoshSamplerPlugin;
 }
 
-char** GetIcon()
+char** SpiralPlugin_GetIcon()
 {
 	return SpiralIcon_xpm;
 }
 
-int GetID()
+int SpiralPlugin_GetID()
 {
 	return 32;
 }
 
-string GetGroupName()
+string SpiralPlugin_GetGroupName()
 {
 	return "Delay/Sampling";
 }
@@ -100,7 +100,7 @@ m_Recording(false)
 		
 		SampleDesc* NewDesc = new SampleDesc;
 		char temp[256];
-		sprintf(temp,"PoshSampler%d_%d",GetID(),n);				
+		sprintf(temp,"PoshSampler%d_%d",SpiralPlugin_GetID(),n);				
 		NewDesc->Pathname   = temp; 
 		NewDesc->Volume     = 1.0f;
 		NewDesc->Velocity   = 1.0f;
@@ -464,7 +464,7 @@ bool PoshSamplerPlugin::SaveExternalFiles(const string &Dir)
 	for (int n=0; n<NUM_SAMPLES; n++)
 	{		
 		char temp[256];
-		sprintf(temp,"PoshSampler%d_%d.wav",GetID(),n);				
+		sprintf(temp,"PoshSampler%d_%d.wav",SpiralPlugin_GetID(),n);				
 		m_SampleDescVec[n]->Pathname   = temp; 
 	}
 
@@ -484,7 +484,7 @@ void PoshSamplerPlugin::LoadExternalFiles(const string &Dir)
 	for (int n=0; n<NUM_SAMPLES; n++)
 	{		
 		char temp[256];
-		sprintf(temp,"PoshSampler%d_%d.wav",GetID(),n);				
+		sprintf(temp,"PoshSampler%d_%d.wav",SpiralPlugin_GetID(),n);				
 		m_SampleDescVec[n]->Pathname   = temp; 
 	}
 	

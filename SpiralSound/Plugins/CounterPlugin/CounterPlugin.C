@@ -22,22 +22,22 @@
 #include "../../NoteTable.h"
 
 extern "C" {
-SpiralPlugin* CreateInstance()
+SpiralPlugin* SpiralPlugin_CreateInstance()
 {
 	return new CounterPlugin;
 }
 
-char** GetIcon()
+char** SpiralPlugin_GetIcon()
 {
 	return SpiralIcon_xpm;
 }
 
-int GetID()
+int SpiralPlugin_GetID()
 {
 	return 45;
 }
 
-string GetGroupName()
+string SpiralPlugin_GetGroupName()
 {
 	return "Maths/Logic";
 }

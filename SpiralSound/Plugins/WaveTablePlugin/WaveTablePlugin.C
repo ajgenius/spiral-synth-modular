@@ -28,22 +28,22 @@ static const int OUT_MAIN = 0;
 
 extern "C"
 {
-SpiralPlugin* CreateInstance()
+SpiralPlugin* SpiralPlugin_CreateInstance()
 {
 	return new WaveTablePlugin;
 }
 
-char** GetIcon()
+char** SpiralPlugin_GetIcon()
 {
 	return SpiralIcon_xpm;
 }
 
-int GetID()
+int SpiralPlugin_GetID()
 {
 	return 0x0017;
 }
 
-string GetGroupName()
+string SpiralPlugin_GetGroupName()
 {
 	return "Oscillators";
 }

@@ -28,22 +28,22 @@
 ////////////////////////////////////////////////////
 
 extern "C" {
-SpiralPlugin* CreateInstance()
+SpiralPlugin* SpiralPlugin_CreateInstance()
 {
 	return new LADSPAPlugin;
 }
 
-char** GetIcon()
+char** SpiralPlugin_GetIcon()
 {
 	return SpiralIcon_xpm;
 }
 
-int GetID()
+int SpiralPlugin_GetID()
 {
 	return 0x0016;
 }
 
-string GetGroupName()
+string SpiralPlugin_GetGroupName()
 {
 	return "Filters/FX";
 }

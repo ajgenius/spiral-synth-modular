@@ -27,22 +27,22 @@ static const int   RECBUFFERSIZE = 16384;
 static const float RECORD_GAIN = 1.0f;
 
 extern "C" {
-SpiralPlugin* CreateInstance()
+SpiralPlugin* SpiralPlugin_CreateInstance()
 {
 	return new SpiralLoopPlugin;
 }
 
-char** GetIcon()
+char** SpiralPlugin_GetIcon()
 {
 	return SpiralIcon_xpm;
 }
 
-int GetID()
+int SpiralPlugin_GetID()
 {
 	return 0x001a;
 }
 
-string GetGroupName()
+string SpiralPlugin_GetGroupName()
 {
 	return "Delay/Sampling";
 }
@@ -251,7 +251,7 @@ void SpiralLoopPlugin::StreamIn(istream &s)
 bool SpiralLoopPlugin::SaveExternalFiles(const string &Dir)
 {
 	char temp[256];
-	sprintf(temp,"%sSpiralLoopSample%d.wav",Dir.c_str(),GetID());	
+	sprintf(temp,"%sSpiralLoopSample%d.wav",Dir.c_str(),SpiralPlugin_GetID());	
 	SaveWav(temp);
 	return true;
 }
@@ -259,7 +259,7 @@ bool SpiralLoopPlugin::SaveExternalFiles(const string &Dir)
 void SpiralLoopPlugin::LoadExternalFiles(const string &Dir)
 {
 	char temp[256];
-	sprintf(temp,"%sSpiralLoopSample%d.wav",Dir.c_str(),GetID());	
+	sprintf(temp,"%sSpiralLoopSample%d.wav",Dir.c_str(),SpiralPlugin_GetID());	
 	LoadWav(temp);
 }
 

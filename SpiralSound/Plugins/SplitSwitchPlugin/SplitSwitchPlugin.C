@@ -23,13 +23,13 @@
 
 extern "C" {
 
-   SpiralPlugin* CreateInstance () { return new SplitSwitchPlugin; }
+   SpiralPlugin* SpiralPlugin_CreateInstance () { return new SplitSwitchPlugin; }
 
-   char** GetIcon () { return SpiralIcon_xpm; }
+   char** SpiralPlugin_GetIcon () { return SpiralIcon_xpm; }
 
-   int GetID () { return 125; }
+   int SpiralPlugin_GetID () { return 125; }
 
-   string GetGroupName() { return "Maths/Logic"; }
+   string SpiralPlugin_GetGroupName() { return "Maths/Logic"; }
 }
 
 ///////////////////////////////////////////////////////

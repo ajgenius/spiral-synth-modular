@@ -22,22 +22,22 @@
 
 extern "C"
 {
-SpiralPlugin* CreateInstance()
+SpiralPlugin* SpiralPlugin_CreateInstance()
 {
 	return new ScopePlugin;
 }
 
-char** GetIcon()
+char** SpiralPlugin_GetIcon()
 {
 	return SpiralIcon_xpm;
 }
 
-int GetID()
+int SpiralPlugin_GetID()
 {
 	return 0x0001;
 }
 
-string GetGroupName()
+string SpiralPlugin_GetGroupName()
 {
 	return "Control";
 }

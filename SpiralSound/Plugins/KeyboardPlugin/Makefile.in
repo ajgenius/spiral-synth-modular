@@ -47,7 +47,6 @@ HEADERS =	../SpiralPlugin.h \
 		../Widgets/Fl_Knob.H \
 		../Widgets/Fl_DragBar.H \
 		../../Sample.h \
-		../../Midi.h \
 		KeyboardPlugin.h \
 		KeyboardPluginGUI.h
 SOURCES =	../SpiralPlugin.C \
@@ -56,7 +55,6 @@ SOURCES =	../SpiralPlugin.C \
 		../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_DragBar.cxx \
 		../../Sample.C \
-		../../Midi.C \
 		KeyboardPlugin.C \
 		KeyboardPluginGUI.C
 OBJECTS =	../SpiralPlugin.o \
@@ -65,7 +63,6 @@ OBJECTS =	../SpiralPlugin.o \
 		../Widgets/Fl_Knob.o \
 		../Widgets/Fl_DragBar.o \
 		../../Sample.o \
-		../../Midi.o \
 		KeyboardPlugin.o \
 		KeyboardPluginGUI.o
 INTERFACES =	
@@ -147,10 +144,6 @@ install:
 		../../Sample.h \
 		../../SpiralInfo.h
 
-../../Midi.o: ../../Midi.C \
-		../../Midi.h \
-		../../NoteTable.h
-
 KeyboardPlugin.o: KeyboardPlugin.C \
 		KeyboardPlugin.h \
 		../SpiralPlugin.h \
@@ -163,7 +156,6 @@ KeyboardPlugin.o: KeyboardPlugin.C \
 		../SpiralPluginGUI.h \
 		../Widgets/Fl_DragBar.H \
 		../../NoteTable.h \
-		../../Midi.h \
 		SpiralIcon.xpm
 
 KeyboardPluginGUI.o: KeyboardPluginGUI.C \

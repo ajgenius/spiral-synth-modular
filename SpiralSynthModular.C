@@ -87,7 +87,7 @@ m_PauseAudio(false)
 	m_Info.OUTPUTFILE = SpiralInfo::OUTPUTFILE;
 	m_Info.MIDIFILE   = SpiralInfo::MIDIFILE;
 	m_Info.POLY       = SpiralInfo::POLY;
-	//m_Info.GUI_COLOUR = SpiralInfo::GUI_COLOUR;
+	//m_Info.SpiralSynthModularInfo::GUICOL_Button = SpiralInfo::SpiralSynthModularInfo::GUICOL_Button;
 
 	for (int n=0; n<512; n++) Numbers[n]=n;
 
@@ -231,26 +231,25 @@ SpiralWindowType *SynthModular::CreateWindow()
 	m_TopWindow = new SpiralWindowType(MAIN_WIDTH, MAIN_HEIGHT, LABEL.c_str());
 	//m_TopWindow->resizable(m_TopWindow);
 
-	int but=44;
-        int ToolbarHeight=but+20;
+	int but=50;
+        int ToolbarHeight=but+0;
 
         m_Topbar = new Fl_Pack (0, 0, MAIN_WIDTH, ToolbarHeight, "");
         m_Topbar->user_data((void*)(this));
        	m_Topbar->type(FL_HORIZONTAL);
+		m_Topbar->color(SpiralSynthModularInfo::GUICOL_Button);
         m_TopWindow->add(m_Topbar);
 
         m_ToolbarPanel = new Fl_Pack (0, 0, but*5, ToolbarHeight, "");
         m_ToolbarPanel->user_data((void*)(this));
        	m_ToolbarPanel->type(FL_VERTICAL);
+		m_ToolbarPanel->color(SpiralSynthModularInfo::GUICOL_Button);
         m_Topbar->add(m_ToolbarPanel);
-
-        m_ToolbarFiller = new Fl_Group (0, 0, but*5, 20, "");
-        m_ToolbarPanel->add(m_ToolbarFiller);
 
         m_Toolbar = new Fl_Pack (0, 0, but*5, but, "");
         m_Toolbar->user_data((void*)(this));
        	m_Toolbar->type(FL_HORIZONTAL);
-        m_Toolbar->color(SpiralSynthModularInfo::GUICOL_Tool);
+		m_Toolbar->color(SpiralSynthModularInfo::GUICOL_Button);
         m_ToolbarPanel->add(m_Toolbar);
 
         m_Load = new Fl_Button(0, 0, but, but, "");
@@ -318,11 +317,14 @@ SpiralWindowType *SynthModular::CreateWindow()
 	m_NewComment->callback((Fl_Callback*)cb_NewComment);
 	m_Toolbar->add(m_NewComment);
 
-        m_GroupFiller = new Fl_Group (0, 0, 5, ToolbarHeight, "");
+        m_GroupFiller = new Fl_Group (0, 0, 0, ToolbarHeight, "");
+		m_GroupFiller->color(SpiralSynthModularInfo::GUICOL_Button);
 	m_Topbar->add (m_GroupFiller);
 
        	m_GroupTab = new Fl_Tabs (0, 0, MAIN_WIDTH-m_GroupFiller->w()-but*5, ToolbarHeight, "");
         m_GroupTab->user_data ((void*)(this));
+		m_GroupTab->box(FL_PLASTIC_DOWN_BOX);
+		m_GroupTab->color(SpiralSynthModularInfo::GUICOL_Button);
         m_GroupTab->callback((Fl_Callback*)cb_GroupTab);
 	m_Topbar->add (m_GroupTab);
 
@@ -412,8 +414,8 @@ vector<string> SynthModular::BuildPluginList(const string &Path)
 void SynthModular::LoadPlugins(string pluginPath)
 {
 
-	int Width  = 40;
-	int Height = 40;
+	int Width  = 35;
+	int Height = 35;
 
 	int SWidth  = 256;
 	int SHeight = 256;
@@ -475,7 +477,7 @@ void SynthModular::LoadPlugins(string pluginPath)
 			cerr << ID << " = Plugin [" << *i << "]" << endl;
 			#endif
 
-			Fl_Button *NewButton = new Fl_Button(0,0,Width,Height,"");
+			Fl_ToolButton *NewButton = new Fl_ToolButton(0,0,Width,Height,"");
                         NewButton->user_data((void*)(this));
 			NewButton->labelsize(1);
 			Fl_Pixmap *tPix = new Fl_Pixmap(PluginManager::Get()->GetPlugin(ID)->GetIcon());
@@ -489,9 +491,10 @@ void SynthModular::LoadPlugins(string pluginPath)
 			map<string,Fl_Pack*>::iterator gi=m_PluginGroupMap.find(GroupName);
 			if (gi==m_PluginGroupMap.end())
 			{
-                                the_group = new Fl_Pack (m_GroupTab->x(), 20, m_GroupTab->w(), m_GroupTab->h()-20, GroupName.c_str());
+                                the_group = new Fl_Pack (m_GroupTab->x(), 16, m_GroupTab->w(), m_GroupTab->h()-15, GroupName.c_str());
 	                        the_group->type(FL_HORIZONTAL);
                                 the_group->labelsize(8);
+								the_group->color(SpiralSynthModularInfo::GUICOL_Button);
                                 the_group->user_data((void*)(this));
 	                        //m_GroupTab->add(the_group);
                                 m_GroupTab->value(the_group);
@@ -502,9 +505,10 @@ void SynthModular::LoadPlugins(string pluginPath)
 				the_group=gi->second;
 			}
                         NewButton->type(0);
-			NewButton->box(FL_PLASTIC_UP_BOX);
-			NewButton->color(SpiralSynthModularInfo::GUICOL_Button);
-			NewButton->selection_color(SpiralSynthModularInfo::GUICOL_Tool);
+			NewButton->box(FL_NO_BOX);
+			NewButton->down_box(FL_NO_BOX);
+			//NewButton->color(SpiralSynthModularInfo::GUICOL_Button);
+			//NewButton->selection_color(SpiralSynthModularInfo::GUICOL_Button);
 			the_group->add(NewButton);
 
 			string tooltip=*i;
@@ -533,7 +537,10 @@ void SynthModular::LoadPlugins(string pluginPath)
         map<string,Fl_Pack*>::iterator PlugGrp;
 
         for (PlugGrp = m_PluginGroupMap.begin(); PlugGrp!= m_PluginGroupMap.end(); ++PlugGrp)
+		{
                 m_GroupTab->add(PlugGrp->second);
+				PlugGrp->second->add(new Fl_Box(0,0,600,100,""));
+		}
 
 	// try to show the SpiralSound group
         PlugGrp = m_PluginGroupMap.find("SpiralSound");

@@ -24,22 +24,22 @@
 #define PI 3.141592654
 
 extern "C" {
-SpiralPlugin* CreateInstance()
+SpiralPlugin* SpiralPlugin_CreateInstance()
 {
 	return new AmpPlugin;
 }
 
-char** GetIcon()
+char** SpiralPlugin_GetIcon()
 {
 	return SpiralIcon_xpm;
 }
 
-int GetID()
+int SpiralPlugin_GetID()
 {
 	return 0x0009;
 }
 
-string GetGroupName()
+string SpiralPlugin_GetGroupName()
 {
 	return "Amps/Mixers";
 }

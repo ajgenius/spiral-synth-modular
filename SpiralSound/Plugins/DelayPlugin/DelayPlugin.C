@@ -23,22 +23,22 @@
 static const float MAX_DELAY=1.0f;
 
 extern "C" {
-SpiralPlugin* CreateInstance()
+SpiralPlugin* SpiralPlugin_CreateInstance()
 {
 	return new DelayPlugin;
 }
 
-char** GetIcon()
+char** SpiralPlugin_GetIcon()
 {
 	return SpiralIcon_xpm;
 }
 
-int GetID()
+int SpiralPlugin_GetID()
 {
 	return 0x000f;
 }
 
-string GetGroupName()
+string SpiralPlugin_GetGroupName()
 {
 	return "Delay/Sampling";
 }

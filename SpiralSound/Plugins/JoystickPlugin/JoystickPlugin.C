@@ -34,22 +34,22 @@ int JoystickPlugin::m_RefCount=0;
 int JoystickPlugin::m_NoExecuted=0;
 
 extern "C" {
-SpiralPlugin* CreateInstance()
+SpiralPlugin* SpiralPlugin_CreateInstance()
 {
   return new JoystickPlugin;
 }
 
-char** GetIcon()
+char** SpiralPlugin_GetIcon()
 {	
   return SpiralIcon_xpm;
 }
 
-int GetID()
+int SpiralPlugin_GetID()
 {
   return 0x0070;
 }
 
-string GetGroupName()
+string SpiralPlugin_GetGroupName()
 {
 	return "SpiralSound";
 }
