@@ -79,6 +79,14 @@ private:
 	Fl_Pack                       *m_ControlPack;
 	Fl_Group                      *m_SetupGroup;
 	Fl_Choice                     *m_Browser;
+
+        Fl_Box                        *m_ValueLabel;
+       	Fl_Box                        *m_DefaultLabel;
+       	Fl_Box                        *m_MinLabel;
+       	Fl_Box                        *m_MaxLabel;
+      	Fl_Box                        *m_ClampLabel;
+      	Fl_Box                        *m_PortLabel;
+
 	Fl_Scroll                     *m_InputScroll;
 	Fl_Pack                       *m_InputPack;
 	Fl_Check_Button               *m_UpdateInputs;

@@ -15,7 +15,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include <cstdio>
 #include <cmath>
@@ -107,7 +107,7 @@ SpiralPluginGUI(w,h,o,ch)
 
 	m_SetupGroup->add(m_Browser);
 
-	m_InputScroll = new Fl_Scroll(10,130,480,145,"   Value         Default        Min               Max               Clamp?    Port Name");
+	m_InputScroll = new Fl_Scroll(10,130,480,145);
 	m_InputScroll->labelsize(12);
 	m_InputScroll->align(FL_ALIGN_TOP_LEFT);
 	m_InputScroll->type(Fl_Scroll::VERTICAL);
@@ -117,6 +117,30 @@ SpiralPluginGUI(w,h,o,ch)
 	m_InputScroll->add(m_InputPack);
 
 	m_SetupGroup->add(m_InputScroll);
+
+       	m_ValueLabel = new Fl_Box(15,115,60,15,"Value");
+	m_ValueLabel->labelsize(12);
+        m_SetupGroup->add(m_ValueLabel);
+
+       	m_DefaultLabel = new Fl_Box(77,115,60,15,"Default");
+	m_DefaultLabel->labelsize(12);
+        m_SetupGroup->add(m_DefaultLabel);
+
+       	m_MinLabel = new Fl_Box(139,115,60,15,"Min");
+	m_MinLabel->labelsize(12);
+        m_SetupGroup->add(m_MinLabel);
+
+       	m_MaxLabel = new Fl_Box(201,115,60,15,"Max");
+	m_MaxLabel->labelsize(12);
+        m_SetupGroup->add(m_MaxLabel);
+
+      	m_ClampLabel = new Fl_Box(280,115,10,15,"Clamp?");
+	m_ClampLabel->labelsize(12);
+        m_SetupGroup->add(m_ClampLabel);
+
+      	m_PortLabel = new Fl_Box(325,115,60,15,"Port Name");
+	m_PortLabel->labelsize(12);
+        m_SetupGroup->add(m_PortLabel);
 
 	m_UpdateInputs = new Fl_Check_Button(10,282,120,25,"Update input values?");
 	m_UpdateInputs->labelsize(12);
@@ -298,9 +322,19 @@ void LADSPAPluginGUI::SetName(const char *s)
 	m_NameLabel->label(s);
 }
 
+char MakerLabelText[256];
+
 void LADSPAPluginGUI::SetMaker(const char *s)
 {
-	m_MakerLabel->label(s);
+        // If this has got an "@" in it FLTK thinks it's a special character not an E.mail address
+        int t=0;
+        for (int f=0; f<strlen (s); f++) {
+          if (t==255) break;
+          if (s[f]=='@') MakerLabelText[t++]='@';
+          MakerLabelText[t++]=s[f];
+        }
+        MakerLabelText[t]=0;
+        m_MakerLabel->label (MakerLabelText);
 }
 
 void LADSPAPluginGUI::SetPortSettings(unsigned long n, float min, float max, bool clamp, float defolt)
@@ -506,7 +540,7 @@ void LADSPAPluginGUI::SelectPlugin(void)
 	m_GUICH->GetData("GetInputPortSettings", m_InputPortSettings);
 	m_GUICH->GetData("GetInputPortDefaults", m_InputPortDefaults);
 
-	SetName((const char *)m_Name);
+        SetName((const char *)m_Name);
 	SetMaker((const char *)m_Maker);
 
 	for (unsigned long p = 0; p < m_InputPortCount; p++) {
@@ -547,14 +581,13 @@ inline void LADSPAPluginGUI::cb_Select_i(Fl_Choice* o)
 
 	m_PluginIndex = o->value();
 
-	if (o->value() != 0) {
-	// Plugin selected
-		m_GUICH->SetData("SetPluginIndex",&m_PluginIndex);
-		m_GUICH->SetCommand(LADSPAPlugin::SELECTPLUGIN);
-		m_GUICH->Wait();
-
-		SelectPlugin();
+	if (m_PluginIndex != 0) {
+                // Plugin selected
+	        m_GUICH->SetData("SetPluginIndex",&m_PluginIndex);
+	        m_GUICH->SetCommand(LADSPAPlugin::SELECTPLUGIN);
+                m_GUICH->Wait();
 	}
+        SelectPlugin();
 
 //	redraw();
 }
