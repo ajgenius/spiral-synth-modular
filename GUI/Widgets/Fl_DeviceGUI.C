@@ -51,13 +51,14 @@ int Fl_PortButton::handle(int event)
 	return 1;
 }
 
-Fl_DeviceGUI::Fl_DeviceGUI(const DeviceGUIInfo& Info, Fl_Group *PW, Fl_Pixmap *Icon) :
+Fl_DeviceGUI::Fl_DeviceGUI(const DeviceGUIInfo& Info, Fl_Group *PW, Fl_Pixmap *Icon, bool Terminal) :
 Fl_Group(Info.XPos, Info.YPos, Info.Width+(PortGroupWidth*2), Info.Height+TitleBarHeight, ""),
 m_PluginWindow(NULL),
 m_Icon(NULL),
 m_Name(Info.Name),
 m_ID(-1),
-m_DelMe(false)
+m_DelMe(false),
+m_IsTerminal(Terminal)
 {	
 	for (int n=0; n<512; n++) Numbers[n]=n;
 	

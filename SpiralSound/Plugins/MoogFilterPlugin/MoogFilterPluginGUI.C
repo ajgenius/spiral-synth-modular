@@ -71,3 +71,12 @@ inline void MoogFilterPluginGUI::cb_Resonance_i(Fl_Knob* o, void* v)
 { m_GUICH->Set("Resonance",(float)(o->value())); }
 void MoogFilterPluginGUI::cb_Resonance(Fl_Knob* o, void* v) 
 { ((MoogFilterPluginGUI*)(o->parent()))->cb_Resonance_i(o,v); }
+
+const string MoogFilterPluginGUI::GetHelpText(const string &loc){
+    return string("")
+    + "Classic moog filter. Very different sound to the other filters,\n" 
+	+ "needless to say, very squelchy. As well as lowpass, band and high\n"
+	+ "pass are simultaneously calculated too. The emphasis can be pushed\n"
+	+ "into self oscillation (careful of the speakers). In this way, it\n" 
+	+ "can be used to generate sinewave oscillations.";
+}

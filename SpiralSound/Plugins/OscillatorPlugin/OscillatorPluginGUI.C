@@ -372,3 +372,19 @@ void OscillatorPluginGUI::cb_pop(Fl_Button* o, void* v) {
   ((OscillatorPluginGUI*)(o->parent()))->cb_pop_i(o,v);
 }
 
+const string OscillatorPluginGUI::GetHelpText(const string &loc){
+    return string("") 
+	+ "The Oscillator generates raw waveforms from CV controls. Three wave \n"
+	+ "shapes are included, Square wave, Triangle wave and white noise.\n\n"
+	+ "In the square and triangle shapes, the Frequency CV controls the pitch \n"
+	+ "of the signal generated, and the pulsewidth turns the squarewave into \n"
+	+ "a pulse wave of varying harmonics, and the triangle wave into a sawtooth,\n" 
+	+ "or reverse sawtooth wave.\n\n"
+	+ "The sample & hold CV changes the time between samples with the white noise.\n" 
+	+ "This is usful for making the Oscillator into a random CV generator.\n\n"
+	+ "The plugin window allows you to select the wave shape, set the octave and\n" 
+	+ "fine tune the frequency. There are also controls to set the pulsewidth,\n" 
+	+ "sample and hold manually, and control the modulation depth of the input CV's.\n\n"
+	+ "The frequency can be set extremely low on this oscillator, so you can use\n" 
+	+ "it as an LFO for controlling other plugins.";
+}

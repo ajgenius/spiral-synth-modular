@@ -154,7 +154,7 @@ int JackClient::Process(jack_nframes_t nframes, void *o)
 			}
 		}
 	}
-		
+			
 	if(RunCallback&&RunContext) 
 	{
 		// do the work
@@ -345,6 +345,9 @@ m_Connected(false)
 {
 	m_RefCount++;
 	
+	// we are an output
+	m_IsTerminal = true;
+	
 	m_PluginInfo.Name="Jack";
 	m_PluginInfo.Width=200;
 	m_PluginInfo.Height=325;
@@ -390,7 +393,7 @@ PluginInfo &JackPlugin::Initialise(const HostInfo *Host)
 	PluginInfo& Info= SpiralPlugin::Initialise(Host);
 	host=Host;		
 	
-	JackClient::Get()->SetCallback(cb_Update,m_Parent);	
+	if (m_RefCount==1) JackClient::Get()->SetCallback(cb_Update,m_Parent);	
 
 	return Info;
 }
@@ -409,6 +412,11 @@ void JackPlugin::Execute()
 
 void JackPlugin::ExecuteCommands()
 {
+	// only do this once per set of plugins
+	m_NoExecuted++;
+	if (m_NoExecuted!=m_RefCount) return;
+	m_NoExecuted=0;
+		
 	// we want to process this whether we are connected to stuff or not
 	JackClient* pJack=JackClient::Get();
 	

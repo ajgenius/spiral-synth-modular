@@ -104,6 +104,8 @@ public:
 	void SetParent(void *s) { m_Parent=s; }
 
 	void UpdateChannelHandler();
+	// is the plugin connected to an external device (oss/alsa/jack)
+	bool IsTerminal() { return m_IsTerminal; }
 	 
     ChannelHandler *GetChannelHandler() { return m_AudioCH; }
 	
@@ -153,6 +155,8 @@ protected:
 	// tell the engine that we are taking control of the 
 	// timing for output.
 	void (*cb_Blocking)(void*o ,bool m);	
+
+	bool   m_IsTerminal;
 	
 private:
 

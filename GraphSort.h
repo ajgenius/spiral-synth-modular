@@ -34,7 +34,7 @@ public:
 	~GraphSort();
 	const list<int> &GetSortedList();
 	void Sort();
-	void AddConnection(int SID, int DID);
+	void AddConnection(int SID, bool STerminal, int DID, bool DTerminal);
 	void RemoveConnection(int SID, int DID);
 	void Clear();
 	void Dump();
@@ -43,6 +43,7 @@ public:
 	{
 		list<int> Inputs;
 		list<int> Outputs;
+		bool IsTerminal;
 	};
 	
 private:

@@ -567,7 +567,7 @@ DeviceWin* SynthModular::NewDeviceWin(int n, int x, int y)
 	Info.XPos       = x; //TOOLBOX_WIDTH+(rand()%400);
 	Info.YPos       = y; //rand()%400;
 	
-	nlw->m_DeviceGUI = new Fl_DeviceGUI(Info, temp, Pix);
+	nlw->m_DeviceGUI = new Fl_DeviceGUI(Info, temp, Pix, nlw->m_Device->IsTerminal());
 	m_Canvas->add(nlw->m_DeviceGUI);
 	m_Canvas->redraw();
 

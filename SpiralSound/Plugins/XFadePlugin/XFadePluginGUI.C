@@ -49,7 +49,7 @@ void XFadePluginGUI::UpdateValues(SpiralPlugin *o)
 
 inline void XFadePluginGUI::cb_Mix_i(Fl_Slider* o, void* v) 
 { 
-	m_GUICH->Set("Mix",o->value()); 
+	m_GUICH->Set("Mix",(float)o->value()); 
 }
 void XFadePluginGUI::cb_Mix(Fl_Slider* o, void* v) 
 { ((XFadePluginGUI*)(o->parent()))->cb_Mix_i(o,v); }

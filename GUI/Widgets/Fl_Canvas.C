@@ -38,8 +38,10 @@ m_UpdateTimer(0)
 {
 	m_IncompleteWire.OutputChild=-1;
 	m_IncompleteWire.OutputPort=-1;
+	m_IncompleteWire.OutputTerminal=false;
 	m_IncompleteWire.InputChild=-1;
 	m_IncompleteWire.InputPort=-1;
+	m_IncompleteWire.InputTerminal=false;
 	
 	m_BG=NULL;
 	m_BGData=NULL;
@@ -364,6 +366,7 @@ void Fl_Canvas::PortClicked(Fl_DeviceGUI* Device, int Type, int Port, bool Value
 					m_IncompleteWire.OutputChild=ChildNum;
 					m_IncompleteWire.OutputPort=Port;
 					m_IncompleteWire.OutputID=Device->GetID();
+					m_IncompleteWire.OutputTerminal=Device->IsTerminal();
 				}
 				else
 				{
@@ -378,6 +381,7 @@ void Fl_Canvas::PortClicked(Fl_DeviceGUI* Device, int Type, int Port, bool Value
 					m_IncompleteWire.InputChild=ChildNum;
 					m_IncompleteWire.InputPort=Port;
 					m_IncompleteWire.InputID=Device->GetID();
+					m_IncompleteWire.InputTerminal=Device->IsTerminal();
 				}
 				else
 				{
@@ -392,7 +396,8 @@ void Fl_Canvas::PortClicked(Fl_DeviceGUI* Device, int Type, int Port, bool Value
 	
 				// send the connect callback
 				cb_Connection(this,(void*)&m_IncompleteWire);
-				m_Graph.AddConnection(m_IncompleteWire.OutputID,m_IncompleteWire.InputID);
+				m_Graph.AddConnection(m_IncompleteWire.OutputID,m_IncompleteWire.OutputTerminal,
+									  m_IncompleteWire.InputID,m_IncompleteWire.InputTerminal);
 				
 				// Turn on both ports
 				Fl_DeviceGUI* ODGUI = (Fl_DeviceGUI*)(child(m_IncompleteWire.OutputChild));
@@ -557,30 +562,65 @@ istream &operator>>(istream &s, Fl_Canvas &o)
 {
 	int NumWires;
 	s>>NumWires;
-		
-	for(int n=0; n<NumWires; n++)
+	
+	// my bad, didn't version this stream - remove one day...
+	if (NumWires==-1)
 	{
-		CanvasWire NewWire;
+		int version;
+		s>>version;
+		s>>NumWires;
 		
-		s>>NewWire.OutputID;
-		s>>NewWire.OutputChild;
-		s>>NewWire.OutputPort;
-		s>>NewWire.InputID;
-		s>>NewWire.InputChild;
-		s>>NewWire.InputPort;	
-
-		o.m_WireVec.push_back(NewWire);
-
-		// Notify connection by callback
-		o.cb_Connection(&o,(void*)&NewWire);
-		o.m_Graph.AddConnection(NewWire.OutputID,NewWire.InputID);
+		for(int n=0; n<NumWires; n++)
+		{
+			CanvasWire NewWire;
 			
-		// Turn on both ports
-		((Fl_DeviceGUI*)(o.child(NewWire.OutputChild)))->AddConnection(NewWire.OutputPort+
-			((Fl_DeviceGUI*)(o.child(NewWire.OutputChild)))->GetInfo()->NumInputs);
-		((Fl_DeviceGUI*)(o.child(NewWire.InputChild)))->AddConnection(NewWire.InputPort);
-	}
+			s>>NewWire.OutputID;
+			s>>NewWire.OutputChild;
+			s>>NewWire.OutputPort;
+			s>>NewWire.OutputTerminal;
+			s>>NewWire.InputID;
+			s>>NewWire.InputChild;
+			s>>NewWire.InputPort;	
+			s>>NewWire.InputTerminal;
+	
+			o.m_WireVec.push_back(NewWire);	
+
+			// Notify connection by callback
+			o.cb_Connection(&o,(void*)&NewWire);
+			o.m_Graph.AddConnection(NewWire.OutputID,NewWire.OutputTerminal,NewWire.InputID,NewWire.InputTerminal);
+				
+			// Turn on both ports
+			((Fl_DeviceGUI*)(o.child(NewWire.OutputChild)))->AddConnection(NewWire.OutputPort+
+				((Fl_DeviceGUI*)(o.child(NewWire.OutputChild)))->GetInfo()->NumInputs);
+			((Fl_DeviceGUI*)(o.child(NewWire.InputChild)))->AddConnection(NewWire.InputPort);
+		}
 		
+	}
+	else
+	{		
+		for(int n=0; n<NumWires; n++)
+		{
+			CanvasWire NewWire;
+			
+			s>>NewWire.OutputID;
+			s>>NewWire.OutputChild;
+			s>>NewWire.OutputPort;
+			s>>NewWire.InputID;
+			s>>NewWire.InputChild;
+			s>>NewWire.InputPort;	
+	
+			o.m_WireVec.push_back(NewWire);	
+
+			// Notify connection by callback
+			o.cb_Connection(&o,(void*)&NewWire);
+			o.m_Graph.AddConnection(NewWire.OutputID,false,NewWire.InputID,false);
+				
+			// Turn on both ports
+			((Fl_DeviceGUI*)(o.child(NewWire.OutputChild)))->AddConnection(NewWire.OutputPort+
+				((Fl_DeviceGUI*)(o.child(NewWire.OutputChild)))->GetInfo()->NumInputs);
+			((Fl_DeviceGUI*)(o.child(NewWire.InputChild)))->AddConnection(NewWire.InputPort);
+		}
+	}	
 	return s;
 }
 
@@ -588,6 +628,9 @@ istream &operator>>(istream &s, Fl_Canvas &o)
 
 ostream &operator<<(ostream &s, Fl_Canvas &o)
 {
+	int version=0;
+	s<<-1<<" "<<version<<" ";
+	
 	s<<o.m_WireVec.size()<<endl;
 
 	for(vector<CanvasWire>::iterator i=o.m_WireVec.begin();
@@ -596,9 +639,11 @@ ostream &operator<<(ostream &s, Fl_Canvas &o)
 		s<<i->OutputID<<" ";
 		s<<i->OutputChild<<" ";
 		s<<i->OutputPort<<" ";
+		s<<i->OutputTerminal<<" ";
 		s<<i->InputID<<" ";
 		s<<i->InputChild<<" ";
-		s<<i->InputPort<<endl;	
+		s<<i->InputPort<<" ";	
+		s<<i->InputTerminal<<endl;
 	}
 
 	return s;

@@ -87,7 +87,10 @@ OutputPlugin::OutputPlugin() :
 m_Volume(1.0f)
 {
 	m_RefCount++;
-		
+	
+	// we are an output.
+	m_IsTerminal=true;
+	
 	m_PluginInfo.Name="OSS";
 	m_PluginInfo.Width=100;
 	m_PluginInfo.Height=100;

@@ -79,7 +79,7 @@ struct DeviceGUIInfo
 class Fl_DeviceGUI : public Fl_Group
 {
 public:
-	Fl_DeviceGUI(const DeviceGUIInfo& Info, Fl_Group *PW, Fl_Pixmap *Icon);
+	Fl_DeviceGUI(const DeviceGUIInfo& Info, Fl_Group *PW, Fl_Pixmap *Icon, bool Terminal=false);
 	
 	virtual int handle(int event);
 	virtual void draw();
@@ -107,6 +107,9 @@ public:
 	virtual void  Clear();
 	int           GetPortType(int n)             { return m_Info.PortTypes[n]; }
 		
+	// do we belong to a plugin that is an output?
+	bool IsTerminal() { return m_IsTerminal; }
+
 protected:
 
 	DeviceGUIInfo m_Info;
@@ -127,6 +130,7 @@ private:
 	string m_Name;
 	int    m_ID;
 	bool   m_DelMe;
+	bool   m_IsTerminal;
 };
 
 #endif

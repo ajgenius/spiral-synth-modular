@@ -80,3 +80,17 @@ inline void SVFilterPluginGUI::cb_Reset_i(Fl_Button* o, void* v)
 { }
 void SVFilterPluginGUI::cb_Reset(Fl_Button* o, void* v) 
 { ((SVFilterPluginGUI*)(o->parent()))->cb_Reset_i(o,v); }
+
+const string SVFilterPluginGUI::GetHelpText(const string &loc){
+    return string("")
+	 + "A State Variable Filter. First thing to say is, it's a bit\n" 
+	 + "broken. Seems to generate glitchy noise when the cutoff is \n"
+	 + "modulated. Possibly a range bug on the cutoff too.\n" 
+	 + "On the other hand, I like some of the noises it seems to\n" 
+	 + "make, so it's here anyway (I'll fix it some day).\n\n"
+	+ "Works pretty well at band,high and peaking useful for creating\n" 
+	+ "some different sounds.\n\n"
+	+ "Note: Comes with a reset button, so if you break it pushing\n"
+	+ "the emphasis up too high, you can reset the cooeficients\n" 
+	+ "(which fixes it).";
+}

@@ -48,13 +48,31 @@ void GraphSort::Sort()
 	// walk back from all the roots
 	m_Sorted.clear();
 	list<int> RootNodes;
+	bool FoundRoot=false;
+	
 	for (map<int,Node>::iterator i=m_Graph.begin();
 		 i!=m_Graph.end(); i++)
 	{
 		// if there are no outputs, this must be a root
 		if (i->second.Outputs.empty())
 		{
+			FoundRoot=true;
 			RecursiveWalk(i->first);
+		}
+	}
+	
+	// no roots found - try looking for a terminal node and recursing from
+	// there, this makes circular graphs work.
+	if (!FoundRoot)
+	{
+		for (map<int,Node>::iterator i=m_Graph.begin();
+			 i!=m_Graph.end(); i++)
+		{
+			// if there are no outputs, this must be a root
+			if (i->second.IsTerminal)
+			{	
+				RecursiveWalk(i->first);
+			}
 		}
 	}
 	
@@ -121,12 +139,13 @@ void GraphSort::Dump()
 	}
 }
 
-void GraphSort::AddConnection(int SID, int DID)
+void GraphSort::AddConnection(int SID, bool STerminal, int DID, bool DTerminal)
 {
 	map<int,Node>::iterator si=m_Graph.find(SID);
 	if (si==m_Graph.end())
 	{
 		Node newnode;
+		newnode.IsTerminal = STerminal;
 		m_Graph[SID]=newnode;
 		#ifdef GRAPHSORT_TRACE		
 		cerr<<"added "<<SID<<endl;
@@ -137,6 +156,7 @@ void GraphSort::AddConnection(int SID, int DID)
 	if (di==m_Graph.end())
 	{
 		Node newnode;
+		newnode.IsTerminal = DTerminal;
 		m_Graph[DID]=newnode;
 		#ifdef GRAPHSORT_TRACE
 		cerr<<"added "<<DID<<endl;

@@ -81,6 +81,7 @@ inline void FilterPluginGUI::cb_Cutoff_i(Fl_Slider* o, void* v)
 	float value=100.0f-o->value();
 	m_GUICH->Set("Cutoff",(float)(value*value)+10.0f); 
 }
+
 void FilterPluginGUI::cb_Cutoff(Fl_Slider* o, void* v) 
 { ((FilterPluginGUI*)(o->parent()))->cb_Cutoff_i(o,v); }
 
@@ -99,3 +100,10 @@ inline void FilterPluginGUI::cb_RevResonance_i(Fl_Button* o, void* v)
 void FilterPluginGUI::cb_RevResonance(Fl_Button* o, void* v) 
 { ((FilterPluginGUI*)(o->parent()))->cb_RevResonance_i(o,v); }
 	
+const string FilterPluginGUI::GetHelpText(const string &loc){
+    return string("")
+	+ "The standard SpiralSynth filter, based on the (zxforms design).\n"
+	+ "Quite a meaty sound - low pass only, nice for bass modulations.\n"
+	+ "With variable emphasis/cutoff CV's.\n\n"
+	+ "It's also pretty fast, and well tested in SpiralSynth.";
+}

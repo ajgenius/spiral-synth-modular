@@ -40,18 +40,22 @@ public:
 		OutputChild=-1;
 		OutputPort=-1;
 		OutputID=-1;
+		OutputTerminal=false;
 		InputChild=-1;
 		InputPort=-1;
 		InputID=-1;
+		InputTerminal=false;
 		DelMe=false;
 	}
 
 	int OutputID;
 	int OutputChild;
 	int OutputPort;
+	bool OutputTerminal;
 	int InputID;
 	int InputChild;
 	int InputPort;
+	bool InputTerminal;
 	bool DelMe;
 };
 

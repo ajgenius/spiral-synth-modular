@@ -504,3 +504,17 @@ void WaveTablePluginGUI::cb_pop(Fl_Button* o, void* v) {
   ((WaveTablePluginGUI*)o->parent())->cb_pop_i(o,v);
 }
 
+const string WaveTablePluginGUI::GetHelpText(const string &loc){
+    return string("") 
+	+ "The WaveTable plugin is a fast multifunction oscillator with a variety \n"
+	+ "of wave shapes:\n"
+	+ "Sine, Square, Saw, Reverse Saw, Triangle, Two pulse shapes and an inverse\n" 
+	+ "sinewave.\n\n"
+	+ "These wave shapes are internally represented as samples, rather than\n" 
+	+ "being continually calculated like the conventional oscillator. This \n"
+	+ "makes the plugin fast, but restricts the modulations you can do on the\n" 
+	+ "wave forms (no pulsewidth).\n\n"
+	+ "The oscillator can be pitched very low for use as a LFO CV generator,\n" 
+	+ "using any of the supported wave shapes. User wave shapes are planned,\n" 
+	+ "so you will be able to load your own samples in.";
+}

@@ -21,6 +21,8 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Multiline_Output.h>
+#include <FL/Fl_Text_Display.h>
+#include <FL/Fl_Text_Buffer.h>
 
 static const int GUI_COLOUR = 154;
 static const int GUIBG_COLOUR = 144;
@@ -83,14 +85,15 @@ inline void SpiralPluginGUI::cb_Help_i(Fl_Button* o, void* v)
 	{
 		int w=300,h=200;
 		m_HelpWin = new Fl_Double_Window(w,h,"Help");
-				
-		Fl_Multiline_Output* text= new Fl_Multiline_Output(0,0,w,h);
-		text->value(GetHelpText(SpiralInfo::LOCALE).c_str());
+
+		Fl_Text_Display* text = new Fl_Text_Display(0,0,10,10);
+		text->buffer(new Fl_Text_Buffer);
+		text->insert(GetHelpText(SpiralInfo::LOCALE).c_str());
 		text->textsize(10);
-		text->set_output();
 		m_HelpWin->add(text);
-		
+		m_HelpWin->resizable(text);
 		m_HelpWin->show();
+		text->size(w,h); // hack to get the text widget to appear???
 	}
 	else
 	{
