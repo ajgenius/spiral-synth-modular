@@ -88,6 +88,7 @@ private:
     void SetControlValue(unsigned long p, WhichControl wc);
 	void SetControlRange(unsigned long p, float min, float max);
 	void SetPortValue(unsigned long p, float value, int frompage);
+	float ConvertControlValue(unsigned long p, float value);
 
 	Fl_Color m_GUIColour;
 

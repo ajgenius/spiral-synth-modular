@@ -64,7 +64,7 @@ SpiralPluginGUI(w,h,o,ch)
 	m_BKnob = new Fl_Button(5,15,50,20,"Knobs");
 	m_BKnob->labelsize (10);
 	m_BKnob->type(FL_TOGGLE_BUTTON);
-	m_BKnob->box(FL_PLASTIC_UP_BOX);
+	m_BKnob->box((Fl_Boxtype)SpiralSynthModularInfo::GUIDEVICE_Box);
 	m_BKnob->color(Info->GUI_COLOUR);
 	m_BKnob->selection_color(m_GUIColour);
 	m_BKnob->callback((Fl_Callback *)cb_BKnob);
@@ -73,7 +73,7 @@ SpiralPluginGUI(w,h,o,ch)
 	m_BSlider = new Fl_Button(60,15,50,20,"Sliders");
 	m_BSlider->labelsize (10);
 	m_BSlider->type(FL_TOGGLE_BUTTON);
-	m_BSlider->box(FL_PLASTIC_UP_BOX);
+	m_BSlider->box((Fl_Boxtype)SpiralSynthModularInfo::GUIDEVICE_Box);
 	m_BSlider->color(m_GUIColour);
 	m_BSlider->selection_color(m_GUIColour);
 	m_BSlider->callback((Fl_Callback *)cb_BSlider);
@@ -82,7 +82,7 @@ SpiralPluginGUI(w,h,o,ch)
 	m_BSetup = new Fl_Button(w - 55,15,50,20,"Setup...");
 	m_BSetup->labelsize (10);
 	m_BSetup->type(FL_TOGGLE_BUTTON);
-	m_BSetup->box(FL_PLASTIC_UP_BOX);
+	m_BSetup->box((Fl_Boxtype)SpiralSynthModularInfo::GUIDEVICE_Box);
 	m_BSetup->color(m_GUIColour);
 	m_BSetup->selection_color(m_GUIColour);
 	m_BSetup->callback((Fl_Callback *)cb_BSetup);
@@ -95,22 +95,19 @@ SpiralPluginGUI(w,h,o,ch)
 	add(m_SliderGroup);
 
 	m_SetupGroup = new Fl_Group(5, 35, 490, 275, "");
-	m_SetupGroup->box(FL_PLASTIC_UP_BOX);
-	m_SetupGroup->labelsize(12);
 
 	m_NameLabel = new Fl_Box(10,45,480,15,"None");
 	m_NameLabel->align(FL_ALIGN_LEFT|FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
-	m_NameLabel->labelcolor(Info->GUI_COLOUR);
 	m_NameLabel->labelsize(12);
 	m_SetupGroup->add(m_NameLabel);
 
 	m_MakerLabel = new Fl_Box(10,65,480,15,"None");
 	m_MakerLabel->align(FL_ALIGN_LEFT|FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
-	m_MakerLabel->labelcolor(m_GUIColour);
 	m_MakerLabel->labelsize(12);
 	m_SetupGroup->add(m_MakerLabel);
 
 	m_Browser = new Fl_Choice(50, 90, 440, 22,"Plugin:");
+	m_Browser->box((Fl_Boxtype)SpiralSynthModularInfo::GUIDEVICE_Box);
 	m_Browser->labelsize(12);
 	m_Browser->textsize(12);
 	m_Browser->callback((Fl_Callback *)cb_Select);
@@ -147,12 +144,14 @@ SpiralPluginGUI(w,h,o,ch)
 	m_SetupGroup->add(m_Browser);
 
 	m_InputScroll = new Fl_Scroll(10,135,480,145);
+	m_InputScroll->box((Fl_Boxtype)SpiralSynthModularInfo::GUIDEVICE_Box);
+	m_InputScroll->color((Fl_Color)SpiralSynthModularInfo::GUICOL_Device);
 	m_InputScroll->labelsize(12);
 	m_InputScroll->align(FL_ALIGN_TOP_LEFT);
 	m_InputScroll->type(Fl_Scroll::VERTICAL);
-	m_InputScroll->box(FL_DOWN_BOX);
 
 	m_InputPack = new Fl_Pack(15,140,470,135,"");
+	m_InputPack->color((Fl_Color)SpiralSynthModularInfo::GUICOL_Device);
 	m_InputScroll->add(m_InputPack);
 
 	m_SetupGroup->add(m_InputScroll);
@@ -455,6 +454,7 @@ void LADSPAPluginGUI::SelectPlugin(void)
 	m_UnconnectedInputs = m_InputPortCount;
 
 	m_SetupGroup->redraw();
+
 }
 
 // Change current page (Knobs/Sliders/Setup), resizing window
@@ -590,6 +590,7 @@ void LADSPAPluginGUI::AddPortInfo(unsigned long p)
 
 // Value
 	Fl_Output* NewOutput = new Fl_Output(0,0,60,18,"");
+	NewOutput->box((Fl_Boxtype)SpiralSynthModularInfo::GUIDEVICE_Box);
 	NewOutput->value(0);
 	NewOutput->textsize(10);
 	NewOutput->color(FL_BACKGROUND_COLOR);
@@ -599,6 +600,7 @@ void LADSPAPluginGUI::AddPortInfo(unsigned long p)
 
 // Fixed Value/Default
 	Fl_Input* NewInput = new Fl_Input(62,0,60,18,"");
+	NewInput->box((Fl_Boxtype)SpiralSynthModularInfo::GUIDEVICE_Box);
 	NewInput->value(0);
 	NewInput->textsize(10);
 	NewInput->callback((Fl_Callback *)cb_Default);
@@ -607,6 +609,7 @@ void LADSPAPluginGUI::AddPortInfo(unsigned long p)
 
 // Min
 	NewInput = new Fl_Input(124,0,60,18,"");
+	NewInput->box((Fl_Boxtype)SpiralSynthModularInfo::GUIDEVICE_Box);
 	NewInput->value(0);
 	NewInput->textsize(10);
 	NewInput->callback((Fl_Callback *)cb_Min);
@@ -615,6 +618,7 @@ void LADSPAPluginGUI::AddPortInfo(unsigned long p)
 
 // Max
 	NewInput = new Fl_Input(186,0,60,18,"");
+	NewInput->box((Fl_Boxtype)SpiralSynthModularInfo::GUIDEVICE_Box);
 	NewInput->value(0);
 	NewInput->textsize(10);
 	NewInput->callback((Fl_Callback *)cb_Max);
@@ -653,7 +657,7 @@ void LADSPAPluginGUI::AddPortInfo(unsigned long p)
 
 // Direct input box for knob
 	NewInput = new Fl_Input(0,0,60,16);
-	NewInput->box(FL_PLASTIC_DOWN_BOX);
+	NewInput->box((Fl_Boxtype)SpiralSynthModularInfo::GUIDEVICE_Box);
 	NewInput->value(0);
 	NewInput->textsize(10);
 	NewInput->callback((Fl_Callback *)cb_KnobValue);
@@ -681,8 +685,8 @@ void LADSPAPluginGUI::AddPortInfo(unsigned long p)
 
 // Slider
 	Fl_Slider* NewSlider = new Fl_Slider(0,0,20,100,"");
+	NewSlider->box((Fl_Boxtype)SpiralSynthModularInfo::GUIDEVICE_Box);
 	NewSlider->type(FL_VERT_NICE_SLIDER);
-	NewSlider->box(FL_PLASTIC_DOWN_BOX);
 	NewSlider->selection_color(m_GUIColour);
 	NewSlider->callback((Fl_Callback *)cb_Slider);
 	NewSlider->hide();
@@ -691,7 +695,7 @@ void LADSPAPluginGUI::AddPortInfo(unsigned long p)
 
 // Direct input box for slider
 	NewInput = new Fl_Input(0,0,56,16);
-	NewInput->box(FL_PLASTIC_DOWN_BOX);
+	NewInput->box((Fl_Boxtype)SpiralSynthModularInfo::GUIDEVICE_Box);
 	NewInput->value(0);
 	NewInput->textsize(10);
 	NewInput->callback((Fl_Callback *)cb_SliderValue);
@@ -700,8 +704,8 @@ void LADSPAPluginGUI::AddPortInfo(unsigned long p)
 	m_SliderDefaults.push_back(NewInput);
 
 // Slider Label
-// Copy and truncate knob label to 9 chars for slider
-	len = len > 9 ? 9 : len;
+// Copy and truncate knob label to 11 chars for slider
+	len = len > 11 ? 11 : len;
 	char *sl = (char *)malloc(len+1);
 	if (kl && sl) {
 		strncpy(sl, (const char *)kl, len);
@@ -716,7 +720,7 @@ void LADSPAPluginGUI::AddPortInfo(unsigned long p)
 	m_SliderGroup->add(NewText);
 	m_SliderLabels.push_back(NewText);
 
-// Set up range for knob (integer, logarithmic etc)
+// Set the range values
 	SetControlRange(p, m_InputPortSettings[p].Min, m_InputPortSettings[p].Max);
 }
 
@@ -886,13 +890,13 @@ void LADSPAPluginGUI::UpdateSliders(void)
 			// Width is 170, with 5 pixel 'border'
 				int offset=(160-m_UnconnectedInputs*60)/2;
 				m_Sliders[p]->resize(x()+25+offset+column*60, y()+45,20,100);
-				m_SliderDefaults[p]->resize(x()+7+offset+column*60,y()+45+100,56,16);
-				m_SliderLabels[p]->resize(x()+5+offset+column*60, y()+45+115,60,15);
+				m_SliderDefaults[p]->resize(x()+7+offset+column*60,y()+45+101,56,16);
+				m_SliderLabels[p]->resize(x()+5+offset+column*60, y()+45+116,60,15);
 			} else {
 			// Arrange as per columns and rows
 				m_Sliders[p]->resize(x()+25+column*60, y()+45+row*140,20,100);
-				m_SliderDefaults[p]->resize(x()+7+column*60,y()+45+100+row*140,56,16);
-				m_SliderLabels[p]->resize(x()+5+column*60, y()+45+115+row*140,60,15);
+				m_SliderDefaults[p]->resize(x()+7+column*60,y()+45+101+row*140,56,16);
+				m_SliderLabels[p]->resize(x()+5+column*60, y()+45+116+row*140,60,15);
 			}
 
 			if (++column==(cols - (row < fullrows ? 0 : 1))) {
@@ -917,41 +921,24 @@ void LADSPAPluginGUI::SetControlValue(unsigned long p, WhichControl wc)
 	float max = atof(m_PortMax[p]->value());
 	float value = atof(m_PortDefault[p]->value());
 
-	if (m_InputPortSettings[p].LogBase > 1.0f) {
+	float logbase = m_InputPortSettings[p].LogBase;
+	if (logbase > 1.0f) {
 	// Logarithmic control - requires conversion
-		if (min > 0.0f && max > 0.0f) {
-		// Straight log
-			value = logf(value) / logf(m_InputPortSettings[p].LogBase);
-		} else if (min < 0.0f && max < 0.0f) {
-		// Inverse, negated log
-			value = -logf(-value) / logf(m_InputPortSettings[p].LogBase);
-		} else {
-		// Have asymptote
-			float linthr;
-			float linrng;
-			float logbase = logf(m_InputPortSettings[p].LogBase);
-
-			linrng = (max > -min) ?  logf( max) / logbase
-			                      :  logf(-min) / logbase;
-
-			linthr = powf(m_InputPortSettings[p].LogBase, linrng - 10.0f);
-
-			if (fabsf(value) > linthr) {
-			// Log/Inverted negated log
-				value = value > 0.0f ? logf(value) / logbase
-				                     : -logf(-value) / logbase;
+		if (fabsf(value) > logbase) {
+			if (value > 0.0f) {
+				value = logf(value) / logf(logbase);
 			} else {
-			// Linear scale across asymptote
-				value /= linthr;
-				value *= linrng;
+				value = -logf(-value) / logf(logbase);
 			}
+		} else {
+			value /= logbase;
 		}
 	}
 
 	if (wc == KNOB   || wc == BOTH) m_Knobs[p]->value(value);
 
 // Invert slider value, as sliders are upside down
-	if (wc == SLIDER || wc == BOTH) m_Sliders[p]->value(max - value + min);
+	if (wc == SLIDER || wc == BOTH) m_Sliders[p]->value(m_Sliders[p]->maximum() - value + m_Sliders[p]->minimum());
 }
 
 // Set range of slider and knob (both use the same settings)
@@ -962,67 +949,64 @@ void LADSPAPluginGUI::SetControlRange(unsigned long p, float min, float max)
 		min = floorf(min + 0.5f);
 		max = floorf(max + 0.5f);
 
-		m_Knobs[p]->minimum(min);
-		m_Knobs[p]->maximum(max);
+	// Change steps to map to integers
 		m_Knobs[p]->step(1.0f);
 		m_Knobs[p]->scaleticks((int)(max - min));
-
-		m_Sliders[p]->minimum(min);
-		m_Sliders[p]->maximum(max);
-		m_Sliders[p]->step(1.0f);
+		m_Sliders[p]->step(1.0f / (max - min));
 	} else {
-		if (m_InputPortSettings[p].LogBase > 1.0f) {
+		float logbase = m_InputPortSettings[p].LogBase;
+		if (logbase > 1.0f) {
 		// Continuous logarithmic control
-			if (min > 0.0f && max > 0.0f) {
-			// Log of range
-				min = logf(min) / logf(m_InputPortSettings[p].LogBase);
-				max = logf(max) / logf(m_InputPortSettings[p].LogBase);
-			} else if (min < 0.0f && max < 0.0f) {
-			// Negative log of range
-				min = -logf(-min) / logf(m_InputPortSettings[p].LogBase);
-				max = -logf(-max) / logf(m_InputPortSettings[p].LogBase);
+			float loglogbase = logf(logbase);
+
+			if (fabsf(min) > logbase) {
+				if (min > logbase) {
+					min = logf(min) / loglogbase;
+				} else {
+					min = -logf(-min) / loglogbase;
+				}
 			} else {
-			// Have asymptote at value == 0
-			// We follow a linear scale when close to this, and logarithmic
-			// otherwise. See SetControlValue() and cbKnob_i(), cb_Slider_i()
-			// for handling this.
-				min = -logf(-min) / logf(m_InputPortSettings[p].LogBase);
-				max = logf(max) / logf(m_InputPortSettings[p].LogBase);
+				min /= logbase;
 			}
-			m_Knobs[p]->minimum(min);
-			m_Knobs[p]->maximum(max);
-			m_Knobs[p]->step((max - min) / 10000.0f);
-
-			m_Sliders[p]->minimum(min);
-			m_Sliders[p]->maximum(max);
-			m_Sliders[p]->step((max - min) / 10000.0f);
+			if (fabsf(max) > logbase) {
+				if (max > logbase) {
+					max = logf(max) / loglogbase;
+				} else {
+					max = -logf(-max) / loglogbase;
+				}
+			} else {
+				max /= logbase;
+			}
 		} else {
-		// Continuous linear control - 10000 steps between min and max
-			m_Knobs[p]->minimum(min);
-			m_Knobs[p]->maximum(max);
-			m_Knobs[p]->step((max - min) / 10000.0f);
-
-			m_Sliders[p]->minimum(min);
-			m_Sliders[p]->maximum(max);
-			m_Sliders[p]->step((max - min) / 10000.0f);
+		// Continuous linear control
+		// Same as given min and max
 		}
+
+		m_Knobs[p]->step((max - min) / 10000.0f);
+		m_Sliders[p]->step((max - min) / 10000.0f);
 	}
+
+	m_Knobs[p]->minimum(min);
+	m_Knobs[p]->maximum(max);
+	m_Sliders[p]->minimum(min);
+	m_Sliders[p]->maximum(max);
+
+	cerr<<"Set Range: "<<min<<" - "<<max<<endl;
 }
 
 // The current value ('Default') can be changed from all three pages
 void LADSPAPluginGUI::SetPortValue(unsigned long p, float value, int frompage)
 {
 	m_Default = value;
-	m_Min = atof(m_PortMin[m_PortIndex]->value());
-	m_Max = atof(m_PortMax[m_PortIndex]->value());
+	m_Min = atof(m_PortMin[p]->value());
+	m_Max = atof(m_PortMax[p]->value());
 
 // Pass current port index
-	m_GUICH->SetData("SetInputPortIndex", &m_PortIndex);
+	m_GUICH->SetData("SetInputPortIndex", &p);
 
 // If default is out of [Min, Max] range, stretch range
 	if (m_Default < m_Min) {
-		m_PortMin[m_PortIndex]->value(m_PortDefault[m_PortIndex]->value());
-		m_PortMin[m_PortIndex]->redraw();
+		m_PortMin[p]->value(m_PortDefault[p]->value());
 		m_Min = m_Default;
 
 	// Pass new Minimum to plugin
@@ -1033,8 +1017,7 @@ void LADSPAPluginGUI::SetPortValue(unsigned long p, float value, int frompage)
 	// Reconfigure knob range
 		SetControlRange(m_PortIndex, m_Min, m_Max);
 	} else if (m_Default > m_Max) {
-		m_PortMax[m_PortIndex]->value(m_PortDefault[m_PortIndex]->value());
-		m_PortMax[m_PortIndex]->redraw();
+		m_PortMax[p]->value(m_PortDefault[p]->value());
 		m_Max = m_Default;
 
 	// Pass new Maximum to plugin
@@ -1043,15 +1026,12 @@ void LADSPAPluginGUI::SetPortValue(unsigned long p, float value, int frompage)
 		m_GUICH->Wait();
 
 	// Reconfigure knob and slider range
-		SetControlRange(m_PortIndex, m_Min, m_Max);
+		SetControlRange(p, m_Min, m_Max);
 	}
 
 // Pass new default to plugin
 	m_GUICH->SetData("SetInputPortDefault", &m_Default);
 	m_GUICH->SetCommand(LADSPAPlugin::SETDEFAULT);
-
-// Set knob and slider to corresponding position
-	SetControlValue(m_PortIndex, BOTH);
 
 // Update other two default input boxes
 	char temp[256];
@@ -1062,24 +1042,50 @@ void LADSPAPluginGUI::SetPortValue(unsigned long p, float value, int frompage)
 		case 0:
 		{
 		// Set from knob page - update slider and setup defaults
-			m_SliderDefaults[m_PortIndex]->value(temp);
-			m_PortDefault[m_PortIndex]->value(temp);
+			m_SliderDefaults[p]->value(temp);
+			m_PortDefault[p]->value(temp);
 			break;
 		}
 		case 1:
 		{
 		// Set from slider page - update knob and setup defaults
-			m_KnobDefaults[m_PortIndex]->value(temp);
-			m_PortDefault[m_PortIndex]->value(temp);
+			m_KnobDefaults[p]->value(temp);
+			m_PortDefault[p]->value(temp);
 			break;
 		}
 		default:
 		{
 		// Set from setup page - update knob and slider defaults
-			m_KnobDefaults[m_PortIndex]->value(temp);
-			m_SliderDefaults[m_PortIndex]->value(temp);
+			m_KnobDefaults[p]->value(temp);
+			m_SliderDefaults[p]->value(temp);
 		}
 	}
+
+// Set knob and slider to corresponding position
+	SetControlValue(p, BOTH);
+}
+
+// Convert value supplied by a control (knob/slider) to actual
+// value in range
+float LADSPAPluginGUI::ConvertControlValue(unsigned long p, float value)
+{
+	float logbase = m_InputPortSettings[p].LogBase;
+	if (logbase > 1.0f) {
+	// Logarithmic control - convert back to actual value
+		cerr<<"Value: "<<value<<"->";
+		if (fabsf(value) > 1.0f) {
+			if (value > 0.0f) {
+				value = powf(logbase, value);
+			} else {
+				value = -powf(logbase, -value);
+			}
+		} else {
+			value *= logbase;
+		}
+		cerr<<value<<endl;
+	}
+
+	return value;
 }
 
 // ****************************************************************************
@@ -1359,40 +1365,7 @@ inline void LADSPAPluginGUI::cb_Knob_i(Fl_Knob *o)
 	}
 
 // Get value
-	m_Default = o->value();
-
-	if (m_InputPortSettings[m_PortIndex].LogBase > 1.0f) {
-	// Logarithmic control - convert back to actual value
-		float min = atof(m_PortMin[m_PortIndex]->value());
-		float max = atof(m_PortMax[m_PortIndex]->value());
-
-		if (min > 0.0f && max > 0.0f) {
-		// Straight exp
-			m_Default = powf(m_InputPortSettings[m_PortIndex].LogBase, m_Default);
-		} else if (min < 0.0f && max < 0.0f) {
-		// Inverse, negated exp
-			m_Default = -powf(m_InputPortSettings[m_PortIndex].LogBase, -m_Default);
-		} else {
-		// Have asymptote
-			float linrng;
-			float logbase = logf(m_InputPortSettings[p].LogBase);
-
-			linrng = (max > -min) ?  logf( max) / logbase
-			                      :  logf(-min) / logbase;
-
-			if (fabsf(m_Default) > linrng) {
-			// Log/Inverted negated exp
-				m_Default = m_Default > 0.0f ? powf(m_InputPortSettings[m_PortIndex].LogBase, m_Default)
-				                             : -powf(m_InputPortSettings[m_PortIndex].LogBase, -m_Default)
-			} else {
-			// Linear scale across asymptote
-				float linthr = powf(m_InputPortSettings[p].LogBase, linrng - 10.0f);
-
-				m_Default *= linthr;
-				m_Default /= linrng;
-			}
-		}
-	}
+	m_Default = ConvertControlValue(m_PortIndex, o->value());
 
 // Pass value to plugin
 	m_GUICH->SetData("SetInputPortIndex", &m_PortIndex);
@@ -1453,40 +1426,7 @@ inline void LADSPAPluginGUI::cb_Slider_i(Fl_Slider *o)
 	}
 
 // Get value (Invert it, as sliders are upside down)
-	m_Default = o->maximum() - o->value() + o->minimum();
-
-	if (m_InputPortSettings[m_PortIndex].LogBase > 1.0f) {
-	// Logarithmic control - convert back to actual value
-		float min = atof(m_PortMin[m_PortIndex]->value());
-		float max = atof(m_PortMax[m_PortIndex]->value());
-
-		if (min > 0.0f && max > 0.0f) {
-		// Straight exp
-			m_Default = powf(m_InputPortSettings[m_PortIndex].LogBase, m_Default);
-		} else if (min < 0.0f && max < 0.0f) {
-		// Inverse, negated exp
-			m_Default = -powf(m_InputPortSettings[m_PortIndex].LogBase, -m_Default);
-		} else {
-		// Have asymptote
-			float linrng;
-			float logbase = logf(m_InputPortSettings[p].LogBase);
-
-			linrng = (max > -min) ?  logf( max) / logbase
-			                      :  logf(-min) / logbase;
-
-			if (fabsf(m_Default) > linrng) {
-			// Log/Inverted negated exp
-				m_Default = m_Default > 0.0f ? powf(m_InputPortSettings[m_PortIndex].LogBase, m_Default)
-				                             : -powf(m_InputPortSettings[m_PortIndex].LogBase, -m_Default)
-			} else {
-			// Linear scale across asymptote
-				float linthr = powf(m_InputPortSettings[p].LogBase, linrng - 10.0f);
-
-				m_Default *= linthr;
-				m_Default /= linrng;
-			}
-		}
-	}
+	m_Default = ConvertControlValue(m_PortIndex, o->maximum() - o->value() + o->minimum());
 
 // Pass value to plugin
 	m_GUICH->SetData("SetInputPortIndex", &m_PortIndex);
