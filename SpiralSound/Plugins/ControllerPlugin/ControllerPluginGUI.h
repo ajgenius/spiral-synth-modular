@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -28,8 +28,8 @@
 #include "ControllerPlugin.h"
 #include "../SpiralPluginGUI.h"
 
-#ifndef MixerGUI
-#define MixerGUI
+#ifndef ControllerGUI
+#define ControllerGUI
 
 static int Numbers[MAX_CHANNELS];
 
@@ -37,24 +37,24 @@ class ControllerPluginGUI : public SpiralPluginGUI
 {
 public:
 	ControllerPluginGUI(int w, int h, ControllerPlugin *o,ChannelHandler *ch,const HostInfo *Info);
-	
+
 	virtual void UpdateValues(SpiralPlugin *o);
-	
+
 	void StreamIn(istream &s);
 	void StreamOut(ostream &s);
 
 protected:
-    const string GetHelpText(const string &loc);	
-		
+    const string GetHelpText(const string &loc);
+
 private:
 
 	void Clear();
-	
+
 	class CVGUI
 	{
 	public:
 		CVGUI::CVGUI(int n, ControllerPluginGUI *p);
-	
+
 		Fl_Group     *m_SliderGroup;
 		Fl_Input     *m_Title;
 		Fl_Input     *m_Min;
@@ -64,14 +64,12 @@ private:
 
 	friend class CVGUI;
 
-	Fl_Pack *m_MainPack;
-	Fl_Button *m_Add;
-	Fl_Button *m_Delete;
+	Fl_Pack *m_MainPack, *m_Buttons;
+	Fl_Button *m_Add, *m_Delete;
 
-	vector<CVGUI*> m_GuiVec;
+	vector<CVGUI*> m_GUIVec;
 	void AddCV();
 	void DeleteCV();
-
 	int m_CVCount;
 
 	//// Callbacks ////
@@ -85,8 +83,8 @@ private:
 	static void cb_Min(Fl_Input* o, void* v);
 	inline void cb_Add_i(Fl_Button* o, void* v);
 	static void cb_Add(Fl_Button* o, void* v);
-	inline void cb_Delete_i(Fl_Button* o, void* v); 
-	static void cb_Delete(Fl_Button* o, void* v); 
+	inline void cb_Delete_i(Fl_Button* o, void* v);
+	static void cb_Delete(Fl_Button* o, void* v);
 
 	friend istream &operator>>(istream &s, ControllerPluginGUI &o);
 };
