@@ -28,41 +28,31 @@
 #include "SpiralPlugin.h" // for the channel handler
 #include "../../GUI/Widgets/SpiralGUI.H"
 
-class SpiralPluginGUI : public SpiralGUIType
-{
-public:
-	SpiralPluginGUI(int w, int h, SpiralPlugin* o, ChannelHandler *ch);
-	~SpiralPluginGUI();
-        virtual void resize (int x, int y, int w, int h);
-
-	virtual void Update();
-
-        // called while audio thread is suspended, so direct access to the
-	// spiralplugin is acceptable
-	virtual void UpdateValues(SpiralPlugin *o)=0;
-
-protected:
-
-	ChannelHandler *m_GUICH;
-	virtual const std::string GetHelpText(const std::string &loc);
-
-private:
-	Fl_Button*		 m_Hide;
-	Fl_Button*		 m_Help;
-
-	static Fl_Double_Window* m_HelpWin;
-	static Fl_Text_Display* m_HelpWin_text;
-	static SpiralPluginGUI* Help_owner;
-
-	std::string m_Title;
-
-	//// Callbacks ////
-	inline void cb_Hide_i(Fl_Button* o, void* v);
-    static void cb_Hide(Fl_Button*, void*);
-	inline void cb_Help_i(Fl_Button* o, void* v);
-    static void cb_Help(Fl_Button*, void*);
-    inline void cb_Help_close_i(Fl_Double_Window* w, void* v);
-    static void cb_Help_close(Fl_Double_Window*, void*);
+class SpiralPluginGUI : public SpiralGUIType {
+   public:
+      SpiralPluginGUI (int w, int h, SpiralPlugin* o, ChannelHandler *ch);
+      ~SpiralPluginGUI ();
+      virtual void resize (int x, int y, int w, int h);
+      virtual void Update ();
+      // called while audio thread is suspended, so direct access to the
+      // spiralplugin is acceptable
+      virtual void UpdateValues (SpiralPlugin *o) = 0;
+   protected:
+      ChannelHandler *m_GUICH;
+      virtual const std::string GetHelpText (const std::string &loc);
+   private:
+      Fl_Button *m_Hide, *m_Help;
+      static Fl_Double_Window* m_HelpWin;
+      static Fl_Text_Display* m_HelpWin_text;
+      static SpiralPluginGUI* Help_owner;
+      std::string m_Title;
+      //// Callbacks ////
+      inline void cb_Hide_i (Fl_Button *o, void *v);
+      static void cb_Hide (Fl_Button *o, void *v);
+      inline void cb_Help_i (Fl_Button *o, void *v);
+      static void cb_Help (Fl_Button *o, void *v);
+      inline void cb_Help_close_i (Fl_Double_Window *w, void *v);
+      static void cb_Help_close (Fl_Double_Window *w, void *v);
 };
 
 #endif

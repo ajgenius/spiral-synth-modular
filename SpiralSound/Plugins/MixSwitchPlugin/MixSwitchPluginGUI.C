@@ -16,8 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-
-
 #include "MixSwitchPluginGUI.h"
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
@@ -61,7 +59,7 @@ inline void MixSwitchPluginGUI::cb_Chans_i (Fl_Counter* o, void* v) {
     m_GUICH->Set ("Chans", int (o->value ()));
     m_GUICH->SetCommand (MixSwitchPlugin::SETCHANS);
     m_GUICH->Wait ();
-    needs_resize (true);
+    DoResizeCallback ();
   }
 }
 
