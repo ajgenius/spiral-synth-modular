@@ -330,31 +330,23 @@ void ChannelHandler::BulkTransfer(const string &ID, void *dest, int size)
 }
 
 void ChannelHandler::Wait()
-{
-	pthread_mutex_lock(m_Mutex);
-	bool current=m_UpdateIndicator;
-	bool last=m_UpdateIndicator;
-	pthread_mutex_unlock(m_Mutex);
+{	
+	bool current;
+	bool last;
 	
-	while (current==last)
+	for (int n=0; n<2; n++)
 	{
-		usleep(10);
 		pthread_mutex_lock(m_Mutex);
 		current=m_UpdateIndicator;
+		last=m_UpdateIndicator;
 		pthread_mutex_unlock(m_Mutex);
-	}	
 	
-	// do this twice (messages have to get there and back?)
-	pthread_mutex_lock(m_Mutex);
-	current=m_UpdateIndicator;
-	last=m_UpdateIndicator;
-	pthread_mutex_unlock(m_Mutex);
-	
-	while (current==last)
-	{
-		usleep(10);
-		pthread_mutex_lock(m_Mutex);
-		current=m_UpdateIndicator;
-		pthread_mutex_unlock(m_Mutex);
+		while (current==last)
+		{
+			usleep(10);
+			pthread_mutex_lock(m_Mutex);
+			current=m_UpdateIndicator;
+			pthread_mutex_unlock(m_Mutex);
+		}	
 	}
 }
