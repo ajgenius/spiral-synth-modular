@@ -139,6 +139,7 @@ void SpiralInfo::StreamInPrefs (istream &s) {
               if (st!="end") PLUGINVEC.push_back (st);
         }
      }
+	  
 #if __APPLE__
      // ignore custom paths, plugins are encapsulated in the app anyway
      // this prevents the program to fail if the user move the application icon

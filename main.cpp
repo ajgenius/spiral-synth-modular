@@ -174,9 +174,10 @@ int main(int argc, char **argv)
 	Fl::visual(FL_DOUBLE|FL_RGB);
 	
 	synth=new SynthModular;
-	
+
 	// setup the synth
 	Fl_Window* win = synth->CreateWindow();
+	
 	synth->LoadPlugins(cmd_pluginPath);
 	win->xclass("");
 	if (GUI) win->show(1, argv); // prevents stuff happening before the plugins have loaded

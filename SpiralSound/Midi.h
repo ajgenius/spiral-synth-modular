@@ -30,7 +30,7 @@
 
 using namespace std;
 
-//#define ALSA_MIDI
+#define ALSA_MIDI
 
 #ifdef ALSA_MIDI
 #include <alsa/asoundlib.h>
@@ -63,11 +63,12 @@ class MidiDevice
 public:
 	~MidiDevice();
 
-	static void SetDeviceName(string s)   { m_DeviceName=s; }
-	static MidiDevice *Get()      { if(!m_Singleton) m_Singleton=new MidiDevice; return m_Singleton; }
-	static void PackUpAndGoHome() { if(m_Singleton)  delete m_Singleton; m_Singleton=NULL; }
+	enum Type{READ,WRITE};
 
-	static void *MidiReaderCallback(void *o) { ((MidiDevice*)o)->CollectEvents(); return NULL; }
+	static void Init(const string &name, Type t);
+	static void SetDeviceName(string s)   { m_DeviceName=s; }
+	static MidiDevice *Get()      { return m_Singleton; }
+	static void PackUpAndGoHome() { if(m_Singleton)  delete m_Singleton; m_Singleton=NULL; }
 
 	MidiEvent GetEvent(int Device);
 	void SendEvent(int Device,const MidiEvent &Event);
@@ -75,16 +76,18 @@ public:
 	void SetPoly(int s) { m_Poly=s; }
 
 	float GetClock() { return m_Clock; }
-
+	
 private:
-	MidiDevice();
+	MidiDevice(Type t);
 
-	void Open();
+	void Open(Type t);
 	void Close();
 	void CollectEvents();
 	void AddEvent(unsigned char* midi);
 
 	void ReadByte(unsigned char *c);
+	
+	static void *MidiReaderCallback(void *o) { ((MidiDevice*)o)->CollectEvents(); return NULL; }
 
 	int  m_MidiFd;
 	int  m_MidiWrFd;
@@ -98,12 +101,15 @@ private:
 	static MidiDevice *m_Singleton;
 
 	pthread_t        m_MidiReader;
-	pthread_mutex_t* m_Mutex;	
+	pthread_mutex_t* m_Mutex;
+	
+	static string m_AppName;	
 	
 #ifdef ALSA_MIDI
-	int AlsaCallback();
+	static void *AlsaMidiReaderCallback(void *o) { ((MidiDevice*)o)->AlsaCollectEvents(); return NULL; }
+	void AlsaCollectEvents();
 	snd_seq_t *seq_handle;
-	snd_seq_t *AlsaOpen();
+	snd_seq_t *AlsaOpen(Type t);
 #endif
 
 #if __APPLE__

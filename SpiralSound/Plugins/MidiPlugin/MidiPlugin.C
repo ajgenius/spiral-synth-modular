@@ -62,6 +62,11 @@ m_CurrentNote(0)
 {
 	m_Version=2;
 	
+	if (m_RefCount==0)
+	{
+		MidiDevice::Init("SpiralModular",MidiDevice::READ);
+	}
+	
 	m_RefCount++;
 
 	m_PluginInfo.Name="Midi";

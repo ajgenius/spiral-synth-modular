@@ -44,7 +44,7 @@ PluginID PluginManager::LoadPlugin(const char *PluginName)
 	
     if (NewPlugin->Handle==NULL)
     {
-		SpiralInfo::Alert("Error loading plugin: \n"+string(dlerror()));
+		SpiralInfo::Alert("Error loading ["+string(PluginName)+"]: \n"+string(dlerror()));
         return PluginError;
     }
 		
