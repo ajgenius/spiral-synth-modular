@@ -130,7 +130,6 @@ SpiralPluginGUI(w,h,o,ch)
 	m_Tab->value(m_SetupGroup);
 
 	m_TabIndex = 1;
-
 	m_PortIndex = 0;
 
 	end();
@@ -266,8 +265,16 @@ void LADSPAPluginGUI::AddPortInfo(const char *Info)
 	int len = strlen(Info);
 	len -= 5;                  // Get rid of (CV), (AU) bit
 	len = len > 20 ? 20 : len; // Truncate to fit
+	char *label = (char *)malloc(len + 1);
+	if (label)
+	{
+		strncpy(label, Info, len);
+		label[len] = '\0';
+	}
+	m_PortDefaultAdjustLabels.push_back(label);
 
-	Fl_Knob* NewKnob = new Fl_Knob(0,0,40,40,strndup(Info, len));
+	Fl_Knob* NewKnob = new Fl_Knob(0,0,40,40,"");
+	NewKnob->label(m_PortDefaultAdjustLabels[m_PortDefaultAdjustLabels.size() - 1]);
 	NewKnob->labelsize(10);
 	NewKnob->color(GUI_COLOUR);
 	NewKnob->maximum(1.0f);
@@ -327,11 +334,11 @@ void LADSPAPluginGUI::UpdateDefaultAdjustControls(void)
 void LADSPAPluginGUI::UpdateValues(SpiralPlugin *o)
 {
 	LADSPAPlugin* Plugin = (LADSPAPlugin*)o;
+	SetPluginIndex(Plugin->GetPluginIndex());
 	SetName(Plugin->GetName());
 	SetMaker(Plugin->GetMaker());
 	SetTabIndex(Plugin->GetTabIndex());
 	SetUpdateInputs(Plugin->GetUpdateInputs());
-	SetPluginIndex(Plugin->GetPluginIndex());
 
 	m_InputPortCount = Plugin->GetInputPortCount();
 	const char *name;
@@ -407,6 +414,63 @@ void LADSPAPluginGUI::Update(void)
 	if (state_changed) UpdateDefaultAdjustControls();
 }
 
+void LADSPAPluginGUI::ClearPlugin(void)
+{
+	m_PluginIndex = 0;
+	m_InputPortCount = 0;
+	m_PortIndex = 0;
+
+	m_GUICH->SetCommand(LADSPAPlugin::CLEARPLUGIN);
+	m_GUICH->Wait();
+
+// Clear out port info, and refresh
+	m_InputScroll->remove(m_InputPack);
+	delete m_InputPack;
+	m_InputPack = new Fl_Pack(x()+5,y()+135,460,26,"");
+	m_InputScroll->add(m_InputPack);
+
+	m_PortValue.clear();
+	m_PortMin.clear();
+	m_PortMax.clear();
+	m_PortClamp.clear();
+	m_PortDefault.clear();
+	m_PortDefaultAdjust.clear();
+
+	for (vector<char *>::iterator i = m_PortDefaultAdjustLabels.begin();
+	     i != m_PortDefaultAdjustLabels.end(); i++)
+	{
+		if (*i) free (*i);
+	}
+	m_PortDefaultAdjustLabels.clear();
+}
+
+void LADSPAPluginGUI::SelectPlugin(void)
+{
+// Now get the new values to populate GUI controls
+	m_GUICH->GetData("GetName", m_Name);
+	m_GUICH->GetData("GetMaker", m_Maker);
+	m_GUICH->GetData("GetInputPortCount", &(m_InputPortCount));
+	m_GUICH->GetData("GetInputPortNames", m_InputPortNames);
+	m_GUICH->GetData("GetInputPortSettings", m_InputPortSettings);
+	m_GUICH->GetData("GetInputPortDefaults", m_InputPortDefaults);
+
+	SetName((const char *)m_Name);
+	SetMaker((const char *)m_Maker);
+
+	for (unsigned long p = 0; p < m_InputPortCount; p++) {
+		AddPortInfo((const char *)(m_InputPortNames + p * 256));
+		SetPortSettings(p, m_InputPortSettings[p].Min,
+				   m_InputPortSettings[p].Max,
+				   m_InputPortSettings[p].Clamp,
+				   m_InputPortDefaults[p]);
+
+		SetDefaultAdjust(p);
+	}
+
+	UpdateDefaultAdjustControls();
+	m_PortIndex = m_InputPortCount;
+}
+
 // ****************************************************************************
 // **                     Widget Callback Functions                          **
 // ****************************************************************************
@@ -425,59 +489,20 @@ void LADSPAPluginGUI::cb_TabChange(Fl_Tabs *o)
 
 inline void LADSPAPluginGUI::cb_Select_i(Fl_Choice* o)
 {
+	ClearPlugin();
+
 	m_PluginIndex = o->value();
 
-	if (o->value() == 0) {
-	// "(None)" selected
-		m_GUICH->SetCommand(LADSPAPlugin::CLEARPLUGIN);
-	} else {
+	if (o->value() != 0) {
 	// Plugin selected
 		m_GUICH->SetData("SetPluginIndex",&m_PluginIndex);
 		m_GUICH->SetCommand(LADSPAPlugin::SELECTPLUGIN);
+		m_GUICH->Wait();
+
+		SelectPlugin();
 	}
 
-// Wait until next update for plugin to be loaded etc.
-	m_GUICH->Wait();
-
-// Now get the new values to populate GUI controls
-	m_GUICH->GetData("GetName", m_Name);
-	m_GUICH->GetData("GetMaker", m_Maker);
-	m_GUICH->GetData("GetInputPortCount", &(m_InputPortCount));
-	m_GUICH->GetData("GetInputPortNames", m_InputPortNames);
-	m_GUICH->GetData("GetInputPortSettings", m_InputPortSettings);
-	m_GUICH->GetData("GetInputPortDefaults", m_InputPortDefaults);
-
-	SetName((const char *)m_Name);
-	SetMaker((const char *)m_Maker);
-
-// Clear out port info, and refresh
-	m_InputScroll->remove(m_InputPack);
-	delete m_InputPack;
-	m_InputPack = new Fl_Pack(x()+5,y()+135,460,26,"");
-	m_InputScroll->add(m_InputPack);
-
-	m_PortValue.clear();
-	m_PortMin.clear();
-	m_PortMax.clear();
-	m_PortClamp.clear();
-	m_PortDefault.clear();
-	m_PortDefaultAdjust.clear();
-
-	for (unsigned long p = 0; p < m_InputPortCount; p++) {
-		AddPortInfo((const char *)(m_InputPortNames + p * 256));
-		SetPortSettings(p, m_InputPortSettings[p].Min,
-				   m_InputPortSettings[p].Max,
-				   m_InputPortSettings[p].Clamp,
-				   m_InputPortDefaults[p]);
-
-		SetDefaultAdjust(p);
-	}
-
-	UpdateDefaultAdjustControls();
-
-	m_PortIndex = m_InputPortCount;
-
-	redraw();
+//	redraw();
 }
 void LADSPAPluginGUI::cb_Select(Fl_Choice* o)
 {       //                     Group     Tab       GUI

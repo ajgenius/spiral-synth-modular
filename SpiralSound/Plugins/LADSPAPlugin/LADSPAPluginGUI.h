@@ -66,6 +66,8 @@ private:
 	void SetPortSettings(unsigned long n, float min, float max, bool clamp, float defolt);
 	void SetDefaultAdjust(unsigned long n);
 	void UpdateDefaultAdjustControls(void);
+	void ClearPlugin(void);
+	void SelectPlugin(void);
 
 	Fl_Box                        *m_NameLabel;
 	Fl_Box                        *m_MakerLabel;
@@ -84,6 +86,7 @@ private:
 	std::vector<Fl_Check_Button*>  m_PortClamp;
 	std::vector<Fl_Input*>         m_PortDefault;
 	std::vector<Fl_Knob*>          m_PortDefaultAdjust;
+	std::vector<char *>            m_PortDefaultAdjustLabels;
 
 	std::vector<LADSPAInfo::PluginEntry> m_PluginList;
 
