@@ -208,20 +208,10 @@ LADSPAInfo::DiscardDescriptorByID(unsigned long unique_id)
         if (li->RefCount > 0) {
             li->RefCount--;
             if (li->RefCount == 0) {
+                
+            // Unload and clear library handle
                 dlclose(li->Handle);
-
-            // Need to unset all plugin descriptors that may have been
-            // set from this library
-            // Plugins in library will be a contiguous block, so we
-            // just check each direction from given plugin
-                unsigned long i = plugin_index - 1;
-                while (m_Plugins[i].LibraryIndex == pi->LibraryIndex) {
-                    m_Plugins[i--].Descriptor = NULL;
-                }
-                i = plugin_index + 1;
-                while (m_Plugins[i].LibraryIndex == pi->LibraryIndex) {
-                    m_Plugins[i++].Descriptor = NULL;
-                }
+                li->Handle = NULL;
             }
         }
     }
