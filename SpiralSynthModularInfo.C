@@ -42,7 +42,7 @@ int SpiralSynthModularInfo::GUICOL_Tool=179;
 int SpiralSynthModularInfo::GUICOL_Button=181;
 int SpiralSynthModularInfo::GUICOL_Canvas=181;
 int SpiralSynthModularInfo::GUICOL_Device=181;
-string SpiralSynthModularInfo::BGIMG;
+int SpiralSynthModularInfo::GUIDEVICE_Box=30;
 
 vector<string> SpiralSynthModularInfo::PLUGINVEC;
 string SpiralSynthModularInfo::PLUGIN_PATH;
@@ -61,7 +61,6 @@ SpiralSynthModularInfo* SpiralSynthModularInfo::Get()
 
 SpiralSynthModularInfo::SpiralSynthModularInfo()
 {
-	BGIMG="None";
 	PLUGIN_PATH = PLUGIN_PATH_LOCATION;
 }
 
@@ -76,7 +75,7 @@ void SpiralSynthModularInfo::StreamInPrefs(istream &s)
 	s>>temp>>temp>>GUICOL_Button;
 	s>>temp>>temp>>GUICOL_Canvas;
 	s>>temp>>temp>>GUICOL_Device;
-	s>>temp>>temp>>BGIMG;
+	s>>temp>>temp>>GUIDEVICE_Box;
 	s>>temp>>temp>>PLUGIN_PATH;
 	s>>temp>>temp;
 	string st;
@@ -109,7 +108,7 @@ void SpiralSynthModularInfo::StreamOutPrefs(ostream &s)
 	s<<"ButtonColour      = "<<GUICOL_Button<<endl;
 	s<<"CanvasColour      = "<<GUICOL_Canvas<<endl;
 	s<<"DeviceColour      = "<<GUICOL_Device<<endl;
-	s<<"BGImagePNG        = "<<BGIMG<<endl<<endl;
+	s<<"DeviceBoxType     = "<<GUIDEVICE_Box<<endl<<endl;
 
 	s<<"PluginPath        = "<<PLUGIN_PATH<<endl<<endl;
 

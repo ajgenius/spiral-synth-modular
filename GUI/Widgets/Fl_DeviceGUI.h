@@ -21,6 +21,7 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Pixmap.h>
 #include <FL/Fl_Menu_Button.h>
+#include <FL/Fl_Box.h>
 #include <iostream>
 #include <vector>
 #include <string>
@@ -83,7 +84,6 @@ public:
 	Fl_DeviceGUI(const DeviceGUIInfo& Info, Fl_Group *PW, Fl_Pixmap *Icon, bool Terminal=false);
 	
 	virtual int handle(int event);
-	virtual void draw();
 	
 	enum PortType {INPUT,OUTPUT};
 		
@@ -123,6 +123,7 @@ protected:
 	Fl_DragBar* m_DragBar;
 	Fl_Group*   m_PluginWindow;
 	Fl_Pixmap*  m_Icon;
+	Fl_Button*  m_IconButton;
 	Fl_Menu_Button* m_Menu; 
 	
 private:

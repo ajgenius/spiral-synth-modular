@@ -19,13 +19,11 @@
 #include "../SpiralPlugin.h"
 #include <FL/Fl_Pixmap.H>
 
-#include "Loop.h"
-#include "GUI/LoopGUI.h"
-
 #ifndef SpiralLoopPLUGIN
 #define SpiralLoopPLUGIN
 
-static const int NUM_SAMPLES = 8;
+static const int TRANSBUF_SIZE = 0x10000;
+static const int MAX_TRIGGERS = 8;
 
 struct SampleDesc
 {
@@ -50,17 +48,123 @@ public:
 	virtual PluginInfo &Initialise(const HostInfo *Host);
 	virtual SpiralGUIType *CreateGUI();
 	virtual void Execute();
+	virtual void ExecuteCommands();
 	virtual void StreamOut(ostream &s);
 	virtual void StreamIn(istream &s);
 	virtual bool SaveExternalFiles(const string &Dir);
 	virtual void LoadExternalFiles(const string &Dir);
-		
-	// has to be defined in the plugin	
-	virtual void UpdateGUI() { Fl::check(); }
+	
+	enum GUICommands{NONE,START,STOP,RECORD,OVERDUB,ENDRECORD,LOAD,SAVE,CUT,
+					 COPY,PASTE,PASTEMIX,ZERO_RANGE,REVERSE_RANGE,SELECT_ALL,DOUBLE,HALF,
+					 MOVE,CROP,KEEPDUB,UNDODUB,CHANGE_LENGTH,NEW_TRIGGER,UPDATE_TRIGGER,
+					 GETSAMPLE};	
+	
+	void LoadWav(const char *Filename);
+	void SaveWav(const char *Filename);
+	bool GetOutput(Sample &data);
+	void AllocateMem(int Length);
+	void Clear();
+	void MixDub()   { m_StoreBuffer.Mix(m_DubBuffer,0); ClearDub(); }
+	void ClearDub() { m_DubBuffer.Zero(); }
+	void Double();
+	void MatchLength(int Len);
+	void Crop();
+	
+	void SetId(int Id)       				{ m_Id=Id; }
+	void SetPos(int Pos)     				{ m_Pos=Pos; }
+	void SetLength(int Len)  				{ m_LoopPoint=Len; }
+	void SetSpeed(float Speed)				{ m_Speed=Speed; }
+	void SetVolume(float Vol)  				{ m_Volume=Vol; }
+	void SetPlaying(bool Playing) 			{ m_Playing=Playing; }
+	void SetRecordingSource(const float *s) { m_RecordingSource=s; }
+	void Record(bool r) 					{ m_Recording=r; if (!r) EndRecordBuf(); }
+	void DelMe()              				{ m_DelMe=true; }
+	void SetBalance(float s) 	 			{ m_Balance=s; m_LeftVol=(2-s)/2; m_RightVol=(1+s-1.0f)/2;}	
+	void Trigger()							{ m_Pos=0; SetPlaying(true); }
+	
+	const float  GetBalance() 				{return m_Balance;}
+	const bool   IsPlaying() 				{return m_Playing;}
+	const float *GetLoopPtr() 				{return m_StoreBuffer.GetBuffer();}
+	const int    GetId() 					{return m_Id;}
+	const int    GetLoopLength() 			{return m_LoopPoint;}
+	float 		*GetPosPtr() 				{return &m_Pos;}
+	const int    GetTotalLength() 			{assert(m_StoreBuffer.GetLength()==m_DubBuffer.GetLength()); return m_StoreBuffer.GetLength();}
+	const bool   Delete()   				{return m_DelMe; }
+	const float  GetSpeed() 				{return m_Speed;}
+	const float  GetLeftVol()     			{ return m_LeftVol; }
+	const float  GetRightVol()     			{ return m_RightVol; }
+	const float  GetCurrentAngle() 			{ return m_LoopPoint?(m_Pos/m_LoopPoint)*360.0f:0; }
+	const string& GetSampleName()  			{ return m_Sample; }
+	
+	void Cut(int Start, int End);
+	void Copy(int Start, int End);
+	void Paste(int Start);
+	void PasteMix(int Start);
+	
+	void ZeroRange(int Start, int End);
+	void ReverseRange(int Start, int End);
+	void Halve();
+	void SelectAll();
+	void Move(int Start);
 		
 private:
 
-	Loop    *m_Loop;
+	struct GUIArgs
+	{
+		long  Start;
+		long  End;
+		float Length;
+		char  Name[256];
+	};
+	
+	GUIArgs m_GUIArgs;
+	
+	void RecordBuf(float Pos, int Length);
+	void EndRecordBuf();
+
+	int    m_Id;
+	float  m_Pos;
+	int    m_IntPos;
+	int    m_PlayBufPos;
+	bool   m_Playing;
+	bool   m_Recording;
+	bool   m_DelMe;
+	long int m_LoopPoint;
+	float  m_Speed;
+	float  m_Volume;
+	const float *m_RecordingSource;
+	Sample m_StoreBuffer;
+	Sample m_DubBuffer;
+	Sample m_RecBuffer;
+	Sample m_CopyBuffer;
+	int    m_RecPos;
+	float  m_Balance;
+	float  m_LeftVol,m_RightVol;
+	
+	bool   m_FirstRecord;
+	bool   m_FixedRecord;
+	int    m_RecLength;
+		
+	int    m_TickTime;
+	int    m_TickCurrent;
+	int    m_TicksPerLoop;
+	float  m_TickOutput;
+	
+	bool m_Triggered;
+	
+	char  m_SampleBuffer[TRANSBUF_SIZE];
+	long  m_SampleSize;
+
+	struct TriggerInfo
+	{
+		int Channel;
+		float Time;
+		bool Triggered;
+	};
+	
+	vector<TriggerInfo> m_TriggerVec;
+
+	string m_Sample;			
 };
 
 #endif

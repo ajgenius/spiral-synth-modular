@@ -46,7 +46,8 @@ if test $ac_arg_jack = "Y" ; then
 	DistributorPlugin LFOPlugin KeyboardPlugin DiskWriterPlugin FormantFilterPlugin \
 	AnotherFilterPlugin OperatorPlugin CounterPlugin FlipflopPlugin SwitchPlugin \
 	BeatMatchPlugin NoisePlugin SequencerPlugin LogicPlugin SplitSwitchPlugin \
-	MixSwitchPlugin MeterPlugin WaveShaperPlugin JackPlugin"
+	MixSwitchPlugin MeterPlugin WaveShaperPlugin TrigPlugin SpiralLoopPlugin  \
+	JackPlugin"
 else
 	PLUGINLIST="AmpPlugin ControllerPlugin DelayPlugin EchoPlugin EnvFollowerPlugin \
 	EnvelopePlugin FilterPlugin MatrixPlugin MidiPlugin MixerPlugin MoogFilterPlugin \
@@ -56,7 +57,7 @@ else
 	DistributorPlugin LFOPlugin KeyboardPlugin DiskWriterPlugin FormantFilterPlugin \
 	AnotherFilterPlugin OperatorPlugin CounterPlugin FlipflopPlugin SwitchPlugin \
 	BeatMatchPlugin NoisePlugin SequencerPlugin LogicPlugin SplitSwitchPlugin \
-	MixSwitchPlugin MeterPlugin WaveShaperPlugin "
+	MixSwitchPlugin MeterPlugin WaveShaperPlugin TrigPlugin SpiralLoopPlugin"
 	
 	fi
 echo "$PLUGINLIST" > SpiralSound/PluginList.txt
@@ -170,6 +171,8 @@ SpiralSound/Plugins/SequencerPlugin/Makefile
 SpiralSound/Plugins/LogicPlugin/Makefile
 SpiralSound/Plugins/SplitSwitchPlugin/Makefile
 SpiralSound/Plugins/MixSwitchPlugin/Makefile
+SpiralSound/Plugins/TrigPlugin/Makefile
+SpiralSound/Plugins/SpiralLoopPlugin/Makefile
 SpiralSynthPluginLocation.h
 Makefile
 )

@@ -68,7 +68,7 @@ m_CurrentNote(0)
 	m_PluginInfo.Width=85;
 	m_PluginInfo.Height=155;
 	m_PluginInfo.NumInputs=2;
-	m_PluginInfo.NumOutputs=5;
+	m_PluginInfo.NumOutputs=6;
 	m_PluginInfo.PortTips.push_back("Note CV");
 	m_PluginInfo.PortTips.push_back("Trigger CV");
 	m_PluginInfo.PortTips.push_back("Note CV");
@@ -76,6 +76,7 @@ m_CurrentNote(0)
 	m_PluginInfo.PortTips.push_back("PitchBend CV");
 	m_PluginInfo.PortTips.push_back("ChannelPressure CV");
 	m_PluginInfo.PortTips.push_back("Aftertouch CV");
+	m_PluginInfo.PortTips.push_back("Clock CV");
 	
 	for (int n=0; n<128; n++) m_ControlLevel[n]=0;
 	
@@ -116,6 +117,7 @@ void MidiPlugin::Execute()
 	GetOutputBuf(2)->Zero();
 	GetOutputBuf(3)->Zero();
 	GetOutputBuf(4)->Zero();
+	GetOutputBuf(5)->Zero();
 
 	for (unsigned int c=0; c<m_ControlList.size(); c++)
 	{
@@ -219,6 +221,7 @@ void MidiPlugin::Execute()
 		
 		Event=MidiDevice::Get()->GetEvent(m_DeviceNum);
 	}
+
 	for (int n=0; n<m_HostInfo->BUFSIZE; n++)
 	{
 		SetOutputPitch(0,n,m_NoteLevel);
@@ -226,6 +229,7 @@ void MidiPlugin::Execute()
 		SetOutput(2,n,m_PitchBendLevel);
 		SetOutput(3,n,m_ChannelPressureLevel);
 		SetOutput(4,n,m_AfterTouchLevel);						
+		SetOutput(5,n,MidiDevice::Get()->GetClock());						
 	}
 	
 	for (unsigned int c=0; c<m_ControlList.size(); c++)

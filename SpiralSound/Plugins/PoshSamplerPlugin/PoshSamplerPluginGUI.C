@@ -428,7 +428,7 @@ void PoshSamplerPluginGUI::Update()
 		m_Display->redraw();
 		m_UpdateMe=false;
 	}
-	redraw();
+	//redraw();
 }
 
 void PoshSamplerPluginGUI::UpdateValues(SpiralPlugin *o)

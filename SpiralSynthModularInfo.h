@@ -35,7 +35,7 @@ public:
 	static int GUICOL_Button;
 	static int GUICOL_Canvas;
 	static int GUICOL_Device;
-	static string BGIMG;
+	static int GUIDEVICE_Box;
 
 protected:
 	SpiralSynthModularInfo();

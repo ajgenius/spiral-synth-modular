@@ -74,6 +74,8 @@ public:
 
 	void SetPoly(int s) { m_Poly=s; }
 
+	float GetClock() { return m_Clock; }
+
 private:
 	MidiDevice();
 
@@ -88,6 +90,8 @@ private:
 	int  m_MidiWrFd;
 	static string m_DeviceName;
 	int  m_Poly;
+	float m_Clock;
+	int   m_ClockCount;
 	
 	queue<MidiEvent> m_EventVec[16];
 	

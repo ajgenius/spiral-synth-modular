@@ -64,9 +64,9 @@ m_IsTerminal(Terminal),
 m_Minimised(true)
 {	
 	for (int n=0; n<512; n++) Numbers[n]=n;
-	
+
 	type(1);
-	box(FL_PLASTIC_UP_BOX);
+	box((Fl_Boxtype)SpiralSynthModularInfo::GUIDEVICE_Box);
     labeltype(FL_ENGRAVED_LABEL);
     align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
 	color(SpiralSynthModularInfo::GUICOL_Device);
@@ -86,6 +86,12 @@ m_Minimised(true)
 	
 	m_Menu->add("rename", 0, (Fl_Callback*)cb_Rename,this);
 	m_Menu->add("delete", 0, (Fl_Callback*)cb_Delete,this);
+	
+	int Centx=x()+w()/2;
+	int Centy=y()+h()/2;
+	m_IconButton = new Fl_Button(Centx-m_Icon->w()/2,Centy-m_Icon->h()/2,m_Icon->w(),m_Icon->h());
+	m_IconButton->box(FL_NO_BOX);
+	if (m_Icon) m_IconButton->image(m_Icon);
 	
 	m_PluginWindow = PW;
 	if (m_PluginWindow)
@@ -109,41 +115,25 @@ int  Fl_DeviceGUI::handle(int event)
 {	
 	int t=Fl_Group::handle(event);
 	
-	/*if (m_PluginWindow)
+	if (m_IconButton->value()) 
 	{
-	if (Fl::event_x()>x() && Fl::event_x()<x()+w() && Fl::event_y()>y() && Fl::event_y()<y()+h())
-	{	
-		if (!m_PluginWindow->visible() && m_PluginWindow && !m_DelMe)
+		m_IconButton->value(false);
+		
+		if (m_PluginWindow && !m_DelMe)
 		{					
-			m_Minimised=false;
-			Resize(m_PluginWindow->w()+(PortGroupWidth*2),m_PluginWindow->h()+TitleBarHeight);
-			m_PluginWindow->show();
-		}	
-	}
-	else
-	{
-		if (m_Minimised==false)// && !m_PluginWindow->visible())
-		{
-			m_Minimised=true;
-			Resize(m_MiniWidth,m_MiniHeight);
-			m_PluginWindow->hide();
-			parent()->redraw();
-		}
-	}*/
-	
-	
-	if (t==0 && Fl::belowmouse()==this)
-	{	
-		if (event==FL_PUSH && Fl::event_button()==1) 
-		{
-			if (m_PluginWindow && !m_DelMe)
-			{					
-				if(!m_PluginWindow->visible()) Maximise();
+			if(!m_PluginWindow->visible()) 
+			{
+				Maximise();
+				m_IconButton->hide();
 			}
-		}	
+		}
 	}
 	
-	if (m_Minimised==false && !m_PluginWindow->visible()) Minimise();
+	if (m_Minimised==false && !m_PluginWindow->visible()) 
+	{
+		Minimise();
+		m_IconButton->show();
+	}
 	
 	return t;
 }
@@ -168,6 +158,7 @@ void  Fl_DeviceGUI::Maximise()
 	}
 	
 	m_PluginWindow->show();
+	m_IconButton->hide();
 }
 
 void  Fl_DeviceGUI::Resize(int width, int height)
@@ -183,17 +174,6 @@ void  Fl_DeviceGUI::Resize(int width, int height)
 	}
 	
 	position(x()+(oldw-w())/2,y()+(oldh-h())/2);
-}
-
-void  Fl_DeviceGUI::draw()
-{	
-	Fl_Group::draw();
-	if (m_Icon && m_Minimised)
-	{
-		int Centx=x()+w()/2;
-		int Centy=y()+h()/2;
-		m_Icon->draw(Centx-m_Icon->w()/2,Centy-m_Icon->h()/2);
-	}
 }
 
 void Fl_DeviceGUI::Setup(const DeviceGUIInfo& Info, bool FirstTime)
@@ -217,14 +197,23 @@ void Fl_DeviceGUI::Setup(const DeviceGUIInfo& Info, bool FirstTime)
 	m_PortVec.clear();
 	
 	int InputX=x()+2;
-	int OutputX=x()+PortGroupWidth+Info.Width+4;
+	int OutputX=0;
 	int StartY=y()+TitleBarHeight;
 	int PortDist=10;
 	int PortNum=0;
 	
 	m_MiniHeight=Info.Height+TitleBarHeight;
-	h(m_MiniHeight);
-	
+	bool Maximised = (m_PluginWindow && m_PluginWindow->visible());
+	if (!Maximised) 
+	{
+		h(m_MiniHeight);
+		OutputX=x()+PortGroupWidth+Info.Width+4;
+	}
+	else
+	{
+		OutputX=x()+w()-8;
+	}
+		
 	for (int n=0; n<Info.NumInputs; n++)
 	{
 		Fl_PortButton* NewInput = new Fl_PortButton(InputX,StartY+PortDist*n,PortSize,PortSize,"");
@@ -259,7 +248,7 @@ void Fl_DeviceGUI::Setup(const DeviceGUIInfo& Info, bool FirstTime)
 	
 	for (int n=0; n<Info.NumOutputs; n++)
 	{
-		Fl_PortButton* NewOutput = new Fl_PortButton(OutputX,StartY+PortDist*n,PortSize,PortSize,"");
+		Fl_PortButton* NewOutput= NewOutput = new Fl_PortButton(OutputX,StartY+PortDist*n,PortSize,PortSize,"");
 		NewOutput->type(1);
 		NewOutput->SetType(Fl_PortButton::OUTPUT);
 		NewOutput->value(false);

@@ -19,57 +19,28 @@
 #include "../SpiralPlugin.h"
 #include <FL/Fl_Pixmap.H>
 
-#ifndef OscillatorPLUGIN
-#define OscillatorPLUGIN
+#ifndef PLUGIN
+#define PLUGIN
 
-class MidiPlugin : public SpiralPlugin
+class TrigPlugin : public SpiralPlugin
 {
 public:
- 	MidiPlugin();
-	virtual ~MidiPlugin();
-
+ 	TrigPlugin();
+	virtual ~TrigPlugin();
+	
 	virtual PluginInfo& Initialise(const HostInfo *Host);
 	virtual SpiralGUIType*  CreateGUI();
 	virtual void 		Execute();
-	virtual void        ExecuteCommands();
+	virtual void 		ExecuteCommands();
 	virtual void	    StreamOut(ostream &s);
 	virtual void	    StreamIn(istream &s);
-	
-	// has to be defined in the plugin	
-	virtual void UpdateGUI() { Fl::check(); }
-	
-	int  GetDeviceNum()      { return m_DeviceNum; }
-	bool GetNoteCut()        { return m_NoteCut; }
-	bool GetContinuousNotes()        { return m_ContinuousNotes; }
-	
-	enum GUICommands{NONE,ADDCONTROL,DELCONTROL};
-	struct GUIArgs
-	{
-		int s;
-		char Name[256];
-	};
-		
-private:
-	GUIArgs m_GUIArgs;
-	
-	void AddControl(int s,const string &Name);
-	void DeleteControl();
-	
-	int m_DeviceNum;
 
-	float m_NoteLevel;
-	float m_TriggerLevel;
-	float m_PitchBendLevel;
-	float m_ChannelPressureLevel;
-	float m_AfterTouchLevel;
-	float m_ControlLevel[128];
-	bool  m_NoteCut;
-	bool  m_ContinuousNotes;
-	int	  m_CurrentNote;
+	enum OperatorType{NONE,SIN,COS,TAN};
+
+	OperatorType GetOperator() { return m_Operator; }
 	
-	static int m_RefCount;
-	
-	vector<int> m_ControlList;
+private:
+	OperatorType m_Operator;
 };
 
 #endif
