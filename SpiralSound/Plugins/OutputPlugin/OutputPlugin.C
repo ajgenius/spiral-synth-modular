@@ -99,7 +99,7 @@ m_Volume(1.0f)
 	m_PluginInfo.PortTips.push_back("Left In");
 	m_PluginInfo.PortTips.push_back("Right In");
 	
-	m_AudioCH->Register("Volume",(char*)&m_Volume);
+	m_AudioCH->Register("Volume",&m_Volume);
 	
 	m_Mode=NO_MODE;
 }
