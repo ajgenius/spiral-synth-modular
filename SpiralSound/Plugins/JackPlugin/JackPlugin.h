@@ -107,6 +107,8 @@ private:
         int             m_JackOutputCount;
 	int		m_JackInstanceID;
 
+	static int JackProcessInstanceID;
+
 	void(*RunCallback)(void*, bool m);
 	void *RunContext;
 };
@@ -162,6 +164,9 @@ private:
 	bool		m_Connected;	
 	JackClient 	*m_JackClient;
 	int		m_JackInstanceID;
+
+	//clunky work-around for unique ID
+	static int JackInstanceCount;
 };
 
 #endif

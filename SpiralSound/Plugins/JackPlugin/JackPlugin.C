@@ -25,8 +25,9 @@
 
 using namespace std;
 
-static int JackInstances = 0;
-static int JackProcessInstance = -1;
+int JackClient::JackProcessInstanceID = -1;
+int JackPlugin::JackInstanceCount = 0;
+
 /////////////////////////////////////////////////////////////////////////////////////////////
 inline void JackClient::JackProcess_i(jack_nframes_t nframes)
 {	
@@ -60,10 +61,10 @@ inline void JackClient::JackProcess_i(jack_nframes_t nframes)
 		
 	if (RunCallback&&RunContext)
 	{
-		if (JackProcessInstance==-1)
-			JackProcessInstance = m_JackInstanceID;
+		if (JackProcessInstanceID==-1)
+			JackProcessInstanceID = m_JackInstanceID;
 
-		if (JackProcessInstance==m_JackInstanceID)
+		if (JackProcessInstanceID==m_JackInstanceID)
 			RunCallback(RunContext,true);
 	}
 }
@@ -83,8 +84,8 @@ inline void JackClient::JackShutdown_i()
 
 	SetAttached(false);
 
-	if (JackProcessInstance==m_JackInstanceID)
-		JackProcessInstance = -1;
+	if (JackProcessInstanceID==m_JackInstanceID)
+		JackProcessInstanceID = -1;
 		
 	// tells ssm to go back to non callback mode
 	RunCallback(RunContext, false);
@@ -228,8 +229,8 @@ void JackClient::Detach()
 		m_Attached=false;
 	}
 	
-	if (JackProcessInstance==m_JackInstanceID)
-		JackProcessInstance = -1;
+	if (JackProcessInstanceID==m_JackInstanceID)
+		JackProcessInstanceID = -1;
 
 	// tells ssm to go back to non callback mode
 	RunCallback(RunContext, false);
@@ -275,7 +276,7 @@ void JackClient::ConnectInput(int n, const string &JackPort)
 {
 	if (!IsAttached()) return;
 
-//	cerr<<"JackClient::ConnectInput: connecting source ["<<JackPort<<"] to dest ["<<m_InputPortMap[n]->Name<<"]"<<endl;
+	cerr<<"JackClient::ConnectInput: connecting source ["<<JackPort<<"] to dest ["<<m_InputPortMap[n]->Name<<"]"<<endl;
 
 	if (m_InputPortMap[n]->ConnectedTo!="")
 	{
@@ -298,7 +299,7 @@ void JackClient::ConnectInput(int n, const string &JackPort)
 void JackClient::ConnectOutput(int n, const string &JackPort)
 {
 	if (!IsAttached()) return;
-//	cerr<<"JackClient::ConnectOutput: connecting source ["<<m_OutputPortMap[n]->Name<<"] to dest ["<<JackPort<<"]"<<endl;
+	cerr<<"JackClient::ConnectOutput: connecting source ["<<m_OutputPortMap[n]->Name<<"] to dest ["<<JackPort<<"]"<<endl;
 
 	if (m_OutputPortMap[n]->ConnectedTo!="")
 	{
@@ -319,7 +320,7 @@ void JackClient::ConnectOutput(int n, const string &JackPort)
 void JackClient::DisconnectInput(int n)
 {
 	if (!IsAttached()) return;
-//	cerr<<"JackClient::DisconnectInput: Disconnecting input "<<n<<endl;
+	cerr<<"JackClient::DisconnectInput: Disconnecting input "<<n<<endl;
 
 	if (m_InputPortMap[n]->ConnectedTo!="")
 	{
@@ -336,7 +337,7 @@ void JackClient::DisconnectInput(int n)
 void JackClient::DisconnectOutput(int n)
 {
 	if (!IsAttached()) return;
-//	cerr<<"JackClient::DisconnectInput: Disconnecting input "<<n<<endl;
+	cerr<<"JackClient::DisconnectInput: Disconnecting input "<<n<<endl;
 
 	if (m_OutputPortMap[n]->ConnectedTo!="")
 	{
@@ -393,8 +394,12 @@ m_Connected(false)
 {
         m_JackClient=new JackClient;
 
-	m_JackInstanceID = JackInstances ;
-	JackInstances++;
+	//clunky way to ensure unique JackID - JackInstanceCount is never dec 
+	//so new JackInstances per session always get a higher number even on 
+	//reload and new Patch
+	
+	m_JackInstanceID = JackInstanceCount;
+	JackInstanceCount++;
 
         m_JackClient->SetJackInstanceID(m_JackInstanceID);
         
