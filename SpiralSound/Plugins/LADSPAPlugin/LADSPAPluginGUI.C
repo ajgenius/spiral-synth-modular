@@ -73,23 +73,25 @@ SpiralPluginGUI(w,h,o,ch)
 	m_MakerLabel->labelsize(12);
 	add(m_MakerLabel);
 
-	m_Tab = new Fl_Tabs(5,60,490,255,"");
+	m_Tab = new Fl_Tabs (5, 60, 490, 250, "");
+	m_Tab->box (FL_PLASTIC_DOWN_BOX);
 	m_Tab->callback((Fl_Callback *)cb_TabChange);
 	add(m_Tab);
 
-	m_ControlGroup = new Fl_Group(0,80,490,255,"Control");
+	m_ControlGroup = new Fl_Group (5, 80, 490, 230, "Control");
+        m_ControlGroup->box (FL_PLASTIC_UP_BOX);
 	m_ControlGroup->labelsize(12);
 
-	m_ControlScroll = new Fl_Scroll(10,85,480,210,"");
+	m_ControlScroll = new Fl_Scroll (10, 85, 480, 220, "");
 	m_ControlScroll->align(FL_ALIGN_TOP_LEFT);
 	m_ControlScroll->type(Fl_Scroll::VERTICAL);
-	m_ControlScroll->box(FL_DOWN_BOX);
 	m_ControlGroup->add(m_ControlScroll);
 
-	m_ControlPack = new Fl_Pack(5,90,460,50,"");
+	m_ControlPack = new Fl_Pack (10, 85, 480, 220, "");
 	m_ControlScroll->add(m_ControlPack);
 
-	m_SetupGroup = new Fl_Group(0,80,490,255,"Setup");
+	m_SetupGroup = new Fl_Group (5, 80, 490, 230, "Setup");
+        m_SetupGroup->box (FL_PLASTIC_UP_BOX);
 	m_SetupGroup->labelsize(12);
 
 	m_Browser = new Fl_Choice(50,85,440,22,"Plugin:");
@@ -98,7 +100,7 @@ SpiralPluginGUI(w,h,o,ch)
 	m_Browser->callback((Fl_Callback *)cb_Select);
 
 	m_Browser->add("(None)");
-	
+
     for (vector<LADSPAInfo::PluginEntry>::iterator i=m_PluginList.begin();
 	     i!=m_PluginList.end(); i++)
 	{
@@ -168,7 +170,7 @@ SpiralPluginGUI(w,h,o,ch)
 	m_PortLabel->labelsize(12);
         m_SetupGroup->add(m_PortLabel);
 
-	m_UpdateInputs = new Fl_Check_Button(10,282,120,25,"Update input values?");
+	m_UpdateInputs = new Fl_LED_Button (10, 282, 25, 25, "Update input values?");
 	m_UpdateInputs->labelsize(12);
 	m_UpdateInputs->value(true);
 	m_UpdateInputs->callback((Fl_Callback *)cb_UpdateInputs);
@@ -298,7 +300,7 @@ const string LADSPAPluginGUI::GetHelpText(const string &loc)
 		            + "Value\n"
 		            + "    The value being input to the port from a connection.\n"
 		            + "Default\n"
-		            + "    The value used as input if there is no connection. If"
+		            + "    The value used as input if there is no connection. If\n"
 		            + "    the port is connected, the default will use the value.\n"
 		            + "    Upon disconnection, it will retain the last value\n"
 		            + "    received.\n"
@@ -307,8 +309,8 @@ const string LADSPAPluginGUI::GetHelpText(const string &loc)
 		            + "    assuming the signal is in the range -1.0 to +1.0.\n"
 		            + "Clamp\n"
 		            + "    Whether to scale inputs - if unchecked, the input is\n"
-		            + "    not scaled."
-		            + "Port Name"
+		            + "    not scaled.\n"
+		            + "Port Name\n"
 		            + "    The name of the port, as supplied by the plugin.\n"
 		            + "\n"
 		            + "The Control tab will display a control knob for each port\n"
@@ -630,14 +632,14 @@ void LADSPAPluginGUI::cb_Select(Fl_Choice* o)
 	((LADSPAPluginGUI*)(o->parent()->parent()->parent()))->cb_Select_i(o);
 }
 
-inline void LADSPAPluginGUI::cb_UpdateInputs_i(Fl_Check_Button* o)
+inline void LADSPAPluginGUI::cb_UpdateInputs_i(Fl_LED_Button* o)
 {
 	m_UpdateInputState = (bool)(o->value());
 
 	m_GUICH->SetData("SetUpdateInputs", &m_UpdateInputState);
 	m_GUICH->SetCommand(LADSPAPlugin::SETUPDATEINPUTS);
 }
-void LADSPAPluginGUI::cb_UpdateInputs(Fl_Check_Button* o)
+void LADSPAPluginGUI::cb_UpdateInputs(Fl_LED_Button* o)
 {       //                     Group     Tab       GUI
 	((LADSPAPluginGUI*)(o->parent()->parent()->parent()))->cb_UpdateInputs_i(o);
 }

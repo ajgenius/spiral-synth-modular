@@ -54,14 +54,13 @@ m_WriteHeadPos(0)
 {
 	m_PluginInfo.Name="Delay";
 	m_PluginInfo.Width=120;
-	m_PluginInfo.Height=110;
+	m_PluginInfo.Height=112;
 	m_PluginInfo.NumInputs=3;
 	m_PluginInfo.NumOutputs=1;
-	m_PluginInfo.PortTips.push_back("Input");	
-	m_PluginInfo.PortTips.push_back("Delay CV");		
-	m_PluginInfo.PortTips.push_back("ReadHead CV");	
+	m_PluginInfo.PortTips.push_back("Input");
+	m_PluginInfo.PortTips.push_back("Delay CV");
+	m_PluginInfo.PortTips.push_back("ReadHead CV");
 	m_PluginInfo.PortTips.push_back("Output");
-	
 	m_AudioCH->Register("Delay",&m_Delay);
 	m_AudioCH->Register("Mix",&m_Mix);
 }
@@ -71,8 +70,8 @@ DelayPlugin::~DelayPlugin()
 }
 
 PluginInfo &DelayPlugin::Initialise(const HostInfo *Host)
-{	
-	PluginInfo& Info = SpiralPlugin::Initialise(Host);	
+{
+	PluginInfo& Info = SpiralPlugin::Initialise(Host);
 	m_Buffer.Allocate((int)(m_HostInfo->SAMPLERATE*MAX_DELAY));
 	return Info;
 }
@@ -87,25 +86,25 @@ SpiralGUIType *DelayPlugin::CreateGUI()
 void DelayPlugin::Execute()
 {
 	int Delay;
-	
+
     for (int n=0; n<m_HostInfo->BUFSIZE; n++)
 	{
 		Delay=(int)((m_Delay+GetInput(1,n)*0.5f)*(float)m_HostInfo->SAMPLERATE);
-		
-		if (Delay>=MAX_DELAY*m_HostInfo->SAMPLERATE) 
+
+		if (Delay>=MAX_DELAY*m_HostInfo->SAMPLERATE)
 		{
-			Delay=(int)(MAX_DELAY*m_HostInfo->SAMPLERATE)-1;		
+			Delay=(int)(MAX_DELAY*m_HostInfo->SAMPLERATE)-1;
 		}
-		
+
 		if (Delay<0) Delay=0;
-		
-		if (m_ReadHeadPos<0 || m_ReadHeadPos>=MAX_DELAY*m_HostInfo->SAMPLERATE) 
+
+		if (m_ReadHeadPos<0 || m_ReadHeadPos>=MAX_DELAY*m_HostInfo->SAMPLERATE)
 			cerr<<"read agh! "<<m_ReadHeadPos<<endl;
-		if (m_WriteHeadPos<0 || m_WriteHeadPos>=MAX_DELAY*m_HostInfo->SAMPLERATE) 
+		if (m_WriteHeadPos<0 || m_WriteHeadPos>=MAX_DELAY*m_HostInfo->SAMPLERATE)
 			cerr<<"write agh! "<<m_WriteHeadPos<<endl;
-		
+
 		// Read from the buffer
-		SetOutput(0,n,m_Buffer[m_ReadHeadPos]+m_Mix*GetInput(0,n));	 
+		SetOutput(0,n,m_Buffer[m_ReadHeadPos]+m_Mix*GetInput(0,n));
 		
 		// Write to the buffer	
 		m_Buffer.Set((int)m_WriteHeadPos,GetInput(0,n));

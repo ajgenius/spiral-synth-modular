@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #ifndef __ladspa_plugin_gui_h__
 #define __ladspa_plugin_gui_h__
@@ -32,6 +32,7 @@
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Output.H>
 #include "../Widgets/Fl_Knob.H"
+#include "../Widgets/Fl_LED_Button.H"
 
 #include <vector>
 #include <string>
@@ -89,7 +90,7 @@ private:
 
 	Fl_Scroll                     *m_InputScroll;
 	Fl_Pack                       *m_InputPack;
-	Fl_Check_Button               *m_UpdateInputs;
+	Fl_LED_Button                 *m_UpdateInputs;
 	std::vector<Fl_Output*>        m_PortValue;
 	std::vector<Fl_Input*>         m_PortMin;
 	std::vector<Fl_Input*>         m_PortMax;
@@ -122,8 +123,8 @@ private:
 	static void cb_TabChange(Fl_Tabs *o);
 	inline void cb_Select_i(Fl_Choice* o);
 	static void cb_Select(Fl_Choice* o);
-	inline void cb_UpdateInputs_i(Fl_Check_Button* o);
-	static void cb_UpdateInputs(Fl_Check_Button* o);
+	inline void cb_UpdateInputs_i(Fl_LED_Button* o);
+	static void cb_UpdateInputs(Fl_LED_Button* o);
 	inline void cb_Default_i(Fl_Input* o);
 	static void cb_Default(Fl_Input* o);
 	inline void cb_Min_i(Fl_Input* o);

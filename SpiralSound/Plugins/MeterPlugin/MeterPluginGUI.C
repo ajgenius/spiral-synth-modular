@@ -34,49 +34,57 @@ m_Bypass (false)
   m_Data = new float[m_BufSize];
   // Create the widgets and stuff!
   Bypass = new Fl_Button (2, 18, 54, 20, "Bypass");
-  Bypass -> labelsize (10);
-  Bypass -> type (1);
-  Bypass -> callback ((Fl_Callback*)cb_Bypass);
+  Bypass->labelsize (10);
+  Bypass->type (FL_TOGGLE_BUTTON);
+  Bypass->box (FL_PLASTIC_UP_BOX);
+  Bypass->color (GUI_COLOUR);
+  Bypass->selection_color (GUI_COLOUR);
+  Bypass->callback ((Fl_Callback*)cb_Bypass);
   add (Bypass);
-  VUMode = new Fl_Check_Button (86, 18, 54, 20, "VU");
+  VUMode = new Fl_Button (118, 18, 54, 20, "VU");
   VUMode->type (FL_RADIO_BUTTON);
-  VUMode->down_box (FL_DIAMOND_DOWN_BOX);
+  VUMode->box (FL_PLASTIC_UP_BOX);
+  VUMode->color (GUI_COLOUR);
   VUMode->selection_color (GUI_COLOUR);
+  VUMode->labelsize (10);
   VUMode->callback ((Fl_Callback*)cb_Mode);
   VUMode->set();
   add (VUMode);
-  MMMode = new Fl_Check_Button (142, 18, 54, 20, "Min/Max");
+  MMMode = new Fl_Button (174, 18, 54, 20, "Min/Max");
   MMMode->type (FL_RADIO_BUTTON);
-  MMMode->down_box (FL_DIAMOND_DOWN_BOX);
+  MMMode->box (FL_PLASTIC_UP_BOX);
+  MMMode->color (GUI_COLOUR);
   MMMode->selection_color (GUI_COLOUR);
+  MMMode->labelsize (10);
   MMMode->callback ((Fl_Callback*)cb_Mode);
   add (MMMode);
   for (int display=0; display<8; display++) {
     Digits[display] = new Fl_SevenSeg ((display*28)+2, 40, 28, 40);
-    Digits[display] -> bar_width (4);
-    Digits[display] -> color (FL_WHITE);
-    Digits[display] -> color2 (GUI_COLOUR);
+    Digits[display]->bar_width (4);
+    Digits[display]->color (FL_BLACK);
+    Digits[display]->color2 (FL_GRAY);
     add (Digits[display]);
   }
   MinBox = new Fl_Output (2, 104, 84, 20);
-  MinBox -> box (FL_ENGRAVED_BOX);
-  MinBox -> color (16);
-  MinBox -> set_output();
+  MinBox->box (FL_PLASTIC_DOWN_BOX);
+  MinBox->set_output();
   add (MinBox);
   Reset = new Fl_Button (88, 104, 54, 20, "Reset");
-  Reset -> labelsize (10);
-  Reset -> type (0);
-  Reset -> callback ((Fl_Callback*)cb_Reset);
+  Reset->labelsize (10);
+  Reset->type (0);
+  Reset->box (FL_PLASTIC_UP_BOX);
+  Reset->color (GUI_COLOUR);
+  Reset->selection_color (GUI_COLOUR);
+  Reset->callback ((Fl_Callback*)cb_Reset);
   add (Reset);
   MaxBox = new Fl_Output (144, 104, 84, 20);
   MaxBox->set_output();
-  MaxBox->box (FL_ENGRAVED_BOX);
-  MaxBox->color (16);
+  MaxBox->box (FL_PLASTIC_DOWN_BOX);
   add (MaxBox);
   Meter = new Fl_VU_Meter (2, 82, 226, 20);
   Meter->color (FL_BLACK);
+  Meter->vu_mode (true);
   cb_Reset_i (Reset, NULL);
-  add (Reset);
   end ();
   DoReset ();
 }
@@ -153,7 +161,7 @@ void MeterPluginGUI::cb_Bypass (Fl_Button* o, void* v) {
 }
 
 void MeterPluginGUI::DoReset (void) {
-  MaxBox->color (16);
+  MaxBox->color (MinBox->color());
   SetMinMax (10, -10); // Yes, I know that LOOKS the wrong way round, but it isn't!
 }
 
@@ -165,13 +173,14 @@ void MeterPluginGUI::cb_Reset (Fl_Button* o, void* v) {
   ((MeterPluginGUI*)(o->parent()))->cb_Reset_i (o, v);
 }
 
-void MeterPluginGUI::cb_Mode_i (Fl_Check_Button* o, void* v) {
+void MeterPluginGUI::cb_Mode_i (Fl_Button* o, void* v) {
   DoReset ();
   if (o==VUMode) m_GUICH->SetCommand (MeterPlugin::SETVU);
   else m_GUICH->SetCommand (MeterPlugin::SETMM);
+  Meter->vu_mode (o==VUMode);
 }
 
-void MeterPluginGUI::cb_Mode (Fl_Check_Button* o, void* v) {
+void MeterPluginGUI::cb_Mode (Fl_Button* o, void* v) {
   ((MeterPluginGUI*)(o->parent()))->cb_Mode_i (o, v);
 }
 

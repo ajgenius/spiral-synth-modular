@@ -161,7 +161,7 @@ m_LastPatSeqLight(0)
 	m_Octave->value(0);
 	m_Octave->callback((Fl_Callback*)cb_Octave);
 	add(m_Octave);
-		
+
 	m_CopyBtn = new Fl_Button (5, 150, 40, 20, "Copy");
 	m_CopyBtn->labelsize (10);
 	m_CopyBtn->callback ((Fl_Callback*)cb_CopyBtn);

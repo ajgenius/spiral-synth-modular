@@ -23,7 +23,6 @@
 #include "../Widgets/Fl_VU_Meter.h"
 #include "../Widgets/Fl_SevenSeg.H"
 #include <FL/Fl_Button.H>
-#include <FL/Fl_Check_Button.H>
 #include <FL/Fl_Output.H>
 #include "MeterPlugin.h"
 #include "../SpiralPluginGUI.h"
@@ -44,15 +43,14 @@ class MeterPluginGUI : public SpiralPluginGUI {
     inline void DoReset (void);
     Fl_SevenSeg *Digits[8];
     Fl_Output *MaxBox, *MinBox;
-    Fl_Button *Reset, *Bypass;
-    Fl_Check_Button *VUMode, *MMMode;
+    Fl_Button *Reset, *Bypass, *VUMode, *MMMode;
     Fl_VU_Meter *Meter;
     inline void cb_Reset_i (Fl_Button* o, void* v);
     static void cb_Reset (Fl_Button* o, void* v);
     inline void cb_Bypass_i (Fl_Button* o, void* v);
     static void cb_Bypass (Fl_Button* o, void* v);
-    inline void cb_Mode_i (Fl_Check_Button* o, void* v);
-    static void cb_Mode (Fl_Check_Button* o, void* v);
+    inline void cb_Mode_i (Fl_Button* o, void* v);
+    static void cb_Mode (Fl_Button* o, void* v);
 };
 
 #endif

@@ -45,6 +45,7 @@ HEADERS =	../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
 		../../ChannelHandler.h \
 		../Widgets/Fl_Knob.H \
+		../Widgets/Fl_LED_Button.H \
 		../Widgets/Fl_DragBar.H \
 		../../Sample.h \
 		LADSPAPlugin.h \
@@ -54,6 +55,7 @@ SOURCES =	../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
 		../../ChannelHandler.C \
 		../Widgets/Fl_Knob.cxx \
+		../Widgets/Fl_LED_Button.cxx \
 		../Widgets/Fl_DragBar.cxx \
 		../../Sample.C \
 		LADSPAPlugin.C \
@@ -63,6 +65,7 @@ OBJECTS =	../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
 		../../ChannelHandler.o \
 		../Widgets/Fl_Knob.o \
+		../Widgets/Fl_LED_Button.o \
 		../Widgets/Fl_DragBar.o \
 		../../Sample.o \
 		LADSPAPlugin.o \
@@ -137,11 +140,16 @@ install:
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
 		../Widgets/Fl_DragBar.H \
+		../Widgets/Fl_LED_Button.H \
+		../Widgets/Fl_Knob.H \
 		../SpiralPlugin.h \
 		../../Sample.h
 
 ../Widgets/Fl_Knob.o: ../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_Knob.H
+
+../Widgets/Fl_LED_Button.o: ../Widgets/Fl_LED_Button.cxx \
+		../Widgets/Fl_LED_Button.H
 
 ../Widgets/Fl_DragBar.o: ../Widgets/Fl_DragBar.cxx \
 		../Widgets/Fl_DragBar.H
@@ -157,8 +165,9 @@ LADSPAPlugin.o: LADSPAPlugin.C \
 		../../SpiralInfo.h \
 		../../Sample.h \
 		LADSPAPluginGUI.h \
-		../Widgets/Fl_Knob.H \
 		../SpiralPluginGUI.h \
+		../Widgets/Fl_Knob.H \
+		../Widgets/Fl_LED_Button.H \
 		../Widgets/Fl_DragBar.H \
 		LADSPAInfo.h \
 		SpiralIcon.xpm
@@ -172,6 +181,8 @@ LADSPAPluginGUI.o: LADSPAPluginGUI.C \
 		../../SpiralInfo.h \
 		../../Sample.h \
 		../SpiralPluginGUI.h \
+		../Widgets/Fl_Knob.H \
+		../Widgets/Fl_LED_Button.H \
 		../Widgets/Fl_DragBar.H
 
 ../../ChannelHandler.o: ../../ChannelHandler.C \

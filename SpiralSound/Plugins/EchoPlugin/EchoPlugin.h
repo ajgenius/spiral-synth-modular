@@ -24,31 +24,28 @@
 
 class EchoPlugin : public SpiralPlugin
 {
-public:
+    public:
  	EchoPlugin();
 	virtual ~EchoPlugin();
-	
-	virtual PluginInfo &Initialise(const HostInfo *Host);
+	virtual PluginInfo &Initialise (const HostInfo *Host);
 	virtual SpiralGUIType *CreateGUI();
 	virtual void Execute();
-	virtual void StreamOut(ostream &s);
-	virtual void StreamIn(istream &s);
-	    
-	float GetDelay()    { return m_Delay;    }
+	virtual void StreamOut (ostream &s);
+	virtual void StreamIn (istream &s);
+	float GetDelay() { return m_Delay; }
 	float GetFeedback() { return m_Feedback; }
-	
-	void Randomise();
-	
-private:
-	float m_Delay;
-	float m_Feedback;
-
-	int m_HeadPos;
-	Sample m_Buffer;
-
+        bool GetBounce () { return m_Bounce; }
+	//void Randomise();
+    private:
+	float m_Delay, m_Feedback;
+        bool m_Bounce;
+	int m_HeadPos, m_Buf0, m_Buf1;
+	//Sample m_Buffer1, m_Buffer2;
+	Sample m_Buffer[2];
 	friend istream &operator>>(istream &s, EchoPlugin &o);
 	friend ostream &operator<<(ostream &s, EchoPlugin &o);
 };
+
 istream &operator>>(istream &s, EchoPlugin &o);
 ostream &operator<<(ostream &s, EchoPlugin &o);
 

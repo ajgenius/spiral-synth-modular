@@ -35,6 +35,9 @@ SpiralPluginGUI (w, h, o, ch)
   m_Chans = new Fl_Counter (5, 20, 40, 20, "Channels");
   m_Chans->labelsize (10);
   m_Chans->type (FL_SIMPLE_COUNTER);
+  m_Chans->box (FL_PLASTIC_UP_BOX);
+  m_Chans->color (GUI_COLOUR);
+  m_Chans->selection_color (GUI_COLOUR);
   m_Chans->step (1);
   m_Chans->value (2);
   m_Chans->callback ((Fl_Callback*) cb_Chans);
@@ -43,6 +46,9 @@ SpiralPluginGUI (w, h, o, ch)
   m_Switch = new Fl_Counter (49, 20, 40, 20, "Select");
   m_Switch->labelsize (10);
   m_Switch->type (FL_SIMPLE_COUNTER);
+  m_Switch->box (FL_PLASTIC_UP_BOX);
+  m_Switch->color (GUI_COLOUR);
+  m_Switch->selection_color (GUI_COLOUR);
   m_Switch->step (1);
   m_Switch->value (1);
   m_Switch->callback ((Fl_Callback*) cb_Switch);

@@ -14,50 +14,45 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
+
+#ifndef EchoGUI
+#define EchoGUI
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Group.H>
-#include <FL/Fl_Slider.H>
-#include <FL/Fl_Output.H>
-#include <FL/Fl_Button.H>
-#include <FL/Fl_Box.H>
-
-#include "EchoPlugin.h"
-#include "../SpiralPluginGUI.h"
+#include <FL/Fl_Tabs.H>
+#include <FL/Fl_Counter.H>
 #include "../Widgets/Fl_Knob.H"
-
-#ifndef FilterGUI
-#define FilterGUI
-
+#include "../Widgets/Fl_LED_Button.H"
+#include "../SpiralPluginGUI.h"
+#include "EchoPlugin.h"
 
 class EchoPluginGUI : public SpiralPluginGUI
 {
-public:
-	EchoPluginGUI(int w, int h, EchoPlugin *o,ChannelHandler *ch,const HostInfo *Info);
-	
-	virtual void UpdateValues(SpiralPlugin *o);
-
-protected:
-    const string GetHelpText(const string &loc);	
-	
-private:
-	
-	Fl_Slider 		*m_Delay;
-	Fl_Slider 		*m_Feedback;
-	Fl_Button 		*m_pop;	
-	Fl_Output 		*m_out_delay;
-	Fl_Output 		*m_out_feedback;
-
-	//// Callbacks ////
-	
-	inline void cb_Delay_i(Fl_Slider* o, void* v);
-    static void cb_Delay(Fl_Slider*, void*);
-	inline void cb_Feedback_i(Fl_Slider* o, void* v);
-	static void cb_Feedback(Fl_Slider* o, void* v); 
-  	inline void cb_pop_i(Fl_Button* o, void*);
-  	static void cb_pop(Fl_Button* o, void*);
+   public:
+      EchoPluginGUI (int w, int h, EchoPlugin *o, ChannelHandler *ch, const HostInfo *Info);
+      virtual void UpdateValues (SpiralPlugin *o);
+   protected:
+      const string GetHelpText (const string &loc);
+   private:
+      Fl_Tabs *m_TheTabs;
+      Fl_Group *m_CtlGroup, *m_NumGroup;
+      Fl_Knob *m_Delay, *m_Feedback;
+      Fl_Counter *m_NumDelay, *m_NumFeedback;
+      Fl_LED_Button *m_Bounce;
+      //// Callbacks ////
+      inline void cb_Delay_i (Fl_Knob* o, void* v);
+      static void cb_Delay (Fl_Knob* o, void* v);
+      inline void cb_Feedback_i (Fl_Knob* o, void* v);
+      static void cb_Feedback (Fl_Knob* o, void* v);
+      inline void cb_NumDelay_i (Fl_Counter* o, void* v);
+      static void cb_NumDelay (Fl_Counter* o, void* v);
+      inline void cb_NumFeedback_i (Fl_Counter* o, void* v);
+      static void cb_NumFeedback (Fl_Counter* o, void* v);
+      inline void cb_Bounce_i (Fl_LED_Button* o, void* v);
+      static void cb_Bounce (Fl_LED_Button* o, void* v);
 };
 
 #endif

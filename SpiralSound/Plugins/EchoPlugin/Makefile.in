@@ -45,6 +45,7 @@ HEADERS =	../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
 		../../ChannelHandler.h \
 		../Widgets/Fl_Knob.H \
+		../Widgets/Fl_LED_Button.H \
 		../Widgets/Fl_DragBar.H \
 		../../Sample.h \
 		EchoPlugin.h \
@@ -53,6 +54,7 @@ SOURCES =	../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
 		../../ChannelHandler.C \
 		../Widgets/Fl_Knob.cxx \
+		../Widgets/Fl_LED_Button.cxx \
 		../Widgets/Fl_DragBar.cxx \
 		../../Sample.C \
 		EchoPlugin.C \
@@ -62,15 +64,16 @@ OBJECTS =	../SpiralPlugin.o \
 		../../ChannelHandler.o \
 		../Widgets/Fl_Knob.o \
 		../Widgets/Fl_DragBar.o \
+		../Widgets/Fl_LED_Button.o \
 		../../Sample.o \
 		EchoPlugin.o \
 		EchoPluginGUI.o
-INTERFACES =	
-UICDECLS =	
-UICIMPLS =	
-SRCMOC	=	
-OBJMOC	=	
-DIST	=	
+INTERFACES =
+UICDECLS =
+UICIMPLS =
+SRCMOC	=
+OBJMOC	=
+DIST	=
 TARGET	=	EchoPlugin.so
 
 ####### Implicit rules
@@ -97,7 +100,7 @@ TARGET	=	EchoPlugin.so
 
 all: $(TARGET)
 
-$(TARGET): $(UICDECLS) $(OBJECTS) $(OBJMOC) 
+$(TARGET): $(UICDECLS) $(OBJECTS) $(OBJMOC)
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(OBJMOC) $(LIBS)
 
 moc: $(SRCMOC)
@@ -131,11 +134,16 @@ install:
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
 		../Widgets/Fl_DragBar.H \
+		../Widgets/Fl_Knob.H \
+		../Widgets/Fl_LED_Button.H \
 		../SpiralPlugin.h \
 		../../Sample.h
 
 ../Widgets/Fl_Knob.o: ../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_Knob.H
+
+../Widgets/Fl_LED_Button.o: ../Widgets/Fl_LED_Button.cxx \
+		../Widgets/Fl_LED_Button.H
 
 ../Widgets/Fl_DragBar.o: ../Widgets/Fl_DragBar.cxx \
 		../Widgets/Fl_DragBar.H
@@ -153,6 +161,7 @@ EchoPlugin.o: EchoPlugin.C \
 		EchoPluginGUI.h \
 		../SpiralPluginGUI.h \
 		../Widgets/Fl_DragBar.H \
+		../Widgets/Fl_LED_Button.H \
 		../Widgets/Fl_Knob.H \
 		SpiralIcon.xpm
 
@@ -165,6 +174,7 @@ EchoPluginGUI.o: EchoPluginGUI.C \
 		../../Sample.h \
 		../SpiralPluginGUI.h \
 		../Widgets/Fl_DragBar.H \
+		../Widgets/Fl_LED_Button.H \
 		../Widgets/Fl_Knob.H
 
 ../../ChannelHandler.o: ../../ChannelHandler.C \

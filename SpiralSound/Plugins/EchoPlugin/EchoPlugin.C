@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 #include "EchoPlugin.h"
 #include "EchoPluginGUI.h"
 #include <FL/Fl_Button.h>
@@ -47,85 +47,85 @@ string SpiralPlugin_GetGroupName()
 ///////////////////////////////////////////////////////
 
 EchoPlugin::EchoPlugin() :
-m_Delay(0.75),
-m_Feedback(0.4),
-m_HeadPos(0)
+m_Delay (0.75),
+m_Feedback (0.4),
+m_Bounce (false),
+m_HeadPos (0),
+m_Buf0 (0),
+m_Buf1 (1)
 {
-	m_PluginInfo.Name="Echo";
-	m_PluginInfo.Width=120;
-	m_PluginInfo.Height=110;
-	m_PluginInfo.NumInputs=3;
-	m_PluginInfo.NumOutputs=1;
-	m_PluginInfo.PortTips.push_back("Input");	
-	m_PluginInfo.PortTips.push_back("Delay CV");	
-	m_PluginInfo.PortTips.push_back("Feedback CV");	
-	m_PluginInfo.PortTips.push_back("Output");
-	
-	m_AudioCH->Register("Delay",&m_Delay);
-	m_AudioCH->Register("Feedback",&m_Feedback);
+        m_Version = 2;
+        m_PluginInfo.Name = "Echo";
+	m_PluginInfo.Width = 120;
+	m_PluginInfo.Height = 132;
+	m_PluginInfo.NumInputs = 3;
+	m_PluginInfo.NumOutputs = 2;
+	m_PluginInfo.PortTips.push_back ("Input");
+	m_PluginInfo.PortTips.push_back ("Delay CV");
+	m_PluginInfo.PortTips.push_back ("Feedback CV");
+	m_PluginInfo.PortTips.push_back ("Left/Mono Out");
+	m_PluginInfo.PortTips.push_back ("Right Out");
+	m_AudioCH->Register ("Delay", &m_Delay);
+	m_AudioCH->Register ("Feedback", &m_Feedback);
+	m_AudioCH->Register ("Bounce", &m_Bounce);
 }
 
 EchoPlugin::~EchoPlugin()
 {
 }
 
-PluginInfo &EchoPlugin::Initialise(const HostInfo *Host)
-{	
-	PluginInfo& Info = SpiralPlugin::Initialise(Host);
-	m_Buffer.Allocate((int)(m_HostInfo->SAMPLERATE*MAX_DELAY));
+PluginInfo &EchoPlugin::Initialise (const HostInfo *Host)
+{
+	PluginInfo& Info = SpiralPlugin::Initialise (Host);
+	m_Buffer[0].Allocate ((int)(m_HostInfo->SAMPLERATE * MAX_DELAY));
+	m_Buffer[1].Allocate ((int)(m_HostInfo->SAMPLERATE * MAX_DELAY));
 	return Info;
 }
 
 SpiralGUIType *EchoPlugin::CreateGUI()
 {
-	return new EchoPluginGUI(m_PluginInfo.Width,
-								  	    m_PluginInfo.Height,
-										this,m_AudioCH,m_HostInfo);
+	return new EchoPluginGUI (m_PluginInfo.Width, m_PluginInfo.Height, this, m_AudioCH, m_HostInfo);
 }
 
 void EchoPlugin::Execute()
 {
-	float Delay;
-	
-    for (int n=0; n<m_HostInfo->BUFSIZE; n++)
-	{
-		Delay=(m_Delay+GetInput(1,n)*0.5)*(float)m_HostInfo->SAMPLERATE-1;
-		
-		if (Delay>=MAX_DELAY*m_HostInfo->SAMPLERATE) 
-		{
-			Delay=(MAX_DELAY*m_HostInfo->SAMPLERATE)-1;		
-		}
-		
-		if (Delay<0) Delay=0;
-		
-		if (m_HeadPos>Delay)
-		{
-			m_HeadPos=0;
-		}
+     float Delay;
+     for (int n=0; n<m_HostInfo->BUFSIZE; n++) {
+         Delay=( m_Delay+GetInput (1,n)*0.5 ) * (float)m_HostInfo->SAMPLERATE-1;
+         if (Delay >= MAX_DELAY*m_HostInfo->SAMPLERATE)
+            Delay = (MAX_DELAY*m_HostInfo->SAMPLERATE)-1;
+         if (Delay<0) Delay=0;
+         if (m_HeadPos>Delay) m_HeadPos=0;
+         if (m_Bounce && m_HeadPos==0) {
+            int c=m_Buf0;
+            m_Buf0=m_Buf1;
+            m_Buf1=c;
+         }
+         // Write to the buffer
+         m_Buffer[m_Buf0].Set (m_HeadPos, GetInput (0,n)+(m_Buffer[m_Buf0][m_HeadPos]*(m_Feedback+GetInput (2,n))));
+         if (!m_Bounce) m_Buffer[m_Buf1].Set (m_HeadPos, 0);
+         // Read from the buffer
+         SetOutput(0, n, m_Buffer[m_Buf0][m_HeadPos]);
+         SetOutput(1, n, m_Buffer[m_Buf1][m_HeadPos]);
+         m_HeadPos++;
+     }
 
-		// Write to the buffer	
-		m_Buffer.Set(m_HeadPos,GetInput(0,n)+(m_Buffer[m_HeadPos]*(m_Feedback+GetInput(2,n))));	 
+}
 
-		// Read from the buffer
-		SetOutput(0,n,m_Buffer[m_HeadPos]);	 
-		
-		m_HeadPos++;	
-	}
-		
-}
-	
-void EchoPlugin::Randomise()
-{
-}
-	
+//void EchoPlugin::Randomise()
+//{
+//}
+
 void EchoPlugin::StreamOut(ostream &s)
 {
-	s<<m_Version<<" "<<m_Delay<<" "<<m_Feedback<<" ";
+	s << m_Version << " " << m_Delay << " " << m_Feedback << " " << m_Bounce << " ";
 }
 
 void EchoPlugin::StreamIn(istream &s)
-{	
+{
 	int version;
-	s>>version;
-	s>>m_Delay>>m_Feedback;
+	s >> version;
+	s >> m_Delay >> m_Feedback;
+        if (version>1) s >> m_Bounce; else m_Bounce = false;
 }
+

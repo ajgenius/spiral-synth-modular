@@ -43,8 +43,8 @@ m_TableLength (DEFAULT_TABLE_LEN) {
 	m_CyclePos = 0;
 	m_Note = 0;
 	m_PluginInfo.Name = "LFO";
-	m_PluginInfo.Width = 165;
-	m_PluginInfo.Height = 150;
+	m_PluginInfo.Width = 160;
+	m_PluginInfo.Height = 112;
 	m_PluginInfo.NumInputs = 0;
 	m_PluginInfo.NumOutputs = 3;
 	m_PluginInfo.PortTips.push_back ("Output");
