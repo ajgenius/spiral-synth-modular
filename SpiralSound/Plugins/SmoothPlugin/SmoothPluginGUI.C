@@ -63,11 +63,13 @@ void SmoothPluginGUI::UpdateValues(SpiralPlugin *o)
 }
 	
 inline void SmoothPluginGUI::cb_Down_i(Fl_Knob* o, void* v)
-{ m_GUICH->Set("Down",o->value()); }
+{ m_GUICH->Set("Down",(float)o->value()); }
+
 void SmoothPluginGUI::cb_Down(Fl_Knob* o, void* v)
 { ((SmoothPluginGUI*)(o->parent()))->cb_Down_i(o,v);}
 
 inline void SmoothPluginGUI::cb_Up_i(Fl_Knob* o, void* v)
-{ m_GUICH->Set("Up",o->value()); }
+{ m_GUICH->Set("Up",(float)o->value()); }
+
 void SmoothPluginGUI::cb_Up(Fl_Knob* o, void* v)
 { ((SmoothPluginGUI*)(o->parent()))->cb_Up_i(o,v);}
