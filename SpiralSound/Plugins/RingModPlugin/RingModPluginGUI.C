@@ -49,7 +49,7 @@ void RingModPluginGUI::UpdateValues(SpiralPlugin *o)
 
 inline void RingModPluginGUI::cb_Amount_i(Fl_Knob* o, void* v) 
 { 
-	m_GUICH->Set("Amount",o->value()); 
+	m_GUICH->Set("Amount",(float)o->value()); 
 }
 void RingModPluginGUI::cb_Amount(Fl_Knob* o, void* v) 
 { ((RingModPluginGUI*)(o->parent()))->cb_Amount_i(o,v); }
