@@ -61,6 +61,7 @@ bool SynthModular::m_CallbackUpdateMode = false;
 
 DeviceWin::~DeviceWin()
 {	
+	cerr<<"hello cvs"<<endl;
 } 
 
 //////////////////////////////////////////////////////////
