@@ -162,23 +162,29 @@ void MidiDevice::SendEvent(int Device,const MidiEvent &Event)
   	snd_seq_ev_set_direct (&ev);
 	snd_seq_ev_set_subs   (&ev);
     snd_seq_ev_set_source (&ev, 0);
-  	
+
 	switch (Event.GetType())
 	{
-		case MidiEvent::ON : ev.type = SND_SEQ_EVENT_NOTEON;
-		case MidiEvent::OFF : ev.type = SND_SEQ_EVENT_NOTEOFF;
+		case MidiEvent::ON:
+                     ev.type = SND_SEQ_EVENT_NOTEON;
+                     break;
+		case MidiEvent::OFF:
+                     ev.type = SND_SEQ_EVENT_NOTEOFF;
+                     break;
+                default:
+                     break;
 	}
-		
+
 	ev.data.note.velocity = (char)Event.GetVolume()*127;
 	ev.data.control.channel = Device;
 	ev.data.note.note=Event.GetNote();
-	
+
 	int ret=snd_seq_event_output(seq_handle, &ev);
 	snd_seq_drain_output(seq_handle);
 #else
 	if (Device<0 || Device>15)
 	{
-		cerr<<"SendEvent: Invalid Midi device "<<Device<<endl;		
+		cerr<<"SendEvent: Invalid Midi device "<<Device<<endl;
 	}
 
 	char message[3];
