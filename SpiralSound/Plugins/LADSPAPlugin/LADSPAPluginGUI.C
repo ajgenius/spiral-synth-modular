@@ -226,7 +226,7 @@ void LADSPAPluginGUI::ClearPortInfo()
 	
 	m_InputScroll->remove(m_InputPack);	
 	delete m_InputPack;
-	m_InputPack = new Fl_Pack(300,85,300,100,"");
+	m_InputPack = new Fl_Pack(x()+300,y()+85,300,100,"");
 	m_InputScroll->add(m_InputPack);	
 		
 	m_PortOutput.clear();

@@ -60,7 +60,7 @@ m_SnapDegrees(45),
 m_PosMarkerCount(0)
 {
 	m_MidX=(w/2)+x;
-	m_MidY=(h/2)+y;
+	m_MidY=(h/2)+y-20;
 }
 
 void Fl_Loop::SetupCopyBufFuncs(cb_CopyBuf1 *Cut,
@@ -108,7 +108,7 @@ void Fl_Loop::SetLength(const int Len)
 void Fl_Loop::DrawWav()
 {
 	int Thickness=(m_OuterRad-m_InnerRad)/2;
-	int n=0,x=0,y=0,ox=0,oy=0, c=0, skip=0;
+	int n=0,X=0,Y=0,ox=0,oy=0, c=0, skip=0;
 	bool FirstTime=true;
 	float Angle=0;
 	float Sample=0;
@@ -130,13 +130,13 @@ void Fl_Loop::DrawWav()
 			
 		Angle=c*SampleAngle;
 		
-		ox=x;
-		oy=y;
+		ox=X;
+		oy=Y;
 			
 		float pos=Sample*Thickness+m_InnerRad+Thickness;
 			
-		x=(int)(m_MidX+sin(Angle*RADCONV)*pos);
-		y=(int)(m_MidY+cos(Angle*RADCONV)*pos);
+		X=(int)(m_MidX+x()+sin(Angle*RADCONV)*pos);
+		Y=(int)(m_MidY+y()+cos(Angle*RADCONV)*pos);
 			
 		if (Angle>m_StartAngle && Angle<m_EndAngle)
 		{
@@ -148,16 +148,16 @@ void Fl_Loop::DrawWav()
 			fl_color(100,155,100);
 		}
 				
-		if (!FirstTime) fl_line(x,y,ox,oy);
+		if (!FirstTime) fl_line(X,Y,ox,oy);
 		
 		// draw the snap points
 		if(m_SnapDegrees && (int)Angle%m_SnapDegrees==0)
 		{
 			fl_color(155,155,50);
-			fl_line((int)(m_MidX+sin(Angle*RADCONV)*m_InnerRad),
-					(int)(m_MidY+cos(Angle*RADCONV)*m_InnerRad),
-					(int)(m_MidX+sin(Angle*RADCONV)*m_OuterRad),
-					(int)(m_MidY+cos(Angle*RADCONV)*m_OuterRad));
+			fl_line((int)(m_MidX+x()+sin(Angle*RADCONV)*m_InnerRad),
+					(int)(m_MidY+y()+cos(Angle*RADCONV)*m_InnerRad),
+					(int)(m_MidX+x()+sin(Angle*RADCONV)*m_OuterRad),
+					(int)(m_MidY+y()+cos(Angle*RADCONV)*m_OuterRad));
 		}
 		
 		n+=skip;
@@ -192,10 +192,10 @@ void Fl_Loop::DrawPosMarker()
 		
 		fl_color(FL_BLUE);
 		
-		m_IndSX=(int)(m_MidX+sin(Angle*RADCONV)*m_InnerRad);
-		m_IndSY=(int)(m_MidY+cos(Angle*RADCONV)*m_InnerRad);
-		m_IndEX=(int)(m_MidX+sin(Angle*RADCONV)*m_OuterRad);
-		m_IndEY=(int)(m_MidY+cos(Angle*RADCONV)*m_OuterRad);
+		m_IndSX=(int)(m_MidX+x()+sin(Angle*RADCONV)*m_InnerRad);
+		m_IndSY=(int)(m_MidY+y()+cos(Angle*RADCONV)*m_InnerRad);
+		m_IndEX=(int)(m_MidX+x()+sin(Angle*RADCONV)*m_OuterRad);
+		m_IndEY=(int)(m_MidY+y()+cos(Angle*RADCONV)*m_OuterRad);
 		
 		
 		fl_line(m_IndSX,m_IndSY,m_IndEX,m_IndEY);
@@ -234,9 +234,9 @@ void Fl_Loop::DrawEveryThing()
 		m_InnerRad-=5;
 		m_OuterRad+=5;
 		fl_color(20,60,20);
-		fl_pie(m_MidX-m_OuterRad, m_MidY-m_OuterRad, m_OuterRad*2, m_OuterRad*2, 0, 360);
+		fl_pie(m_MidX+x()-m_OuterRad, m_MidY+y()-m_OuterRad, m_OuterRad*2, m_OuterRad*2, 0, 360);
 		fl_color(color());
-		fl_pie(m_MidX-m_InnerRad, m_MidY-m_InnerRad, m_InnerRad*2, m_InnerRad*2, 0, 360);
+		fl_pie(m_MidX+x()-m_InnerRad, m_MidY+y()-m_InnerRad, m_InnerRad*2, m_InnerRad*2, 0, 360);
 		m_OuterRad-=5;
 		m_InnerRad+=5;	
 		
@@ -265,8 +265,8 @@ int Fl_Loop::handle(int event)
 			// fall through
 		case FL_DRAG:
     		{				
-				int mx = Fl::event_x()-m_MidX;
-				int my = Fl::event_y()-m_MidY;
+				int mx = Fl::event_x()-(m_MidX+x());
+				int my = Fl::event_y()-(m_MidY+y());
 				if (!mx && !my) break;
 				    			
 				double angle = 90+atan2((float)-my, (float)mx)*180/M_PI;
