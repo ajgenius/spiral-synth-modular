@@ -29,6 +29,7 @@ extern "C" {
 
    int GetID () { return 125; }
 
+   string GetGroupName() { return "Maths/Logic"; }
 }
 
 ///////////////////////////////////////////////////////
