@@ -61,7 +61,8 @@ m_Name(Info.Name),
 m_ID(-1),
 m_DelMe(false),
 m_IsTerminal(Terminal),
-m_Minimised(true)
+m_Minimised(true),
+m_Maximising(false)
 {
 	for (int n=0; n<512; n++) Numbers[n]=n;
 
@@ -104,11 +105,10 @@ m_Minimised(true)
 	m_PluginWindow = PW;
 	if (m_PluginWindow) {
            m_PluginWindow->hide();
-           add (m_PluginWindow);			
+           add (m_PluginWindow);
+           m_PluginWindow->ResizeCallback (&cb_Resize, this);
 	}
-
 	resizable(NULL);
-
 	//Add the input/output ports
 	Setup(Info, true);
 }
@@ -117,6 +117,15 @@ void Fl_DeviceGUI::Clear()
 {
 	end();
 }
+
+inline void Fl_DeviceGUI::cb_Resize_i (void) {
+     if (m_PluginWindow && !m_DelMe && !m_Minimised && !m_Maximising) Maximise();
+}
+
+void Fl_DeviceGUI::cb_Resize (Fl_DeviceGUI *o) {
+     o->cb_Resize_i();
+}
+
 
 int Fl_DeviceGUI::handle (int event) {
     int t=Fl_Group::handle(event);
@@ -128,13 +137,7 @@ int Fl_DeviceGUI::handle (int event) {
        }
     }
 
-    if (m_PluginWindow && !m_DelMe) {
-       if (m_PluginWindow->needs_resize() && !m_Minimised) {
-          Maximise();
-          m_PluginWindow->needs_resize(false);
-       }
-    }
-
+    // this bit might be supposed to be in cb_resize_i, I'm not sure - Andy Preston
     if (!m_Minimised && !m_PluginWindow->visible()) {
        Minimise();
        if (m_IconButton) m_IconButton->show();
@@ -152,7 +155,8 @@ void  Fl_DeviceGUI::Minimise()
 
 void  Fl_DeviceGUI::Maximise()
 {
-	m_Minimised=false;
+        m_Minimised=false;
+        m_Maximising=true;
 	if (m_PluginWindow->h()+2>m_MiniHeight)
 	{
 		Resize(m_PluginWindow->w()+(PortGroupWidth*2)-5,m_PluginWindow->h()+2);
@@ -165,6 +169,7 @@ void  Fl_DeviceGUI::Maximise()
 	m_IconButton->hide();
 	parent()->redraw();
 	((Fl_Canvas*)parent())->ToTop(this);
+        m_Maximising=false;
 }
 
 void  Fl_DeviceGUI::Resize(int width, int height)
@@ -200,22 +205,22 @@ void Fl_DeviceGUI::Setup(const DeviceGUIInfo& Info, bool FirstTime)
 	// delete the current ports
 	for(vector<Fl_PortButton*>::iterator i=m_PortVec.begin();
 			i!=m_PortVec.end(); i++)
-	{		
+	{
 		remove(*i);
 		delete(*i);
 	}
 
 	m_PortVec.clear();
-	
+
 	int InputX=x()+2;
 	int OutputX=0;
 	int StartY=y()+TitleBarHeight;
 	int PortDist=10;
 	int PortNum=0;
-	
+
 	m_MiniHeight=Info.Height+TitleBarHeight;
 	bool Maximised = (m_PluginWindow && m_PluginWindow->visible());
-	if (!Maximised) 
+	if (!Maximised)
 	{
 		h(m_MiniHeight);
 		OutputX=x()+PortGroupWidth+Info.Width+4;
@@ -224,7 +229,7 @@ void Fl_DeviceGUI::Setup(const DeviceGUIInfo& Info, bool FirstTime)
 	{
 		OutputX=x()+w()-8;
 	}
-		
+
 	for (int n=0; n<Info.NumInputs; n++)
 	{
 		Fl_PortButton* NewInput = new Fl_PortButton(InputX,StartY+PortDist*n,PortSize,PortSize,"");
@@ -232,7 +237,7 @@ void Fl_DeviceGUI::Setup(const DeviceGUIInfo& Info, bool FirstTime)
 		NewInput->SetType(Fl_PortButton::INPUT);
 		NewInput->value(false);
 		NewInput->box(FL_ROUNDED_BOX);
-		
+
         Fl_Color col = (Fl_Color) WIRE_COL0;
          switch (Info.PortTypes[n]) {
              case 0:     col = (Fl_Color) WIRE_COL0;
@@ -248,15 +253,15 @@ void Fl_DeviceGUI::Setup(const DeviceGUIInfo& Info, bool FirstTime)
              default:    col = (Fl_Color) WIRE_COL0;
          }
  		NewInput->selection_color(col);
-		 
+
 		NewInput->down_box(FL_ROUNDED_BOX);
 		NewInput->tooltip(Info.PortTips[n].c_str());
-		NewInput->callback((Fl_Callback*)cb_Port,(void*)&Numbers[PortNum]);		
+		NewInput->callback((Fl_Callback*)cb_Port,(void*)&Numbers[PortNum]);
 		m_PortVec.push_back(NewInput);
 		add(NewInput);
 		PortNum++;
 	}
-	
+
 	for (int n=0; n<Info.NumOutputs; n++)
 	{
 		Fl_PortButton* NewOutput= NewOutput = new Fl_PortButton(OutputX,StartY+PortDist*n,PortSize,PortSize,"");
@@ -280,20 +285,19 @@ void Fl_DeviceGUI::Setup(const DeviceGUIInfo& Info, bool FirstTime)
              default:    col = (Fl_Color) WIRE_COL0;
          }
  		NewOutput->selection_color(col);
-  
 
 		NewOutput->down_box(FL_ROUNDED_BOX);
 		NewOutput->tooltip(Info.PortTips[n+Info.NumInputs].c_str());
-		NewOutput->callback((Fl_Callback*)cb_Port,(void*)&Numbers[PortNum]);		
+		NewOutput->callback((Fl_Callback*)cb_Port,(void*)&Numbers[PortNum]);
 		m_PortVec.push_back(NewOutput);
 		add(NewOutput);
 		PortNum++;
 	}
 }
 
-bool Fl_DeviceGUI::AddConnection(int n)  		 
-{ 
-	if ( n < (int)m_PortVec.size() ) 
+bool Fl_DeviceGUI::AddConnection(int n)
+{
+	if ( n < (int)m_PortVec.size() )
 	{
 		m_PortVec[n]->Add();
 		m_PortVec[n]->value(1);
@@ -302,15 +306,15 @@ bool Fl_DeviceGUI::AddConnection(int n)
 	}
 	return false;
 }
-	
-void Fl_DeviceGUI::RemoveConnection(int n)  		 
-{ 
-	m_PortVec[n]->Remove(); 
-	if (!m_PortVec[n]->GetCount()) 
-	{ 
-		m_PortVec[n]->value(0); 
+
+void Fl_DeviceGUI::RemoveConnection(int n)
+{
+	m_PortVec[n]->Remove();
+	if (!m_PortVec[n]->GetCount())
+	{
+		m_PortVec[n]->value(0);
 		redraw();
-	} 
+	}
 }
 
 inline void Fl_DeviceGUI::cb_Port_i(Fl_Button* o, void* v)
@@ -318,11 +322,11 @@ inline void Fl_DeviceGUI::cb_Port_i(Fl_Button* o, void* v)
 	int Port=*(int*)(v);
 	Fl_PortButton *PortButton = (Fl_PortButton *)o;
 	PortType Pt;
-	
+
 	if (m_DelMe) return;
-	
+
 	// Find out if this is an input or an output.
-	if (Port<m_Info.NumInputs) 
+	if (Port<m_Info.NumInputs)
 	{
 		Pt=INPUT;
 	}
@@ -331,16 +335,16 @@ inline void Fl_DeviceGUI::cb_Port_i(Fl_Button* o, void* v)
 		Pt=OUTPUT;
 		Port-=m_Info.NumInputs;
 	}
-	
+
 	if (PortButton->GetLastButton()==1)
 	{
 		((Fl_Canvas*)(parent()))->PortClicked(this,Pt,Port,1);
 	}
 	else
 	{
-		((Fl_Canvas*)(parent()))->PortClicked(this,Pt,Port,0);	
+		((Fl_Canvas*)(parent()))->PortClicked(this,Pt,Port,0);
 	}
-		
+
 }
 void Fl_DeviceGUI::cb_Port(Fl_Button* o, void* v)
 {((Fl_DeviceGUI*)(o->parent()))->cb_Port_i(o,v);}

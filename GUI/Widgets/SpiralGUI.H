@@ -20,14 +20,20 @@
 
 #include <FL/Fl_Group.H>
 
+class Fl_DeviceGUI;
+class SpiralGUIType;
+typedef void (SpiralGUISizeCB)(Fl_DeviceGUI *o);
+
 class SpiralGUIType : public Fl_Group {
    public:
       SpiralGUIType (int x, int y, int w, int h, const char *label = 0);
       ~SpiralGUIType ();
-      bool needs_resize (void) { return m_NeedsResize; }
-      void needs_resize (bool nr) { m_NeedsResize = nr; }
+      void ResizeCallback (SpiralGUISizeCB *c, Fl_DeviceGUI *d) { m_ResizeSpiralGUI = c; m_DeviceGUI = d; }
+   protected:
+      void DoResizeCallback (void) { if (m_ResizeSpiralGUI) m_ResizeSpiralGUI(m_DeviceGUI); }
    private:
-      bool m_NeedsResize;
+      SpiralGUISizeCB *m_ResizeSpiralGUI;
+      Fl_DeviceGUI *m_DeviceGUI;
 };
 
 #endif

@@ -17,10 +17,10 @@
 
 #include "SpiralGUI.H"
 
-//                                                            Default label = 0
+//                                                        Default label = 0
 SpiralGUIType::SpiralGUIType (int x, int y, int w, int h, const char *label) :
 Fl_Group (x, y, w, h, label),
-m_NeedsResize (false) {
+m_ResizeSpiralGUI (0) {
 }
 
 SpiralGUIType::~SpiralGUIType () {

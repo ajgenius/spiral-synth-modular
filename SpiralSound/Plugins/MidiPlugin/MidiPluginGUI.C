@@ -283,8 +283,7 @@ inline void MidiPluginGUI::cb_AddControl_i(Fl_Button* o, void* v)
 		m_GUICH->SetData("Name",Temp);
 		m_GUICH->SetCommand(MidiPlugin::ADDCONTROL);
                 m_GUICH->Wait ();
-                needs_resize (true);
-
+                DoResizeCallback ();
 		//m_Plugin->AddControl(c,List[c]);
 	}
 }
@@ -295,7 +294,7 @@ inline void MidiPluginGUI::cb_RemoveControl_i(Fl_Button* o, void* v)
 {
 	m_GUICH->SetCommand(MidiPlugin::DELCONTROL);
         m_GUICH->Wait ();
-        needs_resize (true);
+        DoResizeCallback ();
 }
 void MidiPluginGUI::cb_RemoveControl(Fl_Button* o, void* v)
 { ((MidiPluginGUI*)(o->parent()))->cb_RemoveControl_i(o,v);}

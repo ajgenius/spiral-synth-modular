@@ -52,13 +52,13 @@ public:
 	Fl_PortButton(int x, int y, int w, int h, char *n);
 	virtual ~Fl_PortButton() {};
 	void SetType(Type s) { m_Type=s; }
-	virtual int handle(int event);	
-	
+	virtual int handle(int event);
+
 	void Add()      { m_ConnectionCount++; }
 	void Remove()   { if (m_ConnectionCount>0) m_ConnectionCount--; }
 	int  GetCount() { return m_ConnectionCount; }
 	int  GetLastButton() { return m_LastButton; }
-	
+
 private:
 
 	Type m_Type;
@@ -69,7 +69,7 @@ private:
 struct DeviceGUIInfo
 {
 	int XPos;
-	int YPos;	
+	int YPos;
 	int Width;
 	int Height;
 	int NumInputs;
@@ -93,13 +93,13 @@ public:
 	bool          Killed()          			 { return m_DelMe; }
 	int           GetPortX(int n)                { return m_PortVec[n]->x()+PortSize/2; }
 	int           GetPortY(int n)                { return m_PortVec[n]->y()+PortSize/2; }
-	
-	// aesthetic, to keep track of number of connections to know whether to 
+
+	// aesthetic, to keep track of number of connections to know whether to
 	// draw the port as occupied or not.
 	bool          AddConnection(int n);
 	void          RemoveConnection(int n);
-	
-	bool          GetPortValue(int n)            { return m_PortVec[n]->value(); }	
+
+	bool          GetPortValue(int n)            { return m_PortVec[n]->value(); }
 	const         DeviceGUIInfo* GetInfo()       { return &m_Info; }
 	SpiralGUIType* GetPluginWindow() { return m_PluginWindow; }
 	string        GetName()						 { return m_Name; }
@@ -108,47 +108,36 @@ public:
 
 	void          Minimise();
 	void          Maximise();
-		
+
 	// automatically called from the constructor, but may be redone at any time.
-	virtual void  Setup(const DeviceGUIInfo& Info, bool FirstTime = false); 
+	virtual void  Setup(const DeviceGUIInfo& Info, bool FirstTime = false);
 	virtual void  Clear();
 	int           GetPortType(int n)             { return m_Info.PortTypes[n]; }
-		
+
 	// do we belong to a plugin that is an output?
 	bool IsTerminal() { return m_IsTerminal; }
-
 protected:
-
 	DeviceGUIInfo m_Info;
-
 	Fl_DragBar* m_DragBar;
 	SpiralGUIType* m_PluginWindow;
 	Fl_Pixmap*  m_Icon;
 	Fl_Button*  m_IconButton;
-	Fl_Menu_Button* m_Menu; 
-	
+	Fl_Menu_Button* m_Menu;
 private:
-
 	void  Resize(int width, int height);
-
+        inline void cb_Resize_i (void);
+        static void cb_Resize (Fl_DeviceGUI *o);
 	inline void cb_Port_i(Fl_Button* o, void* v);
 	static void cb_Port(Fl_Button* o, void* v);
 	inline void cb_Rename_i(Fl_Menu_Button* o, void* v);
 	static void cb_Rename(Fl_Menu_Button* o, void* v);
 	inline void cb_Delete_i(Fl_Menu_Button* o, void* v);
 	static void cb_Delete(Fl_Menu_Button* o, void* v);
-	
 	vector<Fl_PortButton*> m_PortVec;
-	
 	static int Numbers[512];
-
 	string m_Name;
-	int    m_ID;
-	bool   m_DelMe;
-	bool   m_IsTerminal;
-	bool   m_Minimised;
-
-        int m_MiniWidth, m_MiniHeight;
+	int m_ID, m_MiniWidth, m_MiniHeight;
+	bool m_DelMe, m_IsTerminal, m_Minimised, m_Maximising;
 };
 
 #endif

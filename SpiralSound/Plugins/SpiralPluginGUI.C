@@ -53,6 +53,8 @@ SpiralGUIType(0,0,w,h,"")
 	m_Help->down_box(FL_NO_BOX);
 	m_Help->callback((Fl_Callback*)cb_Help);
 	add(m_Help);
+
+        resizable(NULL);
 }
 
 SpiralPluginGUI::~SpiralPluginGUI()
@@ -61,9 +63,10 @@ SpiralPluginGUI::~SpiralPluginGUI()
 	Fl::check();
 }
 
-void SpiralPluginGUI::resize (int x, int y, int w, int h) {
-     if (w != this->w() || h != this->h()) needs_resize (true);
-     SpiralGUIType::resize (x, y, w, h);
+void SpiralPluginGUI::resize (int newx, int newy, int neww, int newh) {
+     m_Help->position (x()+neww-11, y()+2);
+     SpiralGUIType::resize (newx, newy, neww, newh);
+     DoResizeCallback ();
 }
 
 void SpiralPluginGUI::Update()
