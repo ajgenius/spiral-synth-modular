@@ -42,15 +42,12 @@ public:
 	// spiralplugin is acceptable
 	virtual void UpdateValues(SpiralPlugin *o)=0;
 
-	void RenameTitleBar(const string &s) { m_Title=s; m_DragBar->label(m_Title.c_str()); }
-
 protected:
 
 	ChannelHandler *m_GUICH;
 	virtual const string GetHelpText(const string &loc);
 	
 private:
-	Fl_DragBar*      m_DragBar;
 	Fl_Button*		 m_Hide;
 	Fl_Button*		 m_Help;
 	Fl_Double_Window *m_HelpWin;

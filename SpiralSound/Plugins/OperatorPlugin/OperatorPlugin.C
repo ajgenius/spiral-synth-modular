@@ -49,6 +49,8 @@ OperatorPlugin::OperatorPlugin() :
 m_Operator(ADD),
 m_Constant(0)
 {
+	m_Version=2;
+
 	m_PluginInfo.Name="Operator";
 	m_PluginInfo.Width=90;
 	m_PluginInfo.Height=80;
@@ -161,6 +163,7 @@ void OperatorPlugin::StreamOut(ostream &s)
 {
 	s<<m_Version<<endl;
 	s<<m_Constant<<" ";
+	s<<(int)m_Operator<<" ";
 }
 
 void OperatorPlugin::StreamIn(istream &s) 
@@ -168,4 +171,10 @@ void OperatorPlugin::StreamIn(istream &s)
 	int version;
 	s>>version;
 	s>>m_Constant;
+	if (version>1)
+	{
+		int t;
+		s>>t;
+		m_Operator=(OperatorType)t;
+	}
 }

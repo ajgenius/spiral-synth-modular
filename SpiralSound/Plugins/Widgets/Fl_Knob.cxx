@@ -7,7 +7,7 @@
 
 Fl_Knob::Fl_Knob(int xx,int yy,int ww,int hh,const char *l): Fl_Valuator(xx,yy,ww,hh,l) {
   int side;
-
+	box(FL_NO_BOX);
 	a1 = 35;
 	a2 = 325;
 	_type = DOTLIN;
@@ -52,8 +52,8 @@ unsigned char rr,gg,bb;
 	{
 		int col = ((Fl_Widget *)parent())->color();
 		// Clear rectangle with parent color
-		fl_color(col);
-		fl_rectf(ox,oy,side,side);
+		//fl_color(col);
+		//fl_rectf(ox,oy,side,side);
 
 		// Cast round shadow
 		Fl::get_color((Fl_Color)col,rr,gg,bb);

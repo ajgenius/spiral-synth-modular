@@ -123,13 +123,10 @@ private:
 	Fl_Button       *m_New;
 	Fl_Button       *m_OpenEditor;	
 	Fl_Button       *m_Options;
-	Fl_Group	 	*m_AppGroup;	
-	Fl_Scroll		*m_AppScroll;
 	
 	Fl_Canvas 		*m_Canvas;	
 	Fl_Scroll		*m_CanvasScroll;
 	Fl_Scroll 		*m_ToolBox;
-	Fl_Group 		*m_Buttons;		
 	Fl_Button       *m_NewComment;
 		
 	Fl_Box          *m_GroupName;
@@ -158,11 +155,7 @@ private:
 	SettingsWindow  *m_SettingsWindow;
 	
 	SpiralWindowType* m_TopWindow;
-	Fl_Tile* m_TopTile;
 	
-	Fl_Group* m_MainWindow;
-	Fl_Group* m_EditorWindow;
-
 	vector<Fl_Button*> m_DeviceVec;
 	
 	ChannelHandler m_CH; // used for threadsafe communication
@@ -190,8 +183,6 @@ private:
     static void cb_PluginGroupLeft(Fl_Button* o, void* v);
 	inline void cb_PluginGroupRight_i(Fl_Button* o, void* v);
     static void cb_PluginGroupRight(Fl_Button* o, void* v);
-	inline void cb_RenameDevice_i(Fl_Canvas* o, void* v);
-	static void cb_RenameDevice(Fl_Canvas* o, void* v);
 
 	inline void cb_Rload_i(Fl_Button* o, void* v);
     static void cb_Rload(Fl_Button* o, void* v);

@@ -88,14 +88,30 @@ void Fl_Canvas::draw()
 			draw_box();
 		}
 				
+		// draw minimised modules first
    	 	for (int i=children(); i--;) 
 		{
    			Fl_Widget& o = **a++;
-   	 		draw_child(o);
-   			draw_outside_label(o);
+			if (((Fl_DeviceGUI*)&o)->IsMinimised())
+			{
+   	 			draw_child(o);
+   				draw_outside_label(o);
+			}
 		}
 		
 		DrawWires();
+		
+		// draw maximised modules on top of everything else
+   	 	Fl_Widget*const* a = array();
+		for (int i=children(); i--;) 
+		{
+   			Fl_Widget& o = **a++;
+			if (!((Fl_DeviceGUI*)&o)->IsMinimised())
+			{
+   	 			draw_child(o);
+   				draw_outside_label(o);
+			}
+		}
 	}
 	else // only redraw the children that need it:
 	{	

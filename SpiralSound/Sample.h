@@ -19,7 +19,7 @@
 #ifndef SAMPLE
 #define SAMPLE
 
-//#define PLUGINGUI_IN_MODULE_TEST
+#define PLUGINGUI_IN_MODULE_TEST
 
 #include <assert.h>
 #include <limits.h>

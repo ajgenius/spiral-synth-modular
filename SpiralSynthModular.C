@@ -54,9 +54,9 @@ static const int FILE_VERSION = 4;
 static int Numbers[512];
 
 static const int MAIN_WIDTH     = 700;
-static const int MAIN_HEIGHT    = 300;
+static const int MAIN_HEIGHT    = 600;
 static const int SLIDER_WIDTH   = 15;
-static const int TOOLBOX_HEIGHT = MAIN_HEIGHT-40;
+static const int TOOLBOX_HEIGHT = MAIN_HEIGHT;
 static const int TOOLBOX_WIDTH  = 132+SLIDER_WIDTH;
 static const int ICON_DEPTH     = 3;
 static const int COMMENT_ID     = -1;
@@ -116,7 +116,7 @@ void SynthModular::ClearUp()
 		if (i->second->m_DeviceGUI->GetPluginWindow())
 		{
 			i->second->m_DeviceGUI->GetPluginWindow()->hide();
-			m_MainWindow->remove(i->second->m_DeviceGUI->GetPluginWindow());			
+			//m_MainWindow->remove(i->second->m_DeviceGUI->GetPluginWindow());			
 		}
 		// deleted by Canvas::Remove()? seems to cause random crashes
 		//delete i->second->m_DeviceGUI;
@@ -209,7 +209,7 @@ void SynthModular::UpdatePluginGUIs()
 			if (i->second->m_DeviceGUI->GetPluginWindow())
 			{
 				i->second->m_DeviceGUI->GetPluginWindow()->hide();
-				m_MainWindow->remove(i->second->m_DeviceGUI->GetPluginWindow());
+				//m_MainWindow->remove(i->second->m_DeviceGUI->GetPluginWindow());
 			}
 			
 			i->second->m_DeviceGUI->Clear();
@@ -230,39 +230,17 @@ void SynthModular::UpdatePluginGUIs()
 
 SpiralWindowType *SynthModular::CreateWindow()
 {
-	int xoff=0, yoff=10, but=64, gap=MAIN_HEIGHT/4, n=0;
+	int xoff=0, yoff=10, but=64, gap=MAIN_HEIGHT/5, n=0;
 	
-	m_TopWindow = new SpiralWindowType(MAIN_WIDTH, MAIN_HEIGHT*2, LABEL.c_str());
+	m_TopWindow = new SpiralWindowType(MAIN_WIDTH, MAIN_HEIGHT, LABEL.c_str());
 	m_TopWindow->resizable(m_TopWindow);
-	
-	m_TopTile = new Fl_Tile(0,0,MAIN_WIDTH, MAIN_HEIGHT*2, "");
-	m_TopWindow->add(m_TopTile);
-
-	m_MainWindow = new Fl_Tile(0,0,MAIN_WIDTH, MAIN_HEIGHT, "");
-	m_MainWindow->color(SpiralSynthModularInfo::GUICOL_Canvas);
- 	//m_MainWindow->callback((Fl_Callback*)cb_Close);
-	m_MainWindow->user_data((void*)(this));
-	m_TopTile->add(m_MainWindow);
-	
+		
 	m_MainButtons = new Fl_Group(0, 0, but, MAIN_HEIGHT, "");
     m_MainButtons->type(1);
 	m_MainButtons->color(SpiralSynthModularInfo::GUICOL_Tool);
 	m_MainButtons->box(FL_FLAT_BOX);
 	m_MainButtons->user_data((void*)(this));
-	m_MainWindow->add(m_MainButtons); 
-
-	m_AppScroll = new Fl_Scroll(but, 0, MAIN_WIDTH-but, MAIN_HEIGHT, "");	
-	m_AppScroll->scrollbar.align(FL_ALIGN_RIGHT);
-	m_MainWindow->add(m_AppScroll);
-	//m_MainWindow->resizable(m_AppScroll);
-
-	m_AppGroup = new Fl_Group(-5000, -5000, 10000, 10000, "");
-    m_AppGroup->type(1);
-	m_AppGroup->box(FL_FLAT_BOX);
-    m_AppGroup->labeltype(FL_ENGRAVED_LABEL);
-    m_AppGroup->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
-	m_AppGroup->color(SpiralSynthModularInfo::GUICOL_Canvas);
-	m_AppScroll->add(m_AppGroup);   	
+	m_TopWindow->add(m_MainButtons); 
 
 	m_Load = new Fl_Button(xoff, 5+yoff, but, but, "");
 	m_Load->box(FL_NO_BOX);
@@ -306,58 +284,56 @@ SpiralWindowType *SynthModular::CreateWindow()
 	m_Options->callback((Fl_Callback*)cb_Rload);
 	m_MainButtons->add(m_Options);
 	n++;
-			
+	
+	m_NewComment = new Fl_Button(xoff, n*gap+yoff, but, but, "");
+	m_NewComment->box(FL_NO_BOX);
+	tPix = new Fl_Pixmap(comment_xpm);
+	m_NewComment->image(tPix->copy(tPix->w(),tPix->h()));
+	delete tPix;		
+	m_NewComment->selection_color(SpiralSynthModularInfo::GUICOL_Tool);
+ 	m_NewComment->tooltip("New comment");			 
+	m_NewComment->callback((Fl_Callback*)cb_NewComment);
+	m_MainButtons->add(m_NewComment);
+	n++;
+		
 	/////////////////
 
-	m_EditorWindow = new Fl_Tile(0,MAIN_HEIGHT,MAIN_WIDTH, MAIN_HEIGHT, "");
-	m_EditorWindow->color(SpiralSynthModularInfo::GUICOL_Tool);
-	m_TopTile->add(m_EditorWindow);
-	
-	int edy = MAIN_HEIGHT;
-	Fl_Group *Left = new Fl_Group(0,MAIN_HEIGHT,TOOLBOX_WIDTH,MAIN_HEIGHT);
+	int edy = 0;
+	Fl_Group *Left = new Fl_Group(MAIN_WIDTH-TOOLBOX_WIDTH,0,TOOLBOX_WIDTH,MAIN_HEIGHT);
 	Left->box(FL_FLAT_BOX);
 	Left->color(SpiralSynthModularInfo::GUICOL_Tool);
 	Left->user_data((void*)(this));
-	m_EditorWindow->add(Left); 
-	m_EditorWindow->resizable(Left);
+	m_TopWindow->add(Left); 
 	
-	m_GroupName = new Fl_Box(0,MAIN_HEIGHT,TOOLBOX_WIDTH,16,"");
+	m_GroupName = new Fl_Box(MAIN_WIDTH-TOOLBOX_WIDTH,0,TOOLBOX_WIDTH,16,"");
 	m_GroupName->labelsize(12);
 	m_GroupName->color(SpiralSynthModularInfo::GUICOL_Canvas);
 	m_GroupName->align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE);
 	m_GroupName->box(FL_BORDER_BOX);
 	Left->add(m_GroupName);
 	
-	m_PluginGroupLeft = new Fl_Button(0, MAIN_HEIGHT, 16, 16, "@<");
+	m_PluginGroupLeft = new Fl_Button(MAIN_WIDTH-TOOLBOX_WIDTH, 0, 16, 16, "@<");
 	m_PluginGroupLeft->callback((Fl_Callback*)cb_PluginGroupLeft);
 	Left->add(m_PluginGroupLeft);
 
-	m_PluginGroupRight = new Fl_Button(TOOLBOX_WIDTH-16, MAIN_HEIGHT, 16, 16, "@>");
+	m_PluginGroupRight = new Fl_Button(MAIN_WIDTH-16, 0, 16, 16, "@>");
 	m_PluginGroupRight->callback((Fl_Callback*)cb_PluginGroupRight);
 	Left->add(m_PluginGroupRight);
 	
-	
-	m_ToolBox = new Fl_Scroll(0,0+edy+16,TOOLBOX_WIDTH, TOOLBOX_HEIGHT-16, "");
+	m_ToolBox = new Fl_Scroll(MAIN_WIDTH-TOOLBOX_WIDTH,0+edy+16,TOOLBOX_WIDTH, TOOLBOX_HEIGHT-16, "");
     m_ToolBox->type(Fl_Scroll::VERTICAL_ALWAYS);
 	m_ToolBox->box(FL_FLAT_BOX);
     m_ToolBox->labeltype(FL_ENGRAVED_LABEL);
     m_ToolBox->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
-	m_ToolBox->scrollbar.align(FL_ALIGN_LEFT);
+	m_ToolBox->scrollbar.align(FL_ALIGN_RIGHT);
 	m_ToolBox->color(SpiralSynthModularInfo::GUICOL_Tool);
 	m_ToolBox->user_data((void*)(this));
 	Left->add(m_ToolBox);  
+	m_TopWindow->resizable(m_ToolBox);
 	
-	xoff=0; yoff=MAIN_HEIGHT+TOOLBOX_HEIGHT;
-	m_Buttons = new Fl_Group(xoff, yoff, TOOLBOX_WIDTH, MAIN_HEIGHT*2-TOOLBOX_HEIGHT, "");
-    m_Buttons->type(1);
-	m_Buttons->color(SpiralSynthModularInfo::GUICOL_Tool);
-	m_Buttons->box(FL_FLAT_BOX);
-	m_Buttons->user_data((void*)(this));
-	Left->add(m_Buttons); 
-
-	m_CanvasScroll = new Fl_Scroll(TOOLBOX_WIDTH, 0+edy, MAIN_WIDTH-TOOLBOX_WIDTH, MAIN_HEIGHT, "");	
-	m_EditorWindow->add(m_CanvasScroll);
-	m_EditorWindow->resizable(m_CanvasScroll);
+	m_CanvasScroll = new Fl_Scroll(but, 0, MAIN_WIDTH-TOOLBOX_WIDTH-but, MAIN_HEIGHT, "");	
+	m_TopWindow->add(m_CanvasScroll);
+	m_TopWindow->resizable(m_CanvasScroll);
 	
 	m_Canvas = new Fl_Canvas(-5000, -5000, 10000, 10000, "");
     m_Canvas->type(1);
@@ -369,23 +345,7 @@ SpiralWindowType *SynthModular::CreateWindow()
 	m_Canvas->SetConnectionCallback((Fl_Callback*)cb_Connection);
 	m_Canvas->SetUnconnectCallback((Fl_Callback*)cb_Unconnect);
 	m_Canvas->SetAddDeviceCallback((Fl_Callback*)cb_NewDeviceFromMenu);
-	m_Canvas->SetRenameCallback((Fl_Callback*)cb_RenameDevice);
 	m_CanvasScroll->add(m_Canvas);   
-
-	m_NewComment = new Fl_Button(TOOLBOX_WIDTH/2-16, MAIN_HEIGHT*2-25, 40, 40, "");
-	m_NewComment->box(FL_NO_BOX);
-	m_Canvas->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
-	tPix = new Fl_Pixmap(comment_xpm);
-	m_NewComment->image(tPix->copy(tPix->w(),tPix->h()));	
-	delete tPix;	
-	m_NewComment->color(SpiralSynthModularInfo::GUICOL_Button);
-	m_NewComment->selection_color(SpiralSynthModularInfo::GUICOL_Tool);
-	m_NewComment->type(0);
-	m_NewComment->shortcut(FL_F + 10);		
-	m_NewComment->tooltip("New comment in editor");		 
-	m_NewComment->user_data((void*)(this));
-	m_NewComment->callback((Fl_Callback*)cb_NewComment);
-	m_Buttons->add(m_NewComment);
 
 	m_SettingsWindow = new SettingsWindow;
 	m_SettingsWindow->RegisterApp(this);
@@ -401,7 +361,7 @@ SynthModular::ToolBox::ToolBox(Fl_Scroll *parent, void* user)
 	int Height = 40;
 	m_Icon=0;
 	
-	m_ToolPack = new Fl_Pack(SLIDER_WIDTH+5,25+MAIN_HEIGHT,TOOLBOX_WIDTH-10, TOOLBOX_HEIGHT-60,"");
+	m_ToolPack = new Fl_Pack(MAIN_WIDTH-TOOLBOX_WIDTH+5,20,TOOLBOX_WIDTH-10, TOOLBOX_HEIGHT-60,"");
     m_ToolPack->type(FL_VERTICAL);
 	m_ToolPack->box(FL_NO_BOX);
 	m_ToolPack->color(SpiralSynthModularInfo::GUICOL_Tool);
@@ -679,30 +639,15 @@ DeviceWin* SynthModular::NewDeviceWin(int n, int x, int y)
 	Fl_Pixmap *Pix      = new Fl_Pixmap(Plugin->GetIcon());
 	nlw->m_PluginID     = n;
 
-	#ifndef PLUGINGUI_IN_MODULE_TEST
 	if (temp) 
 	{	
-		temp->hide();
-		temp->position(200,50);
-		m_AppGroup->add(temp);		
-		m_MainWindow->redraw();
+		temp->position(x+10,y);
 	}
-	#else
-	if (temp) 
-	{	
-		temp->position(x+10,y+5);
-	}
-	#endif
 	
 	DeviceGUIInfo Info=BuildDeviceGUIInfo(PInfo);
 	
 	Info.XPos       = x; //TOOLBOX_WIDTH+(rand()%400);
 	Info.YPos       = y; //rand()%400;
-	
-	#ifdef PLUGINGUI_IN_MODULE_TEST
-		Info.Width      = PInfo.Width;
-		Info.Height     = PInfo.Height;
-	#endif
 	
 	nlw->m_DeviceGUI = new Fl_DeviceGUI(Info, temp, Pix, nlw->m_Device->IsTerminal());
 	m_Canvas->add(nlw->m_DeviceGUI);
@@ -917,12 +862,8 @@ istream &operator>>(istream &s, SynthModular &o)
 				temp->m_DeviceGUI->SetID(ID);
 				if (ver>3) 
 				{
-					// set the titlebars 
+					// set the titlebars
 					temp->m_DeviceGUI->SetName(Name);
-					if (temp->m_DeviceGUI->GetPluginWindow())
-					{
-						((SpiralPluginGUI*)(temp->m_DeviceGUI->GetPluginWindow()))->RenameTitleBar(Name);
-					}
 				}
 				
 				temp->m_Device->SetUpdateInfoCallback(ID,o.cb_UpdatePluginInfo);					
@@ -942,10 +883,10 @@ istream &operator>>(istream &s, SynthModular &o)
 					o.m_DeviceWinMap[ID]->m_Device->GetChannelHandler()->FlushChannels();
 
 					// position the plugin window in the main window
-					o.m_DeviceWinMap[ID]->m_DeviceGUI->GetPluginWindow()->position(px,py);
+					//o.m_DeviceWinMap[ID]->m_DeviceGUI->GetPluginWindow()->position(px,py);
 						
-					if (ps) o.m_DeviceWinMap[ID]->m_DeviceGUI->GetPluginWindow()->show();
-					else o.m_DeviceWinMap[ID]->m_DeviceGUI->GetPluginWindow()->hide();
+					if (ps) o.m_DeviceWinMap[ID]->m_DeviceGUI->Maximise();
+					else o.m_DeviceWinMap[ID]->m_DeviceGUI->Minimise();
 					
 					// load external files
 					o.m_DeviceWinMap[ID]->m_Device->LoadExternalFiles(o.m_FilePath+"_files/");
@@ -984,10 +925,10 @@ ostream &operator<<(ostream &s, SynthModular &o)
 	
 	if (FILE_VERSION>2)
 	{
-		s<<o.m_MainWindow->x()<<" "<<o.m_MainWindow->y()<<" ";
-		s<<o.m_MainWindow->w()<<" "<<o.m_MainWindow->h()<<" ";
-		s<<o.m_EditorWindow->x()<<" "<<o.m_EditorWindow->y()<<" ";
-		s<<o.m_EditorWindow->w()<<" "<<o.m_EditorWindow->h()<<endl;
+		s<<o.m_TopWindow->x()<<" "<<o.m_TopWindow->y()<<" ";
+		s<<o.m_TopWindow->w()<<" "<<o.m_TopWindow->h()<<" ";
+		s<<0<<" "<<0<<" ";
+		s<<0<<" "<<0<<endl;
 	}
 	
 	// save out the SynthModular
@@ -1061,8 +1002,8 @@ inline void SynthModular::cb_Close_i(Fl_Window* o, void* v)
 {
 	m_SettingsWindow->hide();
 	delete m_SettingsWindow;
-	m_EditorWindow->hide();
-	delete m_EditorWindow;
+	m_TopWindow->hide();
+	delete m_TopWindow;
 	o->hide();
 }
 
@@ -1174,7 +1115,7 @@ inline void SynthModular::cb_NewComment_i(Fl_Button* o, void* v)
 	AddComment(-1);
 }
 void SynthModular::cb_NewComment(Fl_Button* o, void* v)
-{((SynthModular*)(o->user_data()))->cb_NewComment_i(o,v);}
+{((SynthModular*)(o->parent()->user_data()))->cb_NewComment_i(o,v);}
 
 //////////////////////////////////////////////////////////
 
@@ -1294,16 +1235,6 @@ inline void SynthModular::cb_Unconnect_i(Fl_Canvas* o, void* v)
 }
 void SynthModular::cb_Unconnect(Fl_Canvas* o, void* v)
 {((SynthModular*)(o->user_data()))->cb_Unconnect_i(o,v);}
-
-//////////////////////////////////////////////////////////
-
-inline void SynthModular::cb_RenameDevice_i(Fl_Canvas* o, void* v)
-{
-	Fl_DeviceGUI* device = (Fl_DeviceGUI*)v;
-	((SpiralPluginGUI*)(device->GetPluginWindow()))->RenameTitleBar(device->GetName());
-}
-void SynthModular::cb_RenameDevice(Fl_Canvas* o, void* v)
-{((SynthModular*)(o->user_data()))->cb_RenameDevice_i(o,v);}
 
 //////////////////////////////////////////////////////////
 

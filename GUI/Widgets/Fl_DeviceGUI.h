@@ -103,7 +103,11 @@ public:
 	Fl_Group*     GetPluginWindow()              { return m_PluginWindow; }
 	string        GetName()						 { return m_Name; }
 	void          SetName(const string &s)		 { m_Name=s; m_DragBar->label(m_Name.c_str()); }
-	
+	bool		  IsMinimised()				     { return m_Minimised; }
+
+	void          Minimise();
+	void          Maximise();
+		
 	// automatically called from the constructor, but may be redone at any time.
 	virtual void  Setup(const DeviceGUIInfo& Info, bool FirstTime = false); 
 	virtual void  Clear();
@@ -123,6 +127,8 @@ protected:
 	
 private:
 
+	void  Resize(int width, int height);
+
 	inline void cb_Port_i(Fl_Button* o, void* v);
 	static void cb_Port(Fl_Button* o, void* v);
 	inline void cb_Rename_i(Fl_Menu_Button* o, void* v);
@@ -138,6 +144,10 @@ private:
 	int    m_ID;
 	bool   m_DelMe;
 	bool   m_IsTerminal;
+	bool   m_Minimised;
+	
+	int m_MiniWidth;
+	int m_MiniHeight;
 };
 
 #endif

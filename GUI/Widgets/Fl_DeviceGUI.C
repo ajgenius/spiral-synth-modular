@@ -60,7 +60,8 @@ m_Icon(NULL),
 m_Name(Info.Name),
 m_ID(-1),
 m_DelMe(false),
-m_IsTerminal(Terminal)
+m_IsTerminal(Terminal),
+m_Minimised(true)
 {	
 	for (int n=0; n<512; n++) Numbers[n]=n;
 	
@@ -71,7 +72,9 @@ m_IsTerminal(Terminal)
 	color(SpiralSynthModularInfo::GUICOL_Device);
 		
 	m_Icon=Icon;
-		
+	m_MiniWidth=w();
+	m_MiniHeight=h();
+	
 	m_DragBar = new Fl_DragBar(Info.XPos, Info.YPos, Info.Width+PortGroupWidth*2, TitleBarHeight, m_Name.c_str());
 	m_DragBar->labelsize(10);	
 	m_DragBar->type(Fl_DragBar::FLDRAG);
@@ -85,11 +88,13 @@ m_IsTerminal(Terminal)
 	m_Menu->add("delete", 0, (Fl_Callback*)cb_Delete,this);
 	
 	m_PluginWindow = PW;
+	if (m_PluginWindow)
+	{
+		m_PluginWindow->hide();
+		add(m_PluginWindow);			
+	}
 	
-	#ifdef PLUGINGUI_IN_MODULE_TEST
-	m_PluginWindow->show();
-	add(m_PluginWindow);
-	#endif
+	resizable(NULL);
 	
 	//Add the input/output ports
 	Setup(Info, true);
@@ -104,38 +109,91 @@ int  Fl_DeviceGUI::handle(int event)
 {	
 	int t=Fl_Group::handle(event);
 	
+	/*if (m_PluginWindow)
+	{
+	if (Fl::event_x()>x() && Fl::event_x()<x()+w() && Fl::event_y()>y() && Fl::event_y()<y()+h())
+	{	
+		if (!m_PluginWindow->visible() && m_PluginWindow && !m_DelMe)
+		{					
+			m_Minimised=false;
+			Resize(m_PluginWindow->w()+(PortGroupWidth*2),m_PluginWindow->h()+TitleBarHeight);
+			m_PluginWindow->show();
+		}	
+	}
+	else
+	{
+		if (m_Minimised==false)// && !m_PluginWindow->visible())
+		{
+			m_Minimised=true;
+			Resize(m_MiniWidth,m_MiniHeight);
+			m_PluginWindow->hide();
+			parent()->redraw();
+		}
+	}*/
+	
+	
 	if (t==0 && Fl::belowmouse()==this)
 	{	
 		if (event==FL_PUSH && Fl::event_button()==1) 
 		{
 			if (m_PluginWindow && !m_DelMe)
 			{					
-				if(!m_PluginWindow->visible())
-				{
-					m_PluginWindow->show();
-				}
-				/*else 
-				{
-					m_PluginWindow->hide();
-				}*/			
+				if(!m_PluginWindow->visible()) Maximise();
 			}
 		}	
 	}
 	
+	if (m_Minimised==false && !m_PluginWindow->visible()) Minimise();
+	
 	return t;
+}
+
+void  Fl_DeviceGUI::Minimise()
+{
+	m_Minimised=true;
+	Resize(m_MiniWidth,m_MiniHeight);
+	parent()->redraw();
+}
+
+void  Fl_DeviceGUI::Maximise()
+{					
+	m_Minimised=false;
+	if (m_PluginWindow->h()+2>m_MiniHeight)
+	{
+		Resize(m_PluginWindow->w()+(PortGroupWidth*2)-5,m_PluginWindow->h()+2);
+	}
+	else
+	{
+		Resize(m_PluginWindow->w()+(PortGroupWidth*2)-5,m_MiniHeight);
+	}
+	
+	m_PluginWindow->show();
+}
+
+void  Fl_DeviceGUI::Resize(int width, int height)
+{
+	int oldw = w();
+	int oldh = h();
+	size(width,height);
+	m_DragBar->size(width,m_DragBar->h());
+	
+	for (int n=m_Info.NumInputs; n<(int)m_PortVec.size(); n++)
+	{
+		m_PortVec[n]->position(x()+width-8,m_PortVec[n]->y());
+	}
+	
+	position(x()+(oldw-w())/2,y()+(oldh-h())/2);
 }
 
 void  Fl_DeviceGUI::draw()
 {	
 	Fl_Group::draw();
-	#ifndef PLUGINGUI_IN_MODULE_TEST
-	if (m_Icon)
+	if (m_Icon && m_Minimised)
 	{
 		int Centx=x()+w()/2;
 		int Centy=y()+h()/2;
 		m_Icon->draw(Centx-m_Icon->w()/2,Centy-m_Icon->h()/2);
 	}
-	#endif
 }
 
 void Fl_DeviceGUI::Setup(const DeviceGUIInfo& Info, bool FirstTime)
@@ -164,7 +222,8 @@ void Fl_DeviceGUI::Setup(const DeviceGUIInfo& Info, bool FirstTime)
 	int PortDist=10;
 	int PortNum=0;
 	
-	h(Info.Height+TitleBarHeight);
+	m_MiniHeight=Info.Height+TitleBarHeight;
+	h(m_MiniHeight);
 	
 	for (int n=0; n<Info.NumInputs; n++)
 	{
