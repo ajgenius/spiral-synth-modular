@@ -35,8 +35,15 @@
 
 using namespace std;
 
-LADSPAInfo::LADSPAInfo()
+LADSPAInfo::LADSPAInfo(bool override, const char *path_list)
 {
+	if (strlen(path_list) > 0) {
+		m_ExtraPaths = strdup(path_list);
+	} else {
+		m_ExtraPaths = NULL;
+	}
+	m_LADSPAPathOverride = override;
+
 	RescanPlugins();
 }
 
@@ -48,51 +55,32 @@ LADSPAInfo::~LADSPAInfo()
 void
 LADSPAInfo::RescanPlugins(void)
 {
-	char *ladspa_path;
-	char *start;
-	char *end;
-	int extra;
-	char *temp;
-
 // Clear out what we've got
 	CleanUp();
 
-// Get $LADPSA_PATH, if available
-	ladspa_path = getenv("LADSPA_PATH");
-	if (!ladspa_path) {
+	if (!m_LADSPAPathOverride) {
+	// Get $LADPSA_PATH, if available
+		char *ladspa_path = getenv("LADSPA_PATH");
+		if (!ladspa_path) {
 
-	// Oops
-		cerr << "WARNING: No LADSPA Path Set" << endl;
+		// Oops
+			cerr << "WARNING: No LADSPA Path Set" << endl;
+		}
+
+	// Extract path elements and add path
+		if (ladspa_path) {
+			ScanPathList(ladspa_path);
+		}
 	}
 
-// Extract path elements and add path
-	if (ladspa_path) {
-		start = ladspa_path;
-		while (*start != '\0') {
-			while (*start == ':') start++;
-			end = start;
-			while (*end != ':' && *end != '\0') end++;
-
-			if (end - start > 0) {
-				extra = (*(end - 1) == '/') ? 0 : 1;
-				temp = (char *)malloc(end - start + 1 + extra);
-				if (temp) {
-					strncpy(temp, start, end - start);
-					if (extra == 1) temp[end - start] = '/';
-					temp[end - start + extra] = '\0';
-
-					ExaminePath(temp);
-
-					free(temp);
-				}
-			}
-			start = end;
-		}
+// Check any supplied extra paths
+	if (m_ExtraPaths) {
+		ScanPathList(m_ExtraPaths);
 	}
 
 // Do we have any plugins now?
 	if (m_Plugins.size() == 0) {
-		cerr << "WARNING: No plugins found in given LADSPA_PATH" << endl;
+		cerr << "WARNING: No plugins found" << endl;
 	} else {
 		cerr << m_Plugins.size() << " plugins found in " << m_Libraries.size() << " libraries" << endl;
 	}
@@ -256,6 +244,42 @@ LADSPAInfo::CleanUp(void)
 
 	m_OrderedPluginList.clear();
 	m_MaxInputPortCount = 0;
+
+	if (m_ExtraPaths) {
+		free(m_ExtraPaths);
+		m_ExtraPaths = NULL;
+	}
+}
+
+void
+LADSPAInfo::ScanPathList(const char *path_list)
+{
+	const char *start;
+	const char *end;
+	int extra;
+	char *temp;
+
+	start = path_list;
+	while (*start != '\0') {
+		while (*start == ':') start++;
+		end = start;
+		while (*end != ':' && *end != '\0') end++;
+
+		if (end - start > 0) {
+			extra = (*(end - 1) == '/') ? 0 : 1;
+			temp = (char *)malloc(end - start + 1 + extra);
+			if (temp) {
+				strncpy(temp, start, end - start);
+				if (extra == 1) temp[end - start] = '/';
+				temp[end - start + extra] = '\0';
+
+				ExaminePath(temp);
+
+				free(temp);
+			}
+		}
+		start = end;
+	}
 }
 
 // Check given path:
@@ -274,10 +298,15 @@ LADSPAInfo::ExaminePath(const char *path)
 	void *handle;
 	LADSPA_Descriptor_Function desc_func;
 	const LADSPA_Descriptor *desc;
-	bool path_added = false;
+	bool path_added;
+	unsigned long path_index;
 	bool library_added;
 	string fullpath;
 	vector<string> temp_names;
+	vector<string>::iterator p = find(m_Paths.begin(), m_Paths.end(), path);
+
+	path_added = !(p == m_Paths.end());
+	path_index = p - m_Paths.begin();
 
 	dp = opendir(path);
 	if (!dp) {
@@ -326,7 +355,6 @@ LADSPAInfo::ExaminePath(const char *path)
 							if (m_IDLookup.find(desc->UniqueID) != m_IDLookup.end()) {
 								unsigned long plugin_index;
 								unsigned long library_index;
-								unsigned long path_index;
 
 								cerr << "WARNING: Duplicated Plugin ID ("
 								     << desc->UniqueID << ") found:" << endl;
@@ -353,7 +381,7 @@ LADSPAInfo::ExaminePath(const char *path)
 
 									// Add library info
 										LibraryInfo li;
-										li.PathIndex = m_Paths.size() - 1;
+										li.PathIndex = path_index;
 										li.Basename = ep->d_name;
 										li.Handle = NULL;
 										m_Libraries.push_back(li);

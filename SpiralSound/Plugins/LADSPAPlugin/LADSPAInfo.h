@@ -29,10 +29,11 @@
 class LADSPAInfo
 {
 public:
-	// Examine all valid paths in $LADSPA_PATH, and add
-	// basic plugin information for later lookup, instantiation
-	// and so on.
-	LADSPAInfo();
+	// If override is false, examine $LADSPA_PATH
+	// Also examine supplied path list
+	// For all paths, add basic plugin information for later lookup,
+	// instantiation and so on.
+	LADSPAInfo(bool override, const char *path_list);
 
 	// Unload all loaded plugins and clean up
 	~LADSPAInfo();
@@ -69,13 +70,14 @@ public:
 	// Get the index in the above list for given Unique ID
 	// If not found, this returns the size of the above list
 	unsigned long                   GetPluginListEntryByID(unsigned long unique_id);
-	
+
 	// Get the number of input ports for the plugin with the most
 	// input ports
 	unsigned long                   GetMaxInputPortCount(void) { return m_MaxInputPortCount; }
 
 private:
 	void                            CleanUp(void);
+	void                            ScanPathList(const char *path_list);
 	void                            ExaminePath(const char *path);
 	bool                            CheckPlugin(LADSPA_Descriptor_Function desc_func);
 	LADSPA_Descriptor_Function      GetDescriptorFunctionForLibrary(unsigned long library_index);
@@ -111,6 +113,9 @@ private:
 			return begin.Name < end.Name;
 		}
 	};
+
+	bool                            m_LADSPAPathOverride;
+	char                           *m_ExtraPaths;
 
 	std::vector<std::string>        m_Paths;
 	std::vector<LibraryInfo>        m_Libraries;
