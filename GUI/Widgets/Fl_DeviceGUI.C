@@ -89,7 +89,7 @@ int  Fl_DeviceGUI::handle(int event)
 {	
 	int t=Fl_Group::handle(event);
 	
-	if (t==0)
+	if (t==0 && Fl::belowmouse()==this)
 	{	
 		if (event==FL_PUSH && Fl::event_button()==1) 
 		{

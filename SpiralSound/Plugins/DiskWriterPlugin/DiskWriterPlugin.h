@@ -1,5 +1,5 @@
-/*  SpiralSynthModular
- *  Copyleft (C) 2002 David Griffiths <dave@pawfal.org>
+/*  SpiralSound
+ *  Copyleft (C) 2001 David Griffiths <dave@pawfal.org>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -14,38 +14,38 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/
+*/ 
 
-#ifndef SPIRALSYNTHMODULARINFO
-#define SPIRALSYNTHMODULARINFO
+#include "../SpiralPlugin.h"
+#include "../../RiffWav.h"
+#include <FL/Fl_Pixmap.H>
 
-#include "SpiralSound/SpiralInfo.h"
-#include <vector>
+#ifndef OscillatorPLUGIN
+#define OscillatorPLUGIN
 
-class SpiralSynthModularInfo : public SpiralInfo
+class DiskWriterPlugin : public SpiralPlugin
 {
 public:
-	static SpiralSynthModularInfo* Get();
-	void SetColours();
-	
-	static string PLUGIN_PATH;
-	static vector<string> PLUGINVEC;
-	
-	static int GUICOL_Tool;
-	static int GUICOL_Button;
-	static int GUICOL_Canvas;
-	static int GUICOL_Device;
-	static string BGIMG;
+ 	DiskWriterPlugin();
+	virtual ~DiskWriterPlugin();
 
-protected:
-	SpiralSynthModularInfo();
+	virtual PluginInfo& Initialise(const HostInfo *Host);
+	virtual SpiralGUIType*  CreateGUI();
+	virtual void 		Execute();
+	virtual void 		ExecuteCommands();
+	virtual void	    StreamOut(ostream &s) {}
+	virtual void	    StreamIn(istream &s)  {}
 	
-	virtual string GetResFileName() { return ".spiralmodular"; }
+	enum GUICommands {NONE,OPENWAV,CLOSEWAV,RECORD,STOP};
+	struct GUIArgs
+	{
+		char Name[256];
+	};
 	
-	static SpiralSynthModularInfo *m_SpiralSynthModularInfo;
-	
-	virtual void StreamInPrefs(istream &s);
-	virtual void StreamOutPrefs(ostream &s);
+private:
+	GUIArgs m_GUIArgs;
+	WavFile m_Wav;
+	bool m_Recording;
 };
 
 #endif

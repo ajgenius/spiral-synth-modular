@@ -24,8 +24,10 @@
 static const int GUI_COLOUR = 179;
 static const int GUIBG_COLOUR = 144;
 static const int GUIBG2_COLOUR = 145;
+static const char NoteText[12][3] = {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};
 
 ////////////////////////////////////////////
+
 Fl_MatrixButton::Fl_MatrixButton(int x, int y, int w, int h, char* n) : 
 Fl_Button(x,y,w,h,n),
 m_Volume(NULL),
@@ -170,24 +172,28 @@ m_LastLight(0)
 	m_TransLbl->labelsize(10);
 	add (m_TransLbl);
 
-	int xoff=95;
+	int xoff=105;
 	int yoff=40;
 	int butsize=7;
 	int n=0;
 	
 	fl_color(150,150,150);
 	int markercol=fl_color();
+
+	fl_color(170,170,170);
+	int blcolour=fl_color();
 	
 	for(int x=0; x<MATX; x++)
 	for(int y=0; y<MATY; y++)
 	{
 		Numbers[n]=n;
-		m_Matrix[x][y] = new Fl_MatrixButton(xoff+x*butsize,yoff+y*butsize,butsize+1,butsize+1,"");
+		m_Matrix[x][y] = new Fl_MatrixButton(xoff+x*butsize,yoff+((MATY-1)*butsize)-(y*butsize),butsize+1,butsize+1,"");
 		m_Matrix[x][y]->type(1);
 		m_Matrix[x][y]->box(FL_BORDER_BOX);
 		if ((x%8)==0) m_Matrix[x][y]->color(markercol);
+		else if ((y%12)==1 || (y%12)==3 || (y%12)==6 || (y%12)==8 || (y%12)==10) m_Matrix[x][y]->color(blcolour);
 		else m_Matrix[x][y]->color(FL_GRAY);
-		
+				
 		m_Matrix[x][y]->selection_color(FL_WHITE);
 		m_Matrix[x][y]->callback((Fl_Callback*)cb_Matrix,(void*)&Numbers[n]);
 		m_Matrix[x][y]->SetVolCallback((Fl_Callback*)cb_MatVol,(void*)&Numbers[n]);
@@ -195,7 +201,15 @@ m_LastLight(0)
 		n++;
 	}
 	
-	xoff=93;
+	yoff=37;
+	for(int y=0; y<MATY; y++)
+	{
+		Fl_Box *box = new Fl_Box(90,yoff+((MATY-1)*butsize)-(y*butsize),15,15,NoteText[y%12]);
+		box->align(FL_ALIGN_INSIDE|FL_ALIGN_LEFT);
+		box->labelsize(8);
+	}
+		
+	xoff=103;
 	for(int x=0; x<MATX; x++)
 	{
 		m_Flash[x] = new Fl_LED_Button(xoff+x*butsize,20,15,15,"");

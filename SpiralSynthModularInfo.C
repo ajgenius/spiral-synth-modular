@@ -70,14 +70,17 @@ SpiralSynthModularInfo::SpiralSynthModularInfo()
 	PLUGIN_PATH = PLUGIN_PATH_LOCATION;
 
 	PLUGINVEC.push_back("OutputPlugin.so");	
+	PLUGINVEC.push_back("DiskWriterPlugin.so");	
 	PLUGINVEC.push_back("ScopePlugin.so");	
 	PLUGINVEC.push_back("MidiPlugin.so");	
 	PLUGINVEC.push_back("KeyboardPlugin.so");	
 	PLUGINVEC.push_back("ControllerPlugin.so");	
+	PLUGINVEC.push_back("MatrixPlugin.so");	
+	PLUGINVEC.push_back("PoshSampler.so");
 	PLUGINVEC.push_back("WaveTablePlugin.so");	
 	PLUGINVEC.push_back("OscillatorPlugin.so");	
+	PLUGINVEC.push_back("LFOPlugin.so");
 	PLUGINVEC.push_back("EnvelopePlugin.so");	
-	PLUGINVEC.push_back("SplitterPlugin.so");
 	PLUGINVEC.push_back("SampleHoldPlugin.so");
 	PLUGINVEC.push_back("NoteSnapPlugin.so");	
 	PLUGINVEC.push_back("MixerPlugin.so");	
@@ -89,13 +92,12 @@ SpiralSynthModularInfo::SpiralSynthModularInfo()
 	PLUGINVEC.push_back("MoogFilterPlugin.so");	
 	PLUGINVEC.push_back("EchoPlugin.so");	
 	PLUGINVEC.push_back("DelayPlugin.so");	
-	PLUGINVEC.push_back("MatrixPlugin.so");	
 	PLUGINVEC.push_back("EnvFollowerPlugin.so");	
 	PLUGINVEC.push_back("SmoothPlugin.so");
 	PLUGINVEC.push_back("LADSPAPlugin.so");	
 	PLUGINVEC.push_back("XFadePlugin.so");
 	PLUGINVEC.push_back("DistributorPlugin.so");
-	PLUGINVEC.push_back("LFOPlugin.so");
+	PLUGINVEC.push_back("SplitterPlugin.so");
 }
 
 void SpiralSynthModularInfo::StreamInPrefs(istream &s)

@@ -35,26 +35,20 @@ SpiralPluginGUI(w,h,o,ch)
     Volume->step(0.001);
     Volume->value(0.5);   
 	Volume->callback((Fl_Callback*)cb_Volume);
-
-	Record = new Fl_Button(30, 80, 40, 25, "Record");
-    Record->type(1);
-    Record->down_box(FL_DOWN_BOX);
-    Record->labelsize(10);
-    Record->callback((Fl_Callback*)cb_Record);   
 	  	
-	OpenRead = new Fl_Button(2, 110, 30, 15, "Read");
+	OpenRead = new Fl_Button(2, 80, 30, 15, "Read");
     OpenRead->type(1);
     OpenRead->down_box(FL_DOWN_BOX);
     OpenRead->labelsize(10);
     OpenRead->callback((Fl_Callback*)cb_OpenRead);   
 
-	OpenDuplex = new Fl_Button(34, 110, 31, 15, "Dplx");
+	OpenDuplex = new Fl_Button(34, 80, 31, 15, "Dplx");
     OpenDuplex->type(1);
     OpenDuplex->down_box(FL_DOWN_BOX);
     OpenDuplex->labelsize(10);
     OpenDuplex->callback((Fl_Callback*)cb_OpenDuplex);   
 	
-	OpenWrite = new Fl_Button(68, 110, 30, 15, "Write");
+	OpenWrite = new Fl_Button(68, 80, 30, 15, "Write");
     OpenWrite->type(1);
     OpenWrite->down_box(FL_DOWN_BOX);
     OpenWrite->labelsize(10);
@@ -77,30 +71,6 @@ inline void OutputPluginGUI::cb_Volume_i(Fl_Knob* o, void* v)
 }
 void OutputPluginGUI::cb_Volume(Fl_Knob* o, void* v)
 { ((OutputPluginGUI*)(o->parent()))->cb_Volume_i(o,v); }
-
-inline void OutputPluginGUI::cb_Record_i(Fl_Button* o, void* v)
-{ 
-	if (o->value())
-	{
-		char *fn=fl_file_chooser("Pick a Wav file to save to", "*.wav", NULL);
-		
-		if (fn && fn!="")
-		{
-			OSSOutput::Get()->WavOpen(fn);
-		}
-		else
-		{
-			OSSOutput::Get()->WavClose();
-			o->value(false);
-		}
-	}
-	else
-	{
-		OSSOutput::Get()->WavClose();
-	}
-}
-void OutputPluginGUI::cb_Record(Fl_Button* o, void* v)
-{ ((OutputPluginGUI*)(o->parent()))->cb_Record_i(o,v); }
 
 inline void OutputPluginGUI::cb_OpenRead_i(Fl_Button* o, void* v)
 { 

@@ -60,7 +60,7 @@ m_PatReset(false)
 	m_Version=3;
 
 	m_PluginInfo.Name="Matrix";
-	m_PluginInfo.Width=555;
+	m_PluginInfo.Width=560;
 	m_PluginInfo.Height=270;
 	m_PluginInfo.NumInputs=5;
 	m_PluginInfo.NumOutputs=19;		
@@ -151,8 +151,8 @@ void MatrixPlugin::Execute()
 		SetOutputPitch(0,n,m_CurrentNoteCV);
 		SetOutput(1,n,m_CurrentTriggerCV);
                 
-		if (m_Step+1 >= m_Matrix[m_Current].Length) SetOutput(18, n, 1);
-        else SetOutput(18, n, 0);
+		// clear the pattern sync
+        SetOutput(18, n, 0);
 		 
 		if (GetInputPitch(0,n)>0) 
 		{
@@ -258,7 +258,11 @@ void MatrixPlugin::Execute()
 			m_Time=0;
 			m_Step++;
 			
-			if (m_Step >= m_Matrix[m_Current].Length) m_Step=0;
+			if (m_Step >= m_Matrix[m_Current].Length) 
+			{
+				SetOutput(18, n, 1);
+				m_Step=0;
+			}
 						
 			// Reset the values
 			m_CurrentTriggerCV=0;

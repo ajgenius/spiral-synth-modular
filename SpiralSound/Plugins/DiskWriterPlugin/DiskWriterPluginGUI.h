@@ -24,42 +24,31 @@
 
 #include "../Widgets/Fl_Knob.H"
 #include "../Widgets/Fl_DragBar.H"
-#include "OutputPlugin.h"
+#include "DiskWriterPlugin.h"
 #include "../SpiralPluginGUI.h"
 
 #ifndef SCOPEGUI
 #define SCOPEGUI
 
-class OutputPluginGUI : public SpiralPluginGUI
+class DiskWriterPluginGUI : public SpiralPluginGUI
 {
 public:
-	OutputPluginGUI(int w, int h, SpiralPlugin *o, ChannelHandler *ch, const HostInfo *Info);
+	DiskWriterPluginGUI(int w, int h, SpiralPlugin *o, ChannelHandler *ch, const HostInfo *Info);
 	
 	virtual void UpdateValues(SpiralPlugin *o);
 		
 private:
 
-	Fl_Group 		*GUIMixGroup;	
-	Fl_Knob 		*Volume;
+	Fl_Button		*Open;
+	Fl_Button		*Record;
 	
-	Fl_Button		*OpenRead;
-	Fl_Button		*OpenWrite;
-	Fl_Button		*OpenDuplex;
 		
 	//// Callbacks ////
 	
-	inline void cb_Volume_i(Fl_Knob* o, void* v);
-    static void cb_Volume(Fl_Knob*, void*);
 	inline void cb_Record_i(Fl_Button* o, void* v);
 	static void cb_Record(Fl_Button* o, void* v);
-	
-	inline void cb_OpenRead_i(Fl_Button* o, void* v);
-	static void cb_OpenRead(Fl_Button* o, void* v);
-	inline void cb_OpenDuplex_i(Fl_Button* o, void* v);
-	static void cb_OpenDuplex(Fl_Button* o, void* v);
-	inline void cb_OpenWrite_i(Fl_Button* o, void* v);
-	static void cb_OpenWrite(Fl_Button* o, void* v);
-
+	inline void cb_Open_i(Fl_Button* o, void* v);
+	static void cb_Open(Fl_Button* o, void* v);
 };
 
 #endif

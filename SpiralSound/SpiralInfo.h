@@ -64,7 +64,7 @@ public:
 
 protected:
 	
-	SpiralInfo() : m_HomeDir(getenv("HOME")) {}
+	SpiralInfo() : m_HomeDir(getenv("HOME")), m_Version(0) {}
 	virtual ~SpiralInfo() {}
 
 	virtual string GetResFileName() { return "ballsSpiralrc"; }

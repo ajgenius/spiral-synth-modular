@@ -90,12 +90,12 @@ m_Volume(1.0f)
 		
 	m_PluginInfo.Name="OSS";
 	m_PluginInfo.Width=100;
-	m_PluginInfo.Height=130;
-	m_PluginInfo.NumInputs=3;
+	m_PluginInfo.Height=100;
+	m_PluginInfo.NumInputs=2;
 	m_PluginInfo.NumOutputs=2;
 	m_PluginInfo.PortTips.push_back("Left Out");
 	m_PluginInfo.PortTips.push_back("Right Out");
-	m_PluginInfo.PortTips.push_back("Record Controller");
+	//m_PluginInfo.PortTips.push_back("Record Controller");
 	m_PluginInfo.PortTips.push_back("Left In");
 	m_PluginInfo.PortTips.push_back("Right In");
 	
@@ -149,8 +149,11 @@ void OutputPlugin::Execute()
 	if (m_Mode==OUTPUT || m_Mode==DUPLEX)
 	{
 		OSSOutput::Get()->SendStereo(GetInput(0),GetInput(1));
-		for (int n=0; n<m_HostInfo->BUFSIZE;n++)
+		
+		// can't open GUI stuff here
+	/*	for (int n=0; n<m_HostInfo->BUFSIZE;n++)
 		{
+			// can't open GUI stuff here
 			if (GetInput(2,n)!=0)
 			{
 				if (! m_CheckedAlready)
@@ -177,7 +180,7 @@ void OutputPlugin::Execute()
 			}
 			else
 			m_CheckedAlready=false;
-		}
+		}*/
 	}
 	
 	if (m_Mode==INPUT || m_Mode==DUPLEX) OSSOutput::Get()->GetStereo(GetOutputBuf(0),GetOutputBuf(1));	
