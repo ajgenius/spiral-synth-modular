@@ -37,38 +37,40 @@ SpiralPluginGUI(w,h,o,ch)
     Cutoff->step(0.0001);
     Cutoff->value(1);
     Cutoff->callback((Fl_Callback*)cb_Cutoff);
-	
+
 	Resonance = new Fl_Knob(58, 18, 45, 45, "Emphasis");
     Resonance->color(GUI_COLOUR);
 	Resonance->type(Fl_Knob::DOTLIN);
     Resonance->labelsize(10);
     Resonance->maximum(1);
     Resonance->step(0.00001);
-    Resonance->value(0);   
+    Resonance->value(0);
 	Resonance->callback((Fl_Callback*)cb_Resonance);
-		
+
 	end();
 }
 
 void SVFilterPluginGUI::UpdateValues(SpiralPlugin *o)
 {
 	SVFilterPlugin *Plugin = (SVFilterPlugin*)o;
-	
-	Cutoff->value(100.0f-sqrt(Plugin->GetCutoff()-10.0f));
+//	Cutoff->value(100.0f-sqrt(Plugin->GetCutoff()-10.0f));
+	Cutoff->value (1.0f - Plugin->GetCutoff());
 	Resonance->value(Plugin->GetResonance()-1.0f);
 }
 
-inline void SVFilterPluginGUI::cb_Cutoff_i(Fl_Slider* o, void* v) 
-{ 
+inline void SVFilterPluginGUI::cb_Cutoff_i(Fl_Slider* o, void* v)
+{
 	float value=1.0f-o->value();
-//	m_Plugin->SetCutoff((value*value)+10.0f); 
-	m_GUICH->Set("Cutoff",value); 
+        cerr << value << " " << o->value() << endl;
+//	m_Plugin->SetCutoff((value*value)+10.0f);
+	m_GUICH->Set("Cutoff",value);
 }
-void SVFilterPluginGUI::cb_Cutoff(Fl_Slider* o, void* v) 
+void SVFilterPluginGUI::cb_Cutoff(Fl_Slider* o, void* v)
 { ((SVFilterPluginGUI*)(o->parent()))->cb_Cutoff_i(o,v); }
 
-inline void SVFilterPluginGUI::cb_Resonance_i(Fl_Knob* o, void* v) 
+inline void SVFilterPluginGUI::cb_Resonance_i(Fl_Knob* o, void* v)
 { m_GUICH->Set("Resonance",(float)o->value()); }
+
 void SVFilterPluginGUI::cb_Resonance(Fl_Knob* o, void* v) 
 { ((SVFilterPluginGUI*)(o->parent()))->cb_Resonance_i(o,v); }
 

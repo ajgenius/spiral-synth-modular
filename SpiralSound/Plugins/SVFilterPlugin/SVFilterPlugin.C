@@ -135,12 +135,14 @@ void SVFilterPlugin::Execute()
 void SVFilterPlugin::Randomise()
 {
 }
-	
+
+// This should be streaming the GUI parameters to make it easier to do UpdateValues()
 void SVFilterPlugin::StreamOut(ostream &s)
 {
 	s<<m_Version<<" "<<fc<<" "<<q<<" ";
 }
 
+// This should be streaming the GUI parameters to make it easier to do UpdateValues()
 void SVFilterPlugin::StreamIn(istream &s)
 {	
 	int version;

@@ -28,7 +28,7 @@ static const int GUIBG2_COLOUR = 145;
 
 AnotherFilterPluginGUI::AnotherFilterPluginGUI(int w, int h,AnotherFilterPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
-{	
+{
 	Cutoff = new Fl_Slider(15, 20, 20, 70, "Cutoff");
 	Cutoff->type(4);
 	Cutoff->selection_color(GUI_COLOUR);
@@ -37,38 +37,40 @@ SpiralPluginGUI(w,h,o,ch)
     Cutoff->step(0.0001);
     Cutoff->value(1);
     Cutoff->callback((Fl_Callback*)cb_Cutoff);
-	
+
 	Resonance = new Fl_Knob(58, 18, 45, 45, "Emphasis");
     Resonance->color(GUI_COLOUR);
 	Resonance->type(Fl_Knob::DOTLIN);
     Resonance->labelsize(10);
     Resonance->maximum(1);
     Resonance->step(0.00001);
-    Resonance->value(0);   
+    Resonance->value(0);
 	Resonance->callback((Fl_Callback*)cb_Resonance);
-		
+
 	end();
 }
 
 void AnotherFilterPluginGUI::UpdateValues(SpiralPlugin *o)
 {
 	AnotherFilterPlugin *Plugin = (AnotherFilterPlugin*)o;
-	
-	Cutoff->value(100.0f-sqrt(Plugin->GetCutoff()-10.0f));
-	Resonance->value(Plugin->GetResonance()-1.0f);
+	// Cutoff->value(100.0f-sqrt(Plugin->GetCutoff()-10.0f));
+	Cutoff->value (1.0f - Plugin->GetCutoff());
+	Resonance->value(Plugin->GetResonance()/*-1.0f*/);
 }
 
-inline void AnotherFilterPluginGUI::cb_Cutoff_i(Fl_Slider* o, void* v) 
-{ 
+inline void AnotherFilterPluginGUI::cb_Cutoff_i(Fl_Slider* o, void* v)
+{
 	float value=1.0f-o->value();
-	m_GUICH->Set("Cutoff",value); 
+	m_GUICH->Set("Cutoff",value);
 }
-void AnotherFilterPluginGUI::cb_Cutoff(Fl_Slider* o, void* v) 
+
+void AnotherFilterPluginGUI::cb_Cutoff(Fl_Slider* o, void* v)
 { ((AnotherFilterPluginGUI*)(o->parent()))->cb_Cutoff_i(o,v); }
 
-inline void AnotherFilterPluginGUI::cb_Resonance_i(Fl_Knob* o, void* v) 
+inline void AnotherFilterPluginGUI::cb_Resonance_i(Fl_Knob* o, void* v)
 { m_GUICH->Set("Resonance",(float)o->value()); }
-void AnotherFilterPluginGUI::cb_Resonance(Fl_Knob* o, void* v) 
+
+void AnotherFilterPluginGUI::cb_Resonance(Fl_Knob* o, void* v)
 { ((AnotherFilterPluginGUI*)(o->parent()))->cb_Resonance_i(o,v); }
 
 const string AnotherFilterPluginGUI::GetHelpText(const string &loc){
