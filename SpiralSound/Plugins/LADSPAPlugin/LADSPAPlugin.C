@@ -405,7 +405,7 @@ bool LADSPAPlugin::UpdatePlugin(int n)
 	return UpdatePlugin(m_LADSPAList[n].Filename.c_str(),m_LADSPAList[n].Label.c_str());
 }
 
-bool LADSPAPlugin::UpdatePlugin(const char * filename, const char * label, bool PortClampReset=true)
+bool LADSPAPlugin::UpdatePlugin(const char * filename, const char * label, bool PortClampReset)
 {
 	// first call with same info, to clear the ports
 	UpdatePluginInfoWithHost();
