@@ -104,6 +104,8 @@ void audioloop(void* o)
 #include <libgen.h>
 #endif
 
+#include "GraphSort.h"
+
 int main(int argc, char **argv)
 {
 #if __APPLE__
@@ -211,6 +213,7 @@ int main(int argc, char **argv)
 	
 	//pthread_cancel(loopthread);
 	delete synth;	
+
 	return 1;
 }
 

@@ -45,6 +45,13 @@ public:
  	SpiralLoopPlugin();
 	virtual ~SpiralLoopPlugin();
 	
+	struct TriggerInfo
+	{
+		int Channel;
+		float Time;
+		bool Triggered;
+	};
+	
 	virtual PluginInfo &Initialise(const HostInfo *Host);
 	virtual SpiralGUIType *CreateGUI();
 	virtual void Execute();
@@ -92,6 +99,7 @@ public:
 	const float  GetVolume()     			{ return m_Volume; }
 	const float  GetCurrentAngle() 			{ return m_LoopPoint?(m_Pos/m_LoopPoint)*360.0f:0; }
 	const string& GetSampleName()  			{ return m_Sample; }
+	vector<TriggerInfo> *GetTriggerVec()    { return &m_TriggerVec; }
 	
 	void Cut(int Start, int End);
 	void Copy(int Start, int End);
@@ -151,13 +159,6 @@ private:
 	
 	char  m_SampleBuffer[TRANSBUF_SIZE];
 	long  m_SampleSize;
-
-	struct TriggerInfo
-	{
-		int Channel;
-		float Time;
-		bool Triggered;
-	};
 	
 	vector<TriggerInfo> m_TriggerVec;
 

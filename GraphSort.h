@@ -1,6 +1,6 @@
 /*  Graph sort
  *  Copyleft (C) 2002 David Griffiths <dave@pawfal.org>
- *
+*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -25,15 +25,26 @@
 #ifndef GRAPH_SORT
 #define GRAPH_SORT
 
+#define GRAPHSORT_USE_TEST_SORT_BY_DEFAULT
+
 using namespace std;
 
 class GraphSort
 {
 public:
-	GraphSort();
+	#ifdef GRAPHSORT_USE_TEST_SORT_BY_DEFAULT
+	GraphSort(bool UseTestSort=true);
+	#else
+	GraphSort(bool UseTestSort=false);
+	#endif
+	
 	~GraphSort();
 	const list<int> &GetSortedList();
+
 	void Sort();
+	void TestSort();
+	void OrigSort();
+
 	void AddConnection(int SID, bool STerminal, int DID, bool DTerminal);
 	void RemoveConnection(int SID, int DID);
 	void Clear();
@@ -44,13 +55,19 @@ public:
 		list<int> Inputs;
 		list<int> Outputs;
 		bool IsTerminal;
+		// temporaries used during sort
+		int UnsatisfiedOutputs;
+		bool IsCandidate;
+		bool IsSorted;
 	};
 	
 private:
 	void RecursiveWalk(int node);
+	bool m_UseTestSort;
 
 	map<int,Node> m_Graph;
-	list<int>     m_Sorted;
+	list<int> m_Sorted;
 };
 
 #endif
+

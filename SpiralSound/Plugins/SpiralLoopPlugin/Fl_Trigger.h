@@ -48,6 +48,7 @@ public:
 	bool Completed() {return (m_Count==m_Passes); }
 	
 	float GetAngle() {return m_Angle;}
+	void  SetAngle(float s) {m_Angle=s;}
 	int   GetLoop() {return m_Loop;}
 	int   GetPass() {return m_Passes;}
 	void  SetSnap(bool s) {m_Snap=s;}

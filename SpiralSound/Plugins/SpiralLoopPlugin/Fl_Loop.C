@@ -58,7 +58,8 @@ m_Move(0),
 m_LastMove(0),
 m_Snap(false),
 m_SnapDegrees(45),
-m_PosMarkerCount(0)
+m_PosMarkerCount(0),
+cb_Move(NULL)
 {
 	box(FL_NO_BOX);
 	m_MidX=(w/2)+x;
@@ -352,7 +353,7 @@ int Fl_Loop::handle(int event)
 					while (m_Move > m_Length) m_Move -= m_Length;
 																
 					// do the move
-					cb_Move(this,m_LastMove-m_Move);
+					if (cb_Move) cb_Move(this,m_LastMove-m_Move);
 					
 					m_LastMove=m_Move;
 				}

@@ -1,6 +1,6 @@
 /*  Graph Sort
  *  Copyleft (C) 2002 David Griffiths <dave@pawfal.org>
- *
+*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -23,8 +23,9 @@
 
 //////////////////////////////////////////////////////////
 
-GraphSort::GraphSort()
+GraphSort::GraphSort(bool UseTestSort)
 {
+	m_UseTestSort=UseTestSort;
 }
 
 GraphSort::~GraphSort()
@@ -37,13 +38,118 @@ void GraphSort::Clear()
 	m_Graph.clear(); 
 }
 
-
 const list<int> &GraphSort::GetSortedList()
 {
 	return m_Sorted;
 }
 
 void GraphSort::Sort()
+{
+	m_UseTestSort?TestSort():OrigSort();
+}
+
+void GraphSort::TestSort()
+{	
+	m_Sorted.clear();
+
+	list<int> Candidates;
+	
+	#ifdef GRAPHSORT_TRACE
+	cerr<<"finding seed candidates"<<endl;
+	#endif
+
+	for (map<int,Node>::iterator i=m_Graph.begin();
+		 i!=m_Graph.end(); i++)
+	{
+		// all nodes need these vars reset
+		i->second.UnsatisfiedOutputs = i->second.Outputs.size();
+		i->second.IsSorted = false;
+
+		if (i->second.Outputs.empty() || i->second.IsTerminal)
+		{
+			// terminals and roots are seed candidates
+			Candidates.push_back(i->first);
+			i->second.IsCandidate=true;
+
+			#ifdef GRAPHSORT_TRACE
+			cerr<<i->first<<" is seed candidate"<<endl;
+			#endif
+		}
+		else
+		{
+			i->second.IsCandidate = false;
+		}
+	}
+		
+	while (!Candidates.empty())
+	{
+		int NodeToSort;
+		bool FoundNodeToSort=false;
+			
+		// look for an ideal candidate
+		for (list<int>::iterator i = Candidates.begin();
+			 i!=Candidates.end() && !FoundNodeToSort; i++)
+		{
+			if (!m_Graph[*i].UnsatisfiedOutputs)
+			{
+				NodeToSort=*i;
+				FoundNodeToSort=true;
+			
+				#ifdef GRAPHSORT_TRACE
+				cerr<<"sorted "<<NodeToSort<<" (ideal)"<<endl;
+				#endif
+			}
+		}
+			
+		if (!FoundNodeToSort)
+		{
+			// The latest, ie closest to the outputs, feedback source is
+			// first on the candidate list. (There may be several equally
+			// late candidates, but the first will do fine in that case).
+			NodeToSort=*Candidates.begin();
+
+			#ifdef GRAPHSORT_TRACE
+			cerr<<"sorted "<<NodeToSort<<" (feedback)"<<endl;
+			#endif
+		}
+			
+		// put the chosen candidate on the sort list
+		Candidates.remove(NodeToSort);
+		m_Sorted.push_back(NodeToSort);
+		m_Graph[NodeToSort].IsCandidate=false;
+		m_Graph[NodeToSort].IsSorted=true;
+			
+		// all nodes which fed the candidate...
+		for (list<int>::iterator i=m_Graph[NodeToSort].Inputs.begin();
+			 i!=m_Graph[NodeToSort].Inputs.end(); i++)
+		{
+			// ...have another satisfied output...
+			m_Graph[*i].UnsatisfiedOutputs--;
+
+			if(!m_Graph[*i].IsCandidate && !m_Graph[*i].IsSorted)
+			{
+				// ..and are promoted to candidate if they haven't been already
+				Candidates.push_back(*i);
+				m_Graph[*i].IsCandidate=true;
+
+				#ifdef GRAPHSORT_TRACE
+				cerr<<*i<<" is now a candidate"<<endl;
+				#endif
+			}
+		}
+	}
+
+	#ifdef GRAPHSORT_TRACE
+	for(list<int>::iterator i=m_Sorted.begin();
+		i!=m_Sorted.end(); i++) 
+	{
+		cerr<<*i<<" ";
+	}
+	cerr<<endl;
+	#endif
+}
+
+void GraphSort::OrigSort()
 {	
 	// walk back from all the roots
 	m_Sorted.clear();
@@ -207,6 +313,7 @@ void GraphSort::RemoveConnection(int SID, int DID)
 		cerr<<"removed "<<DID<<endl;
 		#endif
 	}
-	
+
 	Sort();
 }	
+

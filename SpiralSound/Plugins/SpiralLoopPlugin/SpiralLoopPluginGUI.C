@@ -229,8 +229,36 @@ void SpiralLoopPluginGUI::UpdateValues(SpiralPlugin *o)
 	
 	m_Volume->value(Plugin->GetVolume());
 	m_Speed->value(Plugin->GetSpeed());
-	m_Length->value(Plugin->GetLoopLength()/m_SampleSize);
-	m_LoopGUI->SetLength(Plugin->GetLoopLength());
+	if(m_SampleSize!=0) 
+	{
+		m_Length->value(Plugin->GetLoopLength()/m_SampleSize);
+		m_LoopGUI->SetLength(Plugin->GetLoopLength());
+	}
+	else
+	{
+		m_LoopGUI->SetLength(0);
+	}
+	
+	vector<SpiralLoopPlugin::TriggerInfo> *TrigVec=Plugin->GetTriggerVec();
+	int ID=0;
+	
+	for (vector<SpiralLoopPlugin::TriggerInfo>::iterator i=TrigVec->begin();
+		 i!=TrigVec->end(); i++)
+	{
+		Fl_Trigger *NewTrigger = new Fl_Trigger(parent()->x(), parent()->y(), 20, 20);
+		NewTrigger->SetCentreX(150);
+		NewTrigger->SetCentreY(150);
+		NewTrigger->SetCentreRadius(125);
+		if(m_SampleSize!=0) NewTrigger->SetAngle(i->Time*360.0f);
+		NewTrigger->SetID(ID);
+		NewTrigger->SetChannel(i->Channel);
+		NewTrigger->callback((Fl_Callback*)cb_Trigger);
+		m_LoopGUI->add(NewTrigger);
+		m_TriggerVec.push_back(NewTrigger);
+		NewTrigger->redraw();
+		m_LoopGUI->redraw();
+		ID++;
+	}
 }
 
 void SpiralLoopPluginGUI::Update()
@@ -360,7 +388,8 @@ inline void SpiralLoopPluginGUI::cb_Trig_i(Fl_Button* o, void* v)
 	m_LoopGUI->add(NewTrigger);
 	m_TriggerVec.push_back(NewTrigger);
 	NewTrigger->redraw();
-
+	m_LoopGUI->redraw();
+	
 	m_GUICH->Set("Start",NewTrigger->GetID());
 	m_GUICH->Set("End",NewTrigger->GetChannel());
 	m_GUICH->Set("Length",0);
