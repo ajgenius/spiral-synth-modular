@@ -25,8 +25,6 @@
 #include "../SpiralPlugin.h"
 #include "LADSPAInfo.h"
 
-static const unsigned int NUM_PORTS = 8;
-
 struct PortSettings
 {
 	float   Min;
@@ -52,27 +50,41 @@ public:
 	virtual void StreamOut(ostream &s);
 	virtual void StreamIn(istream &s);
 
+	unsigned long  GetPluginIndex() { return m_PluginIndex; }
 	const char    *GetName() { return (const char *)m_Name; }
 	const char    *GetMaker() { return (const char *)m_Maker; }
+	int            GetTabIndex() { return m_TabIndex; }
+	bool           GetUpdateInputs() { return m_UpdateInputs; }
 	unsigned long  GetInputPortCount() { return m_InputPortCount; }
-	const char    *GetPortName(unsigned long p)
+	const char    *GetInputPortName(unsigned long p)
 	{
 		return (const char *)(m_OutData.InputPortNames + p * 256);
 	}
-	PortSettings GetPortSettings(unsigned long p)
+	PortSettings GetInputPortSettings(unsigned long p)
 	{
 		PortSettings settings;
-		settings.Min = m_PortMin[p];
-		settings.Max = m_PortMax[p];
-		settings.Clamp = m_PortClamp[p];
+		settings.Min = m_InputPortMin[p];
+		settings.Max = m_InputPortMax[p];
+		settings.Clamp = m_InputPortClamp[p];
 		return settings;
 	}
-	float GetPortDefault(unsigned long p) 
+	float GetInputPortDefault(unsigned long p)
 	{
-		return m_PortDefault[p];
+		return m_InputPortDefault[p];
 	}
 
-	enum GUICommands{NONE,SETPORTSETTINGS,SELECTPLUGIN,CLEARPLUGIN};
+	enum GUICommands
+	{
+		NONE,
+		SETTABINDEX,
+		SELECTPLUGIN,
+		CLEARPLUGIN,
+		SETUPDATEINPUTS,
+		SETDEFAULT,
+		SETMIN,
+		SETMAX,
+		SETCLAMP
+	};
 
 private:
 	bool UpdatePlugin(unsigned long UniqueID);
@@ -81,33 +93,30 @@ private:
 	void ResetPortSettings(void);
 	void SetGUIExports(void);
 
-	void SetPortSettings(void);
+	const LADSPA_Descriptor *m_PlugDesc;
+	vector<LADSPA_Data*>     m_LADSPABufVec;
+	LADSPA_Handle            m_PlugInstHandle;
 
-	void LoadPluginList(void);
+	vector<int>     m_PortID;
+	vector<float>   m_InputPortMin;
+	vector<float>   m_InputPortMax;
+	vector<bool>    m_InputPortClamp;
+	vector<float>   m_InputPortDefault;
 
-	const LADSPA_Descriptor * PlugDesc;
-
-	vector<LADSPA_Data*> m_LADSPABufVec;
-	LADSPA_Handle PlugInstHandle;
-
-	vector<int>   m_PortID;
-	vector<float> m_PortMin;
-	vector<float> m_PortMax;
-	vector<bool>  m_PortClamp;
-	vector<float> m_PortDefault;
-
-	int           m_Version;
+	int             m_Version;
 
 	// our database of ladspa plugins
-	LADSPAInfo    m_LADSPAInfo;
+	LADSPAInfo      m_LADSPAInfo;
 
-	unsigned long m_PluginIndex;
-	unsigned long m_UniqueID;
+	unsigned long   m_PluginIndex;
+	unsigned long   m_UniqueID;
+	int             m_TabIndex;
+	bool            m_UpdateInputs;
 
-	unsigned long m_MaxInputPortCount;
-	unsigned long m_InputPortCount;
-	char          m_Name[256];
-	char          m_Maker[256];
+	unsigned long   m_MaxInputPortCount;
+	unsigned long   m_InputPortCount;
+	char            m_Name[256];
+	char            m_Maker[256];
 
 	// Data sent to GUI
 	struct OutputChannelData
@@ -122,8 +131,13 @@ private:
 	struct InputChannelData
 	{
 		unsigned long PluginIndex;
-		PortSettings *InputPortSettings;
-		float        *InputPortDefaults;
+		int           TabIndex;
+		bool          UpdateInputs;
+		unsigned long InputPortIndex;
+		float         InputPortDefault;
+		float         InputPortMin;
+		float         InputPortMax;
+		bool          InputPortClamp;
 	};
 
 	OutputChannelData     m_OutData;

@@ -51,64 +51,76 @@ public:
 	                ChannelHandler *ch,
 	                const HostInfo *Info,
 	                const std::vector<LADSPAInfo::PluginEntry> &PVec);
-	~LADSPAPluginGUI();
+	~LADSPAPluginGUI(void);
 
 	virtual void UpdateValues(SpiralPlugin *o);
 	virtual void Update(void);
 
+private:
+	void AddPortInfo(const char *Info);
+	void SetTabIndex(int index);
+	void SetUpdateInputs(bool state);
+	void SetPluginIndex(unsigned long n);
 	void SetName(const char *s);
 	void SetMaker(const char *s);
-
-	void ClearPortInfo();
-	void AddPortInfo(const char *Info);
-	void UpdatePortDisplay(int n, PortValues pv, float defolt);
 	void SetPortSettings(unsigned long n, float min, float max, bool clamp, float defolt);
+	void SetDefaultAdjust(unsigned long n);
+	void UpdateDefaultAdjustControls(void);
 
-private:
+	Fl_Box                        *m_NameLabel;
+	Fl_Box                        *m_MakerLabel;
 	Fl_Tabs                       *m_Tab;
 	Fl_Group                      *m_ControlGroup;
+	Fl_Scroll                     *m_ControlScroll;
+	Fl_Pack                       *m_ControlPack;
 	Fl_Group                      *m_SetupGroup;
+	Fl_Choice                     *m_Browser;
 	Fl_Scroll                     *m_InputScroll;
 	Fl_Pack                       *m_InputPack;
-	Fl_Choice                     *m_Browser;
-	Fl_Box                        *m_Name;
-	Fl_Box                        *m_Maker;
-	Fl_Button                     *m_UpdateInputs;
-	Fl_Button                     *m_UpdatePortSettings;
-	std::vector<Fl_Output*>        m_PortOutput;
+	Fl_Check_Button               *m_UpdateInputs;
+	std::vector<Fl_Output*>        m_PortValue;
 	std::vector<Fl_Input*>         m_PortMin;
 	std::vector<Fl_Input*>         m_PortMax;
 	std::vector<Fl_Check_Button*>  m_PortClamp;
 	std::vector<Fl_Input*>         m_PortDefault;
-	std::vector<Fl_Knob*>          m_PortDefaultKnob;
+	std::vector<Fl_Knob*>          m_PortDefaultAdjust;
 
-	std::vector<LADSPAInfo::PluginEntry> PluginList;
+	std::vector<LADSPAInfo::PluginEntry> m_PluginList;
 
-	// this is needed as fltk seems to crash if you delete
-	// the pack, is won't delete the children properly???
-	std::vector<Fl_Group*>   m_PackVec;
+	unsigned long                  m_PortIndex;
+	float                          m_Default;
+	float                          m_Min;
+	float                          m_Max;
+	bool                           m_Clamp;
 
-	int inited;
+	unsigned long                  m_PluginIndex;
+	int                            m_TabIndex;
+	bool                           m_UpdateInputState;
+	char                           m_Name[256];
+	char                           m_Maker[256];
+	unsigned long                  m_MaxInputPortCount;
+	unsigned long                  m_InputPortCount;
+	char                          *m_InputPortNames;
+	PortSettings                  *m_InputPortSettings;
+	PortValues                    *m_InputPortValues;
+	float                         *m_InputPortDefaults;
 
+	inline void cb_TabChange_i(Fl_Tabs *o);
+	static void cb_TabChange(Fl_Tabs *o);
 	inline void cb_Select_i(Fl_Choice* o);
 	static void cb_Select(Fl_Choice* o);
-	inline void cb_PortSettings_i(Fl_Button* o, void* v);
-	static void cb_PortSettings(Fl_Button* o, void* v);
-
-	struct InChannelData
-	{
-		unsigned long   PluginIndex;
-		char            Name[256];
-		char            Maker[256];
-		unsigned long   MaxInputPortCount;
-		unsigned long   InputPortCount;
-		char           *InputPortNames;
-		PortSettings   *InputPortSettings;
-		PortValues     *InputPortValues;
-		float          *InputPortDefaults;
-	};
-
-	InChannelData  m_InData;
+	inline void cb_UpdateInputs_i(Fl_Check_Button* o);
+	static void cb_UpdateInputs(Fl_Check_Button* o);
+	inline void cb_Default_i(Fl_Input* o);
+	static void cb_Default(Fl_Input* o);
+	inline void cb_Min_i(Fl_Input* o);
+	static void cb_Min(Fl_Input* o);
+	inline void cb_Max_i(Fl_Input* o);
+	static void cb_Max(Fl_Input* o);
+	inline void cb_Clamp_i(Fl_Check_Button* o);
+	static void cb_Clamp(Fl_Check_Button* o);
+	inline void cb_DefaultAdjust_i(Fl_Knob *o);
+	static void cb_DefaultAdjust(Fl_Knob *o);
 };
 
 
