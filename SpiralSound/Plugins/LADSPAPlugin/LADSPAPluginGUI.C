@@ -98,11 +98,37 @@ SpiralPluginGUI(w,h,o,ch)
 	m_Browser->callback((Fl_Callback *)cb_Select);
 
 	m_Browser->add("(None)");
-	for (vector<LADSPAInfo::PluginEntry>::iterator i=m_PluginList.begin();
+	
+    for (vector<LADSPAInfo::PluginEntry>::iterator i=m_PluginList.begin();
 	     i!=m_PluginList.end(); i++)
 	{
-		m_Browser->add(i->Name.c_str());
-	}
+        unsigned long len = i->Name.length();
+		unsigned long esc_count = 0;
+		const char *tmp = i->Name.c_str();
+		char *dest;
+
+		for (unsigned long c = 0; c < len; c++) {
+			if (tmp[c] == '/') esc_count++;
+		}
+
+        dest = (char *)malloc(len + 1 + esc_count);
+
+		if (dest) {
+			unsigned long d = 0;
+			for (unsigned long c = 0; c < len; c++, d++) {
+				if (tmp[c] == '/' || tmp[c] = '|') {
+					dest[d] = '\\';
+					d++;
+					dest[d] = tmp[c];
+                } else {
+					dest[d] = tmp[c];
+				}
+			}
+			dest[len + esc_count] = '\0';
+			m_Browser->add(dest);
+			free(dest);
+		}
+    }
 	m_Browser->value(0);
 
 	m_SetupGroup->add(m_Browser);
