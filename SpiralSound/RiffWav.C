@@ -27,7 +27,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#define TRACE_OUT
+//#define TRACE_OUT
 
 using namespace std;
 
@@ -95,18 +95,6 @@ int WavFile::Open(string FileName, Mode mode, Channels channels)
 		m_DataHeader.DataName[3]='a';
 
 		m_DataHeader.DataLengthBytes=0;
-
-		#ifdef TRACE_OUT
-		cerr<<FileName<<endl;
-		cerr<<"RiffFileLength "<<m_Header.RiffFileLength<<endl;
-		cerr<<"FmtLength "<<m_Header.FmtLength<<endl;
-		cerr<<"FmtTag "<<m_Header.FmtTag<<endl;
-		cerr<<"FmtChannels "<<m_Header.FmtChannels<<endl;
-		cerr<<"FmtSamplerate "<<m_Header.FmtSamplerate<<endl;
-		cerr<<"FmtBytesPerSec "<<m_Header.FmtBytesPerSec<<endl;
-		cerr<<"FmtBlockAlign "<<m_Header.FmtBlockAlign<<endl;
-		cerr<<"FmtBitsPerSample "<<m_Header.FmtBitsPerSample<<endl;
-		#endif
 
 		SWAPINT(m_Header.RiffFileLength);
 		SWAPINT(m_Header.FmtLength);
@@ -281,20 +269,20 @@ int WavFile::GetSize()
 
 int WavFile::Load(Sample &data)
 {
-	if (m_Header.FmtChannels>1) // mix the channels into a mono buffer 
+	if (m_Header.FmtChannels>1) // mix the channels into a mono buffer
 	{
-		#ifdef TRACE_OUT		
+		#ifdef TRACE_OUT
 		cerr<<"WavFile::Load - Channels = "<<m_Header.FmtChannels<<
 		" Mixing down to mono..."<<endl;
 		#endif
-		
+
 		short *TempBuf = new short[m_DataHeader.DataLengthBytes];
 		if (m_DataHeader.DataLengthBytes!=(int)fread(TempBuf,1,m_DataHeader.DataLengthBytes,m_Stream))
     	{
     	    cerr<<"WavFile: Read error"<<endl;
-    		return 0; 
+    		return 0;
     	}
-		
+
 		for (int n=0; n<GetSize(); n++)
 		{
 			long value=0;
@@ -305,20 +293,20 @@ int WavFile::Load(Sample &data)
 				value+=s;
 			}
 			value/=m_Header.FmtChannels;
-			
+
 			data.Set(n,value/(float)SHRT_MAX);
 		}
-		
+
 		m_DataHeader.DataLengthBytes /= m_Header.FmtChannels;
 		m_Header.FmtChannels=1;
-		 
+
 		delete[] TempBuf;
 	}
 	else // it's mono.
 	{
     	short *TempBuf = new short[GetSize()];
 		int t=(int)fread(TempBuf,1,m_DataHeader.DataLengthBytes,m_Stream);
-		if (m_DataHeader.DataLengthBytes!=t)		
+		if (m_DataHeader.DataLengthBytes!=t)
     	{
     	    cerr<<"WavFile: Read error read "<<t<<" expected "<<m_DataHeader.DataLengthBytes<<endl;
     		//return 0; 
@@ -394,11 +382,11 @@ int WavFile::Load(short *data)
 
 int WavFile::SeekToChunk(int Pos)
 {
-	Pos*=4;
+	Pos *= 2 * m_Header.FmtChannels;
 	if (m_CurSeekPos==m_DataStart+Pos) return 1;
-	
+
 	m_CurSeekPos=m_DataStart+Pos;
-	
+
 	#ifdef TRACE_OUT		
 	cerr<<"Seeking to "<<m_DataStart+Pos<<" "<<m_CurSeekPos<<endl;
 	#endif
@@ -406,43 +394,41 @@ int WavFile::SeekToChunk(int Pos)
 	{
 		cerr<<"WavFile::SeekToChunk: Seek error"<<endl;
 	}
-	
+
 	return 1;
 }
 
 int WavFile::LoadChunk(int NumSamples, Sample &ldata, Sample &rdata)
 {
-	if (m_Header.FmtChannels>1) // untangle the interleaved data
+	int c = m_Header.FmtChannels;
+	int SizeBytes = NumSamples * 2 * c; // 2 bytes per sample per channel
+	short *TempBuf = new short[NumSamples * c];
+
+	if (SizeBytes!=(int)fread(TempBuf,1,SizeBytes,m_Stream))
 	{
-		int SizeBytes=NumSamples*4; // stereo,16bit
-		short *TempBuf = new short[NumSamples*2];
-		if (SizeBytes!=(int)fread(TempBuf,1,SizeBytes,m_Stream))
-    	{
-    	    cerr<<"WavFile: Read chunk error"<<endl;
-    		return 0; 
-    	}
-		
+		cerr<<"WavFile: Read chunk error"<<endl;
+		return 0;
+	} else {
 		m_CurSeekPos+=SizeBytes;
-		
-		for (int n=0; n<NumSamples; n++)
-		{
-			ldata.Set(n,TempBuf[n*2]/(float)SHRT_MAX);
-			rdata.Set(n,TempBuf[(n*2)+1]/(float)SHRT_MAX);
+
+	// Extract and scale samples to float range +/-1.0
+		if (m_Header.FmtChannels==1) {
+			for (int n=0; n<NumSamples; n++)
+			{
+				ldata.Set(n,TempBuf[n]/(float)SHRT_MAX);
+				// rdata allocated and set to zero when stream opened
+			}
+		} else {
+			for (int n=0; n<NumSamples; n++)
+			{
+			// Only copy first two channels
+				ldata.Set(n,TempBuf[n*c]/(float)SHRT_MAX);
+				rdata.Set(n,TempBuf[n*c+1]/(float)SHRT_MAX);
+			}
 		}
-		
-		delete[] TempBuf;
 	}
-	else // we can read the data directly in, it's mono.
-	{
-    	if (m_DataHeader.DataLengthBytes==
-		(int)fread(ldata.GetNonConstBuffer(),1,NumSamples*2,m_Stream))
-    	{
-    	    return 1;
-    	}
-	
-    	cerr<<"WavFile: Read error"<<endl;
-    	return 0;
-	}
-	
-	return 0;
+
+	delete[] TempBuf;
+
+	return 1;
 }

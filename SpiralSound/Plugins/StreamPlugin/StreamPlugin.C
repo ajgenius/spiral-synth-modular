@@ -117,10 +117,10 @@ void StreamPlugin::Execute() {
                FinTrig = m_StreamPos < 0;
                if (FinTrig) {
                   m_StreamPos = m_File.GetSize() - m_SampleSize;
-		  m_GlobalPos = m_StreamPos;
-	       }
+                  m_GlobalPos = m_StreamPos;
+               }
                m_File.SeekToChunk (m_StreamPos);
-	       m_File.LoadChunk (m_SampleSize, m_SampleL, m_SampleR);
+               m_File.LoadChunk (m_SampleSize, m_SampleL, m_SampleR);
             }
             else if (m_Pos >= m_SampleSize) {
                m_Pos = 0;
@@ -190,7 +190,7 @@ void StreamPlugin::OpenStream (void) {
      m_Pitch = m_SampleRate / (float)m_HostInfo->SAMPLERATE;
      if (m_File.IsStereo ()) {
         m_Pitch *= 2;
-	m_GUIArgs.MaxTime = GetLength();
+        m_GUIArgs.MaxTime = GetLength();
      }
      else m_GUIArgs.MaxTime = GetLength() / 2;
 }
@@ -230,7 +230,3 @@ void StreamPlugin::StreamIn(istream &s) {
      s >> m_GlobalPos;
      s >> m_Pitch;
 }
-
-
-
-
