@@ -42,18 +42,12 @@ class StreamPluginGUI : public SpiralPluginGUI {
       char m_TextBuf[256], m_PitchLabel[256];
       void SetMaxTime (float t) { m_Pos->maximum(t); }
       void UpdatePitch (bool UpdateIt = true, bool DrawIt = true, bool SendIt = true);
+      void UpdatePlayStatus (void);
       // Widgets
-      Fl_SevenSeg* m_Display[6];
-      Fl_Knob* m_Volume;
-      Fl_Slider* m_Pitch;
-      Fl_Slider* m_Pos;
-      Fl_Button* m_Load;
-      Fl_Button* m_ToStart;
-      Fl_Button* m_Play;
-      Fl_Button* m_Reset;
-      Fl_Button* m_Rev;
-      Fl_Button* m_Div;
-      Fl_Button* m_Dbl;
+      Fl_SevenSeg *m_Display[6];
+      Fl_Knob *m_Volume;
+      Fl_Slider *m_Pitch, *m_Pos;
+      Fl_Button *m_Load, *m_ToStart, *m_Play, *m_Reset, *m_Rev, *m_Div, *m_Dbl;
       Fl_Repeat_Button* m_Nudge;
       //// Callbacks ////
       inline void cb_Volume_i (Fl_Knob* o, void* v);

@@ -71,7 +71,8 @@ m_Mode(STOPM)
 	m_PluginInfo.PortTips.push_back ("Right Out");
 	m_PluginInfo.PortTips.push_back ("Finish Trigger");
 	m_GUIArgs.Volume = 1.0f;
-	m_GUIArgs.PitchMod   = 1.0f;
+	m_GUIArgs.PitchMod = 1.0f;
+        m_GUIArgs.PlayOut = false;
 	m_AudioCH->Register ("Volume", &m_GUIArgs.Volume);
 	m_AudioCH->Register ("Pitch", &m_GUIArgs.PitchMod, ChannelHandler::INPUT);
 	m_AudioCH->RegisterData ("FileName", ChannelHandler::INPUT,
@@ -79,6 +80,7 @@ m_Mode(STOPM)
 	m_AudioCH->Register ("Time", &m_GUIArgs.Time);
 	m_AudioCH->Register ("TimeOut", &m_GUIArgs.TimeOut, ChannelHandler::OUTPUT);
 	m_AudioCH->Register ("MaxTime", &m_GUIArgs.MaxTime, ChannelHandler::OUTPUT);
+	m_AudioCH->Register ("Playing", &m_GUIArgs.PlayOut, ChannelHandler::OUTPUT);
 }
 
 StreamPlugin::~StreamPlugin()
@@ -100,8 +102,13 @@ void StreamPlugin::Execute() {
         for (int n=0; n<m_HostInfo->BUFSIZE; n++) {
             bool FinTrig = false;
             float CVPitch = GetInput(0, n)*10.0f;
-            if (GetInput (1, n) > 0) Play();
-            if (GetInput (2, n) > 0) Stop();
+            if (GetInput (1, n) > 0) m_Mode = PLAYM;
+            if (GetInput (2, n) > 0) {
+               m_Mode = STOPM;
+               m_Pos = 0;
+               m_GlobalPos = 0;
+               m_StreamPos = 0;
+            }
             if (m_Pos<0) {
                m_Pos = m_SampleSize - 1;
                m_StreamPos -= m_SampleSize;
@@ -124,26 +131,43 @@ void StreamPlugin::Execute() {
                m_File.SeekToChunk (m_StreamPos);
                m_File.LoadChunk (m_SampleSize, m_SampleL, m_SampleR);
             }
-            SetOutput (0, n, m_SampleL[m_Pos] * m_GUIArgs.Volume);
-            SetOutput (1, n, m_SampleR[m_Pos] * m_GUIArgs.Volume);
-            if (FinTrig) SetOutput (2, n, 1); else SetOutput (2, n, 0);
+            if (FinTrig) SetOutput (2, n, 1);
+            else SetOutput (2, n, 0);
             if (m_Mode==PLAYM) {
-               m_Pos += m_GUIArgs.PitchMod + CVPitch;
-               m_GlobalPos += m_GUIArgs.PitchMod + CVPitch;
+              SetOutput (0, n, m_SampleL[m_Pos] * m_GUIArgs.Volume);
+              SetOutput (1, n, m_SampleR[m_Pos] * m_GUIArgs.Volume);
+              m_Pos += m_GUIArgs.PitchMod + CVPitch;
+              m_GlobalPos += m_GUIArgs.PitchMod + CVPitch;
+            }
+            else {
+              SetOutput (0, n, 0);
+              SetOutput (1, n, 0);
             }
         }
-        m_GUIArgs.TimeOut = GetTime();
+        m_GUIArgs.TimeOut = m_GlobalPos / (float)m_SampleRate;
+        m_GUIArgs.PlayOut = m_Mode==PLAYM;
      }
 }
 
 void StreamPlugin::ExecuteCommands() {
      if (m_AudioCH->IsCommandWaiting()) {
         switch (m_AudioCH->GetCommand()) {
-	  case SET_TIME: SetTime(); break;
-          case LOAD:     OpenStream(); break;
-	  case RESTART:  Restart(); break;
-	  case STOP:     Stop(); break;
-          case PLAY:     Play(); break;
+	  case SET_TIME:
+            SetTime();
+            break;
+          case LOAD:
+            OpenStream();
+            break;
+	  case RESTART:
+            m_StreamPos = 0;
+            m_GlobalPos = 0;
+            break;
+	  case STOP:
+            m_Mode = STOPM;
+            break;
+          case PLAY:
+            m_Mode = PLAYM;
+            break;
 	}
      }
 }

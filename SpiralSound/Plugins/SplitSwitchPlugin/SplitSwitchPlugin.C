@@ -46,11 +46,9 @@ m_Triggered (false)
   m_PluginInfo.Height = 80;
   m_PluginInfo.NumInputs = 3;
   m_PluginInfo.NumOutputs = 3;
-  // Inputs
   m_PluginInfo.PortTips.push_back ("CV");
   m_PluginInfo.PortTips.push_back ("Clock");
   m_PluginInfo.PortTips.push_back ("In");
-  // Outputs
   m_PluginInfo.PortTips.push_back ("CV");
   m_PluginInfo.PortTips.push_back ("Out 1");
   m_PluginInfo.PortTips.push_back ("Out 2");
@@ -108,7 +106,7 @@ void SplitSwitchPlugin::Execute() {
     for (n=0; n<m_HostInfo->BUFSIZE; n++) {
       if (InputExists (0)) {
         // Check the Switch Pos CV Value
-        m_SwitchPos = int (GetInput (0, n)-1) % NumChans;
+        m_SwitchPos = abs (int (GetInput (0, n) - 1)) % NumChans;
       }
       else if (InputExists (1)) {
         // Check the trigger CV value

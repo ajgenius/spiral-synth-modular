@@ -45,7 +45,6 @@ m_Triggered (false)
   m_PluginInfo.Width = 80;
   m_PluginInfo.Height = 80;
   CreatePorts ();
-  // Channels
   m_AudioCH->Register ("Chans", &m_GUIArgs.Chans);
   m_AudioCH->Register ("Switch", &m_GUIArgs.Switch);
   m_AudioCH->Register ("Echo", &m_GUIArgs.Echo, ChannelHandler::OUTPUT);
@@ -115,7 +114,7 @@ void MixSwitchPlugin::Execute() {
   for (n=0; n<m_HostInfo->BUFSIZE; n++) {
     if (InputExists (0)) {
       // Check the Switch Pos CV Value
-      m_SwitchPos = int (GetInput (0, n)-1) % NumChans;
+      m_SwitchPos = abs (int (GetInput (0, n) - 1)) % NumChans;
     }
     else if (InputExists (1)) {
       // Check the trigger CV value

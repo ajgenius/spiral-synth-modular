@@ -155,6 +155,7 @@ void StreamPluginGUI::Update() {
      m_Display[0]->value ((int)(t/600) % 10);
      redraw();
      SetMaxTime (m_GUICH->GetFloat ("MaxTime"));
+     if (m_Playing != m_GUICH->GetBool ("Playing")) UpdatePlayStatus ();
 }
 
 // Update GUI on load
@@ -242,16 +243,15 @@ void StreamPluginGUI::cb_ToStart (Fl_Button* o, void* v) {
 
 // play
 
-inline void StreamPluginGUI::cb_Play_i (Fl_Button* o, void* v) {
-       if (m_Playing) {
-          m_Play->label ("@>");
-          m_GUICH->SetCommand (StreamPlugin::STOP);
-       }
-       else {
-          m_Play->label ("@||");
-          m_GUICH->SetCommand (StreamPlugin::PLAY);
-       }
+void StreamPluginGUI::UpdatePlayStatus (void) {
        m_Playing = ! m_Playing;
+       if (m_Playing) m_Play->label ("@||");
+       else m_Play->label ("@>");
+}
+
+inline void StreamPluginGUI::cb_Play_i (Fl_Button* o, void* v) {
+       if (m_Playing) m_GUICH->SetCommand (StreamPlugin::STOP);
+       else m_GUICH->SetCommand (StreamPlugin::PLAY);
 }
 
 void StreamPluginGUI::cb_Play (Fl_Button* o, void* v) {

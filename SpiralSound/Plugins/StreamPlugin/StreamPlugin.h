@@ -35,34 +35,28 @@ class StreamPlugin : public SpiralPlugin {
       virtual void StreamIn (istream &s);
       enum GUICommands { NONE, SET_TIME, LOAD, RESTART, STOP, PLAY };
       // has to be defined in the plugin
-      virtual void UpdateGUI() { Fl::check(); }
+      //virtual void UpdateGUI() { Fl::check(); }
       float GetVolume (void) { return m_GUIArgs.Volume; }
       float GetPitch (void) { return m_GUIArgs.PitchMod; }
    private:
+      WavFile m_File;
+      Sample m_SampleL, m_SampleR;
+      int m_SampleRate, m_SampleSize, m_StreamPos;
+      float m_GlobalPos, m_Pitch, m_SamplePos, m_Pos;
+      enum Mode { PLAYM, STOPM } m_Mode;
       struct GUIArgs {
 	float  Volume;
 	float  PitchMod;
 	char FileName[256];
 	float Time;
 	float TimeOut;
+        bool PlayOut;
 	float MaxTime;
-      };
-      GUIArgs m_GUIArgs;
-      WavFile m_File;
-      Sample m_SampleL, m_SampleR;
-      int m_SampleRate, m_SampleSize, m_StreamPos;
-      float m_GlobalPos, m_Pitch, m_SamplePos, m_Pos;
-      enum Mode { PLAYM, STOPM };
-      Mode  m_Mode;
-      // Internal functions
-      float GetTime (void) { return m_GlobalPos / (float)m_SampleRate; }
+      } m_GUIArgs;
       float GetLength (void);
       // Commands
       void SetTime (void);
       void OpenStream (void);
-      void Restart (void) { m_StreamPos = 0; m_GlobalPos = 0; }
-      void Stop (void) { m_Mode = STOPM; }
-      void Play (void) { m_Mode = PLAYM; }
 };
 
 #endif
