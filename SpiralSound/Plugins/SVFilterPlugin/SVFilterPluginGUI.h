@@ -44,16 +44,13 @@ private:
 	Fl_Group 		*GUIFilterGroup;
 	Fl_Slider 		*Cutoff;
 	Fl_Knob 		*Resonance;
-	Fl_Button 		*Reset;
 	
 	//// Callbacks ////
 	
 	inline void cb_Cutoff_i(Fl_Slider* o, void* v);
     static void cb_Cutoff(Fl_Slider*, void*);
 	inline void cb_Resonance_i(Fl_Knob* o, void* v);
-	static void cb_Resonance(Fl_Knob* o, void* v); 
-	inline void cb_Reset_i(Fl_Button* o, void* v);
-	static void cb_Reset(Fl_Button* o, void* v); 
+	static void cb_Resonance(Fl_Knob* o, void* v);  
 };
 
 #endif

@@ -84,7 +84,7 @@ void StereoMixerPluginGUI::cb_Chan(Fl_Slider* o, void* v) {
 
 inline void StereoMixerPluginGUI::cb_Pan_i(Fl_Knob* o, void* v) {
   m_GUICH->Set("Num",*(int*)(v));
-  m_GUICH->Set("Value",(float)(2.0f-o->value()));
+  m_GUICH->Set("Value",(float)(1.0f-o->value()));
   m_GUICH->SetCommand(StereoMixerPlugin::SETPAN);
 }
 

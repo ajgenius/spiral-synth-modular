@@ -21,7 +21,6 @@
 #include <FL/Fl_Button.h>
 #include "SpiralIcon.xpm"
 
-#define DENORMALISE(fv) (((*(unsigned int*)&(fv))&0x7f800000)==0)?0.0f:(fv)
 #define PI 3.141592654
 
 static const int GRANULARITY = 10;
@@ -46,7 +45,7 @@ int GetID()
 ///////////////////////////////////////////////////////
 
 SVFilterPlugin::SVFilterPlugin() :
-Cutoff(50.0f),
+Cutoff(0.0f),
 Resonance(0.0f),
 fs(44100.0f),
 fc(1000.0f),
@@ -54,11 +53,11 @@ q(1.0f),
 m_f(0.0f),
 m_q(0.0f),
 m_qnrm(0.0f),
-m_h(1.0f),
-m_b(1.0f), 
-m_l(1.0f),
-m_p(1.0f),
-m_n(1.0f)
+m_h(0.0f),
+m_b(0.0f), 
+m_l(0.0f),
+m_p(0.0f),
+m_n(0.0f)
 {
 	m_PluginInfo.Name="SVF";
 	m_PluginInfo.Width=120;
@@ -104,47 +103,26 @@ void SVFilterPlugin::Execute()
 	{
 		if (n%GRANULARITY==0)
 		{
-			fc = 220.0*(float)pow(2.0f, Cutoff+GetInput(1,n))*5.0f; 
+			fc = 4000.0f*(Cutoff+GetInput(1,n)); 
 	 		q  = 1-Resonance+GetInput(2,n);  
-		
-			m_f = 2.0*sin(PI*fc/fs);
-			m_q = 2.0*cos(pow(q,0.1)*PI*0.5);
-			m_qnrm = sqrt(m_q/2.0+0.01);
+			m_f = 2.0f*sin(PI*fc/fs);
 		}
 		
-		in = m_qnrm*GetInput(0,n);
+		in = GetInput(0,n);
 		
-		//if (in!=0)
-		//{
-			in = DENORMALISE(in);
-			m_l = DENORMALISE(m_l);
+		float scale=0.5f;
 		
-			// Protect the filter from breaking
-			if (m_b>10) m_b=10;
-			if (m_b<-10) m_b=-10;
-					
-			m_b = m_b - m_b*m_b*m_b*0.001;
-			m_h = in - m_l - q*m_b;
-			
-			m_b = m_b + m_f*m_h;
-			m_l = m_l + m_f*m_b;
-			m_n = m_l + m_h;
-			m_p = m_l - m_h;
+		m_l = m_l + m_f*m_b;
+		m_h = scale*in - m_l - q*m_b;
+		m_b = m_b + m_f*m_h;
+		m_n = m_l + m_h;
+		m_p = m_l - m_h;
 				
-			SetOutput(0,n,m_l);	 
-			SetOutput(1,n,m_b);
-			SetOutput(2,n,m_h);
-			SetOutput(3,n,m_n);
-			SetOutput(4,n,m_p);
-		//}
-		//else
-		//{
-		//	m_Output[0]->Set(n,0);	 
-		//	m_Output[1]->Set(n,0);
-		//	m_Output[2]->Set(n,0);
-		//	m_Output[3]->Set(n,0);
-		//	m_Output[4]->Set(n,0);
-		//}
+		SetOutput(0,n,m_l);	 
+		SetOutput(1,n,m_b);
+		SetOutput(2,n,m_h);
+		SetOutput(3,n,m_n);
+		SetOutput(4,n,m_p);
 	}
 		
 }

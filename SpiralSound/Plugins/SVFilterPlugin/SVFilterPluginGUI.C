@@ -46,11 +46,7 @@ SpiralPluginGUI(w,h,o,ch)
     Resonance->step(0.00001);
     Resonance->value(0);   
 	Resonance->callback((Fl_Callback*)cb_Resonance);
-	
-	Reset = new Fl_Button(60,80,40,20,"Reset");
-	Reset->labelsize(10);
-	Reset->callback((Fl_Callback*)cb_Reset);
-	
+		
 	end();
 }
 
@@ -72,25 +68,14 @@ void SVFilterPluginGUI::cb_Cutoff(Fl_Slider* o, void* v)
 { ((SVFilterPluginGUI*)(o->parent()))->cb_Cutoff_i(o,v); }
 
 inline void SVFilterPluginGUI::cb_Resonance_i(Fl_Knob* o, void* v) 
-{ m_GUICH->Set("Resonance",o->value()); }
+{ m_GUICH->Set("Resonance",(float)o->value()); }
 void SVFilterPluginGUI::cb_Resonance(Fl_Knob* o, void* v) 
 { ((SVFilterPluginGUI*)(o->parent()))->cb_Resonance_i(o,v); }
 
-inline void SVFilterPluginGUI::cb_Reset_i(Fl_Button* o, void* v) 
-{ }
-void SVFilterPluginGUI::cb_Reset(Fl_Button* o, void* v) 
-{ ((SVFilterPluginGUI*)(o->parent()))->cb_Reset_i(o,v); }
-
 const string SVFilterPluginGUI::GetHelpText(const string &loc){
     return string("")
-	 + "A State Variable Filter. First thing to say is, it's a bit\n" 
-	 + "broken. Seems to generate glitchy noise when the cutoff is \n"
-	 + "modulated. Possibly a range bug on the cutoff too.\n" 
-	 + "On the other hand, I like some of the noises it seems to\n" 
-	 + "make, so it's here anyway (I'll fix it some day).\n\n"
-	+ "Works pretty well at band,high and peaking useful for creating\n" 
-	+ "some different sounds.\n\n"
-	+ "Note: Comes with a reset button, so if you break it pushing\n"
-	+ "the emphasis up too high, you can reset the cooeficients\n" 
-	+ "(which fixes it).";
+	 + "A 12db approximation of Chamberlin two-pole filter.\n"
+	 + "State Variable Filter with low, band and highpass modes plus\n"
+	 + "notch and peaking outputs that you can use simulaneously.\n\n"
+	 + "It was broken for ages, but it's fixed now - dave";
 }

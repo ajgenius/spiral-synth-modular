@@ -56,7 +56,8 @@ void watchdog (void *arg)
 	while (1) 
 	{
 		usleep (10000000);
-		if (watchdog_check == 0 || gui_watchdog_check== 0) 
+		// gui watchdog goes off with modal dialog boxes
+		if (watchdog_check == 0)// || gui_watchdog_check== 0) 
 		{
 			cerr<<"ssm watchdog: timeout - killing ssm"<<endl;
 			if (watchdog_check==0) cerr<<"diagnosis: audio hung?"<<endl;

@@ -349,7 +349,7 @@ void MatrixPlugin::PastePattern() {
      m_Matrix[m_GUICurrent].Octave = m_Matrix[m_CopyPattern].Octave;
      for (int y=0; y<MATY; y++) {
          for (int x=0; x<MATX; x++) {
-             m_Matrix[m_Current].Matrix[x][y] = m_Matrix[m_CopyPattern].Matrix[x][y];
+             m_Matrix[m_GUICurrent].Matrix[x][y] = m_Matrix[m_CopyPattern].Matrix[x][y];
          }
      }
 }
