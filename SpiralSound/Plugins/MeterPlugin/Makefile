@@ -1,4 +1,3 @@
-# Generated automatically from Makefile.in by configure.
 #############################################################################
 # Makefile for building MeterPlugin.so
 #############################################################################
@@ -12,7 +11,7 @@ CXXFLAGS=	-pipe -Wall -O3 -ffast-math -DNO_DEBUG -Wno-unused  -fPIC -fPIC
 INCPATH	=	-I/usr/X11R6/include
 LINK	=	g++ -shared
 LFLAGS	=
-LIBS	=   -L/usr/X11R6/lib -lfltk -lGL -lXext -lX11 -lm -ldl
+LIBS	=   -L/usr/X11R6/lib  -L/usr/X11R6/lib -lfltk -lGL -lGL -lXext -lX11  -ldl
 MOC     = moc
 UIC	=
 

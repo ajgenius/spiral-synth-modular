@@ -32,18 +32,40 @@
 #ifndef MixerGUI
 #define MixerGUI
 
+class StreamPluginGUI;
+
+/*struct Compare_thingy
+{
+	bool operator() (const StreamPluginGUI* s1,const StreamPluginGUI* s2) const
+	{
+		return s1<s2;
+	}
+};*/
 
 class StreamPluginGUI : public SpiralPluginGUI
 {
 public:
-	StreamPluginGUI(int w, int h, StreamPlugin *o,const HostInfo *Info);
+	StreamPluginGUI(int w, int h, StreamPlugin *o,ChannelHandler *ch,const HostInfo *Info);
+	virtual ~StreamPluginGUI();
 	
-	virtual void UpdateValues();
-	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }
-	void    SetTime(float t);
+	virtual void UpdateValues(SpiralPlugin *o);
+	void    SetTime();
 	void    SetMaxTime(float t) { m_Pos->maximum(t); }
 
-	StreamPlugin *m_Plugin;	
+	//Stuff for the timer
+        static bool TimerSet;
+	/*static struct Compare_thingy
+	{
+        	bool operator() (const StreamPluginGUI* s1,const StreamPluginGUI* s2) const
+        	{
+        	        return s1<s2;
+        	}
+	};*/
+        //static set<const StreamPluginGUI*,Compare_thingy> PluginList;
+	static vector<StreamPluginGUI*> PluginList;
+        static void StartTimer(StreamPluginGUI* p);
+        static void StopTimer(StreamPluginGUI* p);
+        static void TimerCallBack(void* x);
 private:
 	
 	Fl_Button* m_Load;
@@ -62,6 +84,10 @@ private:
 	Fl_SevenSeg* m_Display[6];
 	
 	Fl_Slider* m_Pos;
+
+	char m_TextBuf[256];
+
+	float m_PitchValue;
 	
 	//// Callbacks ////
 	inline void cb_Load_i(Fl_Button* o, void* v);
