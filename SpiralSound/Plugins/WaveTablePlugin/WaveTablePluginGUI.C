@@ -475,7 +475,7 @@ void WaveTablePluginGUI::cb_InvSine(Fl_Check_Button* o, void* v)
 inline void WaveTablePluginGUI::cb_ModAmount_i(Fl_Knob* o, void* v)
 {
 char str[10];
-	m_GUICH->Set("ModAmount",o->value());
+	m_GUICH->Set("ModAmount",(float)o->value());
 	sprintf(str,"%4.0f %%", 100*o->value());
 	m_out_mod->value(str); 
 }
