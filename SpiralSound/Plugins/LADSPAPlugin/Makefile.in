@@ -14,7 +14,7 @@ CXXFLAGS=	@CXXFLAGS@
 INCPATH	=	-I/usr/X11R6/include
 LINK	=	g++ -shared
 LFLAGS	=	
-LIBS	=   -L/usr/X11R6/lib -lfltk -lGL -lXext -lX11 -lm -ldl
+LIBS	=   @FLTK_LIBS@ -L/usr/X11R6/lib -lGL -lXext -lX11 -lm -ldl
 MOC     = moc
 UIC	=	
 
@@ -49,8 +49,8 @@ HEADERS =	../SpiralPlugin.h \
 		../../Sample.h \
 		LADSPAPlugin.h \
 		LADSPAPluginGUI.h \
-		String.h \
-		utils.h
+		LADSPAInfo.h \
+		String.h
 SOURCES =	../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
 		../../ChannelHandler.C \
@@ -59,10 +59,8 @@ SOURCES =	../SpiralPlugin.C \
 		../../Sample.C \
 		LADSPAPlugin.C \
 		LADSPAPluginGUI.C \
-		String.cc \
-		load.c \
-		misc.c \
-		search.c
+		LADSPAInfo.C \
+		String.cc
 OBJECTS =	../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
 		../../ChannelHandler.o \
@@ -71,16 +69,14 @@ OBJECTS =	../SpiralPlugin.o \
 		../../Sample.o \
 		LADSPAPlugin.o \
 		LADSPAPluginGUI.o \
-		String.o \
-		load.o \
-		misc.o \
-		search.o
-INTERFACES =	
-UICDECLS =	
-UICIMPLS =	
-SRCMOC	=	
-OBJMOC	=	
-DIST	=	
+		LADSPAInfo.o \
+		String.o
+INTERFACES =
+UICDECLS =
+UICIMPLS =
+SRCMOC	=
+OBJMOC	=
+DIST	=
 TARGET	=	LADSPAPlugin.so
 
 ####### Implicit rules
@@ -107,7 +103,7 @@ TARGET	=	LADSPAPlugin.so
 
 all: $(TARGET)
 
-$(TARGET): $(UICDECLS) $(OBJECTS) $(OBJMOC) 
+$(TARGET): $(UICDECLS) $(OBJECTS) $(OBJMOC)
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(OBJMOC) $(LIBS)
 
 moc: $(SRCMOC)
@@ -138,7 +134,8 @@ install:
 
 ../SpiralPlugin.o: ../SpiralPlugin.C \
 		../SpiralPlugin.h \
-		../../Sample.h
+		../../Sample.h \
+		LADSPAInfo.h
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
@@ -166,7 +163,7 @@ LADSPAPlugin.o: LADSPAPlugin.C \
 		../Widgets/Fl_Knob.H \
 		../SpiralPluginGUI.h \
 		../Widgets/Fl_DragBar.H \
-		utils.h \
+		LADSPAInfo.h \
 		SpiralIcon.xpm
 
 LADSPAPluginGUI.o: LADSPAPluginGUI.C \
@@ -178,20 +175,10 @@ LADSPAPluginGUI.o: LADSPAPluginGUI.C \
 		../../SpiralInfo.h \
 		../../Sample.h \
 		../SpiralPluginGUI.h \
-		../Widgets/Fl_DragBar.H \
-		utils.h
+		../Widgets/Fl_DragBar.H 
 
 String.o: String.cc \
 		String.h
-
-load.o: load.c \
-		utils.h
-
-misc.o: misc.c \
-		utils.h
-
-search.o: search.c \
-		utils.h
 
 ../../ChannelHandler.o: ../../ChannelHandler.C \
 		../../ChannelHandler.h

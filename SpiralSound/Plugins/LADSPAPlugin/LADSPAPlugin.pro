@@ -5,9 +5,8 @@ HEADERS     = ../SpiralPlugin.h \
 			  ../../Sample.h \
 			  LADSPAPlugin.h \
 			  LADSPAPluginGUI.h \
-			  String.h \
-			  utils.h
-			  
+			  String.h 
+
 SOURCES     = ../SpiralPlugin.C \
 			  ../SpiralPluginGUI.C \
 			  ../Widgets/Fl_Knob.cxx \
@@ -15,9 +14,6 @@ SOURCES     = ../SpiralPlugin.C \
 			  ../../Sample.C \
 			  LADSPAPlugin.C \
 			  LADSPAPluginGUI.C \
-			  String.cc \
-			  load.c \
-			  misc.c \
-			  search.c
+			  String.cc
 
 TARGET      = LADSPAPlugin.so
