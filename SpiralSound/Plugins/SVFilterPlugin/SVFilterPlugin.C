@@ -115,14 +115,19 @@ void SVFilterPlugin::Execute()
 
 		in = GetInput(0,n);
 
-		float scale=0.5f;
+		if (in == 0)
+			Clear();	 
+		else 
+		{				
+			float scale=0.5f;
 
-		m_l = m_l + m_f*m_b;
-		m_h = scale*in - m_l - q*m_b;
-		m_b = m_b + m_f*m_h;
-		m_n = m_l + m_h;
-		m_p = m_l - m_h;
-
+			m_l = m_l + m_f*m_b;
+			m_h = scale*in - m_l - q*m_b;
+			m_b = m_b + m_f*m_h;
+			m_n = m_l + m_h;
+			m_p = m_l - m_h;
+		}
+		
 		SetOutput(0,n,m_l);
 		SetOutput(1,n,m_b);
 		SetOutput(2,n,m_h);
@@ -156,7 +161,7 @@ void SVFilterPlugin::StreamIn (istream &s) {
 void SVFilterPlugin::Clear()
 {
 	m_h=0.0f;
-	m_b=0.1f;
+	m_b=0.0f;
 	m_l=0.0f;
 	m_p=0.0f;
 	m_n=0.0f;

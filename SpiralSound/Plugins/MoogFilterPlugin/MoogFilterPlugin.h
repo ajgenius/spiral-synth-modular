@@ -37,6 +37,7 @@ public:
 	float GetCutoff()    { return Cutoff; }
 	float GetResonance() { return Resonance;  } 
 	
+	void Clear();
 	void Randomise();
 
 private:

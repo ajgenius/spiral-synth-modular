@@ -60,7 +60,7 @@ f(0.0f),
 p(0.0f),
 q(0.0f),
 b0(0.1f),
-b1(0.1f),
+b1(0.0f),
 b2(0.0f),
 b3(0.0f),
 b4(0.0f),
@@ -135,28 +135,47 @@ void MoogFilterPlugin::Execute()
 			Q = ((Resonance+GetInput(2,n))*6)-3.0f;
 			q = Q + (1.0f + 0.5f * q * (1.0f - q + 5.6f * q * q));
 		}
-		
+
 		in = GetInput(0,n);
-				
-		in -= q * b4;
 		
-		if (in>1) in=1;
-		if (in<-1) in=-1;
-								
-		t1 = b1; b1 = (in + b0) * p - b1 * f;
-		t2 = b2; b2 = (b1 + t1) * p - b2 * f;
-		t1 = b3; b3 = (b2 + t2) * p - b3 * f;		
-     		     b4 = (b3 + t1) * p - b4 * f;	
-		b4 = b4 - b4 * b4 * b4 * 0.166667f;
-		
-		b0 = in;	
-		 
-		SetOutput(0,n,b4);	 
-		SetOutput(1,n,(in-b4));
-		SetOutput(2,n,3.0f * (b3 - b4));	
+		if (in == 0)
+		{
+			Clear();
+			SetOutput(0,n,0);	 
+	  		SetOutput(1,n,0);
+			SetOutput(2,n,0);	
+		} else {				
+			in -= q * b4;
+			
+			if (in>1) in=1;
+			if (in<-1) in=-1;
+									
+			t1 = b1; b1 = (in + b0) * p - b1 * f;
+			t2 = b2; b2 = (b1 + t1) * p - b2 * f;
+			t1 = b3; b3 = (b2 + t2) * p - b3 * f;		
+     			     b4 = (b3 + t1) * p - b4 * f;	
+			b4 = b4 - b4 * b4 * b4 * 0.166667f;
+			
+			b0 = in;	
+			 
+			SetOutput(0,n,b4);	 
+			SetOutput(1,n,(in-b4));
+			SetOutput(2,n,3.0f * (b3 - b4));	
+		}
 	}			
 }
-	
+
+void MoogFilterPlugin::Clear()
+{
+	b0 = 0.0f;
+	b1 = 0.0f;
+	b2 = 0.0f;
+	b3 = 0.0f;
+	b4 = 0.0f;
+	t1 = 0.0f;
+	t2 = 0.0f;
+}
+
 void MoogFilterPlugin::Randomise()
 {
 }
