@@ -29,7 +29,7 @@ using namespace std;
 MixSwitchPluginGUI::MixSwitchPluginGUI (int w, int h, MixSwitchPlugin *o, ChannelHandler *ch, const HostInfo *Info) :
 SpiralPluginGUI (w, h, o, ch)
 {
-  m_Switch = new Fl_Counter (15, 14, 50, 20, "Select");
+  m_Switch = new Fl_Counter (11, 14, 58, 20, "Select");
   m_Switch->labelsize (10);
   m_Switch->type (FL_SIMPLE_COUNTER);
   m_Switch->box (FL_PLASTIC_UP_BOX);
@@ -40,8 +40,9 @@ SpiralPluginGUI (w, h, o, ch)
   m_Switch->callback ((Fl_Callback*) cb_Switch);
   add (m_Switch);
 
-  m_Chans = new Fl_Counter (15, 46, 50, 20, "Channels");
-  m_Chans->labelsize (10);
+  m_Chans = new Fl_Counter (15, 50, 50, 15, "Channels");
+  m_Chans->labelsize (8);
+  m_Chans->textsize (8);
   m_Chans->type (FL_SIMPLE_COUNTER);
   m_Chans->box (FL_PLASTIC_UP_BOX);
   m_Chans->color (Info->GUI_COLOUR);
@@ -80,8 +81,10 @@ void MixSwitchPluginGUI::cb_Switch (Fl_Counter* o, void* v) {
 }
 
 void MixSwitchPluginGUI::Update () {
-  int e = m_GUICH->GetInt ("Echo");
-  if (m_Switch->value () != e) m_Switch->value (e);
+  if (m_GUICH->GetBool ("Auto")) {
+    int e = m_GUICH->GetInt ("Echo");
+    if (m_Switch->value () != e) m_Switch->value (e);
+  }
 }
 
 void MixSwitchPluginGUI::UpdateValues (SpiralPlugin *o) {

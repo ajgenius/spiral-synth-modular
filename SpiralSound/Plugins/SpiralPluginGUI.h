@@ -40,6 +40,7 @@ public:
         // called while audio thread is suspended, so direct access to the
 	// spiralplugin is acceptable
 	virtual void UpdateValues(SpiralPlugin *o)=0;
+
 protected:
 
 	ChannelHandler *m_GUICH;

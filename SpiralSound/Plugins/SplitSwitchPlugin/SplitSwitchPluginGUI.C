@@ -38,8 +38,9 @@ SpiralPluginGUI (w, h, o, ch)
   m_Switch->callback ((Fl_Callback*) cb_Switch);
   add (m_Switch);
 
-  m_Chans = new Fl_Counter (15, 46, 50, 20, "Channels");
-  m_Chans->labelsize (10);
+  m_Chans = new Fl_Counter (15, 50, 50, 15, "Channels");
+  m_Chans->labelsize (8);
+  m_Chans->textsize (8);
   m_Chans->type (FL_SIMPLE_COUNTER);
   m_Chans->box (FL_PLASTIC_UP_BOX);
   m_Chans->color (Info->GUI_COLOUR);
@@ -77,8 +78,12 @@ void SplitSwitchPluginGUI::cb_Switch (Fl_Counter* o, void* v) {
   ((SplitSwitchPluginGUI*) (o->parent ())) -> cb_Switch_i (o, v);
 }
 
+
 void SplitSwitchPluginGUI::Update () {
-  m_Switch->value (m_GUICH->GetInt ("Echo"));
+  if (m_GUICH->GetBool ("Auto")) {
+    int e = m_GUICH->GetInt ("Echo");
+    if (m_Switch->value () != e) m_Switch->value (e);
+  }
 }
 
 void SplitSwitchPluginGUI::UpdateValues (SpiralPlugin *o) {

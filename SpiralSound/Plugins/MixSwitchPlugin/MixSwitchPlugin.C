@@ -37,19 +37,25 @@ extern "C" {
 ///////////////////////////////////////////////////////
 
 MixSwitchPlugin::MixSwitchPlugin () :
-m_SwitchPos (0),
+m_SwitchPos (1),
 m_Triggered (false)
 {
   m_GUIArgs.Chans = 2;
   m_GUIArgs.Switch = 1;
   m_GUIArgs.Echo = 1;
+  m_GUIArgs.Auto = false;
   m_PluginInfo.Name = "MixSwitch";
   m_PluginInfo.Width = 80;
   m_PluginInfo.Height = 80;
   CreatePorts ();
+  // Number of channels <- GUI
   m_AudioCH->Register ("Chans", &m_GUIArgs.Chans);
+  // Switch Position <- GUI
   m_AudioCH->Register ("Switch", &m_GUIArgs.Switch);
+  // Switch Position -> GUI
   m_AudioCH->Register ("Echo", &m_GUIArgs.Echo, ChannelHandler::OUTPUT);
+  // Auto Mode (Switch position is controlled by CV or Clock = True, Switch Position controlled by GUI = False
+  m_AudioCH->Register ("Auto", &m_GUIArgs.Auto, ChannelHandler::OUTPUT);
 }
 
 MixSwitchPlugin::~MixSwitchPlugin () {
@@ -109,15 +115,17 @@ void MixSwitchPlugin::SetChans (int n) {
 }
 
 void MixSwitchPlugin::Execute() {
-  int n;
   float f;
+  int p;
   int NumChans = m_PluginInfo.NumInputs - 2;
-  for (n=0; n<m_HostInfo->BUFSIZE; n++) {
+  for (int n=0; n<m_HostInfo->BUFSIZE; n++) {
     if (InputExists (0)) {
+      m_GUIArgs.Auto = true;
       // Check the Switch Pos CV Value
-      m_SwitchPos = abs (int (GetInput (0, n) - 1)) % NumChans;
+      m_SwitchPos = int (GetInput (0, n));
     }
     else if (InputExists (1)) {
+      m_GUIArgs.Auto = true;
       // Check the trigger CV value
       if (GetInput (1, n) < 0.01) {
         m_Triggered = false;
@@ -125,16 +133,19 @@ void MixSwitchPlugin::Execute() {
       else {
         if (!m_Triggered) {
           m_Triggered = true;
-          m_SwitchPos = (m_SwitchPos+1) % NumChans;
+          m_SwitchPos = m_SwitchPos + 1;
         }
       }
     }
-    else m_SwitchPos=(m_GUIArgs.Switch - 1) % NumChans;
-    int o = m_SwitchPos+1;
-    m_GUIArgs.Echo = o;
-    SetOutput (0, n, o);
-    o++;
-    if (InputExists (o)) f=GetInput (o, n);
+    else {
+      m_GUIArgs.Auto = false;
+      m_SwitchPos = m_GUIArgs.Switch;
+    }
+    if (m_SwitchPos > NumChans) m_SwitchPos = 1;
+    m_GUIArgs.Echo = m_SwitchPos;
+    SetOutput (0, n, m_SwitchPos);
+    p = m_SwitchPos + 1; // SwitchPos 1 = Port 2, and so on
+    if (InputExists (p)) f=GetInput (p, n);
     else f=0.0;
     SetOutput (1, n, f);
   }

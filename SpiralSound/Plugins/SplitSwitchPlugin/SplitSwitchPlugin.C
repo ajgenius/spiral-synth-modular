@@ -54,9 +54,14 @@ m_Triggered (false)
   m_PluginInfo.PortTips.push_back ("CV");
   m_PluginInfo.PortTips.push_back ("Out 1");
   m_PluginInfo.PortTips.push_back ("Out 2");
+  // Number of channels <- GUI
   m_AudioCH->Register ("Chans", &m_GUIArgs.Chans);
+  // Switch Position <- GUI
   m_AudioCH->Register ("Switch", &m_GUIArgs.Switch);
+  // Switch Position -> GUI
   m_AudioCH->Register ("Echo", &m_GUIArgs.Echo, ChannelHandler::OUTPUT);
+  // Auto Mode (Switch position is controlled by CV or Clock = True, Switch Position controlled by GUI = False
+  m_AudioCH->Register ("Auto", &m_GUIArgs.Auto, ChannelHandler::OUTPUT);
 }
 
 SplitSwitchPlugin::~SplitSwitchPlugin () {
@@ -106,10 +111,12 @@ void SplitSwitchPlugin::Execute() {
   if (InputExists (2)) {
     for (n=0; n<m_HostInfo->BUFSIZE; n++) {
       if (InputExists (0)) {
+        m_GUIArgs.Auto = true;
         // Check the Switch Pos CV Value
-        m_SwitchPos = abs (int (GetInput (0, n) - 1)) % NumChans;
+        m_SwitchPos = int (GetInput (0, n));
       }
       else if (InputExists (1)) {
+        m_GUIArgs.Auto = true;
         // Check the trigger CV value
         if (GetInput (1, n) < 0.01) {
           m_Triggered = false;
@@ -117,15 +124,18 @@ void SplitSwitchPlugin::Execute() {
         else {
           if (!m_Triggered) {
             m_Triggered = true;
-            m_SwitchPos = (m_SwitchPos+1) % NumChans;
+            m_SwitchPos = (m_SwitchPos+1);
           }
         }
       }
-      else m_SwitchPos=(m_GUIArgs.Switch - 1) % NumChans;
-      int o = m_SwitchPos+1;
-      m_GUIArgs.Echo = o;
-      SetOutput (0, n, o);
-      SetOutput (o, n, GetInput (2, n));
+      else {
+        m_GUIArgs.Auto = false;
+        m_SwitchPos=(m_GUIArgs.Switch);
+      }
+      if (m_SwitchPos > NumChans) m_SwitchPos = 1;
+      m_GUIArgs.Echo = m_SwitchPos;
+      SetOutput (0, n, m_SwitchPos);
+      SetOutput (m_SwitchPos, n, GetInput (2, n));
     }
   }
 }

@@ -32,13 +32,12 @@ class SplitSwitchPlugin : public SpiralPlugin {
     virtual void ExecuteCommands ();
     virtual void StreamOut (std::ostream &s);
     virtual void StreamIn (std::istream &s);
-    int GetSwitch (void) { return m_SwitchPos + 1; }
+    int GetSwitch (void) { return m_SwitchPos; }
     int GetChans (void) { return m_PluginInfo.NumOutputs - 1; }
-    enum GUICommands {NONE, SETCHANS};
+    enum GUICommands { NONE, SETCHANS };
     struct GUIArgs {
-      int Chans;
-      int Switch;
-      int Echo;
+      int Chans, Switch, Echo;
+      bool Auto;
     };
   private:
     GUIArgs m_GUIArgs;
