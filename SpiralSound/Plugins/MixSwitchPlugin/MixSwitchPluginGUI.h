@@ -40,6 +40,8 @@ class MixSwitchPluginGUI : public SpiralPluginGUI {
     static void cb_Switch (Fl_Counter* o, void* v);
     inline void cb_Chans_i (Fl_Counter* o, void* v);
     static void cb_Chans (Fl_Counter* o, void* v);
+    // Andy Preston - multiple inputs
+
 };
 
 #endif

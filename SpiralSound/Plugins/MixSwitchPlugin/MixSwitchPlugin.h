@@ -34,7 +34,7 @@ class MixSwitchPlugin : public SpiralPlugin {
     virtual void StreamIn (istream &s);
     int GetSwitch (void) { return m_SwitchPos + 1; }
     int GetChans (void) { return m_PluginInfo.NumInputs - 2; }
-    enum GUICommands {NONE, SETCHANS, SETSWITCH};
+    enum GUICommands {NONE, SETCHANS};
     struct GUIArgs {
       int Chans;
       int Switch;
@@ -43,7 +43,6 @@ class MixSwitchPlugin : public SpiralPlugin {
   private:
     GUIArgs m_GUIArgs;
     void SetChans (int n);
-    void SetSwitch (int n);
     int m_SwitchPos;
     bool m_Triggered;
     void CreatePorts (int n = 2, bool AddPorts = false);

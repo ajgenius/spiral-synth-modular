@@ -65,10 +65,8 @@ SpiralGUIType *MixSwitchPlugin::CreateGUI () {
 void MixSwitchPlugin::ExecuteCommands () {
   if (m_AudioCH->IsCommandWaiting ()) {
     switch (m_AudioCH->GetCommand()) {
-      case (SETCHANS)  : SetChans (m_GUIArgs.Chans);
-                         break;
-      case (SETSWITCH) : SetSwitch (m_GUIArgs.Switch);
-                         break;
+      case SETCHANS : SetChans (m_GUIArgs.Chans);
+                      break;
     }
   }
 }
@@ -109,14 +107,11 @@ void MixSwitchPlugin::SetChans (int n) {
   UpdatePluginInfoWithHost ();
 }
 
-void MixSwitchPlugin::SetSwitch (int n) {
-  m_SwitchPos=(m_GUIArgs.Switch - 1) % (m_PluginInfo.NumInputs - 2);
-}
-
 void MixSwitchPlugin::Execute() {
   int n;
   float f;
   int NumChans = m_PluginInfo.NumInputs - 2;
+  m_SwitchPos=(m_GUIArgs.Switch - 1) % (m_PluginInfo.NumInputs - 2);
   for (n=0; n<m_HostInfo->BUFSIZE; n++) {
     if (InputExists (0)) {
       // Check the Switch Pos CV Value
