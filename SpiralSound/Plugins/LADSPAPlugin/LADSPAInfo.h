@@ -98,8 +98,10 @@ private:
                                                                                  const std::string));
     void                            ExaminePluginLibrary(const std::string path,
                                                          const std::string basename);
+#ifdef HAVE_LIBLRDF
     void                            ExamineRDFFile(const std::string path,
                                                    const std::string basename);
+#endif
 
     bool                            CheckPlugin(const LADSPA_Descriptor *desc);
     LADSPA_Descriptor_Function      GetDescriptorFunctionForLibrary(unsigned long library_index);

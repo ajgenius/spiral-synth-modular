@@ -32,7 +32,11 @@
 #include <dlfcn.h>
 
 #include <ladspa.h>
+
+#ifdef HAVE_LIBLRDF
 #include <lrdf.h>
+#endif
+
 #include "LADSPAInfo.h"
 
 using namespace std;
@@ -47,7 +51,9 @@ LADSPAInfo::LADSPAInfo(bool override,
     }
     m_LADSPAPathOverride = override;
 
+#ifdef HAVE_LIBLRDF
     lrdf_init();
+#endif
     
     RescanPlugins();
 }
@@ -112,6 +118,7 @@ LADSPAInfo::RescanPlugins(void)
     } else {
         cerr << m_Plugins.size() << " plugins found in " << m_Libraries.size() << " libraries" << endl;
 
+#ifdef HAVE_LIBLRDF
     // Got some plugins. Now search for RDF data
         char *rdf_path = getenv("LADSPA_RDF_PATH");
 
@@ -122,6 +129,7 @@ LADSPAInfo::RescanPlugins(void)
         // Examine rdf info
             ScanPathList(rdf_path, &LADSPAInfo::ExamineRDFFile);
         }
+#endif
     }
 
 // Sort list by name
@@ -298,7 +306,9 @@ LADSPAInfo::CleanUp(void)
     m_Libraries.clear();
     m_Paths.clear();
 
+#ifdef HAVE_LIBLRDF
     lrdf_cleanup();
+#endif
 
     m_OrderedPluginList.clear();
     m_MaxInputPortCount = 0;
@@ -491,6 +501,7 @@ LADSPAInfo::ExaminePluginLibrary(const string path,
     }
 }
 
+#ifdef HAVE_LIBLRDF
 // Examine given RDF plugin meta-data file
 void
 LADSPAInfo::ExamineRDFFile(const std::string path,
@@ -502,6 +513,7 @@ LADSPAInfo::ExamineRDFFile(const std::string path,
         cerr << "WARNING: File " << path + basename << " could not be parsed [Ignored]" << endl;
     }
 }
+#endif
 
 bool
 LADSPAInfo::CheckPlugin(const LADSPA_Descriptor *desc)
