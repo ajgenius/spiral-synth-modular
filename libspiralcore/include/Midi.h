@@ -36,6 +36,10 @@ using namespace std;
 #include <alsa/asoundlib.h>
 #endif
 
+#if __APPLE__
+#include <CoreMIDI/MIDIServices.h>
+#endif
+
 class MidiEvent
 {
 public:
@@ -97,6 +101,25 @@ private:
 	snd_seq_t *seq_handle;
 	snd_seq_t *AlsaOpen();
 #endif
+
+#if __APPLE__
+	MIDIClientRef					mMIDIClient;
+	MIDIEndpointRef					mMIDISource;
+	MIDIEndpointRef					mMIDIDestination;
+	
+	#define midi_ReadSize			4096
+	unsigned char					m_ReadBuffer[midi_ReadSize];
+	volatile int					m_ReadFillIndex;
+	volatile int					m_ReadReadIndex;
+
+	void MidiDevice::AppleOpen();
+	void MidiDevice::AppleClose();
+	int MidiDevice::AppleWrite(int dummy, unsigned char *outbuffer, int maxlen);
+	int MidiDevice::AppleRead(int dummy, unsigned char *outbuffer, int maxlen);
+	
+	static void MidiDevice::sMIDIRead(const MIDIPacketList *pktlist, void *readProcRefCon, void *srcConnRefCon);
+
+#endif 
 };
 
 #endif
