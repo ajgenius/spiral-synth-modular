@@ -47,15 +47,30 @@ PluginID PluginManager::LoadPlugin(const char *PluginName)
         return PluginError;
     }
 		
-	// Link the neccesary functions
-	NewPlugin->CreateInstance  = (SpiralPlugin*(*)()) dlsym(NewPlugin->Handle, "CreateInstance"); 	
-	NewPlugin->GetIcon = (char **(*)()) dlsym(NewPlugin->Handle, "GetIcon");
-	NewPlugin->GetID  = (int(*)()) dlsym(NewPlugin->Handle, "GetID"); 	
+	// Link the neccesary functions 
+	char *error;
 	
-	char *error;		
+	NewPlugin->CreateInstance  = (SpiralPlugin*(*)()) dlsym(NewPlugin->Handle, "CreateInstance"); 	
+	
+	if ((error = dlerror()) != NULL)
+    {
+         SpiralInfo::Alert("Error linking to plugin "+string(PluginName)+"\n"+string(error));
+         return PluginError;
+    }
+	
+	NewPlugin->GetIcon = (char **(*)()) dlsym(NewPlugin->Handle, "GetIcon");
+
     if ((error = dlerror()) != NULL)
     {
-		SpiralInfo::Alert("Error linking to plugin: \n"+string(error));
+         SpiralInfo::Alert("Error linking to plugin "+string(PluginName)+"\n"+string(error));
+         return PluginError;
+    }
+
+	NewPlugin->GetID  = (int(*)()) dlsym(NewPlugin->Handle, "GetID"); 	
+			
+    if ((error = dlerror()) != NULL)
+    {
+		SpiralInfo::Alert("Error linking to plugin "+string(PluginName)+"\n"+string(error));
         return PluginError;
     }       
 		
