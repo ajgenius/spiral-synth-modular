@@ -21,13 +21,12 @@
 bool Pawfal_Input(const char *a, const char *b, char *out)
 {
 	PawfalInput pi(300, 100,a,b);
-	if (pi.go()) 
+	if (pi.go())
 	{
-		strcpy(out,pi.getText());
+                strcpy(out,pi.getText());
 		return true;
 	}
-	
-	return true;
+	return false;
 }
 
 PawfalInput::PawfalInput(int x, int y, int w, int h, const char *label, const char *dflt):

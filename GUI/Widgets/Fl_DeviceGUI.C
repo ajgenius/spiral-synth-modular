@@ -343,7 +343,6 @@ inline void Fl_DeviceGUI::cb_Rename_i(Fl_Menu_Button* o, void* v)
 		m_DragBar->label(m_Name.c_str());
 		((Fl_Canvas*)(parent()))->Rename(this);
 	}
-	
 }
 void Fl_DeviceGUI::cb_Rename(Fl_Menu_Button* o, void* v)
 {((Fl_DeviceGUI*)(o->parent()))->cb_Rename_i(o,v);}
