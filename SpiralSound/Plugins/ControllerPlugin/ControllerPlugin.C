@@ -49,7 +49,7 @@ string GetGroupName()
 ControllerPlugin::ControllerPlugin() :
 m_Num(4)
 {
-	m_Version=3;
+	m_Version=4;
 	
 	m_PluginInfo.Name="CV Control";
 	m_PluginInfo.Width=240;
@@ -109,13 +109,25 @@ void ControllerPlugin::ExecuteCommands()
 	{
 		switch (m_AudioCH->GetCommand())
 		{
-			case (SETCHANNEL) : 
-				SetChannel(m_GUIArgs.Number,m_GUIArgs.Value,m_GUIArgs.Min,m_GUIArgs.Max,m_GUIArgs.Name);
-			break;
-			case (SETNUM)     : 
+			case (SETNUM)     :
 				SetNum(m_GUIArgs.Number);
 			break;
-		}
+			case (SETALL)     :
+				SetAll(m_GUIArgs.Number, m_GUIArgs.Name, m_GUIArgs.Max, m_GUIArgs.Value, m_GUIArgs.Min);
+			break;
+			case (SETNAME)    :
+				SetName(m_GUIArgs.Number, m_GUIArgs.Name);
+			break;
+			case (SETMAX)     :
+				SetMax(m_GUIArgs.Number, m_GUIArgs.Max);
+			break;
+			case (SETCHANNEL) :
+				SetChannel(m_GUIArgs.Number, m_GUIArgs.Value);
+			break;
+			case (SETMIN)     :
+				SetMin(m_GUIArgs.Number, m_GUIArgs.Min);
+			break;
+        }
 	}
 }
 
@@ -123,7 +135,7 @@ void ControllerPlugin::SetNum(int n)
 {
 	// once to clear the connections with the current info
 	UpdatePluginInfoWithHost();
-	
+
 	if (m_Num<n)
 	{
 		char t[256];
@@ -158,29 +170,40 @@ void ControllerPlugin::Clear()
 void ControllerPlugin::StreamOut(ostream &s)
 {
 	s<<m_Version<<" ";
-	
+
 	switch (m_Version)
 	{
+		case 4:
+		{
+			s<<m_Num<<endl;
+			for (int n=0; n<m_Num; n++)
+			{
+				s<<m_Names[n]<<" ";
+				s<<m_MinVal[n]<<" ";
+				s<<m_MaxVal[n]<<" ";
+				s<<m_ChannelVal[n]<<endl;
+			}
+		} break;
 		case 3:
 		{
-			s<<m_Num<<" ";			
+			s<<m_Num<<" ";
 			for (int n=0; n<m_Num; n++)
 			{
 				s<<m_ChannelVal[n]<<" ";
 			}
 			s<<1<<endl;
-			s<<m_Num<<" ";			
+			s<<m_Num<<" ";
 			for (int n=0; n<m_Num; n++)
-			{		
+			{
 				s<<m_Names[n].size()<<" ";
 				s<<m_Names[n]<<" ";
 				s<<m_MinVal[n]<<" ";
 				s<<m_MaxVal[n]<<" ";
-				s<<m_ChannelVal[n]<<endl;		
+				s<<m_ChannelVal[n]<<endl;
 			}
-			
+
 		} break;
-		default : 
+		default :
 			cerr<<"ControllerPlugin - I dont support this streaming version any more"<<endl;
 		break;
 	}
@@ -190,49 +213,75 @@ void ControllerPlugin::StreamIn(istream &s)
 {
 	int version;
 	s>>version;
-	
+
 	switch (version)
 	{
+		case 4:
+		{
+			Clear();
+
+			s>>m_Num;
+			string name;
+			for (int n=0; n<m_Num; n++)
+			{
+				s>>m_Names[n];
+				s>>m_MinVal[n];
+				s>>m_MaxVal[n];
+				s>>m_ChannelVal[n];
+			}
+
+		// add the channels one by one
+			for (int n=0; n<m_Num; n++)
+			{
+				char t[256];
+				sprintf(t,"CV %d",n);
+				m_PluginInfo.PortTips.push_back(t);
+				AddOutput();
+			}
+
+			m_PluginInfo.NumOutputs=m_Num;
+			UpdatePluginInfoWithHost();
+		} break;
 		case 3:
 		{
 			Clear();
-		
+
 			s>>m_Num;
-			
+
 			for (int n=0; n<m_Num; n++)
 			{
 				s>>m_ChannelVal[n];
 			}
-			
+
 			char Buf[4096];
 			int size,dummy;
 			s>>dummy;
-			s>>m_Num;			
+			s>>m_Num;
 			for (int n=0; n<m_Num; n++)
-			{		
+			{
 				s>>size;
 				s.ignore(1);
 				s.get(Buf,size+1);
 				m_Names[n]=Buf;
 				s>>m_MinVal[n];
 				s>>m_MaxVal[n];
-				s>>m_ChannelVal[n];		
+				s>>m_ChannelVal[n];
 			}
-			
+
 			// add the channels one by one
 			for (int n=0; n<m_Num; n++)
-			{						
+			{
 				char t[256];
 				sprintf(t,"CV %d",n);
 				m_PluginInfo.PortTips.push_back(t);
 				AddOutput();
 			}
-			
+
 			m_PluginInfo.NumOutputs=m_Num;
-			UpdatePluginInfoWithHost();	
+			UpdatePluginInfoWithHost();
 		} break;
 
-		default : 
+		default :
 			cerr<<"ControllerPlugin - I dont support this streaming version any more"<<endl;
 		break;
 	}

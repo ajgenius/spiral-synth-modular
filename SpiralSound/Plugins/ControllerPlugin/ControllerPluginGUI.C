@@ -32,35 +32,40 @@ ControllerPluginGUI::CVGUI::CVGUI(int n, ControllerPluginGUI *p)
 	m_SliderGroup = new Fl_Group(0,0,60,153,"");
 	m_SliderGroup->box(FL_UP_BOX);
 	m_SliderGroup->user_data((void *)p);
-		
+
 	m_Title = new Fl_Input(5,2,50,15,"");
 	m_Title->value("Name");
 	m_Title->textsize(10);
+	m_Title->callback((Fl_Callback*)ControllerPluginGUI::cb_Title,
+		(void*)&Numbers[n]);
 	m_SliderGroup->add(m_Title);
-		
-	m_Max = new Fl_Int_Input(5,18,50,15,"");
+
+	m_Max = new Fl_Input(5,18,50,15,"");
 	char t[64];
-	sprintf(t,"%d",1);
+	sprintf(t,"%.6f",1.0f);
 	m_Max->value(t);
 	m_Max->textsize(10);
+	m_Max->callback((Fl_Callback*)ControllerPluginGUI::cb_Max,
+		(void*)&Numbers[n]);
 	m_SliderGroup->add(m_Max);
-		
+
 	m_Chan = new Fl_Slider(20, 34, 20, 100, "");
 	m_Chan->type(4);
 	m_Chan->selection_color(GUI_COLOUR);
 	m_Chan->maximum(1);
-   	m_Chan->step(0.01);
-   	m_Chan->value(0.5);
-		
+	m_Chan->step(0.01);
+	m_Chan->value(0.5);
    	m_Chan->callback((Fl_Callback*)ControllerPluginGUI::cb_Chan,
 		(void*)&Numbers[n]);
 	m_SliderGroup->add(m_Chan);
-	
-	m_Min = new Fl_Int_Input(5,136,50,15,"");
+
+	m_Min = new Fl_Input(5,136,50,15,"");
 	char t2[64];
-	sprintf(t2,"%d",-1);
+	sprintf(t2,"%.6f",-1.0f);
 	m_Min->value(t2);
 	m_Min->textsize(10);
+	m_Min->callback((Fl_Callback*)ControllerPluginGUI::cb_Min,
+		(void*)&Numbers[n]);
 	m_SliderGroup->add(m_Min);
 }
 
@@ -125,78 +130,160 @@ void ControllerPluginGUI::Clear()
 }
 
 void ControllerPluginGUI::UpdateValues(SpiralPlugin *o)
-{	
+{
 	ControllerPlugin *Plugin = (ControllerPlugin *)o;
 
 	int c;
+	float min, max, val;
 	string Title,Min,Max;
 	char temp[64];
-	
+
 	Clear();
-	
+
 	c=Plugin->GetNum();
 	for (int n=0; n<c; n++)
 	{
-		AddCV();		
+		AddCV();
 		m_GuiVec[n]->m_Title->value(Plugin->GetName(n).c_str());
-		sprintf(temp,"%f",Plugin->GetMin(n));
+		
+		min = Plugin->GetMin(n);
+		max = Plugin->GetMax(n);
+		sprintf(temp,"%.6f",min);
 		m_GuiVec[n]->m_Min->value(temp);
-		sprintf(temp,"%f",Plugin->GetMax(n));
+		sprintf(temp,"%.6f",max);
 		m_GuiVec[n]->m_Max->value(temp);
-		m_GuiVec[n]->m_Chan->value(Plugin->GetVal(n));	
+
+	// Scale and invert value to match slider range (0->1)
+		float val = 1.0f - (Plugin->GetVal(n) - min) / (max - min);
+		m_GuiVec[n]->m_Chan->value(val);
 	}
-	
+
 	resize(x(),y(),c*60,h());
 }
-	
-inline void ControllerPluginGUI::cb_Chan_i(Fl_Slider* o, void* v) 
-{ 
+
+inline void ControllerPluginGUI::cb_Title_i(Fl_Input* o, void* v)
+{
 	int num=*(int*)(v);
-	// swap em over, cos it's the easiqest way to reverse
-	// the fltk slider, which is upside down imho	
-	long max=strtol(m_GuiVec[num]->m_Max->value(),NULL,10);
-	long min=strtol(m_GuiVec[num]->m_Min->value(),NULL,10);
-	float val=(1.0f-o->value())*(max-min)+min;				
-	m_GUICH->Set("Number",(int)num);
-	m_GUICH->Set("Value",(float)val);
-	m_GUICH->Set("Min",(float)min);
-	m_GUICH->Set("Max",(float)max);
+
 	char temp[256];
 	sprintf(temp,"%s",m_GuiVec[num]->m_Title->value());
-	
-	m_GUICH->SetData("Name",(void*)temp);	
+	m_GUICH->Set("Number",num);
+	m_GUICH->SetData("Name",(void*)temp);
+	m_GUICH->SetCommand(ControllerPlugin::SETNAME);
+}
+void ControllerPluginGUI::cb_Title(Fl_Input* o, void* v)
+{ ((ControllerPluginGUI*)(o->parent()->user_data()))->cb_Title_i(o,v);}
+
+inline void ControllerPluginGUI::cb_Max_i(Fl_Input* o, void* v)
+{
+	int num=*(int*)(v);
+
+	float min = atof(m_GuiVec[num]->m_Min->value());
+	float max = atof(m_GuiVec[num]->m_Max->value());
+	if (min > max) {
+	// Swap values if arse over tit...
+		float temp = min;
+		char t[64];
+
+		min = max;
+		max = temp;
+
+		sprintf(t,"%.6f",min);
+		m_GuiVec[num]->m_Min->value(t);
+		sprintf(t,"%.6f",max);
+		m_GuiVec[num]->m_Max->value(t);
+	}
+
+	m_GUICH->Set("Number",num);
+	m_GUICH->Set("Max",max);
+	m_GUICH->SetCommand(ControllerPlugin::SETMAX);
+}
+void ControllerPluginGUI::cb_Max(Fl_Input* o, void* v)
+{ ((ControllerPluginGUI*)(o->parent()->user_data()))->cb_Max_i(o,v);}
+
+inline void ControllerPluginGUI::cb_Chan_i(Fl_Slider* o, void* v)
+{
+	int num=*(int*)(v);
+	// swap em over, cos it's the easiqest way to reverse
+	// the fltk slider, which is upside down imho
+	float min = atof(m_GuiVec[num]->m_Min->value());
+	float max = atof(m_GuiVec[num]->m_Max->value());
+	float val = (1.0f-o->value())*(max-min)+min;
+	m_GUICH->Set("Number",num);
+	m_GUICH->Set("Value",val);
+
 	m_GUICH->SetCommand(ControllerPlugin::SETCHANNEL);
 }
-void ControllerPluginGUI::cb_Chan(Fl_Slider* o, void* v) 
+void ControllerPluginGUI::cb_Chan(Fl_Slider* o, void* v)
 { ((ControllerPluginGUI*)(o->parent()->user_data()))->cb_Chan_i(o,v);}
 
-inline void ControllerPluginGUI::cb_Add_i(Fl_Button* o, void* v) 
-{ 
+inline void ControllerPluginGUI::cb_Min_i(Fl_Input* o, void* v)
+{
+	int num=*(int*)(v);
+
+	float min = atof(m_GuiVec[num]->m_Min->value());
+	float max = atof(m_GuiVec[num]->m_Max->value());
+	if (min > max) {
+	// Swap values if arse over tit...
+		float temp = min;
+		char t[64];
+
+		min = max;
+		max = temp;
+
+		sprintf(t,"%.6f",min);
+		m_GuiVec[num]->m_Min->value(t);
+		sprintf(t,"%.6f",max);
+		m_GuiVec[num]->m_Max->value(t);
+	}
+	m_GUICH->Set("Number",num);
+	m_GUICH->Set("Min",min);
+	m_GUICH->SetCommand(ControllerPlugin::SETMIN);
+}
+void ControllerPluginGUI::cb_Min(Fl_Input* o, void* v)
+{ ((ControllerPluginGUI*)(o->parent()->user_data()))->cb_Min_i(o,v);}
+
+inline void ControllerPluginGUI::cb_Add_i(Fl_Button* o, void* v)
+{
 	if (m_CVCount<MAX_CHANNELS)
 	{
 		AddCV();
 		resize(x(),y(),w()+60,h());
 		redraw();
-		m_GUICH->Set("Number",(int)m_GuiVec.size());
+		int num   = (int)m_GuiVec.size();
+		float min = atof(m_GuiVec[num - 1]->m_Min->value());
+		float max = atof(m_GuiVec[num - 1]->m_Max->value());
+		float val = (1.0f-o->value())*(max-min)+min;
+		char temp[256];
+		sprintf(temp,"%s",m_GuiVec[num - 1]->m_Title->value());
+
+		m_GUICH->Set("Number", num);
 		m_GUICH->SetCommand(ControllerPlugin::SETNUM);
+		m_GUICH->Wait();
+		m_GUICH->Set("Number", num);
+		m_GUICH->SetData("Name",(void*)temp);
+		m_GUICH->Set("Max",max);
+		m_GUICH->Set("Value",val);
+		m_GUICH->Set("Min",min);
+		m_GUICH->SetCommand(ControllerPlugin::SETALL);
 	}
 }
-void ControllerPluginGUI::cb_Add(Fl_Button* o, void* v) 
+void ControllerPluginGUI::cb_Add(Fl_Button* o, void* v)
 { ((ControllerPluginGUI*)(o->parent()))->cb_Add_i(o,v);}
 
-inline void ControllerPluginGUI::cb_Delete_i(Fl_Button* o, void* v) 
-{ 
+inline void ControllerPluginGUI::cb_Delete_i(Fl_Button* o, void* v)
+{
 	if (m_GuiVec.size()>1)
 	{
 		DeleteCV();
 		resize(x(),y(),w()-60,h());
-		redraw(); 
-		
+		redraw();
+
 		m_GUICH->Set("Number",(int)m_GuiVec.size());
 		m_GUICH->SetCommand(ControllerPlugin::SETNUM);
 	}
 }
-void ControllerPluginGUI::cb_Delete(Fl_Button* o, void* v) 
+void ControllerPluginGUI::cb_Delete(Fl_Button* o, void* v)
 { ((ControllerPluginGUI*)(o->parent()))->cb_Delete_i(o,v);}
 
 // call for version <3
@@ -205,13 +292,13 @@ istream &operator>>(istream &s, ControllerPluginGUI &o)
 	int c;
 	string Title,Min,Max;
 	float Val;
-	
+
 	o.Clear();
-	
+
 	s>>c;
 	for (int n=0; n<c; n++)
 	{
-		s>>Title>>Min>>Max>>Val;		
+		s>>Title>>Min>>Max>>Val;
 		o.AddCV();		
 		o.m_GuiVec[n]->m_Title->value(Title.c_str());
 		o.m_GuiVec[n]->m_Min->value(Min.c_str());

@@ -42,8 +42,8 @@ public:
 	float  GetVal(int n)  { return m_ChannelVal[n]; }
 	float  GetMin(int n)  { return m_MinVal[n]; }
 	float  GetMax(int n)  { return m_MaxVal[n]; }
-		
-	enum GUICommands{NONE,SETCHANNEL,SETNUM};
+
+	enum GUICommands{NONE,SETNUM,SETALL,SETNAME,SETMAX,SETCHANNEL,SETMIN};
 	struct GUIArgs
 	{
 		int Number;
@@ -55,12 +55,20 @@ public:
 	
 private:
 	GUIArgs m_GUIArgs;
-	
-	void SetChannel(int n, float s, float min, float max, char* name)  
-		{ m_ChannelVal[n]=s; m_MinVal[n]=min; m_MaxVal[n]=max; m_Names[n]=name; }
+
 	void SetNum(int n);
+	void SetAll(int n, char *name, float max, float value, float min)
+		{ m_Names[n]      = name;
+		  m_MaxVal[n]     = min;
+		  m_ChannelVal[n] = value;
+		  m_MinVal[n]     = max;
+		};
+	void SetName(int n, char* name)     { m_Names[n]      = name;  };
+	void SetChannel(int n, float value) { m_ChannelVal[n] = value; };
+	void SetMax(int n, float max)       { m_MaxVal[n]     = max;   };
+	void SetMin(int n, float min)       { m_MinVal[n]     = min;   };
 	void Clear();
-	
+
 	int m_Num;
 	float  m_ChannelVal[MAX_CHANNELS];
 	string m_Names[MAX_CHANNELS];

@@ -57,27 +57,33 @@ private:
 	
 		Fl_Group     *m_SliderGroup;
 		Fl_Input     *m_Title;
-		Fl_Int_Input *m_Min;
-		Fl_Int_Input *m_Max;
+		Fl_Input     *m_Min;
+		Fl_Input     *m_Max;
 		Fl_Slider    *m_Chan;
 	};
-	
+
 	friend class CVGUI;
-	
+
 	Fl_Pack *m_MainPack;
 	Fl_Button *m_Add;
 	Fl_Button *m_Delete;
-	
+
 	vector<CVGUI*> m_GuiVec;
 	void AddCV();
 	void DeleteCV();
-	
+
 	int m_CVCount;
-	
+
 	//// Callbacks ////
+	inline void cb_Title_i(Fl_Input* o, void* v);
+	static void cb_Title(Fl_Input* o, void* v);
+	inline void cb_Max_i(Fl_Input* o, void* v);
+	static void cb_Max(Fl_Input* o, void* v);
 	inline void cb_Chan_i(Fl_Slider* o, void* v);
-	static void cb_Chan(Fl_Slider* o, void* v); 
-	inline void cb_Add_i(Fl_Button* o, void* v); 
+	static void cb_Chan(Fl_Slider* o, void* v);
+	inline void cb_Min_i(Fl_Input* o, void* v);
+	static void cb_Min(Fl_Input* o, void* v);
+	inline void cb_Add_i(Fl_Button* o, void* v);
 	static void cb_Add(Fl_Button* o, void* v);
 	inline void cb_Delete_i(Fl_Button* o, void* v); 
 	static void cb_Delete(Fl_Button* o, void* v); 
