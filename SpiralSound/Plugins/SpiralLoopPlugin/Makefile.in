@@ -161,6 +161,9 @@ install:
 GUI/Widgets/Fl_Loop.o: GUI/Widgets/Fl_Loop.C \
 		GUI/Widgets/Fl_Loop.h
 
+Fl_Loop.o:	Fl_Loop.C \
+		Fl_Loop.h
+
 Fl_Trigger.o:	Fl_Trigger.C \
 		Fl_Trigger.h \
 		Fl_Loop.h
