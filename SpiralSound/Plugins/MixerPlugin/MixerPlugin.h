@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include "../SpiralPlugin.h"
 #include <FL/Fl_Pixmap.H>
@@ -22,39 +22,34 @@
 #ifndef MixerPLUGIN
 #define MixerPLUGIN
 
-static const int NUM_CHANNELS = 4;
+static const int MAX_CHANNELS = 16;
 
-class MixerPlugin : public SpiralPlugin
-{
-public:
- 	MixerPlugin();
-	virtual ~MixerPlugin();
-	
-	virtual PluginInfo &Initialise(const HostInfo *Host);
-	virtual SpiralGUIType *CreateGUI();
-	virtual void Execute();
-	virtual void ExecuteCommands();
-	virtual void StreamOut(ostream &s);
-	virtual void StreamIn(istream &s);
-	
-	// has to be defined in the plugin	
-	virtual void UpdateGUI() { Fl::check(); }
-	
-	enum GUICommands{NONE,SETCH};
-	struct GUIArgs
-	{
-		int Num;
-		float Value;
-	};
-	
-	float GetChannel(int n) { return m_ChannelVal[n]; }
-			
-private:
-
-	GUIArgs m_GUIArgs;
-
-	void  SetChannel(int n, float s) { m_ChannelVal[n]=s; }	
-	float m_ChannelVal[NUM_CHANNELS];
+class MixerPlugin : public SpiralPlugin {
+  public:
+      MixerPlugin();
+      virtual ~MixerPlugin();
+      virtual PluginInfo &Initialise(const HostInfo *Host);
+      virtual SpiralGUIType *CreateGUI();
+      virtual void Execute();
+      virtual void ExecuteCommands();
+      virtual void StreamOut(ostream &s);
+      virtual void StreamIn(istream &s);
+      // has to be defined in the plugin
+      virtual void UpdateGUI() { Fl::check(); }
+      enum GUICommands { NONE, SETCH, SETNUM };
+      struct GUIArgs {
+	     int Num;
+	     float Value;
+      };
+      float GetChannel (int n) { return m_ChannelVal[n]; }
+      int GetChannels (void) { return m_NumChannels; }
+  private:
+      void CreatePorts (int n = 4, bool AddPorts = false);
+      GUIArgs m_GUIArgs;
+      int m_NumChannels;
+      void SetChannel (int n, float s) { m_ChannelVal[n]=s; }
+      void SetChannels (int n);
+      float m_ChannelVal[MAX_CHANNELS];
 };
 
 #endif

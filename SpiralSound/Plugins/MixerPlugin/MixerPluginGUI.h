@@ -14,11 +14,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Group.H>
+#include <FL/Fl_Pack.H>
 #include <FL/Fl_Slider.H>
 
 #include "MixerPlugin.h"
@@ -27,27 +28,27 @@
 #ifndef MixerGUI
 #define MixerGUI
 
+static int Numbers[MAX_CHANNELS];
 
-class MixerPluginGUI : public SpiralPluginGUI
-{
-public:
-	MixerPluginGUI(int w, int h, MixerPlugin *o,ChannelHandler *ch,const HostInfo *Info);
-	
-	virtual void UpdateValues(SpiralPlugin *o);
-
-protected:
-    const string GetHelpText(const string &loc);	
-	
-private:
-	
-	int Numbers[NUM_CHANNELS];
-	
-	Fl_Slider* m_Chan[NUM_CHANNELS];
-	
-	//// Callbacks ////
-	inline void cb_Chan_i(Fl_Slider* o, void* v);
-	static void cb_Chan(Fl_Slider* o, void* v); 
-	
+class MixerPluginGUI : public SpiralPluginGUI {
+   public:
+      MixerPluginGUI(int w, int h, MixerPlugin *o,ChannelHandler *ch,const HostInfo *Info);
+      virtual void UpdateValues(SpiralPlugin *o);
+   protected:
+      const string GetHelpText(const string &loc);
+   private:
+      void AddChan (bool SendData = false, bool ResizeIt = false);
+      void DeleteChan (bool SendData = true, bool DrawIt = true);
+      vector<Fl_Slider*> m_SlidVec;
+      Fl_Pack *m_MainPack, *m_Buttons;
+      Fl_Button *m_Add, *m_Delete;
+      //// Callbacks ////
+      inline void cb_Chan_i (Fl_Slider* o, void* v);
+      static void cb_Chan (Fl_Slider* o, void* v);
+      inline void cb_Add_i (Fl_Button* o, void* v);
+      static void cb_Add (Fl_Button* o, void* v);
+      inline void cb_Delete_i (Fl_Button* o, void* v);
+      static void cb_Delete (Fl_Button* o, void* v);
 };
 
 #endif

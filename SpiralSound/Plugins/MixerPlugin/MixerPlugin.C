@@ -14,7 +14,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
+
+#include <stdio.h>
 #include "MixerPlugin.h"
 #include "MixerPluginGUI.h"
 #include <FL/Fl_Button.h>
@@ -44,26 +46,17 @@ string GetGroupName()
 
 ///////////////////////////////////////////////////////
 
-MixerPlugin::MixerPlugin()
+MixerPlugin::MixerPlugin() :
+m_NumChannels(0)
 {
-	m_PluginInfo.Name="Mixer";
-	m_PluginInfo.Width=100;
-	m_PluginInfo.Height=125;
-	m_PluginInfo.NumInputs=4;
-	m_PluginInfo.NumOutputs=1;
-	m_PluginInfo.PortTips.push_back("Input one");	
-	m_PluginInfo.PortTips.push_back("Input two");	
-	m_PluginInfo.PortTips.push_back("Input three");	
-	m_PluginInfo.PortTips.push_back("Input four");	
-	m_PluginInfo.PortTips.push_back("Output");
-	
-	for (int n=0; n<NUM_CHANNELS; n++)
-	{
-		m_ChannelVal[n]=1.0f;		
-	}
-	
-	m_AudioCH->Register("Value",&m_GUIArgs.Value);
-	m_AudioCH->Register("Num",&m_GUIArgs.Num);
+        m_Version = 2;
+        m_PluginInfo.Name="Mixer";
+	m_PluginInfo.Width=80;
+	m_PluginInfo.Height=145;
+        CreatePorts ();
+	for (int n=0; n<MAX_CHANNELS; n++) m_ChannelVal[n]=1.0f;
+	m_AudioCH->Register("Value", &m_GUIArgs.Value);
+	m_AudioCH->Register("Num", &m_GUIArgs.Num);
 }
 
 MixerPlugin::~MixerPlugin()
@@ -71,7 +64,7 @@ MixerPlugin::~MixerPlugin()
 }
 
 PluginInfo &MixerPlugin::Initialise(const HostInfo *Host)
-{	
+{
 	return SpiralPlugin::Initialise(Host);
 }
 
@@ -82,44 +75,77 @@ SpiralGUIType *MixerPlugin::CreateGUI()
 										this,m_AudioCH,m_HostInfo);
 }
 
-void MixerPlugin::Execute()
-{
-	// Mix the inputs
-	for (int n=0; n<m_HostInfo->BUFSIZE; n++)
-	{
-		SetOutput(0,n,(GetInput(0,n)*m_ChannelVal[0])+
-					  (GetInput(1,n)*m_ChannelVal[1])+
-					  (GetInput(2,n)*m_ChannelVal[2])+
-					  (GetInput(3,n)*m_ChannelVal[3]));
-	}
+void MixerPlugin::Execute () {
+     // Mix the inputs
+     for (int n=0; n<m_HostInfo->BUFSIZE; n++) {
+         float out = 0.0;
+         for (int c=0; c<m_NumChannels; c++) out += (GetInput (c, n) * m_ChannelVal[c]);
+         SetOutput (0, n, out);
+     }
 }
 
-void MixerPlugin::ExecuteCommands()
-{
-	if (m_AudioCH->IsCommandWaiting())
-	{
-		switch (m_AudioCH->GetCommand())
-		{
-			case (SETCH) : SetChannel(m_GUIArgs.Num,m_GUIArgs.Value); break;
-		}
-	}
+void MixerPlugin::ExecuteCommands() {
+     if (m_AudioCH->IsCommandWaiting()) {
+        switch (m_AudioCH->GetCommand()) {
+          case SETCH:
+               SetChannel (m_GUIArgs.Num, m_GUIArgs.Value);
+               break;
+          case SETNUM:
+               SetChannels (m_GUIArgs.Num);
+               break;
+        }
+      }
 }
 
-void MixerPlugin::StreamOut(ostream &s)
-{
-	s<<m_Version<<" ";
-	for (int n=0; n<NUM_CHANNELS; n++)
-	{
-		s<<m_ChannelVal[n]<<" ";
-	}
+void MixerPlugin::SetChannels (int n) {
+     // once to clear the connections with the current info
+     // do we need this????
+     UpdatePluginInfoWithHost();
+     // Things can get a bit confused deleting and adding inputs
+     // so we just chuck away all the ports...
+     RemoveAllInputs ();
+     RemoveAllOutputs ();
+     m_PluginInfo.NumInputs = 0;
+     m_PluginInfo.NumOutputs = 0;
+     m_PluginInfo.PortTips.clear ();
+     // ... and then create some new ones
+     CreatePorts (n, true);
+     // do the actual update
+     UpdatePluginInfoWithHost ();
 }
 
-void MixerPlugin::StreamIn(istream &s)
-{	
-	int version;
-	s>>version;
-	for (int n=0; n<NUM_CHANNELS; n++)
-	{
-		s>>m_ChannelVal[n];
-	}
+void MixerPlugin::CreatePorts (int n, bool AddPorts) {
+     int c;
+     m_PluginInfo.NumInputs = n;
+     m_NumChannels = n;
+     char t[256];
+     for (c=1; c<=n; c++) {
+         sprintf (t, "Input %d", c);
+         m_PluginInfo.PortTips.push_back (t);
+     }
+     m_PluginInfo.NumOutputs = 1;
+     m_PluginInfo.PortTips.push_back ("Output");
+     if (AddPorts) {
+        for (c=0; c<m_PluginInfo.NumInputs; c++) AddInput();
+        for (c=0; c<m_PluginInfo.NumOutputs; c++) AddOutput();
+     }
+}
+
+void MixerPlugin::StreamOut (ostream &s) {
+     s << m_Version << " ";
+     s << m_NumChannels << " ";
+     for (int n=0; n<m_NumChannels; n++) s << m_ChannelVal[n] << " ";
+}
+
+void MixerPlugin::StreamIn (istream &s) {
+     int version, chans;
+     s >> version;
+     switch (version) {
+       case 1: SetChannels (4);
+               break;
+       case 2: s >> chans;
+               SetChannels (chans);
+               break;
+     }
+     for (int n=0; n<m_NumChannels; n++) s >> m_ChannelVal[n];
 }
