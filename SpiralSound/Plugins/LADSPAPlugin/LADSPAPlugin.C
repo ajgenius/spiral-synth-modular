@@ -67,9 +67,10 @@ LADSPAPlugin::LADSPAPlugin()
 {
 #ifdef USE_POSIX_SHM
 // Share the LADSPA Database via SHM
-// We keep two things: A reference counter, and a pointer to the
-// database. We can get away with just a pointer as all instances
-// are in the same address space (process + thread)
+// We keep two things:
+//  1. A reference counter, counting LADSPAPlugin instances
+//  2. A pointer to the database. We can get away with just a pointer as
+//     all instances are in the same address space (SSM audio thread)
 
 	int shm_rc_fd;
 	int shm_db_fd;
@@ -157,17 +158,18 @@ LADSPAPlugin::LADSPAPlugin()
 	m_AudioCH->RegisterData("GetInputPortCount",ChannelHandler::OUTPUT,&(m_InputPortCount),sizeof(m_InputPortCount));
 
 	m_OutData.InputPortNames = (char *)malloc(256 * m_MaxInputPortCount);
-	m_OutData.InputPortSettings = (PortSettings *)malloc(sizeof(PortSettings) * m_MaxInputPortCount);
-	m_OutData.InputPortValues = (PortValues *)calloc(m_MaxInputPortCount, sizeof(PortValues));
+	m_OutData.InputPortSettings = (PortSetting *)malloc(sizeof(PortSetting) * m_MaxInputPortCount);
+	m_OutData.InputPortValues = (PortValue *)calloc(m_MaxInputPortCount, sizeof(PortValue));
 	m_OutData.InputPortDefaults = (float *)calloc(m_MaxInputPortCount, sizeof(float));
 
 	if (m_OutData.InputPortNames &&
-	    m_OutData.InputPortDefaults &&
 	    m_OutData.InputPortSettings &&
-	    m_OutData.InputPortValues) {
+	    m_OutData.InputPortValues &&
+	    m_OutData.InputPortDefaults)
+	{
 		m_AudioCH->RegisterData("GetInputPortNames", ChannelHandler::OUTPUT, m_OutData.InputPortNames, 256 * m_MaxInputPortCount);
-		m_AudioCH->RegisterData("GetInputPortSettings", ChannelHandler::OUTPUT, m_OutData.InputPortSettings, sizeof(PortSettings) * m_MaxInputPortCount);
-		m_AudioCH->RegisterData("GetInputPortValues", ChannelHandler::OUTPUT, m_OutData.InputPortValues, sizeof(PortValues) * m_MaxInputPortCount);
+		m_AudioCH->RegisterData("GetInputPortSettings", ChannelHandler::OUTPUT, m_OutData.InputPortSettings, sizeof(PortSetting) * m_MaxInputPortCount);
+		m_AudioCH->RegisterData("GetInputPortValues", ChannelHandler::OUTPUT, m_OutData.InputPortValues, sizeof(PortValue) * m_MaxInputPortCount);
 		m_AudioCH->RegisterData("GetInputPortDefaults", ChannelHandler::OUTPUT, m_OutData.InputPortDefaults, sizeof(float) * m_MaxInputPortCount);
 	} else {
 		cerr<<"LADSPA Plugin: Memory allocation error"<<endl;
@@ -1046,13 +1048,13 @@ void LADSPAPlugin::ResetPortSettings(void)
 			} else {
 			// These hints may be affected by SAMPLERATE, LOGARITHMIC and INTEGER
 				if (LADSPA_IS_HINT_DEFAULT_MINIMUM(HintDesc) &&
-				LADSPA_IS_HINT_BOUNDED_BELOW(HintDesc)) {
+				    LADSPA_IS_HINT_BOUNDED_BELOW(HintDesc)) {
 					Default=m_PlugDesc->PortRangeHints[Port].LowerBound;
 				} else if (LADSPA_IS_HINT_DEFAULT_MAXIMUM(HintDesc) &&
-					LADSPA_IS_HINT_BOUNDED_ABOVE(HintDesc)) {
+				           LADSPA_IS_HINT_BOUNDED_ABOVE(HintDesc)) {
 					Default=m_PlugDesc->PortRangeHints[Port].UpperBound;
 				} else if (LADSPA_IS_HINT_BOUNDED_BELOW(HintDesc) &&
-					LADSPA_IS_HINT_BOUNDED_ABOVE(HintDesc)) {
+				           LADSPA_IS_HINT_BOUNDED_ABOVE(HintDesc)) {
 				// These hints require both upper and lower bounds
 					float lp = 0.0f, up = 0.0f;
 					float min = m_PlugDesc->PortRangeHints[Port].LowerBound;
@@ -1109,6 +1111,7 @@ void LADSPAPlugin::ResetPortSettings(void)
 #warning     www.ladspa.org
 #warning Defaults will not be used.
 #warning ************************************
+		Default = 0.0f;
 #endif
 
 		m_InputPortMin.push_back(Min);
@@ -1124,16 +1127,31 @@ void LADSPAPlugin::SetGUIExports(void)
 	char *lbl_start;
 
 	lbl_start = m_OutData.InputPortNames;
-	for (unsigned long n = 0; n < m_InputPortCount; n++) {
-		lbl_length = m_PluginInfo.PortTips[n].size();
+	for (unsigned long p = 0; p < m_InputPortCount; p++) {
+		int Port = m_PortID[p];
+		LADSPA_PortRangeHintDescriptor HintDesc=m_PlugDesc->PortRangeHints[Port].HintDescriptor;
+
+	// Port Labels
+		lbl_length = m_PluginInfo.PortTips[p].size();
 		lbl_length = lbl_length > 255 ? 255 : lbl_length;
-		strncpy(lbl_start, m_PluginInfo.PortTips[n].c_str(), lbl_length);
+		strncpy(lbl_start, m_PluginInfo.PortTips[p].c_str(), lbl_length);
 		lbl_start[lbl_length] = '\0';
 		lbl_start += 256;
 
-		m_OutData.InputPortSettings[n].Min = m_InputPortMin[n];
-		m_OutData.InputPortSettings[n].Max = m_InputPortMax[n];
-		m_OutData.InputPortSettings[n].Clamp = m_InputPortClamp[n];
-		m_OutData.InputPortDefaults[n] = m_InputPortDefault[n];
+		m_OutData.InputPortSettings[p].Integer = LADSPA_IS_HINT_INTEGER(HintDesc);
+		if (LADSPA_IS_HINT_LOGARITHMIC(HintDesc)) {
+			if (LADSPA_IS_HINT_SAMPLE_RATE(HintDesc)) {
+				m_OutData.InputPortSettings[p].LogBase = 2.0f;
+			} else {
+				m_OutData.InputPortSettings[p].LogBase = 10.0f;
+			}
+		} else {
+			m_OutData.InputPortSettings[p].LogBase = 0.0f;
+		}
+
+		m_OutData.InputPortSettings[p].Min = m_InputPortMin[p];
+		m_OutData.InputPortSettings[p].Max = m_InputPortMax[p];
+		m_OutData.InputPortSettings[p].Clamp = m_InputPortClamp[p];
+		m_OutData.InputPortDefaults[p] = m_InputPortDefault[p];
 	}
 }

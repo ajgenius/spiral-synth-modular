@@ -25,8 +25,8 @@
 #include <vector>
 #include <algorithm>
 
-#include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
+#include <FL/Fl_Tooltip.H>
 
 #include "LADSPAPluginGUI.h"
 #include "LADSPAInfo.h"
@@ -41,16 +41,13 @@ SpiralPluginGUI(w,h,o,ch)
 	m_GUIColour = (Fl_Color)Info->GUI_COLOUR;
 	m_PluginList = PVec;
 
-	int Width=20;
-	int Height=100;
-
 // Get maximum input port count
 	m_GUICH->GetData("GetMaxInputPortCount",&(m_MaxInputPortCount));
 
 // Set up buffers for data transfer via ChannelHandler
 	m_InputPortNames = (char *)malloc(256 * m_MaxInputPortCount);
-	m_InputPortSettings = (PortSettings *)malloc(sizeof(PortSettings) * m_MaxInputPortCount);
-	m_InputPortValues = (PortValues *)calloc(m_MaxInputPortCount, sizeof(PortValues));
+	m_InputPortSettings = (PortSetting *)malloc(sizeof(PortSetting) * m_MaxInputPortCount);
+	m_InputPortValues = (PortValue *)calloc(m_MaxInputPortCount, sizeof(PortValue));
 	m_InputPortDefaults = (float *)calloc(m_MaxInputPortCount, sizeof(float));
 
 	if (!(m_InputPortNames && m_InputPortSettings &&
@@ -182,9 +179,9 @@ SpiralPluginGUI(w,h,o,ch)
 
 LADSPAPluginGUI::~LADSPAPluginGUI(void)
 {
-	if (m_InputPortNames)  free(m_InputPortNames);
+	if (m_InputPortNames)    free(m_InputPortNames);
 	if (m_InputPortSettings) free(m_InputPortSettings);
-	if (m_InputPortValues) free(m_InputPortValues);
+	if (m_InputPortValues)   free(m_InputPortValues);
 	if (m_InputPortDefaults) free(m_InputPortDefaults);
 
 	m_PluginIDLookup.clear();
@@ -195,7 +192,7 @@ LADSPAPluginGUI::~LADSPAPluginGUI(void)
 // Rearrange knobs depending on connections
 // Knobs corresponding to connected ports are hidden,
 // the rest are shown
-void LADSPAPluginGUI::UpdateDefaultAdjustControls(void)
+void LADSPAPluginGUI::UpdatePortControlKnobs(void)
 {
 	int column = 0;
 
@@ -218,9 +215,9 @@ void LADSPAPluginGUI::UpdateDefaultAdjustControls(void)
 	for (unsigned long p = 0; p < m_InputPortCount; p++)
 	{
 		if (!m_InputPortValues[p].Connected) {
-			m_PortDefaultAdjust[p]->position(50 + column * 105, 0);
-			m_PortDefaultAdjust[p]->show();
-			NewGroup->add(m_PortDefaultAdjust[p]);
+			m_PortControlKnobs[p]->position(50 + column * 105, 0);
+			m_PortControlKnobs[p]->show();
+			NewGroup->add(m_PortControlKnobs[p]);
 
 			column++;
 			if ((column > 3) && (p < m_InputPortCount - 1)) {
@@ -231,7 +228,7 @@ void LADSPAPluginGUI::UpdateDefaultAdjustControls(void)
 				column = 0;
 			}
 		} else {
-			m_PortDefaultAdjust[p]->hide();
+			m_PortControlKnobs[p]->hide();
 		}
 	}
 
@@ -250,19 +247,20 @@ void LADSPAPluginGUI::UpdateValues(SpiralPlugin *o)
 
 	m_InputPortCount = Plugin->GetInputPortCount();
 	const char *name;
-	PortSettings settings;
-	float defolt;
 
 	for (unsigned long p = 0; p < m_InputPortCount; p++) {
 		name = Plugin->GetInputPortName(p);
-		settings = Plugin->GetInputPortSettings(p);
-		defolt = Plugin->GetInputPortDefault(p);
-		AddPortInfo(name);
-		SetPortSettings(p, settings.Min, settings.Max, settings.Clamp, defolt);
-		SetDefaultAdjust(p);
+		strncpy((char *)(m_InputPortNames + p * 256), name, 256);
+
+		m_InputPortSettings[p] = Plugin->GetInputPortSetting(p);
+		m_InputPortDefaults[p] = Plugin->GetInputPortDefault(p);
+
+		AddPortInfo(p);
+		SetPortSettings(p);
+		SetPortControlKnobValue(p);
 	}
 
-	UpdateDefaultAdjustControls();
+	UpdatePortControlKnobs();
 
 	m_PortIndex = m_InputPortCount;
 }
@@ -370,34 +368,85 @@ void LADSPAPluginGUI::SetMaker(const char *s)
 	m_MakerLabel->label (m_Maker);
 }
 
-void LADSPAPluginGUI::SetPortSettings(unsigned long n, float min, float max, bool clamp, float defolt)
+void LADSPAPluginGUI::SetPortSettings(unsigned long p)
 {
 	char temp[256];
-	sprintf(temp,"%.4f",min);
-	m_PortMin[n]->value(temp);
+	sprintf(temp,"%.4f", m_InputPortSettings[p].Min);
+	m_PortMin[p]->value(temp);
 
-	sprintf(temp,"%.4f",max);
-	m_PortMax[n]->value(temp);
+	sprintf(temp,"%.4f", m_InputPortSettings[p].Max);
+	m_PortMax[p]->value(temp);
 
-	sprintf(temp, "%d",clamp);
-	m_PortClamp[n]->value(atoi(temp));
+	sprintf(temp, "%d", m_InputPortSettings[p].Clamp);
+	m_PortClamp[p]->value(atoi(temp));
 
-	sprintf(temp, "%.4f",defolt);
-	m_PortDefault[n]->value(temp);
+	sprintf(temp, "%.4f", m_InputPortDefaults[p]);
+	m_PortDefault[p]->value(temp);
 }
 
-void LADSPAPluginGUI::SetDefaultAdjust(unsigned long n)
+void LADSPAPluginGUI::SetPortControlKnobValue(unsigned long p)
 {
 // Set default adjust knob
-	float min = atof(m_PortMin[n]->value());
-	float max = atof(m_PortMax[n]->value());
-	float def = atof(m_PortDefault[n]->value());
-	float value = ((max - min) > 0.0f) ? (def - min) / (max - min) : 0.5f;
+	float min = atof(m_PortMin[p]->value());
+	float max = atof(m_PortMax[p]->value());
+	float value = atof(m_PortDefault[p]->value());
 
-	m_PortDefaultAdjust[n]->value(value);
+	if (m_InputPortSettings[p].LogBase > 1.0f) {
+	// Logarithmic control - requires conversion
+		if (min > 0.0f && max > 0.0f) {
+		// Straight log
+			value = logf(value) / logf(m_InputPortSettings[p].LogBase);
+		} else if (min < 0.0f && max < 0.0f) {
+		// Inverse, negated log
+			value = -logf(-value) / logf(m_InputPortSettings[p].LogBase);
+		} else {
+		// Linear if asymptote present
+		// Do nothing
+		}
+	}
+
+	m_PortControlKnobs[p]->value(value);
 }
 
-void LADSPAPluginGUI::AddPortInfo(const char *Info)
+void LADSPAPluginGUI::SetPortControlKnobRange(unsigned long p, float min, float max)
+{
+	if (m_InputPortSettings[p].Integer) {
+	// Integer control - integer steps between minimum and maximum
+		min = floorf(min + 0.5f);
+		max = floorf(max + 0.5f);
+
+		m_PortControlKnobs[p]->minimum(min);
+		m_PortControlKnobs[p]->maximum(max);
+		m_PortControlKnobs[p]->step(1.0f);
+		m_PortControlKnobs[p]->scaleticks((int)(max - min));
+	} else {
+		if (m_InputPortSettings[p].LogBase > 1.0f) {
+		// Continuous logarithmic control
+			if (min > 0.0f && max > 0.0f) {
+			// Log of range
+				min = logf(min) / logf(m_InputPortSettings[p].LogBase);
+				max = logf(max) / logf(m_InputPortSettings[p].LogBase);
+			} else if (min < 0.0f && max < 0.0f) {
+			// Negative log of range
+				min = -logf(-min) / logf(m_InputPortSettings[p].LogBase);
+				max = -logf(-max) / logf(m_InputPortSettings[p].LogBase);
+			} else {
+			// Linear if asymptote present
+			// Do nothing
+			}
+			m_PortControlKnobs[p]->minimum(min);
+			m_PortControlKnobs[p]->maximum(max);
+			m_PortControlKnobs[p]->step((max - min) / 10000.0f);
+		} else {
+		// Continuous linear control - 10000 steps between min and max
+			m_PortControlKnobs[p]->minimum(min);
+			m_PortControlKnobs[p]->maximum(max);
+			m_PortControlKnobs[p]->step((max - min) / 10000.0f);
+		}
+	}
+}
+
+void LADSPAPluginGUI::AddPortInfo(unsigned long p)
 {
 	Fl_Group* NewGroup = new Fl_Group(0,0,460,24,"");
 	NewGroup->box(FL_FLAT_BOX);
@@ -445,8 +494,9 @@ void LADSPAPluginGUI::AddPortInfo(const char *Info)
 
 // Port Name
 	Fl_Box* NewText = new Fl_Box(320,0,10,18,"");
-	NewText->label(Info);
+	NewText->label((const char *)(m_InputPortNames + p * 256));
 	NewText->labelsize(10);
+	NewText->tooltip((const char *)(m_InputPortNames + p * 256));
 	NewText->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 	NewGroup->add(NewText);
 
@@ -456,26 +506,27 @@ void LADSPAPluginGUI::AddPortInfo(const char *Info)
 
 // Control knobs - these aren't displayed yet, as their display will depend
 // on what is connected. All that is decided in UpdateControlKnobs()
-	int len = strlen(Info);
+	int len = strlen((const char *)(m_InputPortNames + p * 256));
 	len -= 5;                  // Get rid of (CV), (AU) bit
 	len = len > 20 ? 20 : len; // Truncate to fit
 	char *label = (char *)malloc(len + 1);
 	if (label)
 	{
-		strncpy(label, Info, len);
+		strncpy(label, (const char *)(m_InputPortNames + p * 256), len);
 		label[len] = '\0';
 	}
-	m_PortDefaultAdjustLabels.push_back(label);
+	m_PortControlLabels.push_back(label);
 
 	Fl_Knob* NewKnob = new Fl_Knob(0,0,40,40,"");
-	NewKnob->label(m_PortDefaultAdjustLabels[m_PortDefaultAdjustLabels.size() - 1]);
+	NewKnob->label(m_PortControlLabels[m_PortControlLabels.size() - 1]);
 	NewKnob->labelsize(10);
 	NewKnob->color(m_GUIColour);
-	NewKnob->maximum(1.0f);
-	NewKnob->step(0.001f);
 	NewKnob->callback((Fl_Callback *)cb_DefaultAdjust);
 	NewKnob->hide();
-	m_PortDefaultAdjust.push_back(NewKnob);
+	m_PortControlKnobs.push_back(NewKnob);
+
+// Set up range for knob (integer, logarithmic etc)
+	SetPortControlKnobRange(p, m_InputPortSettings[p].Min, m_InputPortSettings[p].Max);
 }
 
 // This is done all the time
@@ -509,9 +560,9 @@ void LADSPAPluginGUI::Update(void)
 
 			sprintf(temp,"%.4f", m_InputPortDefaults[p]);
 			m_PortDefault[p]->value(temp);
-
-			SetDefaultAdjust(p);
 			m_PortDefault[p]->redraw();
+
+			SetPortControlKnobValue(p);
 
 			state_changed = true;
 		}
@@ -530,7 +581,7 @@ void LADSPAPluginGUI::Update(void)
 
 // If a connection has been added/removed, we need to
 // rearrange the knobs
-	if (state_changed) UpdateDefaultAdjustControls();
+	if (state_changed) UpdatePortControlKnobs();
 }
 
 void LADSPAPluginGUI::ClearPlugin(void)
@@ -558,14 +609,16 @@ void LADSPAPluginGUI::ClearPlugin(void)
 	m_PortMax.clear();
 	m_PortClamp.clear();
 	m_PortDefault.clear();
-	m_PortDefaultAdjust.clear();
+	m_PortControlKnobs.clear();
 
-	for (vector<char *>::iterator i = m_PortDefaultAdjustLabels.begin();
-	     i != m_PortDefaultAdjustLabels.end(); i++)
+	for (vector<char *>::iterator i = m_PortControlLabels.begin();
+	     i != m_PortControlLabels.end(); i++)
 	{
 		if (*i) free (*i);
 	}
-	m_PortDefaultAdjustLabels.clear();
+	m_PortControlLabels.clear();
+
+	redraw();
 }
 
 void LADSPAPluginGUI::SelectPlugin(void)
@@ -582,16 +635,12 @@ void LADSPAPluginGUI::SelectPlugin(void)
 	SetMaker((const char *)m_Maker);
 
 	for (unsigned long p = 0; p < m_InputPortCount; p++) {
-		AddPortInfo((const char *)(m_InputPortNames + p * 256));
-		SetPortSettings(p, m_InputPortSettings[p].Min,
-		                   m_InputPortSettings[p].Max,
-		                   m_InputPortSettings[p].Clamp,
-		                   m_InputPortDefaults[p]);
-
-		SetDefaultAdjust(p);
+		AddPortInfo(p);
+		SetPortSettings(p);
+		SetPortControlKnobValue(p);
 	}
 
-	UpdateDefaultAdjustControls();
+	UpdatePortControlKnobs();
 	m_PortIndex = m_InputPortCount;
 
 	redraw();
@@ -621,16 +670,16 @@ inline void LADSPAPluginGUI::cb_Select_i(Fl_Choice* o)
 
 	if (m_UniqueID != 0) {
 	// Plugin selected
-	        m_GUICH->SetData("SetUniqueID",&m_UniqueID);
-	        m_GUICH->SetCommand(LADSPAPlugin::SELECTPLUGIN);
-            m_GUICH->Wait();
+		m_GUICH->SetData("SetUniqueID",&m_UniqueID);
+		m_GUICH->SetCommand(LADSPAPlugin::SELECTPLUGIN);
+		m_GUICH->Wait();
 	}
 	SelectPlugin();
 
 //	redraw();
 }
 void LADSPAPluginGUI::cb_Select(Fl_Choice* o)
-{       //                     Group     Tab       GUI
+{   //                     Group     Tab       GUI
 	((LADSPAPluginGUI*)(o->parent()->parent()->parent()))->cb_Select_i(o);
 }
 
@@ -642,7 +691,7 @@ inline void LADSPAPluginGUI::cb_UpdateInputs_i(Fl_LED_Button* o)
 	m_GUICH->SetCommand(LADSPAPlugin::SETUPDATEINPUTS);
 }
 void LADSPAPluginGUI::cb_UpdateInputs(Fl_LED_Button* o)
-{       //                     Group     Tab       GUI
+{   //                     Group     Tab       GUI
 	((LADSPAPluginGUI*)(o->parent()->parent()->parent()))->cb_UpdateInputs_i(o);
 }
 
@@ -665,25 +714,45 @@ inline void LADSPAPluginGUI::cb_Default_i(Fl_Input* o)
 	m_Min = atof(m_PortMin[m_PortIndex]->value());
 	m_Max = atof(m_PortMax[m_PortIndex]->value());
 
+// Pass current port index
+	m_GUICH->SetData("SetInputPortIndex", &m_PortIndex);
+
 // If default is out of [Min, Max] range, stretch range
 	if (m_Default < m_Min) {
 		m_PortMin[m_PortIndex]->value(m_PortDefault[m_PortIndex]->value());
 		m_PortMin[m_PortIndex]->redraw();
+		m_Min = m_Default;
+
+	// Pass new Minimum to plugin
+		m_GUICH->SetData("SetInputPortMin", &m_Min);
+		m_GUICH->SetCommand(LADSPAPlugin::SETMAX);
+		m_GUICH->Wait();
+
+	// Reconfigure knob range
+		SetPortControlKnobRange(m_PortIndex, m_Min, m_Max);
 	} else if (m_Default > m_Max) {
 		m_PortMax[m_PortIndex]->value(m_PortDefault[m_PortIndex]->value());
 		m_PortMax[m_PortIndex]->redraw();
+		m_Max = m_Default;
+
+	// Pass new Maximum to plugin
+		m_GUICH->SetData("SetInputPortMax", &m_Max);
+		m_GUICH->SetCommand(LADSPAPlugin::SETMAX);
+		m_GUICH->Wait();
+
+	// Reconfigure knob range
+		SetPortControlKnobRange(m_PortIndex, m_Min, m_Max);
 	}
 
-// Pass value to plugin
-	m_GUICH->SetData("SetInputPortIndex", &m_PortIndex);
+// Pass new default to plugin
 	m_GUICH->SetData("SetInputPortDefault", &m_Default);
 	m_GUICH->SetCommand(LADSPAPlugin::SETDEFAULT);
 
-// Set Default Adjust knob to corresponding position
-	SetDefaultAdjust(m_PortIndex);
+// Set knob to corresponding position
+	SetPortControlKnobValue(m_PortIndex);
 }
 void LADSPAPluginGUI::cb_Default(Fl_Input* o)
-{       //                  Group        Pack      Scroll    Group     Tab       GUI
+{   //                  Group        Pack      Scroll    Group     Tab       GUI
 	((LADSPAPluginGUI*)(o->parent()->parent()->parent()->parent()->parent()->parent()))->cb_Default_i(o);
 }
 
@@ -702,7 +771,7 @@ inline void LADSPAPluginGUI::cb_Min_i(Fl_Input* o)
 		m_PortIndex = distance(m_PortMin.begin(), i);
 	}
 
-// Pass value to plugin
+// Pass current port index
 	m_GUICH->SetData("SetInputPortIndex", &m_PortIndex);
 
 // Check that min is really min and max is really max
@@ -746,11 +815,12 @@ inline void LADSPAPluginGUI::cb_Min_i(Fl_Input* o)
 		m_PortDefault[m_PortIndex]->redraw();
 	}
 
-// Reposition Default Adjust knob to reflect new range
-	SetDefaultAdjust(m_PortIndex);
+// Reposition and reconfigure knob to reflect new range
+	SetPortControlKnobValue(m_PortIndex);
+	SetPortControlKnobRange(m_PortIndex, m_Min, m_Max);
 }
 void LADSPAPluginGUI::cb_Min(Fl_Input* o)
-{       //                  Group        Pack      Scroll    Group     Tab       GUI
+{   //                  Group        Pack      Scroll    Group     Tab       GUI
 	((LADSPAPluginGUI*)(o->parent()->parent()->parent()->parent()->parent()->parent()))->cb_Min_i(o);
 }
 
@@ -814,11 +884,12 @@ inline void LADSPAPluginGUI::cb_Max_i(Fl_Input* o)
 		m_PortDefault[m_PortIndex]->redraw();
 	}
 
-// Reposition Default Adjust knob to reflect new range
-	SetDefaultAdjust(m_PortIndex);
+// Reposition and reconfigure knob to reflect new range
+	SetPortControlKnobValue(m_PortIndex);
+	SetPortControlKnobRange(m_PortIndex, m_Min, m_Max);
 }
 void LADSPAPluginGUI::cb_Max(Fl_Input* o)
-{       //                  Group        Pack      Scroll    Group     Tab       GUI
+{   //                  Group        Pack      Scroll    Group     Tab       GUI
 	((LADSPAPluginGUI*)(o->parent()->parent()->parent()->parent()->parent()->parent()))->cb_Max_i(o);
 }
 
@@ -845,7 +916,7 @@ inline void LADSPAPluginGUI::cb_Clamp_i(Fl_Check_Button* o)
 	m_GUICH->SetCommand(LADSPAPlugin::SETCLAMP);
 }
 void LADSPAPluginGUI::cb_Clamp(Fl_Check_Button* o)
-{       //                  Group        Pack      Scroll    Group     Tab       GUI
+{   //                  Group        Pack      Scroll    Group     Tab       GUI
 	((LADSPAPluginGUI*)(o->parent()->parent()->parent()->parent()->parent()->parent()))->cb_Clamp_i(o);
 }
 
@@ -853,23 +924,36 @@ inline void LADSPAPluginGUI::cb_DefaultAdjust_i(Fl_Knob *o)
 {
 // First, find which knob is being adjusted
 	bool do_search = false;
-	if (m_PortIndex == m_PortDefaultAdjust.size()) { do_search = true; }
-	if (!do_search) { do_search = (o != (m_PortDefaultAdjust[m_PortIndex])) ? true : false; }
+	if (m_PortIndex == m_PortControlKnobs.size()) { do_search = true; }
+	if (!do_search) { do_search = (o != (m_PortControlKnobs[m_PortIndex])) ? true : false; }
 
 	if (do_search) {
 	// Only bother to re-query knob if it is different from last one adjusted
-		vector<Fl_Knob *>::iterator i = std::find(m_PortDefaultAdjust.begin(),
-		                                          m_PortDefaultAdjust.end(),
+		vector<Fl_Knob *>::iterator i = std::find(m_PortControlKnobs.begin(),
+		                                          m_PortControlKnobs.end(),
 		                                          o);
-		m_PortIndex = distance(m_PortDefaultAdjust.begin(), i);
+		m_PortIndex = distance(m_PortControlKnobs.begin(), i);
 	}
 
+// Get value
 	m_Default = o->value();
 
-// Convert knob value [0.0, 1.0] to value in Min, Max range
-	float min = atof(m_PortMin[m_PortIndex]->value());
-	float max = atof(m_PortMax[m_PortIndex]->value());
-	m_Default = ((max - min) > 0.0f) ? min + (max - min) * m_Default : min;
+	if (m_InputPortSettings[m_PortIndex].LogBase > 1.0f) {
+	// Logarithmic control - convert back to actual value
+		float min = o->minimum();
+		float max = o->maximum();
+
+		if (min > 0.0f && max > 0.0f) {
+		// Straight exp
+			m_Default = powf(m_InputPortSettings[m_PortIndex].LogBase, m_Default);
+		} else if (min < 0.0f && max < 0.0f) {
+		// Inverse, negated exp
+			m_Default = -powf(m_InputPortSettings[m_PortIndex].LogBase, -m_Default);
+		} else {
+		// Linear if asymptote present
+		// Do nothing
+		}
+	}
 
 // Pass value to plugin
 	m_GUICH->SetData("SetInputPortIndex", &m_PortIndex);
@@ -883,6 +967,6 @@ inline void LADSPAPluginGUI::cb_DefaultAdjust_i(Fl_Knob *o)
 }
 
 void LADSPAPluginGUI::cb_DefaultAdjust(Fl_Knob *o)
-{       //                     Group     Pack      Scroll    Group     Tab       GUI
+{   //                     Group     Pack      Scroll    Group     Tab       GUI
 	((LADSPAPluginGUI*)(o->parent()->parent()->parent()->parent()->parent()->parent()))->cb_DefaultAdjust_i(o);
 }

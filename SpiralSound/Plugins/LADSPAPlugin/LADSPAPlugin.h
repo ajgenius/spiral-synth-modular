@@ -21,19 +21,28 @@
 #ifndef __ladspa_plugin_h__
 #define __ladspa_plugin_h__
 
+#include <config.h>
+
 #include <FL/Fl_Pixmap.H>
 #include <ladspa.h>
 
 #include "../SpiralPlugin.h"
 #include "LADSPAInfo.h"
 
-struct PortSettings
+#ifdef USE_POSIX_SHM
+#include <sys/types.h> // For pid_t data member
+#include <unistd.h>
+#endif
+
+struct PortSetting
 {
-	float   Min;
-	float   Max;
-	bool    Clamp;
+	float Min;
+	float Max;
+	bool  Clamp;
+	float LogBase;     // >1.0 -> Logarithmic, otherwise linear
+	bool  Integer;
 };
-struct PortValues
+struct PortValue
 {
 	float Value;
 	bool  Connected;
@@ -62,17 +71,13 @@ public:
 	{
 		return (const char *)(m_OutData.InputPortNames + p * 256);
 	}
-	PortSettings GetInputPortSettings(unsigned long p)
+	PortSetting GetInputPortSetting(unsigned long p)
 	{
-		PortSettings settings;
-		settings.Min = m_InputPortMin[p];
-		settings.Max = m_InputPortMax[p];
-		settings.Clamp = m_InputPortClamp[p];
-		return settings;
+		return m_OutData.InputPortSettings[p];
 	}
-	float GetInputPortDefault(unsigned long p)
+	float          GetInputPortDefault(unsigned long p)
 	{
-		return m_InputPortDefault[p];
+		return m_OutData.InputPortDefaults[p];
 	}
 
 	enum GUICommands
@@ -117,17 +122,17 @@ private:
 
 	unsigned long   m_MaxInputPortCount;
 	unsigned long   m_InputPortCount;
-	char            m_Name[256];
+ char            m_Name[256];
 	char            m_Maker[256];
 
 	// Data sent to GUI
 	struct OutputChannelData
 	{
 		char         *InputPortNames;
-		PortSettings *InputPortSettings;
-		PortValues   *InputPortValues;
+		PortSetting  *InputPortSettings;
+		PortValue    *InputPortValues;
 		float        *InputPortDefaults;
-	};
+ };
 
 	// Data received from GUI
 	struct InputChannelData
@@ -145,12 +150,14 @@ private:
 	OutputChannelData     m_OutData;
 	InputChannelData      m_InData;
 
+#ifdef USE_POSIX_SHM
 // SHM stuff - for sharing the LADSPA Plugin database
 	static const char * const m_SHMRefCountPath = "/SpiralSynthModular-LADSPAPlugin-RefCount";
 	static const char * const m_SHMLDBPath = "/SpiralSynthModular-LADSPAPlugin-Database";
 
 	unsigned long *m_SHMRefCount;
 	LADSPAInfo   **m_SHMLDB;
+#endif
 };
 
 #endif // __ladspa_plugin_h__

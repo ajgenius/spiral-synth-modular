@@ -62,15 +62,16 @@ public:
 protected:
 	const string GetHelpText(const string &loc);
 private:
-	void AddPortInfo(const char *Info);
+	void AddPortInfo(unsigned long p);
 	void SetTabIndex(int index);
 	void SetUpdateInputs(bool state);
 	void SetUniqueID(unsigned long n);
 	void SetName(const char *s);
 	void SetMaker(const char *s);
-	void SetPortSettings(unsigned long n, float min, float max, bool clamp, float defolt);
-	void SetDefaultAdjust(unsigned long n);
-	void UpdateDefaultAdjustControls(void);
+	void SetPortSettings(unsigned long p);
+	void SetPortControlKnobValue(unsigned long p);
+	void SetPortControlKnobRange(unsigned long p, float min, float max);
+	void UpdatePortControlKnobs(void);
 	void ClearPlugin(void);
 	void SelectPlugin(void);
 
@@ -99,8 +100,9 @@ private:
 	std::vector<Fl_Input*>         m_PortMax;
 	std::vector<Fl_Check_Button*>  m_PortClamp;
 	std::vector<Fl_Input*>         m_PortDefault;
-	std::vector<Fl_Knob*>          m_PortDefaultAdjust;
-	std::vector<char *>            m_PortDefaultAdjustLabels;
+	std::vector<Fl_Knob*>          m_PortControlKnobs;
+	std::vector<Fl_Slider*>        m_PortControlSliders;
+	std::vector<char *>            m_PortControlLabels;
 
 	std::vector<LADSPAInfo::PluginEntry> m_PluginList;
 	std::vector<unsigned long>     m_PluginIDLookup;
@@ -119,8 +121,8 @@ private:
 	unsigned long                  m_MaxInputPortCount;
 	unsigned long                  m_InputPortCount;
 	char                          *m_InputPortNames;
-	PortSettings                  *m_InputPortSettings;
-	PortValues                    *m_InputPortValues;
+	PortSetting                   *m_InputPortSettings;
+	PortValue                     *m_InputPortValues;
 	float                         *m_InputPortDefaults;
 
 	inline void cb_TabChange_i(Fl_Tabs *o);
