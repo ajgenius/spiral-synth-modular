@@ -56,7 +56,6 @@ int OutputPlugin::m_RefCount=0;
 int OutputPlugin::m_NoExecuted=0;
 OutputPlugin::Mode OutputPlugin::m_Mode=NO_MODE;
 
-
 #define CHECK_AND_REPORT_ERROR	if (result<0)         \
 								{                     \
 									perror("Sound device did not accept settings"); \
@@ -93,10 +92,9 @@ OutputPlugin::OutputPlugin() :
 m_Volume(1.0f)
 {
 	m_RefCount++;
-	
 	// we are an output.
 	m_IsTerminal=true;
-	
+        m_NotifyOpenOut=false;
 	m_PluginInfo.Name="OSS";
 	m_PluginInfo.Width=100;
 	m_PluginInfo.Height=100;
@@ -107,15 +105,15 @@ m_Volume(1.0f)
 	//m_PluginInfo.PortTips.push_back("Record Controller");
 	m_PluginInfo.PortTips.push_back("Left In");
 	m_PluginInfo.PortTips.push_back("Right In");
-	
-	m_AudioCH->Register("Volume",&m_Volume);
+	m_AudioCH->Register ("Volume", &m_Volume);
+        m_AudioCH->Register ("OpenOut", &m_NotifyOpenOut, ChannelHandler::OUTPUT);
 }
 
 OutputPlugin::~OutputPlugin()
-{	
+{
 	m_RefCount--;
 	if (m_RefCount==0)
-	{	
+	{
 		cb_Blocking(m_Parent,false);
 		OSSOutput::PackUpAndGoHome();
 		m_Mode=NO_MODE;
@@ -123,7 +121,7 @@ OutputPlugin::~OutputPlugin()
 }
 
 PluginInfo &OutputPlugin::Initialise(const HostInfo *Host)
-{	
+{
 	PluginInfo& Info= SpiralPlugin::Initialise(Host);
 	host=Host;
 	OSSOutput::Get()->AllocateBuffer();
@@ -133,31 +131,28 @@ PluginInfo &OutputPlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *OutputPlugin::CreateGUI()
 {
-	return new OutputPluginGUI(m_PluginInfo.Width,
-										  m_PluginInfo.Height,
-										  this,
-										  m_AudioCH,
-										  m_HostInfo);
+	return new OutputPluginGUI(m_PluginInfo.Width, m_PluginInfo.Height, this, m_AudioCH, m_HostInfo);
 }
 
 void OutputPlugin::Execute()
 {
-	if (m_Mode==NO_MODE && m_RefCount==1)
+        if (m_Mode==NO_MODE && m_RefCount==1)
 	{
 		if (OSSOutput::Get()->OpenWrite())
 		{
-			cb_Blocking(m_Parent,true); 
+			cb_Blocking(m_Parent,true);
 			m_Mode=OUTPUT;
-		}		
+                        m_NotifyOpenOut=true;
+		}
 	}
-	
-	//if (m_Mode==NO_MODE || m_Mode==CLOSED) cb_Blocking(m_Parent,false); 
-	//else cb_Blocking(m_Parent,true); 
-		
+
+	//if (m_Mode==NO_MODE || m_Mode==CLOSED) cb_Blocking(m_Parent,false);
+	//else cb_Blocking(m_Parent,true);
+
 	if (m_Mode==OUTPUT || m_Mode==DUPLEX)
 	{
 		OSSOutput::Get()->SendStereo(GetInput(0),GetInput(1));
-		
+
 		// can't open GUI stuff here
 	/*	for (int n=0; n<m_HostInfo->BUFSIZE;n++)
 		{
@@ -171,38 +166,39 @@ void OutputPlugin::Execute()
 				n=m_HostInfo->BUFSIZE;
 					if (! m_Recmode)
 					{
-						char *fn=fl_file_chooser("Pick a Wav file to save to", "*.wav", NULL);	
+						char *fn=fl_file_chooser("Pick a Wav file to save to", "*.wav", NULL);
 						if (fn && fn!="")
 						{
 							OSSOutput::Get()->WavOpen(fn);
 						}
 						m_Recmode=true;
 					}
-					else 
+					else
 					{
 						OSSOutput::Get()->WavClose();
 						m_Recmode=false;
 					}
-						
+
 				}
 			}
 			else
 			m_CheckedAlready=false;
 		}*/
 	}
-	
-	if (m_Mode==INPUT || m_Mode==DUPLEX) OSSOutput::Get()->GetStereo(GetOutputBuf(0),GetOutputBuf(1));	
+
+	if (m_Mode==INPUT || m_Mode==DUPLEX)
+           OSSOutput::Get()->GetStereo(GetOutputBuf(0),GetOutputBuf(1));
 }
 
 void OutputPlugin::ExecuteCommands()
 {
 	// Only Play() once per set of plugins
-		
+
 	m_NoExecuted--;
 	if (m_NoExecuted<=0)
-	{	
-		if (m_Mode==INPUT || m_Mode==DUPLEX) OSSOutput::Get()->Read();		
-		if (m_Mode==OUTPUT || m_Mode==DUPLEX) OSSOutput::Get()->Play();		
+	{
+		if (m_Mode==INPUT || m_Mode==DUPLEX) OSSOutput::Get()->Read();
+		if (m_Mode==OUTPUT || m_Mode==DUPLEX) OSSOutput::Get()->Play();
 		m_NoExecuted=m_RefCount;
 	}
 
@@ -211,36 +207,41 @@ void OutputPlugin::ExecuteCommands()
 	{
 		switch(m_AudioCH->GetCommand())
 		{
-			case OPENREAD : 
+			case OPENREAD :
 				if (OSSOutput::Get()->OpenRead())
 				{
 					m_Mode=INPUT;
-					//cb_Blocking(m_Parent,true); 
+					//cb_Blocking(m_Parent,true);
 				}
 			break;
-			case OPENWRITE : 
-				if (OSSOutput::Get()->OpenWrite()) 
+			case OPENWRITE :
+				if (OSSOutput::Get()->OpenWrite())
 				{
 					m_Mode=OUTPUT;
-					cb_Blocking(m_Parent,true); 
+					cb_Blocking(m_Parent,true);
 				}
 			break;
-			case OPENDUPLEX : 
-				if (OSSOutput::Get()->OpenReadWrite()) 
+			case OPENDUPLEX :
+				if (OSSOutput::Get()->OpenReadWrite())
 				{
 					m_Mode=DUPLEX;
-					cb_Blocking(m_Parent,true); 
+					cb_Blocking(m_Parent,true);
 				}
 			break;
-			case CLOSE : 
+			case CLOSE :
 				m_Mode=CLOSED;
-				cb_Blocking(m_Parent,false); 
-				OSSOutput::Get()->Close(); 
+				cb_Blocking(m_Parent,false);
+				OSSOutput::Get()->Close();
 			break;
-			case SET_VOLUME : OSSOutput::Get()->SetVolume(m_Volume); break;			
-			default : break;
+			case SET_VOLUME :
+                                OSSOutput::Get()->SetVolume(m_Volume);
+                                break;
+                        case CLEAR_NOTIFY:
+                                m_NotifyOpenOut=false;
+                                break;
+                        default: break;
 		}
-	}
+        }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -252,7 +253,7 @@ m_Channels(2),
 m_ReadBufferNum(0),
 m_WriteBufferNum(0),
 m_OutputOk(false)
-{ 
+{
 	m_Buffer[0]=NULL;
 	m_Buffer[1]=NULL;
 	m_InBuffer[0]=NULL;

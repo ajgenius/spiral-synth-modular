@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include "LogicPluginGUI.h"
 #include <FL/fl_draw.h>
@@ -25,58 +25,74 @@
 
 LogicPluginGUI::LogicPluginGUI(int w, int h,LogicPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
-{	
-	int Width=32,Depth=20,Pos=0,Count=0;
-	
-	m_AND = new Fl_Button(5, 15, Width, Depth, "AND");
-    m_AND->type(1);
-	m_AND->value(1);
-	m_AND->labelsize(10);
-    m_AND->selection_color(Info->GUI_COLOUR);
- 	m_AND->callback((Fl_Callback*)cb_AND);
+{
+	int Width=36, Depth=20/*, Pos=0, Count=0*/;
 
-	m_OR = new Fl_Button(5, 35, Width, Depth,"OR");
-    m_OR->type(1);
-	m_OR->labelsize(10);
-    m_OR->selection_color(Info->GUI_COLOUR);
-	m_OR->callback((Fl_Callback*)cb_OR);
-	
-	m_NOT = new Fl_Button(5, 55, Width, Depth,"NOT");
-    m_NOT->type(1);
-	m_NOT->labelsize(10);
-    m_NOT->selection_color(Info->GUI_COLOUR);
- 	m_NOT->callback((Fl_Callback*)cb_NOT);
-	
-	m_NAND = new Fl_Button(5, 75, Width, Depth,"NAND");
-    m_NAND->type(1);
- 	m_NAND->labelsize(10);
-  	m_NAND->selection_color(Info->GUI_COLOUR);
-	m_NAND->callback((Fl_Callback*)cb_NAND);
-	
-	m_NOR = new Fl_Button(37, 15, Width, Depth,"NOR");
-    m_NOR->type(1);
-	m_NOR->labelsize(10);
-    m_NOR->selection_color(Info->GUI_COLOUR);
-	m_NOR->callback((Fl_Callback*)cb_NOR);
-	
-	m_XOR = new Fl_Button(37, 35, Width, Depth,"XOR");
-    m_XOR->type(1);
-	m_XOR->labelsize(10);
-    m_XOR->selection_color(Info->GUI_COLOUR);
- 	m_XOR->callback((Fl_Callback*)cb_XOR);
-	
-	m_XNOR = new Fl_Button(37, 55, Width, Depth,"XNOR");
-    m_XNOR->type(1);
-	m_XNOR->labelsize(10);
-    m_XNOR->selection_color(Info->GUI_COLOUR);
-	m_XNOR->callback((Fl_Callback*)cb_XNOR);
+	m_AND = new Fl_Button (2, 15, Width, Depth, "AND");
+        m_AND->type (FL_TOGGLE_BUTTON);
+	m_AND->value (1);
+	m_AND->labelsize (10);
+        m_AND->box (FL_PLASTIC_UP_BOX);
+        m_AND->color (Info->GUI_COLOUR);
+        m_AND->selection_color (Info->GUI_COLOUR);
+ 	m_AND->callback ((Fl_Callback*)cb_AND);
 
-  m_Inputs = new Fl_Counter (17, 97, 40, 20, "Inputs");
-  m_Inputs->labelsize (10);
-  m_Inputs->type (FL_SIMPLE_COUNTER);
-  m_Inputs->step (1);
-  m_Inputs->value (2);
-  m_Inputs->callback ((Fl_Callback*) cb_Inputs);
+	m_OR = new Fl_Button(2, 35, Width, Depth, "OR");
+        m_OR->type (FL_TOGGLE_BUTTON);
+	m_OR->labelsize (10);
+	m_OR->box (FL_PLASTIC_UP_BOX);
+        m_OR->color (Info->GUI_COLOUR);
+        m_OR->selection_color (Info->GUI_COLOUR);
+	m_OR->callback ((Fl_Callback*)cb_OR);
+
+	m_NOT = new Fl_Button (2, 55, Width, Depth, "NOT");
+        m_NOT->type (FL_TOGGLE_BUTTON);
+	m_NOT->labelsize (10);
+	m_NOT->box (FL_PLASTIC_UP_BOX);
+        m_NOT->color (Info->GUI_COLOUR);
+        m_NOT->selection_color (Info->GUI_COLOUR);
+ 	m_NOT->callback ((Fl_Callback*)cb_NOT);
+
+	m_NAND = new Fl_Button(2, 75, Width, Depth, "NAND");
+        m_NAND->type (FL_TOGGLE_BUTTON);
+ 	m_NAND->labelsize (10);
+ 	m_NAND->box (FL_PLASTIC_UP_BOX);
+  	m_NAND->color (Info->GUI_COLOUR);
+  	m_NAND->selection_color (Info->GUI_COLOUR);
+	m_NAND->callback ((Fl_Callback*)cb_NAND);
+
+	m_NOR = new Fl_Button (38, 15, Width, Depth, "NOR");
+        m_NOR->type (FL_TOGGLE_BUTTON);
+	m_NOR->labelsize (10);
+	m_NOR->box (FL_PLASTIC_UP_BOX);
+        m_NOR->color (Info->GUI_COLOUR);
+        m_NOR->selection_color (Info->GUI_COLOUR);
+	m_NOR->callback ((Fl_Callback*)cb_NOR);
+
+	m_XOR = new Fl_Button (38, 35, Width, Depth, "XOR");
+        m_XOR->type (FL_TOGGLE_BUTTON);
+	m_XOR->labelsize (10);
+	m_XOR->box (FL_PLASTIC_UP_BOX);
+        m_XOR->color (Info->GUI_COLOUR);
+        m_XOR->selection_color (Info->GUI_COLOUR);
+ 	m_XOR->callback ((Fl_Callback*)cb_XOR);
+
+	m_XNOR = new Fl_Button (38, 55, Width, Depth, "XNOR");
+        m_XNOR->type (FL_TOGGLE_BUTTON);
+	m_XNOR->labelsize (10);
+	m_XNOR->box (FL_PLASTIC_UP_BOX);
+        m_XNOR->color (Info->GUI_COLOUR);
+        m_XNOR->selection_color (Info->GUI_COLOUR);
+	m_XNOR->callback ((Fl_Callback*)cb_XNOR);
+
+        m_Inputs = new Fl_Counter (7, 97, 60, 20, "Inputs");
+        m_Inputs->labelsize (10);
+        m_Inputs->type (FL_SIMPLE_COUNTER);
+        m_Inputs->box (FL_PLASTIC_UP_BOX);
+        m_Inputs->color (Info->GUI_COLOUR);
+        m_Inputs->step (1);
+        m_Inputs->value (2);
+        m_Inputs->callback ((Fl_Callback*) cb_Inputs);
 
 	end();
 }
@@ -91,20 +107,21 @@ void LogicPluginGUI::ClearButtons()
 	m_XOR->value(false);
 	m_XNOR->value(false);
 }
-	
+
 void LogicPluginGUI::UpdateValues(SpiralPlugin *o)
 {
 	LogicPlugin* Plugin = (LogicPlugin*)o;
 	ClearButtons();
 	switch (Plugin->GetOperator())
 	{
-		case LogicPlugin::AND  : m_AND->value(true); break;
-		case LogicPlugin::OR   : m_OR->value(true); break;
-		case LogicPlugin::NOT  : m_NOT->value(true); break;
-		case LogicPlugin::NAND : m_NAND->value(true); break;
-		case LogicPlugin::NOR  : m_NOR->value(true); break;
-		case LogicPlugin::XOR  : m_XOR->value(true); break;
-		case LogicPlugin::XNOR : m_XNOR->value(true); break;
+		case LogicPlugin::AND  : m_AND->value (true); break;
+		case LogicPlugin::OR   : m_OR->value (true); break;
+		case LogicPlugin::NOT  : m_NOT->value (true); break;
+		case LogicPlugin::NAND : m_NAND->value (true); break;
+		case LogicPlugin::NOR  : m_NOR->value (true); break;
+		case LogicPlugin::XOR  : m_XOR->value (true); break;
+		case LogicPlugin::XNOR : m_XNOR->value (true); break;
+                default: break;
 	}
         m_Inputs->value (Plugin->GetInputs());
 }
@@ -172,7 +189,7 @@ void LogicPluginGUI::cb_NOT(Fl_Button* o, void* v)
 { ((LogicPluginGUI*)(o->parent()))->cb_NOT_i(o,v);}
 
 inline void LogicPluginGUI::cb_NAND_i(Fl_Button* o, void* v)
-{	
+{
 	if (o->value())
 	{
 		ClearButtons();

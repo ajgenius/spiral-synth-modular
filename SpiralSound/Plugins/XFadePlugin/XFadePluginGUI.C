@@ -25,7 +25,7 @@
 XFadePluginGUI::XFadePluginGUI(int w, int h,XFadePlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
 {	
-	m_Mix = new Fl_Slider(5, 20, 200, 20, "");
+        m_Mix = new Fl_Slider(5, 20, 200, 20, "");
 	m_Mix->type(FL_HOR_NICE_SLIDER);
         m_Mix->box (FL_PLASTIC_DOWN_BOX);
 	m_Mix->selection_color(Info->GUI_COLOUR);
@@ -34,7 +34,7 @@ SpiralPluginGUI(w,h,o,ch)
         m_Mix->step(0.0001);
         m_Mix->value(0.5);
         m_Mix->callback((Fl_Callback*)cb_Mix);
-	
+
 	end();
 }
 
@@ -44,11 +44,11 @@ void XFadePluginGUI::UpdateValues(SpiralPlugin *o)
 	m_Mix->value(Plugin->GetMix());
 }
 
-inline void XFadePluginGUI::cb_Mix_i(Fl_Slider* o, void* v) 
-{ 
-	m_GUICH->Set("Mix",(float)o->value()); 
+inline void XFadePluginGUI::cb_Mix_i(Fl_Slider* o, void* v)
+{
+	m_GUICH->Set("Mix",(float)o->value());
 }
-void XFadePluginGUI::cb_Mix(Fl_Slider* o, void* v) 
+void XFadePluginGUI::cb_Mix(Fl_Slider* o, void* v)
 { ((XFadePluginGUI*)(o->parent()))->cb_Mix_i(o,v); }
 
 const string XFadePluginGUI::GetHelpText(const string &loc)
@@ -65,7 +65,7 @@ const string XFadePluginGUI::GetHelpText(const string &loc)
 	{
 		return "DE: For mixing stereo inputs like a superstar DJ would.";
 	}
-	
+
 	// default to english?
 	return "DE: For mixing stereo inputs like a superstar DJ would.";
 }

@@ -14,14 +14,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 #include <math.h>
 #include "XFadePlugin.h"
 #include "XFadePluginGUI.h"
 #include <FL/Fl_Button.h>
 #include "SpiralIcon.xpm"
-
-#define PI 3.141592654
 
 extern "C" {
 SpiralPlugin* SpiralPlugin_CreateInstance()
@@ -56,13 +54,13 @@ m_Mix(0.5f)
 	m_PluginInfo.NumInputs=5;
 	m_PluginInfo.NumOutputs=2;
 	m_PluginInfo.PortTips.push_back("XFade CV");
-	m_PluginInfo.PortTips.push_back("A Left");	
+	m_PluginInfo.PortTips.push_back("A Left");
 	m_PluginInfo.PortTips.push_back("A Right");
-	m_PluginInfo.PortTips.push_back("B Left");	
-	m_PluginInfo.PortTips.push_back("B Right");	
-	m_PluginInfo.PortTips.push_back("Left");	
-	m_PluginInfo.PortTips.push_back("Right");	
-	
+	m_PluginInfo.PortTips.push_back("B Left");
+	m_PluginInfo.PortTips.push_back("B Right");
+	m_PluginInfo.PortTips.push_back("Left");
+	m_PluginInfo.PortTips.push_back("Right");
+
 	m_AudioCH->Register("Mix",&m_Mix);
 }
 
@@ -71,7 +69,7 @@ XFadePlugin::~XFadePlugin()
 }
 
 PluginInfo &XFadePlugin::Initialise(const HostInfo *Host)
-{	
+{
 	return SpiralPlugin::Initialise(Host);;
 }
 

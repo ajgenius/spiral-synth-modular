@@ -37,7 +37,7 @@
 class CountLine : public Fl_Group
 {
 public:
-	CountLine (int n, Fl_Color col1, Fl_Color col2);
+	CountLine (int n, Fl_Color col1/*, Fl_Color col2*/);
 	~CountLine();
 
 	void  SetVal(int n, float val);
@@ -77,7 +77,7 @@ protected:
 private:
 
 	int m_LastLight;
-        Fl_Color m_Colour1, m_Colour2;
+        Fl_Color m_Colour/*1, m_Colour2*/;
 	Fl_Pack    *m_Main;
 	Fl_Scroll  *m_Scroll;
 	Fl_Button  *m_New;

@@ -72,28 +72,42 @@ int OptionsList(const vector<string> &List)
 
 MidiPluginGUI::MidiPluginGUI(int w, int h,MidiPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
-{	
-	m_DeviceNum = new Fl_Counter(20,30,40,20,"Channel");
-	m_DeviceNum->type(FL_SIMPLE_COUNTER);
+{
+	m_DeviceNum = new Fl_Counter (15, 30, 55, 20, "Channel");
+	m_DeviceNum->type (FL_SIMPLE_COUNTER);
+        m_DeviceNum->box (FL_PLASTIC_UP_BOX);
+        m_DeviceNum->color (Info->GUI_COLOUR);
 	m_DeviceNum->step(1);
 	m_DeviceNum->value(1);
 	m_DeviceNum->callback((Fl_Callback*)cb_DeviceNum, NULL);
-	
-	m_NoteCut = new Fl_Button(5,70,75,20,"Note Cut");
-	m_NoteCut->type(1);
+
+	m_NoteCut = new Fl_Button (2, 70, 81, 20, "Note Cut");
+	m_NoteCut->type (FL_TOGGLE_BUTTON);
+        m_NoteCut->box (FL_PLASTIC_UP_BOX);
+        m_NoteCut->color (Info->GUI_COLOUR);
+        m_NoteCut->selection_color (Info->GUI_COLOUR);
 	m_NoteCut->labelsize(10);
 	m_NoteCut->callback((Fl_Callback*)cb_NoteCut, NULL);
 
-	m_ContinuousNotes = new Fl_Button(5,90,75,20,"Cont Notes");
-	m_ContinuousNotes->type(1);
+	m_ContinuousNotes = new Fl_Button (2, 90, 81, 20, "Cont Notes");
+	m_ContinuousNotes->type (FL_TOGGLE_BUTTON);
+        m_ContinuousNotes->box (FL_PLASTIC_UP_BOX);
+        m_ContinuousNotes->color (Info->GUI_COLOUR);
+        m_ContinuousNotes->selection_color (Info->GUI_COLOUR);
 	m_ContinuousNotes->labelsize(10);
 	m_ContinuousNotes->callback((Fl_Callback*)cb_ContinuousNotes, NULL);
 
-	m_AddControl = new Fl_Button(5,110,75,20,"Add Control");
+	m_AddControl = new Fl_Button (2, 110, 81, 20, "Add Control");
+        m_AddControl->box (FL_PLASTIC_UP_BOX);
+        m_AddControl->color (Info->GUI_COLOUR);
+        m_AddControl->selection_color (Info->GUI_COLOUR);
 	m_AddControl->labelsize(10);
 	m_AddControl->callback((Fl_Callback*)cb_AddControl, NULL);
 
-	m_RemoveControl = new Fl_Button(5,130,75,20,"Remove Control");
+	m_RemoveControl = new Fl_Button (2, 130, 81, 20, "Remove Control");
+        m_RemoveControl->box (FL_PLASTIC_UP_BOX);
+        m_RemoveControl->color (Info->GUI_COLOUR);
+        m_RemoveControl->selection_color (Info->GUI_COLOUR);
 	m_RemoveControl->labelsize(10);
 	m_RemoveControl->callback((Fl_Callback*)cb_RemoveControl, NULL);
 }
@@ -103,9 +117,9 @@ void MidiPluginGUI::UpdateValues(SpiralPlugin *o)
 	MidiPlugin *Plugin = (MidiPlugin*)o;
 	m_DeviceNum->value(Plugin->GetDeviceNum());
 }
-	
+
 //// Callbacks ////
-inline void MidiPluginGUI::cb_DeviceNum_i(Fl_Counter* o, void* v) 
+inline void MidiPluginGUI::cb_DeviceNum_i(Fl_Counter* o, void* v)
 { 
 	if (o->value()<1) o->value(1);
 	if (o->value()>128) o->value(128);

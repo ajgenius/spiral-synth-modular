@@ -25,12 +25,14 @@
 SwitchPluginGUI::SwitchPluginGUI(int w, int h,SwitchPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
 {	
-	m_Mix = new Fl_Button(20, 30, 50, 20, "Mix");
-    m_Mix->selection_color(Info->GUI_COLOUR);
-    m_Mix->labelsize(8);
-    m_Mix->type(1);
+	m_Mix = new Fl_Button (5, 20, 50, 20, "Mix");
+        m_Mix->selection_color (Info->GUI_COLOUR);
+        m_Mix->color (Info->GUI_COLOUR);
+        m_Mix->box (FL_PLASTIC_UP_BOX);
+        m_Mix->labelsize(8);
+        m_Mix->type(1);
 	m_Mix->callback((Fl_Callback*)cb_Mix);
-	
+
 	end();
 }
 

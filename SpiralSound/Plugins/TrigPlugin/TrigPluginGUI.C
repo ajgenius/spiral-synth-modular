@@ -25,27 +25,31 @@
 
 TrigPluginGUI::TrigPluginGUI(int w, int h,TrigPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
-{	
-	int KeyWidth=10,Note,Pos=0,Count=0;
-	
-	m_Sin = new Fl_Button(5, 15, 50, 15,"Sin");
-	m_Sin->labelsize(8);
-    m_Sin->type(1);
-	m_Sin->value(1);
-    m_Sin->selection_color(Info->GUI_COLOUR);
- 	m_Sin->callback((Fl_Callback*)cb_Sin);
+{
+	m_Sin = new Fl_Button (5, 15, 50, 20, "Sin");
+	m_Sin->labelsize (8);
+        m_Sin->type (FL_TOGGLE_BUTTON);
+        m_Sin->box (FL_PLASTIC_UP_BOX);
+	m_Sin->value (1);
+        m_Sin->color (Info->GUI_COLOUR);
+        m_Sin->selection_color (Info->GUI_COLOUR);
+ 	m_Sin->callback ((Fl_Callback*)cb_Sin);
 
-	m_Cos = new Fl_Button(5, 30, 50, 15,"Cos");
-	m_Cos->labelsize(8);
-    m_Cos->type(1);
-    m_Cos->selection_color(Info->GUI_COLOUR);
-	m_Cos->callback((Fl_Callback*)cb_Cos);
-	
-	m_Tan = new Fl_Button(5, 45, 50, 15,"Tan");
-	m_Tan->labelsize(8);
-    m_Tan->type(1);
-    m_Tan->selection_color(Info->GUI_COLOUR);
- 	m_Tan->callback((Fl_Callback*)cb_Tan);
+	m_Cos = new Fl_Button (5, 35, 50, 20, "Cos");
+	m_Cos->labelsize (8);
+        m_Cos->type (FL_TOGGLE_BUTTON);
+        m_Cos->box (FL_PLASTIC_UP_BOX);
+        m_Cos->color (Info->GUI_COLOUR);
+        m_Cos->selection_color (Info->GUI_COLOUR);
+	m_Cos->callback ((Fl_Callback*)cb_Cos);
+
+	m_Tan = new Fl_Button (5, 55, 50, 20, "Tan");
+	m_Tan->labelsize (8);
+        m_Tan->type (FL_TOGGLE_BUTTON);
+        m_Tan->box (FL_PLASTIC_UP_BOX);
+        m_Tan->color (Info->GUI_COLOUR);
+        m_Tan->selection_color (Info->GUI_COLOUR);
+ 	m_Tan->callback ((Fl_Callback*)cb_Tan);
 	
 	end();
 }
@@ -63,6 +67,7 @@ void TrigPluginGUI::UpdateValues(SpiralPlugin *o)
 		case TrigPlugin::SIN : m_Sin->value(true); break;
 		case TrigPlugin::COS : m_Cos->value(true); break;
 		case TrigPlugin::TAN : m_Tan->value(true); break;
+                default: break;
 	}
 }
 

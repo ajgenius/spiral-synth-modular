@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 #include <math.h>
 #include "AmpPlugin.h"
 #include "AmpPluginGUI.h"
@@ -48,21 +48,21 @@ string SpiralPlugin_GetGroupName()
 ///////////////////////////////////////////////////////
 
 AmpPlugin::AmpPlugin() :
-m_Amp(1.0f),
+m_Gain(1.0f),
 m_DC(0.0f)
 {
 	m_PluginInfo.Name="Amp";
-	m_PluginInfo.Width=120;
-	m_PluginInfo.Height=110;
+	m_PluginInfo.Width = 120;
+	m_PluginInfo.Height = 146;
 	m_PluginInfo.NumInputs=3;
 	m_PluginInfo.NumOutputs=1;
-	m_PluginInfo.PortTips.push_back("Input");	
-	m_PluginInfo.PortTips.push_back("Amp CV");	
-	m_PluginInfo.PortTips.push_back("DC Offset CV");	
+	m_PluginInfo.PortTips.push_back("Input");
+	m_PluginInfo.PortTips.push_back("Gain CV");
+	m_PluginInfo.PortTips.push_back("DC Offset CV");
 	m_PluginInfo.PortTips.push_back("Output");
-	
-	m_AudioCH->Register("Amp",&m_Amp);
-	m_AudioCH->Register("DC",&m_DC);	
+
+	m_AudioCH->Register("Gain",&m_Gain);
+	m_AudioCH->Register("DC",&m_DC);
 }
 
 AmpPlugin::~AmpPlugin()
@@ -70,7 +70,7 @@ AmpPlugin::~AmpPlugin()
 }
 
 PluginInfo &AmpPlugin::Initialise(const HostInfo *Host)
-{	
+{
 	return SpiralPlugin::Initialise(Host);
 }
 
@@ -88,7 +88,7 @@ void AmpPlugin::Execute()
 	for (int n=0; n<m_HostInfo->BUFSIZE; n++)
 	{
 		in = GetInput(0,n);
-		in *= m_Amp+GetInput(1,n);
+		in *= m_Gain+GetInput(1,n);
 		in += (-m_DC)+GetInput(2,n);
 		SetOutput(0,n,in);	 
 	}		
@@ -100,12 +100,12 @@ void AmpPlugin::Randomise()
 	
 void AmpPlugin::StreamOut(ostream &s)
 {
-	s<<m_Version<<" "<<m_Amp<<" "<<m_DC<<" ";
+	s<<m_Version<<" "<<m_Gain<<" "<<m_DC<<" ";
 }
 
 void AmpPlugin::StreamIn(istream &s)
 {	
 	int version;
 	s>>version;
-	s>>m_Amp>>m_DC;
+	s>>m_Gain>>m_DC;
 }

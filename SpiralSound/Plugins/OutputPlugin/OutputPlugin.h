@@ -14,22 +14,22 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include "../SpiralPlugin.h"
 #include "../../RiffWav.h"
 #include <FL/Fl_Pixmap.H>
 
-#ifndef OscillatorPLUGIN
-#define OscillatorPLUGIN
+#ifndef OutputPLUGIN
+#define OutputPLUGIN
 
 class OSSOutput
 {
 public:
 	static OSSOutput *Get()       { if(!m_Singleton) m_Singleton=new OSSOutput; return m_Singleton; }
 	static void PackUpAndGoHome() { if(m_Singleton)  { delete m_Singleton; m_Singleton=NULL; } }
-	~OSSOutput(); 
-	
+	~OSSOutput();
+
 	void    AllocateBuffer();
 	void    SendStereo(const Sample *ldata,const Sample *rdata);
 	void    GetStereo(Sample *ldata,Sample *rdata);
@@ -41,17 +41,17 @@ public:
 	void    WavOpen(char* name) {m_Wav.Open(name,WavFile::WRITE, WavFile::STEREO);}
 	void    WavClose() {m_Wav.Close();}
 	short  *GetBuffer() {return m_Buffer[m_WriteBufferNum];}
-	
+
 	bool 	OpenReadWrite();
 	bool    OpenWrite();
 	bool    OpenRead();
 	bool    Close();
-	
+
 private:
 	static OSSOutput* m_Singleton;
 
- 	OSSOutput(); 
-	
+ 	OSSOutput();
+
 	short  *m_Buffer[2];
 	short  *m_InBuffer[2];
 	int     m_BufSizeBytes;
@@ -68,7 +68,7 @@ private:
 class OutputPlugin : public SpiralPlugin
 {
 public:
-	enum Mode{NO_MODE,INPUT,OUTPUT,DUPLEX,CLOSED};
+	enum Mode {NO_MODE,INPUT,OUTPUT,DUPLEX,CLOSED};
 
  	OutputPlugin();
 	virtual ~OutputPlugin();
@@ -79,16 +79,17 @@ public:
 	virtual void 		ExecuteCommands();
 	virtual void	    StreamOut(ostream &s) {}
 	virtual void	    StreamIn(istream &s)  {}
-	
-	enum GUICommands {NONE,OPENREAD,OPENWRITE,OPENDUPLEX,CLOSE,SET_VOLUME};
+
+	enum GUICommands {NONE, OPENREAD, OPENWRITE, OPENDUPLEX, CLOSE, SET_VOLUME, CLEAR_NOTIFY};
 	float m_Volume;
-	
+
 	Mode GetMode() { return m_Mode; }
-		
+
 private:
 	static int m_RefCount;
 	static int m_NoExecuted;
 	static Mode m_Mode;
+        bool m_NotifyOpenOut;
 	bool m_CheckedAlready;
 	bool m_Recmode;
 };

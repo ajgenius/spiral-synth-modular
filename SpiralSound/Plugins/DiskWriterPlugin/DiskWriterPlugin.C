@@ -73,7 +73,7 @@ m_Recording(false)
 {		
 	m_PluginInfo.Name="DiskWriter";
 	m_PluginInfo.Width=100;
-	m_PluginInfo.Height=60;
+	m_PluginInfo.Height=66;
 	m_PluginInfo.NumInputs=3;
 	m_PluginInfo.NumOutputs=0;
 	m_PluginInfo.PortTips.push_back("Left Out");

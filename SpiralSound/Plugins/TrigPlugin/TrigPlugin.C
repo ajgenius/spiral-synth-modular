@@ -55,7 +55,7 @@ m_Operator(SIN)
 
 	m_PluginInfo.Name="Trig";
 	m_PluginInfo.Width=60;
-	m_PluginInfo.Height=70;
+	m_PluginInfo.Height=80;
 	m_PluginInfo.NumInputs=1;
 	m_PluginInfo.NumOutputs=1;
 	m_PluginInfo.PortTips.push_back("Input");	
@@ -98,30 +98,31 @@ void TrigPlugin::Execute()
 				SetOutput(0,n,cos(GetInput(0,n)*RAD));
 			} 
 			break;
-		case TAN : 
+		case TAN :
 			for (int n=0; n<m_HostInfo->BUFSIZE; n++)
 			{
 				SetOutput(0,n,tan(GetInput(0,n)*RAD));
-			} 
+			}
 			break;
-		
+                default: break;
+
 	}
 }
 
 void TrigPlugin::ExecuteCommands()
 {
 }
-	
-void TrigPlugin::StreamOut(ostream &s) 
+
+void TrigPlugin::StreamOut(ostream &s)
 {
 	s<<m_Version<<endl;
 	s<<(int)m_Operator<<" ";
 }
 
-void TrigPlugin::StreamIn(istream &s) 
+void TrigPlugin::StreamIn(istream &s)
 {
 	int version;
-	s>>version;	
+	s>>version;
 	int t;
 	s>>t;
 	m_Operator=(OperatorType)t;

@@ -23,17 +23,21 @@
 DiskWriterPluginGUI::DiskWriterPluginGUI(int w, int h, SpiralPlugin *o, ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
 {	
-	Open = new Fl_Button(5, 15, 90, 20, "Open");
-    Open->type(1);
-    Open->down_box(FL_DOWN_BOX);
-    Open->labelsize(10);
-    Open->callback((Fl_Callback*)cb_Open);   
+        Open = new Fl_Button(5, 15, 90, 20, "Open");
+        Open->type(1);
+        Open->box (FL_PLASTIC_UP_BOX);
+        Open->color (Info->GUI_COLOUR);
+        Open->selection_color (Info->GUI_COLOUR);
+        Open->labelsize(10);
+        Open->callback((Fl_Callback*)cb_Open);
 
-	Record = new Fl_Button(5, 35, 90, 20, "Record");
-    Record->type(1);
-    Record->down_box(FL_DOWN_BOX);
-    Record->labelsize(10);
-    Record->callback((Fl_Callback*)cb_Record);   
+	Record = new Fl_Button(5, 38, 90, 20, "Record");
+        Record->type(1);
+        Record->box (FL_PLASTIC_UP_BOX);
+        Record->color (Info->GUI_COLOUR);
+        Record->selection_color (Info->GUI_COLOUR);
+        Record->labelsize(10);
+        Record->callback((Fl_Callback*)cb_Record);
 	       
 	end();
 }

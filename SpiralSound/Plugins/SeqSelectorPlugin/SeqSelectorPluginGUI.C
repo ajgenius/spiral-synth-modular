@@ -23,12 +23,12 @@
 
 ////////////////////////////////////////////
 
-CountLine::CountLine (int n, Fl_Color col1, Fl_Color col2) :
+CountLine::CountLine (int n, Fl_Color col) :
 Fl_Group(0,0,250,14,"")
 {
 	box(FL_FLAT_BOX);
-	if (n%4==0) color (col1);
-	if (n%8==0) color (col2);
+	if (n%4==0) color (col);
+	// if (n%8==0) color (col2);
 	m_Num=n;
 
 	sprintf(m_Count,"%d",n);
@@ -38,9 +38,9 @@ Fl_Group(0,0,250,14,"")
     Num->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
 	add(Num);
 
-	m_Flasher = new Fl_LED_Button(15,-3,20,20,"");
-	m_Flasher->selection_color(FL_BLUE);
-	add(m_Flasher);
+	m_Flasher = new Fl_LED_Button (15, -3, 20, 20, "");
+	m_Flasher->selection_color (FL_RED);
+	add (m_Flasher);
 
 	for (int n=0; n<NUM_VALUES; n++)
 	{
@@ -97,8 +97,8 @@ int CountLine::handle(int event)
 SeqSelectorPluginGUI::SeqSelectorPluginGUI(int w, int h,SeqSelectorPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
 {
-        m_Colour1 = (Fl_Color)Info->SCOPE_BG_COLOUR;
-        m_Colour2 = (Fl_Color)Info->GUI_COLOUR;
+        m_Colour = (Fl_Color)Info->GUI_COLOUR;
+        //m_Colour2 = (Fl_Color)Info->SCOPE_BG_COLOUR;
 
         m_Scroll = new Fl_Scroll(0, 20, w, h-50, "");
 	m_Scroll->type(Fl_Scroll::VERTICAL_ALWAYS);
@@ -163,7 +163,7 @@ float SeqSelectorPluginGUI::GetVal(int l, int v)
 
 void SeqSelectorPluginGUI::AddLine(int* Val)
 {
-	CountLine *NewLine = new CountLine(m_LineVec.size(), m_Colour1, m_Colour2);
+	CountLine *NewLine = new CountLine(m_LineVec.size(), m_Colour/*1, m_Colour2*/);
         NewLine->m_GUICH = m_GUICH;
 
 	// copy the last line

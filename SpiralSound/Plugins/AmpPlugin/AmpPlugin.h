@@ -37,13 +37,13 @@ public:
 	// has to be defined in the plugin	
 	virtual void UpdateGUI() { Fl::check(); }
 		
-				float GetAmp()       { return m_Amp; }
+				float GetGain()       { return m_Gain; }
 	float GetDC()        { return m_DC;  } 
 	
 	void Randomise();
 
 private:	
-	float m_Amp;
+	float m_Gain;
 	float m_DC;
 	
 	friend istream &operator>>(istream &s, AmpPlugin &o);

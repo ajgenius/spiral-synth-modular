@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 #include "SwitchPlugin.h"
 #include "SwitchPluginGUI.h"
 #include <FL/Fl_Button.h>
@@ -49,15 +49,15 @@ SwitchPlugin::SwitchPlugin() :
 m_Mix(false)
 {
 	m_PluginInfo.Name="Switch";
-	m_PluginInfo.Width=90;
-	m_PluginInfo.Height=80;
+	m_PluginInfo.Width=60;
+	m_PluginInfo.Height=50;
 	m_PluginInfo.NumInputs=3;
 	m_PluginInfo.NumOutputs=1;
-	m_PluginInfo.PortTips.push_back("Input 1");	
-	m_PluginInfo.PortTips.push_back("Input 2");	
-	m_PluginInfo.PortTips.push_back("CV");	
+	m_PluginInfo.PortTips.push_back("Input 1");
+	m_PluginInfo.PortTips.push_back("Input 2");
+	m_PluginInfo.PortTips.push_back("CV");
 	m_PluginInfo.PortTips.push_back("Output");
-	
+
 	m_AudioCH->Register("Mix",&m_Mix);
 }
 
@@ -66,7 +66,7 @@ SwitchPlugin::~SwitchPlugin()
 }
 
 PluginInfo &SwitchPlugin::Initialise(const HostInfo *Host)
-{	
+{
 	return SpiralPlugin::Initialise(Host);
 }
 

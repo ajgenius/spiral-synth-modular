@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -34,17 +34,18 @@ class OutputPluginGUI : public SpiralPluginGUI
 {
 public:
 	OutputPluginGUI(int w, int h, SpiralPlugin *o, ChannelHandler *ch, const HostInfo *Info);
-	
+
 	virtual void UpdateValues(SpiralPlugin *o);
-		
+	virtual void Update();
+
 protected:
-    const string GetHelpText(const string &loc);	
-	
+    const string GetHelpText(const string &loc);
+
 private:
 
-	Fl_Group 		*GUIMixGroup;	
+	Fl_Group 		*GUIMixGroup;
 	Fl_Knob 		*Volume;
-	
+
 	Fl_Button		*OpenRead;
 	Fl_Button		*OpenWrite;
 	Fl_Button		*OpenDuplex;

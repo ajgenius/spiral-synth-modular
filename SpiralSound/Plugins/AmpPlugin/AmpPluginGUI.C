@@ -14,128 +14,173 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
-#include "AmpPluginGUI.h"
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
+#include "AmpPluginGUI.h"
 
 ////////////////////////////////////////////
 
 AmpPluginGUI::AmpPluginGUI(int w, int h,AmpPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
-{	
-	m_Plugin=o;
-	
-	m_Amp = new Fl_Slider(15, 20, 20, 70, "Amp");
-	m_Amp->type(4);
-	m_Amp->selection_color(Info->GUI_COLOUR);
-    m_Amp->labelsize(10);
-	m_Amp->maximum(4);
-    m_Amp->step(0.0001);
-    m_Amp->value(2);
-    m_Amp->callback((Fl_Callback*)cb_Amp);
-	
-	m_DC = new Fl_Slider(70, 20, 20, 70, "DC Offset");
-	m_DC->type(4);
-	m_DC->selection_color(Info->GUI_COLOUR);
-    m_DC->labelsize(10);
-	m_DC->maximum(4);
-    m_DC->step(0.0001);
-    m_DC->value(2);
-    m_DC->callback((Fl_Callback*)cb_DC);	
-				
-	m_pop = new Fl_Button(1,h-14, 13, 13, "@>");
-    m_pop->type(1);
-    m_pop->box(FL_FLAT_BOX);
-    m_pop->down_box(FL_FLAT_BOX);
-    m_pop->labeltype(FL_SYMBOL_LABEL);
-    m_pop->labelsize(10);
-    m_pop->labelcolor(25);
-    m_pop->callback((Fl_Callback*)cb_pop);
-	
-	m_out_gain = new Fl_Output(25,h+5,36, 15, "Gain");
-    m_out_gain->box(FL_ENGRAVED_BOX);
-    m_out_gain->color(16);
-    m_out_gain->labelsize(10);
-    m_out_gain->textsize(10);
-	m_out_gain->hide();
-	m_out_gain->set_output();
-	
-	m_out_DC = new Fl_Output(82,h+5,36, 15, "DC");
-    m_out_DC->box(FL_ENGRAVED_BOX);
-    m_out_DC->color(16);
-    m_out_DC->labelsize(10);
-    m_out_DC->textsize(10);
-	m_out_DC->hide();
-	m_out_DC->set_output();
-	
-	end();
-}
-
-extern "C" int sprintf(char *,const char *,...);	
-
-void AmpPluginGUI::UpdateValues(SpiralPlugin *o)
 {
-	AmpPlugin* Plugin = (AmpPlugin*)o;
-	
-	m_Amp->value(2.0f-Plugin->GetAmp());
-	m_DC->value(2.0f-Plugin->GetDC());
-	char str[10];
-  	sprintf(str,"%4.2f",Plugin->GetAmp());
-  	m_out_gain->value(str);
-	sprintf(str,"%4.2f",Plugin->GetDC());
-	m_out_DC->value(str);
+        m_TheTabs = new Fl_Tabs (2, 14, 118, 104, "");
+	m_TheTabs->box (FL_PLASTIC_DOWN_BOX);
+        m_TheTabs->color (Info->GUI_COLOUR);
+	add (m_TheTabs);
+
+	m_CtlGroup = new Fl_Group (2, 28, 118, 80, "Control");
+	m_CtlGroup->labelsize (10);
+        m_TheTabs->add (m_CtlGroup);
+
+	m_Gain = new Fl_Slider (24, 32, 20, 70, "Gain");
+        m_Gain->user_data ((void*)(this));
+	m_Gain->type (FL_VERT_NICE_SLIDER);
+        m_Gain->selection_color (Info->GUI_COLOUR);
+        m_Gain->box (FL_PLASTIC_DOWN_BOX);
+        m_Gain->labelsize(10);
+	m_Gain->maximum (4.0);
+	m_Gain->minimum (0.0);
+        m_Gain->step (0.0001);
+        m_Gain->value (2.0);
+        m_Gain->callback((Fl_Callback*)cb_Gain);
+        m_CtlGroup->add (m_Gain);
+
+	m_DC = new Fl_Slider (74, 32, 20, 70, "DC Offset");
+        m_DC->user_data ((void*)(this));
+	m_DC->type (FL_VERT_NICE_SLIDER);
+        m_DC->selection_color (Info->GUI_COLOUR);
+        m_DC->box (FL_PLASTIC_DOWN_BOX);
+        m_DC->labelsize(10);
+	m_DC->maximum (4.0);
+	m_DC->minimum (0.0);
+        m_DC->step (0.0001);
+        m_DC->value (2.0);
+        m_DC->callback((Fl_Callback*)cb_DC);
+        m_CtlGroup->add (m_DC);
+
+        m_NumGroup = new Fl_Group (2, 28, 118, 66, "Numbers");
+	m_NumGroup->labelsize (10);
+        m_TheTabs->add (m_NumGroup);
+
+        m_NumGain = new Fl_Counter (6, 40, 110, 20, "Gain");
+        m_NumGain->user_data ((void*)(this));
+        m_NumGain->labelsize (10);
+        m_NumGain->box (FL_PLASTIC_UP_BOX);
+        m_NumGain->color (Info->GUI_COLOUR);
+        m_NumGain->maximum (2.0);
+	m_NumGain->minimum (-2.0);
+        m_NumGain->step (0.001);
+        m_NumGain->lstep (0.1);
+        m_NumGain->value (0.0);
+        m_NumGain->callback ((Fl_Callback*)cb_NumGain);
+        m_NumGroup->add (m_NumGain);
+
+	m_NumDC = new Fl_Counter (6, 78, 110, 20, "DC Offset");
+        m_NumDC->user_data ((void*)(this));
+        m_NumDC->labelsize (10);
+        m_NumDC->box (FL_PLASTIC_UP_BOX);
+        m_NumDC->color (Info->GUI_COLOUR);
+        m_NumDC->maximum (2.0);
+	m_NumDC->minimum (-2.0);
+        m_NumDC->step (0.001);
+        m_NumDC->lstep (0.1);
+        m_NumDC->value (0.0);
+        m_NumDC->callback ((Fl_Callback*)cb_NumDC);
+        m_NumGroup->add (m_NumDC);
+
+        m_Reset = new Fl_Button (64, 120, 56, 20, "Reset");
+        m_Reset->user_data ((void*)(this));
+        m_Reset->labelsize (10);
+        m_Reset->box (FL_PLASTIC_UP_BOX);
+        m_Reset->color (Info->GUI_COLOUR);
+        m_Reset->selection_color (Info->GUI_COLOUR);
+        m_Reset->callback ((Fl_Callback*)cb_Reset);
+        add (m_Reset);
+
+        end();
 }
 
-inline void AmpPluginGUI::cb_Amp_i(Fl_Slider* o, void* v) 
-{ 
+void AmpPluginGUI::UpdateValues (SpiralPlugin *o) {
+        float value;
+        AmpPlugin* Plugin = (AmpPlugin*)o;
 
-char str[10];
-	float value=2.0f-o->value();
-	m_GUICH->Set("Amp",value); 
-	sprintf(str,"%4.2f",value);
-	m_out_gain->value(str); 
-}
-void AmpPluginGUI::cb_Amp(Fl_Slider* o, void* v) 
-{ ((AmpPluginGUI*)(o->parent()))->cb_Amp_i(o,v); }
+        value = Plugin->GetGain();
+        m_NumGain->value (value);
+        m_Gain->value (2.0f - value);
 
-inline void AmpPluginGUI::cb_DC_i(Fl_Slider* o, void* v) 
-{ 
-char str[10];
-	float value=2.0f-o->value();
-	m_GUICH->Set("DC",value);
-	sprintf(str,"%4.2f",value);
-	m_out_DC->value(str); 
+        value = Plugin->GetDC();
+        m_NumDC->value (value);
+	m_DC->value (2.0f - value);
 }
-void AmpPluginGUI::cb_DC(Fl_Slider* o, void* v) 
-{ ((AmpPluginGUI*)(o->parent()))->cb_DC_i(o,v); }
 
-inline void AmpPluginGUI::cb_pop_i(Fl_Button *o, void*) {
-  if (o->value())
-  	{
-  		o->label("@2>");
-		m_out_gain->show();
-		m_out_DC->show();
-		redraw();
-	}
-	else 
-	{
-		o->label("@>");
-		m_out_gain->hide();
-		m_out_DC->hide();
-		redraw();
-		parent()->redraw();
-	}
+// control callbacks
+
+inline void AmpPluginGUI::cb_Gain_i (Fl_Slider* o, void* v) {
+        float value = 2.0f - o->value();
+	m_GUICH->Set ("Gain", value);
+        m_NumGain->value (value);
 }
-void AmpPluginGUI::cb_pop(Fl_Button* o, void* v) {
-  ((AmpPluginGUI*)(o->parent()))->cb_pop_i(o,v);
+
+void AmpPluginGUI::cb_Gain (Fl_Slider* o, void* v) {
+        ((AmpPluginGUI*)(o->user_data()))->cb_Gain_i (o, v);
 }
+
+inline void AmpPluginGUI::cb_DC_i (Fl_Slider* o, void* v) {
+	float value = 2.0f - o->value();
+	m_GUICH->Set ("DC", value);
+        m_NumDC->value (value);
+}
+
+void AmpPluginGUI::cb_DC (Fl_Slider* o, void* v) {
+        ((AmpPluginGUI*)(o->user_data()))->cb_DC_i (o, v);
+}
+
+// numeric callbacks
+
+inline void AmpPluginGUI::cb_NumGain_i (Fl_Counter* o, void* v) {
+        float value = o->value();
+	m_GUICH->Set ("Gain", value);
+        m_Gain->value (2.0f - value);
+}
+
+void AmpPluginGUI::cb_NumGain (Fl_Counter* o, void* v) {
+        ((AmpPluginGUI*)(o->user_data()))->cb_NumGain_i (o, v);
+}
+
+inline void AmpPluginGUI::cb_NumDC_i (Fl_Counter* o, void* v) {
+	float value = o->value();
+	m_GUICH->Set ("DC", value);
+        m_DC->value (2.0f - value);
+}
+
+void AmpPluginGUI::cb_NumDC (Fl_Counter* o, void* v) {
+        ((AmpPluginGUI*)(o->user_data()))->cb_NumDC_i (o, v);
+}
+
+// button callbacks
+
+inline void AmpPluginGUI::cb_Reset_i (Fl_Button* o, void* v) {
+        m_NumGain->value (0);
+        m_Gain->value (2.0f);
+        m_GUICH->Set ("Gain", 0);
+        m_NumDC->value (0);
+	m_DC->value (2.0f);
+	m_GUICH->Set ("DC", 0);
+}
+
+void AmpPluginGUI::cb_Reset (Fl_Button* o, void* v) {
+        ((AmpPluginGUI*)(o->user_data()))->cb_Reset_i (o, v);
+}
+
+// help text
 
 const string AmpPluginGUI::GetHelpText(const string &loc){
     return string("")
     + "A CV controlled amplifer. You also can use this device to modify\n"
     + "the signal's DC offset (the up or down in the range of values).\n\n"
     + "Handy for fine tuning CV's by hand, or modulating complex\n"
-    + "controls.";
+    + "controls.\n\n"
+    + "The reset button quickly resets both controls back to 0\n";
 }
