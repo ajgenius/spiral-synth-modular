@@ -38,14 +38,18 @@ SpiralPluginGUI(w,h,o,ch)
     end();
 }
 
-void NoisePluginGUI::UpdateValues(SpiralPlugin *o)
-{
+void NoisePluginGUI::UpdateValues (SpiralPlugin *o) {
 	NoisePlugin *Plugin = (NoisePlugin*)o;
 
-	switch (Plugin->GetType())
-	{
-		case NoisePlugin::WHITE : White->value(1); break;
-		case NoisePlugin::PINK  : Pink->value(1); break;
+	switch (Plugin->GetType()) {
+	  case NoisePlugin::WHITE:
+            White->value (1);
+            Pink->value (0);
+            break;
+	  case NoisePlugin::PINK:
+            White->value (0);
+            Pink->value (1);
+            break;
 	}
 }
 

@@ -112,7 +112,6 @@ void MixSwitchPlugin::Execute() {
   int n;
   float f;
   int NumChans = m_PluginInfo.NumInputs - 2;
-  m_SwitchPos=(m_GUIArgs.Switch - 1) % (m_PluginInfo.NumInputs - 2);
   for (n=0; n<m_HostInfo->BUFSIZE; n++) {
     if (InputExists (0)) {
       // Check the Switch Pos CV Value
@@ -130,6 +129,7 @@ void MixSwitchPlugin::Execute() {
         }
       }
     }
+    else m_SwitchPos=(m_GUIArgs.Switch - 1) % NumChans;
     int o = m_SwitchPos+1;
     m_GUIArgs.Echo = o;
     SetOutput (0, n, o);

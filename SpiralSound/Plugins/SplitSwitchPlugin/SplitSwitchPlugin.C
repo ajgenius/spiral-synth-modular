@@ -102,7 +102,6 @@ void SplitSwitchPlugin::SetChans (int n) {
 void SplitSwitchPlugin::Execute() {
   int n;
   int NumChans = m_PluginInfo.NumOutputs - 1;
-  m_SwitchPos=(m_GUIArgs.Switch - 1) % (m_PluginInfo.NumOutputs - 1);
   for (n=1; n<m_PluginInfo.NumOutputs; n++) GetOutputBuf(n)->Zero();
   if (InputExists (2)) {
     for (n=0; n<m_HostInfo->BUFSIZE; n++) {
@@ -122,6 +121,7 @@ void SplitSwitchPlugin::Execute() {
           }
         }
       }
+      else m_SwitchPos=(m_GUIArgs.Switch - 1) % NumChans;
       int o = m_SwitchPos+1;
       m_GUIArgs.Echo = o;
       SetOutput (0, n, o);
