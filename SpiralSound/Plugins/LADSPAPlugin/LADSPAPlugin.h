@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include "../SpiralPlugin.h"
 #include <FL/Fl_Pixmap.H>
@@ -32,16 +32,17 @@ public:
 	string Label;
 	string Name;
 	string Maker;
-	
+	unsigned long InputPortCount;
+
 	struct LPortDetails
 	{
 		string Name;
 		float Min,Max;
 		bool Clamped;
 	};
-		
+
 	vector<LPortDetails> Ports;
-	
+
 	bool operator<(const LPluginInfo & li) { return (Name < li.Name); }
 	bool operator==(const LPluginInfo& li) { return (Name == li.Name); }
 };
@@ -60,34 +61,22 @@ class LADSPAPlugin : public SpiralPlugin
 public:
  	LADSPAPlugin();
 	virtual ~LADSPAPlugin();
-	
+
 	virtual PluginInfo &Initialise(const HostInfo *Host);
 	virtual SpiralGUIType *CreateGUI();
 	virtual void Execute();
-	virtual void ExecuteCommands();	
+	virtual void ExecuteCommands();
 	virtual void StreamOut(ostream &s);
 	virtual void StreamIn(istream &s);
-		
+
 	float GetGain() { return m_Gain; }
 	bool GetAmped() { return m_Amped; }
-	
-	enum GUICommands{NONE,SETMIN,SETMAX,SETCLAMP,UPDATEPLUGIN};
-	struct GUIArgs
-	{
-		int Num;
-		float Value;
-		bool Clamp;
-		char Filename[256];
-		char Label[256];
-	};
-		
+
+	enum GUICommands{NONE,UPDATERANGES,UPDATEPLUGIN};
+
 private:
 
-	GUIArgs m_GUIArgs;
-
-	void SetMin(int n,float min) { m_PortMin[n]=min; }
-	void SetMax(int n,float max) { m_PortMax[n]=max; }
-	void SetPortClamp(int n,bool i) { m_PortClamp[n]=i; }	
+	void UpdatePortRange(void);
 	bool UpdatePlugin(int n);
 	bool UpdatePlugin(const char * filename, const char * label, bool PortClampReset=true);
 
@@ -96,20 +85,33 @@ private:
 
 	void * PlugHandle;
 	const LADSPA_Descriptor * PlugDesc;
-	
+
 	vector<LADSPA_Data*> m_LADSPABufVec;
 	LADSPA_Handle PlugInstHandle;
-	vector<int> m_PortID;
+
+	vector<int>   m_PortID;
 	vector<float> m_PortMin;
-	vector<float> m_PortMax;	
-	vector<bool> m_PortClamp;
-	
+	vector<float> m_PortMax;
+	vector<bool>  m_PortClamp;
+
 	// our database of ladspa plugins
 	vector<LPluginInfo> m_LADSPAList;
 	LPluginInfo m_CurrentPlugin;
 
-	float m_Gain;
-	bool m_Amped;
+	float           m_Gain;
+	bool            m_Amped;
+	unsigned long   m_PluginIndex;
+	char           *m_Name;
+	char           *m_Maker;
+
+	unsigned long m_InputPortCountMax;	// Maximum number of input ports
+						// Corresponds to input port count of one
+						// (or more) plugins found
+	unsigned long m_InputPortCount; 	// Number of input ports in current plugin
+	float        *m_InputPortMin;		// Input port range minima
+	float        *m_InputPortMax;		// Input port range maxima
+	bool         *m_InputPortClamp;		// Input port clamp state
+	char         *m_InputPortNames;		// Input port names
 };
 
 #endif

@@ -39,8 +39,8 @@
 #ifndef LADSPAGUI
 #define LADSPAGUI
 
-#include <stdio.h>
-#include <math.h>
+#include <cstdio>
+#include <cmath>
 #include <dlfcn.h>
 #include <vector>
 
@@ -65,35 +65,35 @@ public:
 	string GetLabel() { return m_Label; }
 	void SetFilename(string s) { m_Filename=s; }
 	void SetLabel(string s) { m_Label=s; }
-			
+
 private:
 	LPluginInfo m_CurrentPlugin;
 
-	Fl_Scroll	      *m_InputScroll;
-	Fl_Pack  		  *m_InputPack;
-	Fl_Hold_Browser   *m_Browser;
-	Fl_Knob	          *m_OutputGain;
-	Fl_Box            *m_Name;
-	Fl_Box            *m_Maker;
-	Fl_Button		  *m_UpdateInputs;
-	Fl_Button		  *m_UpdateMinMax;
-	Fl_Button		  *m_PowerAmp;
-	vector<Fl_Output*> m_PortOutput;
-	vector<Fl_Input*>  m_PortMin;
-	vector<Fl_Input*>  m_PortMax;	
+	Fl_Scroll		*m_InputScroll;
+	Fl_Pack  		*m_InputPack;
+	Fl_Hold_Browser		*m_Browser;
+	Fl_Knob			*m_OutputGain;
+	Fl_Box			*m_Name;
+	Fl_Box			*m_Maker;
+	Fl_Button		*m_UpdateInputs;
+	Fl_Button		*m_UpdateMinMax;
+	Fl_Button		*m_PowerAmp;
+	vector<Fl_Output*>	 m_PortOutput;
+	vector<Fl_Input*>	 m_PortMin;
+	vector<Fl_Input*>	 m_PortMax;
 	vector<Fl_Check_Button*> m_PortClamp;
-	
+
 	vector<LPluginInfo> PluginList;
-	
+
 	// this is needed as fltk seems to crash if you delete
 	// the pack, is won't delete the children properly???
 	vector<Fl_Group*>   m_PackVec;
-	
+
 	int inited;
-	
+
 	string m_Filename;
 	string m_Label;
-	
+
 	inline void cb_Select_i(Fl_Hold_Browser* o);
 	static void cb_Select(Fl_Hold_Browser* o);
 	inline void cb_Gain_i(Fl_Knob* o, void* v);
@@ -103,6 +103,19 @@ private:
 	inline void cb_PowerAmp_i(Fl_Button* o, void* v);
 	static void cb_PowerAmp(Fl_Button* o, void* v);
 
+	// This lot is for copying plugin info from the audio thread
+	// to the GUI thread, via ChannelHandler
+
+	char         *m_NameString;		// Plugin Name
+	char         *m_MakerString;		// Plugin Maker;
+	unsigned long m_InputPortCountMax;	// Maximum number of input ports
+						// Corresponds to input port count of one
+						// (or more) plugins found
+	unsigned long m_InputPortCount;		// Number of input ports in current plugin
+	float        *m_InputPortMin;		// Input port range minima
+	float        *m_InputPortMax;		// Input port range maxima
+	bool         *m_InputPortClamp;		// Input port clamp state
+	char         *m_InputPortNames;		// Input port names
 };
 
 
