@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #ifndef SAMPLE
 #define SAMPLE
@@ -24,14 +24,13 @@
 #include <assert.h>
 #include <limits.h>
 #include <iostream>
-#include "SpiralInfo.h"
 
 //#define DEBUG
 
-inline float Linear(float bot,float top,float pos,float val1,float val2) 
-{ 
-    float t=(pos-bot)/(top-bot); 
-    return val1*t + val2*(1.0f-t); 
+inline float Linear(float bot,float top,float pos,float val1,float val2)
+{
+    float t=(pos-bot)/(top-bot);
+    return val1*t + val2*(1.0f-t);
 }
 
 inline bool feq(float a, float b, float tol)
@@ -43,7 +42,7 @@ class Sample
 {
 public:
 	enum SampleType {AUDIO=0, IMAGE, MIDI};
-	
+
 	Sample(int Len=0);
 	Sample(const Sample &rhs);
 	Sample(const float *S, int Len);
@@ -62,15 +61,15 @@ public:
 	void GetRegion(Sample &S, int Start, int End) const;
 	const float *GetBuffer() const {return m_Data;}
 	float *GetNonConstBuffer() {return m_Data;}
-	int  GetLength() const {return m_Length;} 
-	int  GetLengthInBytes() const {return m_Length*sizeof(float);} 
+	int  GetLength() const {return m_Length;}
+	int  GetLengthInBytes() const {return m_Length*sizeof(float);}
 	void Expand(int Length);
 	void Shrink(int Length);
 	void CropTo(int NewLength);
 	bool IsEmpty() const { return m_IsEmpty; }
 
 	inline float &Sample::operator[](int i) const
-	{		
+	{
 		#ifdef DEBUG
 			assert(i>=0 && i<m_Length);
 		#endif
@@ -79,51 +78,51 @@ public:
 
 	// Linear interpolated
 	inline float Sample::operator[](float i) const
-	{		
+	{
 		int ii=(int)i;
-		
+
 		#ifdef DEBUG
 			assert(ii>=0 && ii<m_Length);
 		#endif
-		
-		if (ii==m_Length-1) return m_Data[ii];	
-		float t=i-ii;		
+
+		if (ii==m_Length-1) return m_Data[ii];
+		float t=i-ii;
 		return ((m_Data[ii]*(1-t))+(m_Data[ii+1])*t);
 	}
 
 
-	inline void Sample::Set(int i, float v) 
-	{	
+	inline void Sample::Set(int i, float v)
+	{
 		m_IsEmpty=false;
 		#ifdef DEBUG
 			assert(i>=0 && i<m_Length);
-		#endif							
+		#endif
 		m_Data[i]=v;
-	}	
-	
+	}
+
 	inline Sample &Sample::operator=(const Sample &rhs)
 	{
-		Allocate(rhs.GetLength());		
+		Allocate(rhs.GetLength());
 		memcpy(m_Data,rhs.GetBuffer(),GetLengthInBytes());
 		m_IsEmpty=rhs.m_IsEmpty;
 		return *this;
 	}
 
 	void SetDataGranularity(int s) { m_DataGranularity=s; }
-	
+
     void setSpecificData(void *ptr) { m_PluginSpecificData = ptr; }
     void *getSpecificData() { return m_PluginSpecificData; }
     void setSampleType(SampleType t) { m_SampleType = t; }
-    SampleType getSampleType() { return m_SampleType; }        
+    SampleType getSampleType() { return m_SampleType; }
 
-protected:	
+protected:
 	bool m_IsEmpty;
-	
+
 private:
-	int m_DataGranularity;	
+	int m_DataGranularity;
 	float *m_Data;
 	long  int  m_Length;
-	
+
 	void *m_PluginSpecificData;
     SampleType m_SampleType;
 };
