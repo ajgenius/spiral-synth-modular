@@ -116,7 +116,7 @@ SpiralPluginGUI(w,h,o,ch)
 		if (dest) {
 			unsigned long d = 0;
 			for (unsigned long c = 0; c < len; c++, d++) {
-				if (tmp[c] == '/' || tmp[c] = '|') {
+				if (tmp[c] == '/' || tmp[c] == '|') {
 					dest[d] = '\\';
 					d++;
 					dest[d] = tmp[c];
