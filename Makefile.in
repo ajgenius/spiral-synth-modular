@@ -150,8 +150,8 @@ clean:
 		(cd SpiralSound/Plugins/$$subdir ; make clean) \
 		done; 
 
-install: SpiralSynthModular
-	$(INSTALL) SpiralSynthModular $(bindir)
+install: spiralsynthmodular
+	$(INSTALL) spiralsynthmodular $(bindir)
 	$(INSTALL) -d $(SpiralPlugins)
 	list='$(SUBDIRS)'; \
 	for subdir in $$list; do \
@@ -159,7 +159,7 @@ install: SpiralSynthModular
 		done; 
 	
 uninstall:
-	rm -f $(bindir)/SpiralSynthModular
+	rm -f $(bindir)/spiralsynthmodular
 	rm -rf $(SpiralPlugins)
 
 ####### Sub-libraries
