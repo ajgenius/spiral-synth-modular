@@ -504,31 +504,14 @@ LADSPAInfo::ExaminePluginLibrary(const string path,
     }
 }
 
-// Examine given RDF plugin meta-data file, adding any information found
+// Examine given RDF plugin meta-data file
 void
 LADSPAInfo::ExamineRDFFile(const std::string path,
                            const std::string basename)
 {
-// Add path if not already added
     string fileuri = "file://" + path + basename;
 
-    if (!lrdf_read_file(fileuri.c_str())) {
-        unsigned long path_index;
-        vector<string>::iterator p = find(m_RDFPaths.begin(), m_RDFPaths.end(), path);
-        if (p == m_RDFPaths.end()) {
-            path_index = m_RDFPaths.size();
-            m_RDFPaths.push_back(path);
-        } else {
-            path_index = p - m_RDFPaths.begin();
-        }
-
-    // Add file info to our rdf database
-        RDFFileInfo ri;
-        ri.RDFPathIndex = path_index;
-        ri.Basename = basename;
-        m_RDFFiles.push_back(ri);
-
-    } else {
+    if (lrdf_read_file(fileuri.c_str())) {
         cerr << "WARNING: File " << path + basename << " could not be parsed [Ignored]" << endl;
     }
 }
