@@ -46,6 +46,8 @@ public:
 	void   GetPortNames(vector<string> &InputNames,vector<string> &OutputNames);
 	void   ConnectInput(int n, const string &JackPort);
 	void   ConnectOutput(int n, const string &JackPort);
+	void   DisconnectInput(int n);
+	void   DisconnectOutput(int n);
 	string GetInputName(int ID)           { return m_InputPortMap[ID]->Name; }
 	string GetOutputName(int ID)          { return m_OutputPortMap[ID]->Name; }
 	void   SetInputBuf(int ID, float* s);

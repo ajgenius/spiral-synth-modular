@@ -38,7 +38,7 @@ public:
 	JackPluginGUI(int w, int h, JackPlugin *o,ChannelHandler *ch,const HostInfo *Info);
 	
 	virtual void UpdateValues(SpiralPlugin *o);
-	virtual void draw();
+	virtual void Update();
 		
 private:
 

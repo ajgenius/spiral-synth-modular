@@ -55,8 +55,6 @@ JackClient::~JackClient()
 bool JackClient::Attach()
 {
 	if (m_Attached) return true;
-	
-	cerr<<"Attach"<<endl;
 
 	if (!(m_Client = jack_client_new("SSM"))) 
 	{
@@ -64,14 +62,10 @@ bool JackClient::Attach()
 		return false;
 	}
 
-	cerr<<"Register"<<endl;
-
 	jack_set_process_callback(m_Client, JackClient::Process, 0);
 	jack_set_buffer_size_callback(m_Client, JackClient::OnBufSizeChange, 0);
 	jack_set_sample_rate_callback (m_Client, JackClient::OnSRateChange, 0);
 	jack_on_shutdown (m_Client, JackClient::OnJackShutdown, this);
-
-	printf ("engine sample rate: %lu\n", jack_get_sample_rate(m_Client));
 
 	m_InputPortMap.clear();
 	m_OutputPortMap.clear();
@@ -80,7 +74,7 @@ bool JackClient::Attach()
 	for (int n=0; n<NUM_INPUTS; n++)
 	{
 		char Name[256];
-		sprintf(Name,"Out %d",n);
+		sprintf(Name,"In %d",n);
 	
 		JackPort *NewPort = new JackPort;
 		NewPort->Name=Name;
@@ -92,7 +86,7 @@ bool JackClient::Attach()
 	for (int n=0; n<NUM_OUTPUTS; n++)
 	{
 		char Name[256];
-		sprintf(Name,"In %d",n);
+		sprintf(Name,"Out %d",n);
 	
 		JackPort *NewPort = new JackPort;
 		NewPort->Name=Name;
@@ -111,10 +105,7 @@ bool JackClient::Attach()
 	m_Attached=true;
 	
 	cerr<<"connected to jack..."<<endl;
-	
-	ConnectOutput(0,"alsa_pcm:out_1");
-	ConnectOutput(1,"alsa_pcm:out_2");
-	
+		
 	return true;
 }
 
@@ -140,15 +131,11 @@ int JackClient::Process(jack_nframes_t nframes, void *o)
 {	
 	for (int n=0; n<NUM_INPUTS; n++)
 	{
-		if (m_InputPortMap[n]->Connected)
+		if (jack_port_connected(m_InputPortMap[n]->Port))
 		{
-			if (m_InputPortMap[n]->Buf)
-			{
-				sample_t *in = (sample_t *) jack_port_get_buffer(m_InputPortMap[n]->Port, nframes);
-				memcpy (m_InputPortMap[n]->Buf, in, sizeof (sample_t) * m_BufferSize);
-				//cerr<<"got "<<m_InputPortMap[n]->Buf[0]<<" from "<<m_InputPortMap[n]->Name<<endl;
-			}			
-		}
+			sample_t *in = (sample_t *) jack_port_get_buffer(m_InputPortMap[n]->Port, nframes);
+			memcpy (m_InputPortMap[n]->Buf, in, sizeof (sample_t) * m_BufferSize);
+		}			
 	}
 	
 	for (int n=0; n<NUM_OUTPUTS; n++)
@@ -156,19 +143,18 @@ int JackClient::Process(jack_nframes_t nframes, void *o)
 		//if (m_OutputPortMap[n]->Connected)
 		{
 			if (m_OutputPortMap[n]->Buf)
-			{
+			{ 
 				sample_t *out = (sample_t *) jack_port_get_buffer(m_OutputPortMap[n]->Port, nframes);
 				memcpy (out, m_OutputPortMap[n]->Buf, sizeof (sample_t) * m_BufferSize);
 			}
 			else // no output availible, clear
-			{
+			{ 
 				sample_t *out = (sample_t *) jack_port_get_buffer(m_OutputPortMap[n]->Port, nframes);
 				memset (out, 0, sizeof (sample_t) * m_BufferSize);
 			}
 		}
 	}
-
-
+		
 	if(RunCallback&&RunContext) 
 	{
 		// do the work
@@ -243,6 +229,8 @@ void JackClient::GetPortNames(vector<string> &InputNames, vector<string> &Output
 // Input means input of SSM, so this connects jack sources to the plugin outputs
 void JackClient::ConnectInput(int n, const string &JackPort)
 {
+	if (!IsAttached()) return;
+
 	cerr<<"JackClient::ConnectInput: connecting source ["<<JackPort<<"] to dest ["<<m_InputPortMap[n]->Name<<"]"<<endl;
 
 	if (m_InputPortMap[n]->ConnectedTo!="")
@@ -265,6 +253,7 @@ void JackClient::ConnectInput(int n, const string &JackPort)
 // Output means output of SSM, so this connects plugin inputs to a jack destination
 void JackClient::ConnectOutput(int n, const string &JackPort)
 {
+	if (!IsAttached()) return;
 	cerr<<"JackClient::ConnectOutput: connecting source ["<<m_OutputPortMap[n]->Name<<"] to dest ["<<JackPort<<"]"<<endl;
 
 	if (m_OutputPortMap[n]->ConnectedTo!="")
@@ -275,14 +264,45 @@ void JackClient::ConnectOutput(int n, const string &JackPort)
 	}
 	
 	m_OutputPortMap[n]->ConnectedTo = JackPort;
-	
 	if (jack_connect (m_Client, jack_port_name(m_OutputPortMap[n]->Port), JackPort.c_str()))
 		cerr<<"JackClient::ConnectOutput: cannot connect output port ["
 			<<m_OutputPortMap[n]->Name<<"] to ["<<JackPort<<"]"<<endl;
-			
 	m_OutputPortMap[n]->Connected=true; 
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// Input means input of SSM, so this connects jack sources to the plugin outputs
+void JackClient::DisconnectInput(int n)
+{
+	if (!IsAttached()) return;
+	cerr<<"JackClient::DisconnectInput: Disconnecting input "<<n<<endl;
+
+	if (m_InputPortMap[n]->ConnectedTo!="")
+	{
+		if (jack_disconnect (m_Client, m_InputPortMap[n]->ConnectedTo.c_str(), jack_port_name(m_InputPortMap[n]->Port))) 
+			cerr<<"JackClient::ConnectInput: cannot disconnect input port ["
+				<<m_InputPortMap[n]->ConnectedTo<<"] from ["<<m_InputPortMap[n]->Name<<"]"<<endl;
+	}
+
+	m_InputPortMap[n]->Connected=false;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// Output means output of SSM, so this connects plugin inputs to a jack destination
+void JackClient::DisconnectOutput(int n)
+{
+	if (!IsAttached()) return;
+	cerr<<"JackClient::DisconnectInput: Disconnecting input "<<n<<endl;
+
+	if (m_OutputPortMap[n]->ConnectedTo!="")
+	{
+		if (jack_disconnect (m_Client, jack_port_name(m_OutputPortMap[n]->Port), m_OutputPortMap[n]->ConnectedTo.c_str())) 
+			cerr<<"JackClient::ConnectOutput: cannot disconnect output port ["
+				<<m_OutputPortMap[n]->ConnectedTo<<"] from ["<<m_OutputPortMap[n]->Name<<"]"<<endl;
+	}
+
+	m_OutputPortMap[n]->Connected=false;
+}
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 void JackClient::SetInputBuf(int ID, float* s)  
@@ -327,7 +347,7 @@ m_Connected(false)
 	
 	m_PluginInfo.Name="Jack";
 	m_PluginInfo.Width=200;
-	m_PluginInfo.Height=415;
+	m_PluginInfo.Height=325;
 	m_PluginInfo.NumInputs=NUM_OUTPUTS;
 	m_PluginInfo.NumOutputs=NUM_INPUTS;
 	
@@ -390,28 +410,21 @@ void JackPlugin::Execute()
 void JackPlugin::ExecuteCommands()
 {
 	// we want to process this whether we are connected to stuff or not
-	for (int n=0; n<NUM_OUTPUTS; n++)
-	{
-		GetOutputBuf(n)->Zero();
-	}
-
 	JackClient* pJack=JackClient::Get();
-	 	
+	
 	// connect the buffers up if we are plugged into something		
 	for (int n=0; n<NUM_OUTPUTS; n++)
 	{
 		if (InputExists(n)) 
 		{			
-			JackClient::Get()->SetOutputBuf(n,(float*)GetInput(n)->GetBuffer());		
+			pJack->SetOutputBuf(n,(float*)GetInput(n)->GetBuffer());		
 		}
 		else 
 		{	
-			JackClient::Get()->SetOutputBuf(n,NULL);
+			pJack->SetOutputBuf(n,NULL);
 		}
 	}
 	
-	// don't really want to do this all the time, as it only needs to 
-	// be done once per attach. 
 	for (int n=0; n<NUM_INPUTS; n++)
 	{
 		pJack->SetInputBuf(n,(float*)GetOutputBuf(n)->GetBuffer());		
@@ -421,10 +434,10 @@ void JackPlugin::ExecuteCommands()
 	{
 		switch (m_AudioCH->GetCommand())
 		{
-			case ATTACH : Attach(); break;
+		  /*case ATTACH : Attach(); break;
 			case DETACH : Detach(); break;
-			case CONNECTINPUT  : ConnectInput(m_GUIArgs.Num,m_GUIArgs.Port);  break;
-			case CONNECTOUTPUT : ConnectOutput(m_GUIArgs.Num,m_GUIArgs.Port); break;
+			case CONNECTINPUT  : pJack->ConnectInput(m_GUIArgs.Num,m_GUIArgs.Port);  break;
+			case CONNECTOUTPUT : pJack->ConnectOutput(m_GUIArgs.Num,m_GUIArgs.Port); break; */
 			case UPDATE_NAMES :
 			{
 				int c=0;
@@ -451,6 +464,7 @@ void JackPlugin::ExecuteCommands()
 				m_NumOutputPortNames=OutputNames.size();
 			}
 			break;
+			default : break;
 		}
 	}
 	m_Connected=JackClient::Get()->IsAttached();	
