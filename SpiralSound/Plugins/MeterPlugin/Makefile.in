@@ -40,6 +40,7 @@ mandir = @mandir@
 
 HEADERS =	../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
+		../../ChannelHandler.h \
 		../Widgets/Fl_DragBar.H \
 		../Widgets/Fl_SevenSeg.H \
 		../Widgets/Fl_VU_Meter.h \
@@ -48,6 +49,7 @@ HEADERS =	../SpiralPlugin.h \
 		MeterPluginGUI.h
 SOURCES =	../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
+		../../ChannelHandler.C \
 		../Widgets/Fl_DragBar.cxx \
 		../Widgets/Fl_SevenSeg.cxx \
 		../Widgets/Fl_VU_Meter.cxx \
@@ -56,6 +58,7 @@ SOURCES =	../SpiralPlugin.C \
 		MeterPluginGUI.C
 OBJECTS =	../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
+		../../ChannelHandler.o \
 		../Widgets/Fl_DragBar.o \
 		../Widgets/Fl_SevenSeg.o \
 		../Widgets/Fl_VU_Meter.o \
@@ -169,3 +172,5 @@ MeterPluginGUI.o: MeterPluginGUI.C \
 		../../Sample.h \
 		../SpiralPluginGUI.h
 
+../../ChannelHandler.o: ../../ChannelHandler.C \
+		../../ChannelHandler.h

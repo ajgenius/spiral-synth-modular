@@ -20,42 +20,66 @@
 #include "SpiralIcon.xpm"
 
 extern "C" {
+
 SpiralPlugin* CreateInstance() { return new MeterPlugin; }
 
 char** GetIcon() { return SpiralIcon_xpm; }
 
 int GetID() { return 123; }
+
 }
 
-///////////////////////////////////////////////////////
-
 MeterPlugin::MeterPlugin() {
-   m_PluginInfo.Name = "Meter";
-   m_PluginInfo.Width = 230;
-   m_PluginInfo.Height = 108;
-   m_PluginInfo.NumInputs = 1;
-   m_PluginInfo.NumOutputs = 1;
-   m_PluginInfo.PortTips.push_back ("Input");
-   m_PluginInfo.PortTips.push_back ("Output");
+  m_PluginInfo.Name = "Meter";
+  m_PluginInfo.Width = 230;
+  m_PluginInfo.Height = 128;
+  m_PluginInfo.NumInputs = 1;
+  m_PluginInfo.NumOutputs = 1;
+  m_PluginInfo.PortTips.push_back ("Input");
+  m_PluginInfo.PortTips.push_back ("Output");
+  m_Data = NULL;
 }
 
 MeterPlugin::~MeterPlugin() {
+  if (m_Data != NULL) delete m_Data;
 }
 
 PluginInfo &MeterPlugin::Initialise (const HostInfo *Host) {
-   PluginInfo& Info = SpiralPlugin::Initialise (Host);
-   return Info;
+  PluginInfo& Info = SpiralPlugin::Initialise (Host);
+  m_Data = new float[Host->BUFSIZE];
+  m_AudioCH->RegisterData ("AudioData", ChannelHandler::OUTPUT, m_Data, Host->BUFSIZE * sizeof (float));
+  return Info;
 }
 
 SpiralGUIType *MeterPlugin::CreateGUI() {
-   m_GUI = new MeterPluginGUI (m_PluginInfo.Width, m_PluginInfo.Height, this, m_HostInfo);
-   m_GUI->hide();
-   return m_GUI;
+  return new MeterPluginGUI (m_PluginInfo.Width, m_PluginInfo.Height, this, m_AudioCH, m_HostInfo);
 }
 
 void MeterPlugin::Execute() {
-     // Just copy the data through.
-     if (GetOutputBuf (0)) GetOutputBuf (0)->Zero();
-     if (GetInput (0)) GetOutputBuf (0)->Mix (*GetInput(0), 0);
-     m_GUI->redraw();
+  // Just copy the data through.
+  if (GetOutputBuf (0)) GetOutputBuf (0)->Zero();
+  if (GetInput (0)) {
+    GetOutputBuf (0)->Mix (*GetInput(0), 0);
+    memcpy (m_Data, GetInput (0)->GetBuffer (), m_HostInfo->BUFSIZE * sizeof (float));
+  }
+}
+
+void MeterPlugin::ExecuteCommands () {
+  if (m_AudioCH->IsCommandWaiting ()) {
+    switch (m_AudioCH->GetCommand()) {
+      case (SETVU) : m_VUMode = true;
+                     break;
+      case (SETMM) : m_VUMode = false;
+                     break;
+    }
+  }
+}
+
+void MeterPlugin::StreamOut (ostream &s) {
+  s << m_Version << " " << m_VUMode << " ";
+}
+
+void MeterPlugin::StreamIn (istream &s) {
+  int Version;
+  s >> Version >> m_VUMode;
 }

@@ -14,25 +14,28 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #ifndef METERPLUGIN
 #define METERPLUGIN
 
 #include "../SpiralPlugin.h"
-#include <FL/Fl_Pixmap.H>
 
 class MeterPlugin : public SpiralPlugin {
-   public:
-      MeterPlugin();
-      virtual ~MeterPlugin();
-      virtual PluginInfo& Initialise (const HostInfo *Host);
-      virtual SpiralGUIType* CreateGUI();
-      virtual void Execute();
-      virtual void StreamOut (ostream &s) {}
-      virtual void StreamIn (istream &s) {}
-      // has to be defined in the plugin
-      virtual void UpdateGUI() { Fl::check(); }
+  public:
+    MeterPlugin();
+    virtual ~MeterPlugin();
+    virtual PluginInfo& Initialise (const HostInfo *Host);
+    virtual SpiralGUIType* CreateGUI();
+    virtual void Execute();
+    virtual void ExecuteCommands();
+    virtual void StreamOut (ostream &s);
+    virtual void StreamIn (istream &s);
+    int GetVUMode (void) { return m_VUMode; }
+    enum GUICommands {NONE, SETVU, SETMM};
+  private:
+    float *m_Data;
+    bool m_VUMode; // This value isn't USED for anything, it's here so we can save/load it
 };
 
 #endif
