@@ -253,7 +253,7 @@ void Sample::Move(int Dist)
 	m_Length=Length;	
 }
 
-void Sample::GetRegion(Sample &S, int Start, int End)
+void Sample::GetRegion(Sample &S, int Start, int End) const
 {
 	// do some checking
 	assert(End<GetLength() && Start<GetLength());

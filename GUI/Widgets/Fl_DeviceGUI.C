@@ -159,6 +159,7 @@ void  Fl_DeviceGUI::Maximise()
 	
 	m_PluginWindow->show();
 	m_IconButton->hide();
+	parent()->redraw();
 	((Fl_Canvas*)parent())->ToTop(this);
 }
 

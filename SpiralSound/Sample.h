@@ -59,7 +59,7 @@ public:
 	void Remove(int Start, int End);
 	void Reverse(int Start, int End);
 	void Move(int Dist);
-	void GetRegion(Sample &S, int Start, int End);
+	void GetRegion(Sample &S, int Start, int End) const;
 	const float *GetBuffer() const {return m_Data;}
 	float *GetNonConstBuffer() {return m_Data;}
 	int  GetLength() const {return m_Length;} 
