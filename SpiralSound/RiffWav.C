@@ -341,6 +341,7 @@ int WavFile::Save(Sample &data)
 		return 0;
 	}	
 
+	m_FileInfo.frames += data.GetLength();
 	return 1;
 #else
 	if (m_Stream==NULL || data.GetLength()==0)
@@ -386,9 +387,6 @@ int WavFile::Save(short *data, int Bytes)
 	}
 	
 	sf_write_short(m_FileHandle, data, Bytes*m_FileInfo.channels/2);
-
-	sf_close(m_FileHandle); 
-	m_FileHandle = NULL;
 
 	return 1;
 #else
@@ -438,6 +436,7 @@ int WavFile::Save(float *left, float *right, int Length)
 		delete[] TempBuf;
 	}
 
+	m_FileInfo.frames += Length;
 	return 1;
 #else
 	if (m_Stream==NULL || left==NULL || right==NULL)
