@@ -29,118 +29,135 @@
 class LADSPAInfo
 {
 public:
-	// If override is false, examine $LADSPA_PATH
-	// Also examine supplied path list
-	// For all paths, add basic plugin information for later lookup,
-	// instantiation and so on.
-	LADSPAInfo(bool override, const char *path_list);
+// If override is false, examine $LADSPA_PATH
+// Also examine supplied path list
+// For all paths, add basic plugin information for later lookup,
+// instantiation and so on.
+    LADSPAInfo(bool override, const char *path_list);
 
-	// Unload all loaded plugins and clean up
-	~LADSPAInfo();
+// Unload all loaded plugins and clean up
+    ~LADSPAInfo();
 
-	// ************************************************************************
-	// Loading/Unloading plugin libraries
-	//
-	// At first, no library dlls are loaded.
-	//
-	// Each library has an associated reference count, which is initially 0.
-	// As descriptors are requested, using GetDescriptorByID, this count
-	// is incremented. The library dll is loaded on the first request.
-	// At descriptors are discarded, the count is decremented, and when this
-	// reaches 0, the library is unloaded.
+// ************************************************************************
+// Loading/Unloading plugin libraries
+//
+// At first, no library dlls are loaded.
+//
+// Each library has an associated reference count, which is initially 0.
+// As descriptors are requested, using GetDescriptorByID, this count
+// is incremented. The library dll is loaded on the first request.
+// At descriptors are discarded, the count is decremented, and when this
+// reaches 0, the library is unloaded.
 
-	// Rescan all paths in $LADSPA_PATH, as per constructor.
-	// This will also unload all libraries, and make any descriptors that
-	// have not been discarded with DiscardDescriptorByID invalid.
-	void                            RescanPlugins(void);
+// Rescan all paths in $LADSPA_PATH, as per constructor.
+// This will also unload all libraries, and make any descriptors that
+// have not been discarded with DiscardDescriptorByID invalid.
+    void                            RescanPlugins(void);
 
-	// Unload all dlopened libraries. This will make any descriptors that
-	// have not been discarded with DiscardDescriptorByID invalid.
-	void                            UnloadAllLibraries(void);
+// Unload all dlopened libraries. This will make any descriptors that
+// have not been discarded with DiscardDescriptorByID invalid.
+    void                            UnloadAllLibraries(void);
 
-	// Get descriptor of plugin with given ID. This increments the descriptor
-	// count for the corresponding library.
-	const LADSPA_Descriptor        *GetDescriptorByID(unsigned long unique_id);
+// Get descriptor of plugin with given ID. This increments the descriptor
+// count for the corresponding library.
+    const LADSPA_Descriptor        *GetDescriptorByID(unsigned long unique_id);
 
-	// Notify that a descriptor corresponding to the given ID has been
-	// discarded. This decrements the descriptor count for the corresponding
-	// library.
-	void                            DiscardDescriptorByID(unsigned long unique_id);
+// Notify that a descriptor corresponding to the given ID has been
+// discarded. This decrements the descriptor count for the corresponding
+// library.
+    void                            DiscardDescriptorByID(unsigned long unique_id);
 
-	// Get unique ID of plugin identified by given library filename and label.
-	unsigned long                   GetIDFromFilenameAndLabel(std::string filename,
-	                                                          std::string label);
+// Get unique ID of plugin identified by given library filename and label.
+    unsigned long                   GetIDFromFilenameAndLabel(std::string filename,
+                                                              std::string label);
 
-	struct PluginEntry
-	{
-		unsigned long               UniqueID;
-		std::string                 Name;
-	};
+    struct PluginEntry
+    {
+        unsigned long               UniqueID;
+        std::string                 Name;
+    };
 
-	// Get a list of plugins ordered by name (duplicate names are
-	// appended with a (number)
-	const std::vector<PluginEntry>  GetPluginList(void);
+// Get a list of plugins ordered by name (duplicate names are
+// appended with a (number)
+    const std::vector<PluginEntry>  GetPluginList(void);
 
-	// Get the index in the above list for given Unique ID
-	// If not found, this returns the size of the above list
-	unsigned long                   GetPluginListEntryByID(unsigned long unique_id);
+// Get the index in the above list for given Unique ID
+// If not found, this returns the size of the above list
+    unsigned long                   GetPluginListEntryByID(unsigned long unique_id);
 
-	// Get the number of input ports for the plugin with the most
-	// input ports
-	unsigned long                   GetMaxInputPortCount(void) { return m_MaxInputPortCount; }
+// Get the number of input ports for the plugin with the most
+// input ports
+    unsigned long                   GetMaxInputPortCount(void) { return m_MaxInputPortCount; }
+
+    void                            PrintInfo(void);
 
 private:
-	void                            CleanUp(void);
-	void                            ScanPathList(const char *path_list);
-	void                            ExaminePath(const char *path);
-	bool                            CheckPlugin(LADSPA_Descriptor_Function desc_func);
-	LADSPA_Descriptor_Function      GetDescriptorFunctionForLibrary(unsigned long library_index);
+    void                            CleanUp(void);
+    void                            ScanPathList(const char *path_list,
+                                                 void (LADSPAInfo::*ExamineFunc)(const std::string,
+                                                                                 const std::string));
+    void                            ExaminePluginLibrary(const std::string path,
+                                                         const std::string basename);
+    void                            ExamineRDFFile(const std::string path,
+                                                   const std::string basename);
 
-	struct LibraryInfo
-	{
-		unsigned long           PathIndex;  // Index of path in m_Paths
-		std::string             Basename;   // Filename
-		unsigned long           RefCount;   // Count of descriptors requested from library
-		void                   *Handle;     // DLL Handle, NULL
-	};
+    bool                            CheckPlugin(const LADSPA_Descriptor *desc);
+    LADSPA_Descriptor_Function      GetDescriptorFunctionForLibrary(unsigned long library_index);
 
-	struct PluginInfo
-	{
-		unsigned long               LibraryIndex;   // Index of library in m_Libraries
-		unsigned long               Index;          // Plugin index in library
-		const LADSPA_Descriptor    *Descriptor;     // Descriptor, NULL
-	};
+    struct LibraryInfo
+    {
+        unsigned long           PathIndex;  // Index of path in m_Paths
+        std::string             Basename;   // Filename
+        unsigned long           RefCount;   // Count of descriptors requested from library
+        void                   *Handle;     // DLL Handle, NULL
+    };
 
-	typedef std::map<unsigned long,
-	                 unsigned long,
-	                 std::less<unsigned long> >  IDMap;
+    struct PluginInfo
+    {
+        unsigned long               LibraryIndex;   // Index of library in m_Libraries
+        unsigned long               Index;          // Plugin index in library
+        const LADSPA_Descriptor    *Descriptor;     // Descriptor, NULL
+    };
 
-	typedef std::map<std::string,
-	                 unsigned long,
-	                 std::less<std::string> >    StringMap;
+    struct RDFFileInfo
+    {
+        unsigned long           RDFPathIndex; // Index of path in m_RDFPaths
+        std::string             Basename;     // Filename
+    };
 
-	// For sorting vectors of PluginEntries
-	struct PluginEntrySortAsc
-	{
-		bool operator()(const PluginEntry &begin, const PluginEntry &end)
-		{
-			return begin.Name < end.Name;
-		}
-	};
+    typedef std::map<unsigned long,
+                     unsigned long,
+                     std::less<unsigned long> >  IDMap;
 
-	bool                            m_LADSPAPathOverride;
-	char                           *m_ExtraPaths;
+    typedef std::map<std::string,
+                     unsigned long,
+                     std::less<std::string> >    StringMap;
 
-	std::vector<std::string>        m_Paths;
-	std::vector<LibraryInfo>        m_Libraries;
-	std::vector<PluginInfo>         m_Plugins;
+    // For sorting vectors of PluginEntries
+    struct PluginEntrySortAsc
+    {
+        bool operator()(const PluginEntry &begin, const PluginEntry &end)
+        {
+            return begin.Name < end.Name;
+        }
+    };
 
-	IDMap                           m_IDLookup;
-	StringMap                       m_FilenameLookup;
+    bool                            m_LADSPAPathOverride;
+    char                           *m_ExtraPaths;
 
-	std::vector<PluginEntry>        m_OrderedPluginList;
+    std::vector<std::string>        m_Paths;
+    std::vector<LibraryInfo>        m_Libraries;
+    std::vector<PluginInfo>         m_Plugins;
 
-	unsigned long                   m_MaxInputPortCount;
+    std::vector<std::string>        m_RDFPaths;
+    std::vector<RDFFileInfo>        m_RDFFiles;
+
+    IDMap                           m_IDLookup;
+    StringMap                       m_FilenameLookup;
+
+    std::vector<PluginEntry>        m_OrderedPluginList;
+
+    unsigned long                   m_MaxInputPortCount;
 };
 
 #endif // __ladspa_info_h__
