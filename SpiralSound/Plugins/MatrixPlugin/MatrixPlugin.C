@@ -53,7 +53,9 @@ m_CurrentNoteCV(0),
 m_CurrentTriggerCV(0),
 m_Triggered(false),
 m_ClockHigh(false),
-m_CopyPattern(0)
+m_CopyPattern(0),
+m_PatAdvance(false),
+m_PatReset(false)
 {
 	m_Version=3;
 
@@ -67,6 +69,8 @@ m_CopyPattern(0)
 	m_PluginInfo.PortTips.push_back("Input Pitch CV");	
 	m_PluginInfo.PortTips.push_back("Input Trigger CV");
 	m_PluginInfo.PortTips.push_back("External Clock");
+	//m_PluginInfo.PortTips.push_back("Pattern Advance");
+	//m_PluginInfo.PortTips.push_back("Pattern Reset");
 	m_PluginInfo.PortTips.push_back("Output Pitch");	
 	m_PluginInfo.PortTips.push_back("Output Trigger");
 	m_PluginInfo.PortTips.push_back("Trigger 1");
@@ -89,7 +93,7 @@ m_CopyPattern(0)
 		
 	for (int n=0; n<NUM_PATTERNS; n++)
 	{
-		m_Matrix[n].Length=32;
+		m_Matrix[n].Length=64;
 		m_Matrix[n].Speed=1.0f;
 		m_Matrix[n].Octave=0;
 		
@@ -149,7 +153,7 @@ void MatrixPlugin::Execute()
                 
 		if (m_Step+1 >= m_Matrix[m_Current].Length) SetOutput(18, n, 1);
         else SetOutput(18, n, 0);
-
+		 
 		if (GetInputPitch(0,n)>0) 
 		{
 			if (!m_Triggered)
@@ -167,10 +171,7 @@ void MatrixPlugin::Execute()
 				}
 				
 				// make it so the next note to trigger
-				// will be the first one
-				
-				//if (m_GUI) ((MatrixPluginGUI*)m_GUI)->UpdateValues();
-								
+				// will be the first one								
 				m_Time=m_StepTime*(1/m_Matrix[m_Current].Speed);
 				m_Step=-1;
 
@@ -216,9 +217,40 @@ void MatrixPlugin::Execute()
 				ExternalClockTriggered=true;
 			}
 		}
-			
-			
-				
+/* not yet...			
+		// external pattern advance
+		if (GetInput(5,n)>0)
+		{
+			if (!m_PatAdvance)
+			{
+				m_Current++;
+				if (m_Current==16) m_Current=0;
+				m_PatAdvance=true;
+				m_Step=-1;
+				ExternalClockTriggered=true;
+			}
+		}
+		else
+		{
+			m_PatAdvance=false;
+		}
+		
+		// external pattern reset
+		if (GetInput(6,n)>0)
+		{
+			if (!m_PatReset)
+			{
+				m_Current=0;
+				m_PatReset=true;
+				m_Step=-1;
+				ExternalClockTriggered=true;
+			}
+		}
+		else
+		{
+			m_PatReset=false;
+		}	
+*/		
 		// An external clock pulse overrides the internal timing
 		if ((!ExternalClock && m_Time>=m_StepTime*(1/m_Matrix[m_Current].Speed)) ||
 			(ExternalClock && ExternalClockTriggered)) 
@@ -227,9 +259,7 @@ void MatrixPlugin::Execute()
 			m_Step++;
 			
 			if (m_Step >= m_Matrix[m_Current].Length) m_Step=0;
-			
-			//if (m_GUI) ((MatrixPluginGUI*)m_GUI)->SetLED(m_Step);
-			
+						
 			// Reset the values
 			m_CurrentTriggerCV=0;
 			if (m_NoteCut) m_CurrentNoteCV=0;
@@ -238,7 +268,6 @@ void MatrixPlugin::Execute()
 				SetOutput(t+2,n,0);
 				m_TriggerLevel[t]=0;
 			}
-			
 			
 			// Scan the matrix at current time 
 			for (int i=0; i<MATY; i++)
@@ -271,7 +300,7 @@ void MatrixPlugin::ExecuteCommands()
 			break;
 			
 			case MAT_SPEED    : 
-				m_Matrix[m_Current].Speed=m_GUIArgs.Speed; 
+				m_Matrix[m_Current].Speed=m_GUIArgs.Speed/8.0f; 
 			break;		
 			
 			case MAT_ACTIVATE : 

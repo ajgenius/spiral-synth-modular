@@ -74,6 +74,7 @@ private:
 	
 	int Numbers[MATX*MATY];
 	Pattern m_GUIMatrix[NUM_PATTERNS];
+	int m_LastLight;
 	
 	Fl_Button*  m_NoteCut;
 	Fl_Counter* m_Pattern;

@@ -87,7 +87,8 @@ int Fl_MatrixButton::handle(int event)
 ////////////////////////////////////////////
 
 MatrixPluginGUI::MatrixPluginGUI(int w, int h,MatrixPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
-SpiralPluginGUI(w,h,o,ch)
+SpiralPluginGUI(w,h,o,ch),
+m_LastLight(0)
 {	
 	//size_range(10,10);
 	m_NoteCut = new Fl_Button (5, h-30, 85, 20,"NoteCut");
@@ -207,14 +208,13 @@ SpiralPluginGUI(w,h,o,ch)
 
 void MatrixPluginGUI::Update()
 {	
-	for(int x=0; x<MATX; x++)
+	int Light=m_GUICH->GetInt("Step");
+	if (Light!=m_LastLight)
 	{
-		m_Flash[x]->value(0);
+		m_Flash[Light]->value(1);
+		m_Flash[m_LastLight]->value(0);
+		m_LastLight=Light;
 	}
-
-	m_Flash[m_GUICH->GetInt("Step")]->value(1);
-	
-	redraw();
 }
 
 void MatrixPluginGUI::UpdateValues(SpiralPlugin *o)
@@ -233,20 +233,7 @@ void MatrixPluginGUI::UpdateValues(SpiralPlugin *o)
 		m_Matrix[x][y]->value(Plugin->GetPattern()->Matrix[x][y]);
 		m_Matrix[x][y]->SetVolume(Plugin->GetPattern()->Volume[x][y]);
 	}        
-	
-	//if (Plugin->CanTransposeUp()) m_TransUpBtn->activate(); else m_TransUpBtn->deactivate();
-    //if (Plugin->CanTransposeDown()) m_TransDnBtn->activate(); else m_TransDnBtn->deactivate();
 }
-	
-/*void MatrixPluginGUI::SetLED(int n) 
-{ 
-	for (int i=0; i<MATX; i++) 
-	{
-		m_Flash[i]->value(false); 
-	}
-	
-	m_Flash[n]->value(true); 
-}*/
 	
 void MatrixPluginGUI::UpdateMatrix()
 {
@@ -307,10 +294,7 @@ inline void MatrixPluginGUI::cb_Length_i(Fl_Counter* o, void* v)
 {
 	if (o->value()<1) o->value(1);
 	if (o->value()>64) o->value(64);
- 	//m_GUICH->GetPattern()->Length=(int)o->value();
-	
-	cerr<<(int)o->value()<<endl;
-	
+ 		
 	m_GUICH->Set("Length",(int)o->value());
 	m_GUICH->SetCommand(MatrixPlugin::MAT_LENGTH);
 

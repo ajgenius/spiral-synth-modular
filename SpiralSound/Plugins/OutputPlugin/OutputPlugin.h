@@ -42,10 +42,10 @@ public:
 	void    WavClose() {m_Wav.Close();}
 	short  *GetBuffer() {return m_Buffer[m_WriteBufferNum];}
 	
-	void 	OpenReadWrite();
-	void    OpenWrite();
-	void    OpenRead();
-	void    Close();
+	bool 	OpenReadWrite();
+	bool    OpenWrite();
+	bool    OpenRead();
+	bool    Close();
 	
 private:
 	static OSSOutput* m_Singleton;
@@ -68,7 +68,7 @@ private:
 class OutputPlugin : public SpiralPlugin
 {
 public:
-	enum Mode{INPUT,OUTPUT,DUPLEX};
+	enum Mode{NO_MODE,INPUT,OUTPUT,DUPLEX,CLOSED};
 
  	OutputPlugin();
 	virtual ~OutputPlugin();
@@ -76,8 +76,12 @@ public:
 	virtual PluginInfo& Initialise(const HostInfo *Host);
 	virtual SpiralGUIType*  CreateGUI();
 	virtual void 		Execute();
+	virtual void 		ExecuteCommands();
 	virtual void	    StreamOut(ostream &s) {}
 	virtual void	    StreamIn(istream &s)  {}
+	
+	enum GUICommands {NONE,OPENREAD,OPENWRITE,OPENDUPLEX,CLOSE,SET_VOLUME};
+	float m_Volume;
 	
 	Mode GetMode() { return m_Mode; }
 		

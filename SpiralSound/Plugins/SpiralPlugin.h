@@ -94,11 +94,14 @@ public:
 	string 				GetName() { return m_PluginInfo.Name; }
 
 	void UpdatePluginInfoWithHost();
-	void SetUpdateInfoCallback(int ID, void(*s)(int, void *));
-	void SetUpdateCallback(void (*s)(void*,bool m)) { cb_Update=s; }
-	void SetParent(void *s) { m_Parent=s; }
 	void SetInPortType(PluginInfo &pinfo, int port, Sample::SampleType type);    
     void SetOutPortType(PluginInfo &pinfo, int port, Sample::SampleType type);
+	
+	// Callbacks to main engine. Should only called by plugin hosts.
+	void SetUpdateInfoCallback(int ID, void(*s)(int, void *));
+	void SetUpdateCallback(void (*s)(void*,bool m)) { cb_Update=s; }
+	void SetBlockingCallback(void (*s)(void*,bool m)) { cb_Blocking=s; }
+	void SetParent(void *s) { m_Parent=s; }
 
 	void UpdateChannelHandler();
 	 
@@ -146,6 +149,10 @@ protected:
 	// needed for jack
 	void (*cb_Update)(void*o ,bool m);	
 	void  *m_Parent;
+
+	// tell the engine that we are taking control of the 
+	// timing for output.
+	void (*cb_Blocking)(void*o ,bool m);	
 	
 private:
 

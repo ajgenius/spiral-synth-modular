@@ -71,6 +71,7 @@ public:
 	void ClearUp();	
 	void UpdateHostInfo();	
 	bool CallbackMode() { return m_CallbackUpdateMode; }
+	bool IsBlockingOutputPluginReady() { return m_BlockingOutputPluginIsReady; }
 	void UpdatePluginGUIs();
 	void LoadPatch(const char *fn);	
 	
@@ -84,6 +85,9 @@ public:
 	{
 		m_CH.Set("PauseAudio",false);
 	}
+	
+	// only for audio thread
+	bool IsPaused() { return m_PauseAudio; }
 	
 private:
 
@@ -104,6 +108,7 @@ private:
 	int m_NextPluginButtonYPos;
 	
 	static bool m_CallbackUpdateMode;
+	static bool m_BlockingOutputPluginIsReady;
 	string m_FilePath;
 	
 	// Main GUI stuff
@@ -164,8 +169,10 @@ private:
     static void cb_Rload(Fl_Button* o, void* v);
 	
     static void cb_Update(void* o, bool Mode);	
+    static void cb_Blocking(void* o, bool Mode);	
 	static void cb_UpdatePluginInfo(int ID, void *PluginInfo);
 
+	
 	friend istream &operator>>(istream &s, SynthModular &o);
 	friend ostream &operator<<(ostream &s, SynthModular &o);	
 };

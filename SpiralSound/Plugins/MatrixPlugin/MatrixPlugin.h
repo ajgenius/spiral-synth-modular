@@ -95,6 +95,8 @@ private:
 	bool  m_Triggered;
 	bool  m_ClockHigh;
 	int m_CopyPattern;
+	bool  m_PatAdvance;
+	bool  m_PatReset;
 };
 
 #endif

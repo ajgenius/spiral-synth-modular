@@ -71,7 +71,10 @@ void OutputPluginGUI::UpdateValues(SpiralPlugin *o)
 //// Callbacks ////
 
 inline void OutputPluginGUI::cb_Volume_i(Fl_Knob* o, void* v)
-{ OSSOutput::Get()->SetVolume(o->value()); }
+{
+	m_GUICH->Set("Volume",(float)o->value());
+ 	m_GUICH->SetCommand(OutputPlugin::SET_VOLUME);
+}
 void OutputPluginGUI::cb_Volume(Fl_Knob* o, void* v)
 { ((OutputPluginGUI*)(o->parent()))->cb_Volume_i(o,v); }
 
@@ -104,14 +107,16 @@ inline void OutputPluginGUI::cb_OpenRead_i(Fl_Button* o, void* v)
 	if (o->value())
 	{
 		OpenWrite->value(0);
-		OSSOutput::Get()->Close();
-		OSSOutput::Get()->OpenRead();
-		m_GUICH->Set("Mode",(char)OutputPlugin::INPUT);
+		m_GUICH->SetCommand(OutputPlugin::CLOSE);
+		m_GUICH->Wait();
+		m_GUICH->SetCommand(OutputPlugin::OPENREAD);
+		m_GUICH->Wait();
 	}
 	else
 	{
-		OpenWrite->value(0);
-		OSSOutput::Get()->Close();
+		OpenWrite->value(0);		
+		m_GUICH->SetCommand(OutputPlugin::CLOSE);
+		m_GUICH->Wait();
 	}
 }
 void OutputPluginGUI::cb_OpenRead(Fl_Button* o, void* v)
@@ -122,14 +127,16 @@ inline void OutputPluginGUI::cb_OpenDuplex_i(Fl_Button* o, void* v)
 	if (o->value())
 	{
 		OpenRead->value(0);
-		OSSOutput::Get()->Close();
-		OSSOutput::Get()->OpenReadWrite();
-		m_GUICH->Set("Mode",(char)OutputPlugin::DUPLEX);
+		m_GUICH->SetCommand(OutputPlugin::CLOSE);
+		m_GUICH->Wait();
+		m_GUICH->SetCommand(OutputPlugin::OPENDUPLEX);
+		m_GUICH->Wait();
 	}
 	else
 	{
 		OpenRead->value(0);
-		OSSOutput::Get()->Close();
+		m_GUICH->SetCommand(OutputPlugin::CLOSE);
+		m_GUICH->Wait();
 	} 
 }
 void OutputPluginGUI::cb_OpenDuplex(Fl_Button* o, void* v)
@@ -140,14 +147,16 @@ inline void OutputPluginGUI::cb_OpenWrite_i(Fl_Button* o, void* v)
 	if (o->value())
 	{
 		OpenRead->value(0);
-		OSSOutput::Get()->Close();
-		OSSOutput::Get()->OpenWrite();
-		m_GUICH->Set("Mode",(char)OutputPlugin::OUTPUT);
+		m_GUICH->SetCommand(OutputPlugin::CLOSE);
+		m_GUICH->Wait();
+		m_GUICH->SetCommand(OutputPlugin::OPENWRITE);
+		m_GUICH->Wait();
 	}
 	else
 	{
 		OpenRead->value(0);
-		OSSOutput::Get()->Close();
+		m_GUICH->SetCommand(OutputPlugin::CLOSE);
+		m_GUICH->Wait();
 	}
 }
 void OutputPluginGUI::cb_OpenWrite(Fl_Button* o, void* v)

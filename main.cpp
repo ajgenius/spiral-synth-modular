@@ -25,30 +25,66 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Tooltip.h>
 #include <unistd.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 
 #include "SpiralSynthModular.h"
 
-pthread_t loopthread;
+pthread_t loopthread,watchdogthread;
 SynthModular *synth;
+
+char watchdog_check = 1;
+char gui_watchdog_check = 1;
 
 int pthread_create_realtime (pthread_t *new_thread,
 			 void *(*start)(void *), void *arg,
 			 int priority);
 
 bool CallbackOnly = false;
+bool FIFO = false;
+bool GUI = true;
+
+/////////////////////////////////////////////////////////////
+
+void watchdog (void *arg)
+{	
+	pthread_setcanceltype (PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+
+	watchdog_check = 0;
+	gui_watchdog_check = 0;
+	
+	while (1) 
+	{
+		usleep (10000000);
+		if (watchdog_check == 0 || gui_watchdog_check== 0) 
+		{
+			cerr<<"ssm watchdog: timeout - killing ssm"<<endl;
+			if (watchdog_check==0) cerr<<"diagnosis: audio hung?"<<endl;
+			if (gui_watchdog_check==0) cerr<<"diagnosis: gui starved by audio"<<endl;
+			exit (1);
+		}
+		watchdog_check = 0;
+		gui_watchdog_check = 0;
+	}
+}
+
+///////////////////////////////////////////////////////////////////////
 
 void audioloop(void* o)
 {
 	while(1)
-	{
+	{		
 		if (!synth->CallbackMode()) 
 		{
 			// do funky stuff
 			synth->Update();
-			
-			// slow down this thread if we are not going to be using the
-			// oss plugin. prevents maxing the CPU out for no reason.
-			if (CallbackOnly) usleep(100);
+
+			// put the brakes on if there is no blocking output running
+			if (!synth->IsBlockingOutputPluginReady()||
+				 synth->IsPaused()) 
+			{
+				usleep(10000);
+			}
 		}
 		else
 		{
@@ -56,16 +92,17 @@ void audioloop(void* o)
 			// need to do anything unless we are switched back 
 			usleep(1000000);
 		}
+		
+		watchdog_check = 1;
 	}
 }
+
+//////////////////////////////////////////////////////
 
 int main(int argc, char **argv)
 {	
 	srand(time(NULL));
 	SpiralSynthModularInfo::Get()->LoadPrefs();
-	
-	bool GUI = true;
-	bool FIFO = false;
 	
 	// get args
     string cmd_filename="";
@@ -78,24 +115,22 @@ int main(int argc, char **argv)
 		for (int a=1; a<argc; a++)
 		{
 			if (!strcmp(argv[a],"--NoGUI")) GUI = false;
-			else if (!strcmp(argv[a],"--SHED_FIFO")) FIFO = true;
-			else if (!strcmp(argv[a],"--CallbackOnly")) CallbackOnly = true;			
+			else if (!strcmp(argv[a],"--Realtime")) FIFO = true;
 			else if (!strcmp(argv[a],"-h")) 
 			{	
-				cout<<"usage: spiralsynthmodular [options] [patch.ssm]"<<endl<<endl
+				cout<<"usage: spiralsynthmodular [patch.ssm] [options]"<<endl<<endl
 				<<"options list"<<endl
 				<<"-h : help"<<endl
 				<<"-v : print version"<<endl
 				<<"--NoGUI : run without GUI (only useful when loading patch from command line"<<endl
-				<<"--SHED_FIFO : spawn audio thread with FIFO sheduling (run as root)"<<endl
-				<<"--CallbackOnly : prevents 100% cpu usage when idle, but makes OSS output unsable"<<endl
+				<<"--Realtime : spawn audio thread with FIFO scheduling (run as root)"<<endl
 				<<"--PluginPath <PATH> : look for plugins in the specified directory"<<endl;
 				exit(0);
 			}
 			else if (!strcmp(argv[a],"-v")) 
 			{
 				cout<<VER_STRING<<endl; exit(0);
-			}
+			} 			
 			else if (!strcmp(argv[a],"--PluginPath"))
 			{
 				a++;
@@ -108,12 +143,10 @@ int main(int argc, char **argv)
 			}
 		}
     }	
+	
 	// set some fltk defaults
 	Fl_Tooltip::size(10);	
 	Fl::visible_focus(false);
-	
-	//Fl::set_font(FL_HELVETICA,FL_SCREEN);
-	
 	Fl::visual(FL_DOUBLE|FL_RGB);
 	
 	synth=new SynthModular;
@@ -125,11 +158,17 @@ int main(int argc, char **argv)
 	if (GUI) win->show(1, argv); // prevents stuff happening before the plugins have loaded
 	
 	// spawn the audio thread
-	int ret;
-	if (FIFO) ret=pthread_create_realtime(&loopthread,(void*(*)(void*))audioloop,NULL,10);
-	else ret=pthread_create(&loopthread,NULL,(void*(*)(void*))audioloop,NULL);
-	
-	pthread_t GUIThread = pthread_self();
+	if (FIFO) 
+	{	
+		pthread_create_realtime(&watchdogthread,(void*(*)(void*))watchdog,NULL,sched_get_priority_max(SCHED_FIFO));
+		pthread_create_realtime(&loopthread,(void*(*)(void*))audioloop,NULL,sched_get_priority_max(SCHED_FIFO)-1);
+	}
+	else 
+	{
+		pthread_create(&loopthread,NULL,(void*(*)(void*))audioloop,NULL);
+		// reduce the priority of the gui
+		if (setpriority(PRIO_PROCESS,0,20)) cerr<<"Could not set priority for GUI thread"<<endl;
+	}
 	
 	// do we need to load a patch on startup? 
     if (cmd_specd) synth->LoadPatch(cmd_filename.c_str());        
@@ -146,6 +185,7 @@ int main(int argc, char **argv)
     	if (!Fl::check()) break;    	
 		synth->UpdatePluginGUIs(); // deletes any if necc
 		usleep(10000);
+		gui_watchdog_check=1;
   	}
 	
 	//pthread_cancel(loopthread);

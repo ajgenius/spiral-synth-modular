@@ -60,7 +60,7 @@ int OutputPlugin::m_NoExecuted=0;
 								{                     \
 									perror("Sound device did not accept settings"); \
 									m_OutputOk=false; \
-									return;           \
+									return false;     \
 								}
 
 extern "C"
@@ -83,10 +83,11 @@ int GetID()
 
 ///////////////////////////////////////////////////////
 
-OutputPlugin::OutputPlugin() 
+OutputPlugin::OutputPlugin() :
+m_Volume(1.0f)
 {
 	m_RefCount++;
-	
+		
 	m_PluginInfo.Name="OSS";
 	m_PluginInfo.Width=100;
 	m_PluginInfo.Height=130;
@@ -98,16 +99,17 @@ OutputPlugin::OutputPlugin()
 	m_PluginInfo.PortTips.push_back("Left In");
 	m_PluginInfo.PortTips.push_back("Right In");
 	
-	m_AudioCH->Register("Mode",(char*)&m_Mode,ChannelHandler::INPUT);
+	m_AudioCH->Register("Volume",(char*)&m_Volume);
 	
-	m_Mode=OUTPUT;
+	m_Mode=NO_MODE;
 }
 
 OutputPlugin::~OutputPlugin()
-{
+{	
 	m_RefCount--;
 	if (m_RefCount==0)
-	{
+	{	
+		cb_Blocking(m_Parent,false);
 		OSSOutput::PackUpAndGoHome();
 	}
 }
@@ -117,6 +119,7 @@ PluginInfo &OutputPlugin::Initialise(const HostInfo *Host)
 	PluginInfo& Info= SpiralPlugin::Initialise(Host);
 	host=Host;
 	OSSOutput::Get()->AllocateBuffer();
+
 	return Info;
 }
 
@@ -131,15 +134,18 @@ SpiralGUIType *OutputPlugin::CreateGUI()
 
 void OutputPlugin::Execute()
 {
-	// Only Play() once per set of plugins
-	m_NoExecuted++;
-	if (m_NoExecuted==m_RefCount)
-	{	
-		if (m_Mode==INPUT || m_Mode==DUPLEX) OSSOutput::Get()->Read();		
-		if (m_Mode==OUTPUT || m_Mode==DUPLEX) OSSOutput::Get()->Play();		
-		m_NoExecuted=0;
+	if (m_Mode==NO_MODE)
+	{
+		if (OSSOutput::Get()->OpenWrite())
+		{
+			cb_Blocking(m_Parent,true); 
+			m_Mode=OUTPUT;
+		}		
 	}
 	
+	//if (m_Mode==NO_MODE || m_Mode==CLOSED) cb_Blocking(m_Parent,false); 
+	//else cb_Blocking(m_Parent,true); 
+		
 	if (m_Mode==OUTPUT || m_Mode==DUPLEX)
 	{
 		OSSOutput::Get()->SendStereo(GetInput(0),GetInput(1));
@@ -177,6 +183,54 @@ void OutputPlugin::Execute()
 	if (m_Mode==INPUT || m_Mode==DUPLEX) OSSOutput::Get()->GetStereo(GetOutputBuf(0),GetOutputBuf(1));	
 }
 
+void OutputPlugin::ExecuteCommands()
+{
+	// Only Play() once per set of plugins
+	m_NoExecuted++;
+	if (m_NoExecuted==m_RefCount)
+	{	
+		if (m_Mode==INPUT || m_Mode==DUPLEX) OSSOutput::Get()->Read();		
+		if (m_Mode==OUTPUT || m_Mode==DUPLEX) OSSOutput::Get()->Play();		
+		m_NoExecuted=0;
+	}
+
+
+	if (m_AudioCH->IsCommandWaiting())
+	{
+		switch(m_AudioCH->GetCommand())
+		{
+			case OPENREAD : 
+				if (OSSOutput::Get()->OpenRead())
+				{
+					m_Mode=INPUT;
+					//cb_Blocking(m_Parent,true); 
+				}
+			break;
+			case OPENWRITE : 
+				if (OSSOutput::Get()->OpenWrite()) 
+				{
+					m_Mode=OUTPUT;
+					cb_Blocking(m_Parent,true); 
+				}
+			break;
+			case OPENDUPLEX : 
+				if (OSSOutput::Get()->OpenReadWrite()) 
+				{
+					m_Mode=DUPLEX;
+					cb_Blocking(m_Parent,true); 
+				}
+			break;
+			case CLOSE : 
+				m_Mode=CLOSED;
+				cb_Blocking(m_Parent,false); 
+				OSSOutput::Get()->Close(); 
+			break;
+			case SET_VOLUME : OSSOutput::Get()->SetVolume(m_Volume); break;			
+			default : break;
+		}
+	}
+}
+
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
@@ -185,14 +239,12 @@ m_Amp(0.5),
 m_Channels(2),
 m_ReadBufferNum(0),
 m_WriteBufferNum(0),
-m_OutputOk(true)
+m_OutputOk(false)
 { 
 	m_Buffer[0]=NULL;
 	m_Buffer[1]=NULL;
 	m_InBuffer[0]=NULL;
 	m_InBuffer[1]=NULL;
-
-	OpenWrite(); 
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -264,9 +316,10 @@ void OSSOutput::Play()
 		                                 ((m_Buffer[BufferToSend][n]>>8)&0xff);
     }
     #endif	
-    
 	if (m_OutputOk)
+	{
 		write(m_Dspfd,m_Buffer[BufferToSend],m_BufSizeBytes);
+	}
 		
     if(m_Wav.Recording()) 
     {
@@ -316,15 +369,17 @@ void OSSOutput::Read()
 
 //////////////////////////////////////////////////////////////////////
 
-void OSSOutput::Close()
+bool OSSOutput::Close()
 { 	
 	cerr<<"Closing dsp output"<<endl;
 	close(m_Dspfd);
+	
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////
 
-void OSSOutput::OpenWrite()
+bool OSSOutput::OpenWrite()
 { 	
 	int result,val;
 	cerr<<"Opening dsp output"<<endl;
@@ -334,7 +389,7 @@ void OSSOutput::OpenWrite()
 	{
 		fprintf(stderr,"Can't open audio driver for writing.\n");
 		m_OutputOk=false;
-		return;
+		return false;
 	}
    
 	result = ioctl(m_Dspfd,SNDCTL_DSP_RESET,NULL);
@@ -381,11 +436,14 @@ void OSSOutput::OpenWrite()
 	val = host->SAMPLERATE;
 	result = ioctl(m_Dspfd,SNDCTL_DSP_SPEED,&val);
 	CHECK_AND_REPORT_ERROR;
+	
+	m_OutputOk=true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////
 
-void OSSOutput::OpenRead()
+bool OSSOutput::OpenRead()
 { 	
 	int result,val;
   
@@ -396,7 +454,7 @@ void OSSOutput::OpenRead()
 	{
 		fprintf(stderr,"Can't open audio driver for reading.\n");
 		m_OutputOk=false;
-		return;
+		return false;
 	}
    
 	result = ioctl(m_Dspfd,SNDCTL_DSP_RESET,NULL);
@@ -413,11 +471,14 @@ void OSSOutput::OpenRead()
 	val = host->SAMPLERATE;
 	result = ioctl(m_Dspfd,SNDCTL_DSP_SPEED,&val);
 	CHECK_AND_REPORT_ERROR;
+	m_OutputOk=true;
+	
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////
 
-void OSSOutput::OpenReadWrite()
+bool OSSOutput::OpenReadWrite()
 { 	
 	int result,val;
 	cerr<<"Opening dsp output (duplex)"<<endl;
@@ -427,7 +488,7 @@ void OSSOutput::OpenReadWrite()
 	{
 		fprintf(stderr,"Can't open audio driver for writing.\n");
 		m_OutputOk=false;
-		return;
+		return false;
 	}
    
 	result = ioctl(m_Dspfd,SNDCTL_DSP_RESET,NULL);
@@ -474,4 +535,7 @@ void OSSOutput::OpenReadWrite()
 	val = host->SAMPLERATE;
 	result = ioctl(m_Dspfd,SNDCTL_DSP_SPEED,&val);
 	CHECK_AND_REPORT_ERROR;
+	m_OutputOk=true;
+	
+    return true;
 }

@@ -59,6 +59,7 @@ using namespace std;
 
 map<int,DeviceWin*> SynthModular::m_DeviceWinMap;
 bool SynthModular::m_CallbackUpdateMode = false;
+bool SynthModular::m_BlockingOutputPluginIsReady = false;
 
 //////////////////////////////////////////////////////////
 
@@ -138,7 +139,7 @@ void SynthModular::Update()
 		if (i->second->m_Device) // if it's not a comment
 		{
 			#ifdef DEBUG_PLUGINS
-			cerr<<"Updating channelhandler of pluin "<<i->second->m_PluginID<<endl;
+			cerr<<"Updating channelhandler of plugin "<<i->second->m_PluginID<<endl;
 			#endif
 			
 			// updates the data from the gui thread, if it's not blocking
@@ -191,21 +192,24 @@ void SynthModular::UpdatePluginGUIs()
 		
 		if (i->second->m_DeviceGUI->Killed())
 		{
-			if (i->second->m_DeviceGUI->GetPluginWindow())
-			{
-				i->second->m_DeviceGUI->GetPluginWindow()->hide();
-				m_MainWindow->remove(i->second->m_DeviceGUI->GetPluginWindow());
-			}
-			i->second->m_DeviceGUI->Clear();
-			m_Canvas->RemoveDevice(i->second->m_DeviceGUI);			
-			// deleted by Canvas::Remove()? seems to cause random crashes 
-			//delete i->second->m_DeviceGUI;			
 			if (i->second->m_Device) 
 			{
 				PauseAudio();
 				delete i->second->m_Device;
 				ResumeAudio();
 			}
+			
+			if (i->second->m_DeviceGUI->GetPluginWindow())
+			{
+				i->second->m_DeviceGUI->GetPluginWindow()->hide();
+				m_MainWindow->remove(i->second->m_DeviceGUI->GetPluginWindow());
+			}
+			
+			i->second->m_DeviceGUI->Clear();
+			m_Canvas->RemoveDevice(i->second->m_DeviceGUI);			
+			// deleted by Canvas::Remove()? seems to cause random crashes 
+			//delete i->second->m_DeviceGUI;			
+			
 			m_DeviceWinMap.erase(i);
 			break;
 		}
@@ -542,6 +546,7 @@ DeviceWin* SynthModular::NewDeviceWin(int n, int x, int y)
 	{
 		return NULL;
 	}
+	nlw->m_Device->SetBlockingCallback(cb_Blocking);
 	nlw->m_Device->SetUpdateCallback(cb_Update);
 	nlw->m_Device->SetParent((void*)this);
 
@@ -662,10 +667,18 @@ void SynthModular::UpdateHostInfo()
 
 //////////////////////////////////////////////////////////
 
+// called when a callback output plugin wants to run the audio thread
 void SynthModular::cb_Update(void* o, bool mode)
 {
 	m_CallbackUpdateMode=mode;
 	((SynthModular*)o)->Update();
+}
+
+// called by a blocking output plugin to notify the engine its ready to
+// take control of the update timing (so take the brakes off)
+void SynthModular::cb_Blocking(void* o, bool mode)
+{
+	m_BlockingOutputPluginIsReady=mode;
 }
 
 //////////////////////////////////////////////////////////
@@ -775,7 +788,6 @@ istream &operator>>(istream &s, SynthModular &o)
 	s>>*o.m_Canvas;
 
 	o.ResumeAudio();
-
 	return s;
 }
 
