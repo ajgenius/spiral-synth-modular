@@ -116,6 +116,7 @@ void SynthModular::ClearUp()
 		// deleted by Canvas::Remove()? seems to cause random crashes
 		//delete i->second->m_DeviceGUI;
 		delete i->second->m_Device;
+		i->second->m_Device=NULL;
 	}
 	
 	m_Canvas->Clear();
@@ -197,6 +198,7 @@ void SynthModular::UpdatePluginGUIs()
 			if (i->second->m_Device) 
 			{
 				delete i->second->m_Device;
+				i->second->m_Device=NULL;
 			}
 			
 			if (i->second->m_DeviceGUI->GetPluginWindow())
@@ -1089,8 +1091,7 @@ inline void SynthModular::cb_Connection_i(Fl_Canvas* o, void* v)
 		sprintf(num,"%d,%d",Wire->InputID,Wire->InputPort);
 		SpiralInfo::Alert("Warning: Connection problem - can't find source input "+string(num));
 		return;	
-	}
-	
+	} 
 }
 void SynthModular::cb_Connection(Fl_Canvas* o, void* v)
 {((SynthModular*)(o->user_data()))->cb_Connection_i(o,v);}
@@ -1111,9 +1112,9 @@ inline void SynthModular::cb_Unconnect_i(Fl_Canvas* o, void* v)
 		return;
 	}
 
-	if (!di->second->m_Device->SetInput(Wire->InputPort,NULL))
+	SpiralPlugin *Plugin=di->second->m_Device;
+	if (Plugin && !Plugin->SetInput(Wire->InputPort,NULL))
 	{ cerr<<"Can't find destination device's Input"<<endl; return;	}
-	
 }
 void SynthModular::cb_Unconnect(Fl_Canvas* o, void* v)
 {((SynthModular*)(o->user_data()))->cb_Unconnect_i(o,v);}

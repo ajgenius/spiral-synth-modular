@@ -401,8 +401,8 @@ PluginInfo &JackPlugin::Initialise(const HostInfo *Host)
 SpiralGUIType *JackPlugin::CreateGUI()
 {
 	return new JackPluginGUI(m_PluginInfo.Width,
-							  m_PluginInfo.Height,
-						      this,m_AudioCH,m_HostInfo);
+						  m_PluginInfo.Height,
+					      this,m_AudioCH,m_HostInfo);
 }
 
 void JackPlugin::Execute()
@@ -442,10 +442,10 @@ void JackPlugin::ExecuteCommands()
 	{
 		switch (m_AudioCH->GetCommand())
 		{
-		  /*case ATTACH : Attach(); break;
-			case DETACH : Detach(); break;
-			case CONNECTINPUT  : pJack->ConnectInput(m_GUIArgs.Num,m_GUIArgs.Port);  break;
-			case CONNECTOUTPUT : pJack->ConnectOutput(m_GUIArgs.Num,m_GUIArgs.Port); break; */
+		  //case ATTACH : Attach(); break;
+		  //case DETACH : Detach(); break;
+		  //case CONNECTINPUT  : pJack->ConnectInput(m_GUIArgs.Num,m_GUIArgs.Port);  break;
+		  //case CONNECTOUTPUT : pJack->ConnectOutput(m_GUIArgs.Num,m_GUIArgs.Port); break; 
 			case UPDATE_NAMES :
 			{
 				int c=0;
@@ -475,5 +475,5 @@ void JackPlugin::ExecuteCommands()
 			default : break;
 		}
 	}
-	m_Connected=JackClient::Get()->IsAttached();	
+	m_Connected=JackClient::Get()->IsAttached();
 }
