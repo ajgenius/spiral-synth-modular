@@ -370,67 +370,61 @@ void MidiDevice::AlsaClose () {
      snd_seq_close (seq_handle);
 }
 
-void MidiDevice::AlsaCollectEvents()
-{
-    int seq_nfds, l1;
-    struct pollfd *pfds;
-	seq_nfds = snd_seq_poll_descriptors_count(seq_handle, POLLIN);
-    pfds = (struct pollfd *)alloca(sizeof(struct pollfd) * seq_nfds);
-    snd_seq_poll_descriptors(seq_handle, pfds, seq_nfds, POLLIN);
-
-	for(;;)
-	{
-		if (poll (pfds, seq_nfds, 1000) > 0)
-		{
-    		for (l1 = 0; l1 < seq_nfds; l1++)
-			{
-    	    	if (pfds[l1].revents > 0)
-				{
-					snd_seq_event_t *ev;
-    				int l1;
-					MidiEvent::type MessageType=MidiEvent::NONE;
-					int Volume=0,Note=0,EventDevice=0;
-    				do
-					{
-        				snd_seq_event_input(seq_handle, &ev);
-
-        				if ((ev->type == SND_SEQ_EVENT_NOTEON) && (ev->data.note.velocity == 0))
-        				{
-							ev->type = SND_SEQ_EVENT_NOTEOFF;
-						}
-
-        				switch (ev->type) {
-            				case SND_SEQ_EVENT_PITCHBEND:
-                				MessageType=MidiEvent::CHANNELPRESSURE;
-								Volume = (char)((ev->data.control.value / 8192.0)*256);
-                				break;
-            				case SND_SEQ_EVENT_CONTROLLER:
-								MessageType=MidiEvent::PARAMETER;
-								Note = ev->data.control.param;
-								Volume = ev->data.control.value;
-                				break;
-            				case SND_SEQ_EVENT_NOTEON:
-								MessageType=MidiEvent::ON;
-                				EventDevice = ev->data.control.channel;
-                				Note = ev->data.note.note;
-                				Volume = ev->data.note.velocity;
-                				break;
-            				case SND_SEQ_EVENT_NOTEOFF:
-								MessageType=MidiEvent::ON;
-                				EventDevice = ev->data.control.channel;
-                				Note = ev->data.note.note;
-                				break;
-        				}
-						pthread_mutex_lock(m_Mutex);
-						m_EventVec[EventDevice].push(MidiEvent(MessageType,Note,Volume));
-						pthread_mutex_unlock(m_Mutex);
-
-						snd_seq_free_event(ev);
-    				} while (snd_seq_event_input_pending(seq_handle, 0) > 0);
-				}
-			}
-		}
-	}
+void MidiDevice::AlsaCollectEvents () {
+     int seq_nfds, l1;
+     struct pollfd *pfds;
+     seq_nfds = snd_seq_poll_descriptors_count(seq_handle, POLLIN);
+     // Andy Preston
+     // pfds = (struct pollfd *)alloca (sizeof(struct pollfd) * seq_nfds);
+     pfds = new struct pollfd[seq_nfds];
+     snd_seq_poll_descriptors(seq_handle, pfds, seq_nfds, POLLIN);
+     for (;;) {
+         if (poll (pfds, seq_nfds, 1000) > 0) {
+            for (l1 = 0; l1 < seq_nfds; l1++) {
+                if (pfds[l1].revents > 0) {
+                   snd_seq_event_t *ev;
+                   // this line looks suspect to me (Andy Preston)
+                   // int l1;
+                   MidiEvent::type MessageType=MidiEvent::NONE;
+                   int Volume=0, Note=0, EventDevice=0;
+                   do {
+                      snd_seq_event_input (seq_handle, &ev);
+                      if ((ev->type == SND_SEQ_EVENT_NOTEON) && (ev->data.note.velocity == 0)) {
+                         ev->type = SND_SEQ_EVENT_NOTEOFF;
+                      }
+                      switch (ev->type) {
+                        case SND_SEQ_EVENT_PITCHBEND:
+                             // Andy Preston
+                             MessageType=MidiEvent::PITCHBEND;
+                             Volume = (char)((ev->data.control.value / 8192.0)*256);
+                             break;
+                        case SND_SEQ_EVENT_CONTROLLER:
+                             MessageType=MidiEvent::PARAMETER;
+                             Note = ev->data.control.param;
+                             Volume = ev->data.control.value;
+                             break;
+                        case SND_SEQ_EVENT_NOTEON:
+                             MessageType=MidiEvent::ON;
+                             EventDevice = ev->data.control.channel;
+                             Note = ev->data.note.note;
+                             Volume = ev->data.note.velocity;
+                             break;
+                        case SND_SEQ_EVENT_NOTEOFF:
+                             MessageType=MidiEvent::ON;
+                             EventDevice = ev->data.control.channel;
+                             Note = ev->data.note.note;
+                             break;
+                      }
+                      pthread_mutex_lock (m_Mutex);
+                      m_EventVec[EventDevice].push (MidiEvent (MessageType, Note, Volume));
+                      pthread_mutex_unlock (m_Mutex);
+                      snd_seq_free_event (ev);
+                   } while (snd_seq_event_input_pending(seq_handle, 0) > 0);
+                }
+            }
+         }
+     }
+     delete [] pfds;
 }
 
 snd_seq_t *MidiDevice::AlsaOpen(Type t)
