@@ -1,126 +1,126 @@
-SpiralSynthModular File Ver 3
-0 0 700 300 0 300 700 300
+SpiralSynthModular File Ver 4
+298 115 700 600 0 0 0 0
 SectionList
 23
 
 Device 0 Plugin 0
-873 455 0 76 47 
+757 144 3 OSS 0 767 144 
 
 
 Device 1 Plugin 13
-523 380 0 76 47 
+407 69 11 Moog Filter 0 417 69 
 1 1 0.36389 
 
 Device 2 Plugin 13
-522 452 0 76 47 
+406 141 11 Moog Filter 0 416 141 
 1 1 0.38383 
 
 Device 3 Plugin 13
-525 525 0 76 47 
+409 214 11 Moog Filter 0 419 214 
 1 1 0.36274 
 
 Device 7 Plugin 6
-420 404 0 0 0
+304 93 8 Splitter 0 0 0
 
 
 Device 8 Plugin 6
-455 491 0 0 0
+339 180 8 Splitter 0 0 0
 
 
 Device 12 Plugin 7
-611 458 0 76 47 
-1 1 1 1 1 
+495 147 5 Mixer 0 505 147 
+2 4 1 1 1 1 
 
 Device 13 Plugin 8
-783 455 0 76 47 
+667 144 12 Stereo Mixer 0 677 144 
 1 1 0.5 1 0.5 1 0.5 1 0.5 
 
 Device 16 Plugin 1
-697 455 1 445 67 
+508 248 5 Scope 1 518 248 
 
 
 Device 17 Plugin 23
-276 500 1 186 73 
+160 189 9 WaveTable 1 170 189 
 1 0 -3 0.0258332 1 
 
 Device 18 Plugin 23
-340 564 1 180 205 
+224 342 9 WaveTable 1 234 342 
 1 0 -3 0.00586802 1 
 
 Device 19 Plugin 23
-410 633 1 432 205 
+328 467 9 WaveTable 1 338 467 
 1 0 -3 0.0843751 1 
 
 Device 20 Plugin 3
-184 402 1 103 83 
-3 1 0.71 1
-1 4 Name -1 1 0.71
+68 91 10 CV Control 1 78 91 
+4 1
+Name -1 1 0.71
 
 
 Device 21 Plugin 23
-267 400 0 76 47 
+151 89 9 WaveTable 0 161 89 
 1 0 -2 0.187005 1 
 
 Device 22 Plugin 23
-337 402 0 76 47 
+221 91 9 WaveTable 0 231 91 
 1 2 -3 0.325557 1 
 
 Device 23 Plugin -1
-272 318 0 0 0
+156 7 0  0 0 0
 1 53 This layout generates a signal with lots of harmonics
 
 
 Device 24 Plugin -1
-278 332 0 0 0
+162 21 0  0 0 0
 1 55 and filters the signal with three bandpass moog filters
 
 
 Device 25 Plugin -1
-196 380 0 0 0
+80 69 0  0 0 0
 1 26 Change this to alter pitch
 
 
 Device 26 Plugin -1
-665 400 0 0 0
+549 89 0  0 0 0
 1 43 Have a look at the waveform generated in an
 
 
 Device 27 Plugin -1
-667 413 0 0 0
+551 102 0  0 0 0
 1 47 audio editor such as audacity, that can display
 
 
 Device 28 Plugin -1
-625 427 0 0 0
+586 116 0  0 0 0
 1 27 the frequencies as colours.
 
 
 Device 29 Plugin -1
-248 632 0 0 0
+160 306 0  0 0 0
 1 39 These oscillators change the modulation
 
 
 Device 30 Plugin -1
-202 647 0 0 0
+213 319 0  0 0 0
 1 21 of the three filters.
 
 
-17
-7 4 1 8 5 0
-8 5 0 2 2 0
-8 5 1 3 3 0
-7 4 0 1 1 0
-1 1 1 12 6 0
-2 2 1 12 6 1
-3 3 1 12 6 2
-13 7 0 0 0 0
-13 7 1 0 0 1
-12 6 0 16 8 0
-16 8 0 13 7 0
-17 9 0 1 1 1
-18 10 0 2 2 1
-19 11 0 3 3 1
-22 14 0 7 4 0
-21 13 0 22 14 0
-20 12 0 21 13 0
+-1 0 17
+7 0 1 0 8 0 0 0
+8 0 0 0 2 0 0 0
+8 0 1 0 3 0 0 0
+7 0 0 0 1 0 0 0
+1 0 1 0 12 0 0 0
+2 0 1 0 12 0 1 0
+3 0 1 0 12 0 2 0
+13 0 0 0 0 0 0 0
+13 0 1 0 0 0 1 0
+12 0 0 0 16 0 0 0
+16 0 0 0 13 0 0 0
+17 0 0 0 1 0 1 0
+18 0 0 0 2 0 1 0
+19 0 0 0 3 0 1 0
+22 0 0 0 7 0 0 0
+21 0 0 0 22 0 0 0
+20 0 0 0 21 0 0 0
 

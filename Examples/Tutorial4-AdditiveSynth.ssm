@@ -1,105 +1,80 @@
-SpiralSynthModular File Ver 3
-0 0 700 300 0 300 700 300
+SpiralSynthModular File Ver 4
+154 89 700 600 0 0 0 0
 SectionList
-19
+14
 
 Device 0 Plugin 1
-495 495 1 477 128 
+401 145 5 Scope 0 411 145 
 
 
 Device 1 Plugin 0
-629 494 0 100 100 
-
-
-Device 2 Plugin 6
-562 495 0 0 0
+469 145 3 OSS 0 479 145 
 
 
 Device 3 Plugin 23
-219 495 1 95 14 
+139 193 9 WaveTable 0 149 193 
 1 0 2 0.421244 1 
 
 Device 4 Plugin 23
-357 495 1 90 259 
+268 163 9 WaveTable 0 278 163 
 1 0 -3 1 1 
 
 Device 5 Plugin 5
-289 492 1 143 134 
+204 159 10 Envelope 1 0 214 159 
 1 0 0.3249 0.96 1 1 0.01
 
 Device 6 Plugin 5
-426 485 1 328 136 
+335 144 8 Envelope 0 345 144 
 1 0.0289 0.4624 0.26 1 0.5 0.01
 
 Device 9 Plugin -1
-362 331 0 0 0
+68 6 0  0 0 0
 1 31 Tutorial 3 - Additive Synthesis
 
 
 Device 10 Plugin -1
-362 350 0 0 0
+66 21 0  0 0 0
 1 94 Additive synthesis works on the principle of building up sounds by combining simpler elements.
 
 
 Device 11 Plugin -1
-357 364 0 0 0
+65 36 0  0 0 0
 1 95 In this case, two oscillators are used, one modulating the pitch of the other. This is known as
 
 
-Device 14 Plugin -1
-284 561 0 0 0
-1 10 Envelope 1
-
-
-Device 15 Plugin -1
-422 562 0 0 0
-1 10 Envelope 2
-
-
 Device 16 Plugin -1
-347 644 0 0 0
+120 288 0  0 0 0
 1 80 Envelope 1 controls the amount of modulation that the second ocillator recieves,
 
 
 Device 17 Plugin -1
-312 658 0 0 0
+119 304 0  0 0 0
 1 60 The second envelope shapes the amplitude of the final sound.
 
 
 Device 18 Plugin -1
-212 378 0 0 0
+66 50 0  0 0 0
 1 28 frequency modulation, or FM.
 
 
 Device 19 Plugin -1
-337 392 0 0 0
+90 91 0  0 0 0
 1 84 The first digital synths used this technique, such as the DX range of Yamaha synths.
 
 
-Device 22 Plugin -1
-216 566 0 0 0
-1 12 Oscillator 1
-
-
-Device 23 Plugin -1
-352 563 0 0 0
-1 12 Oscillator 2
-
-
 Device 24 Plugin 40
-145 446 0 200 50 
+70 150 8 Keyboard 0 80 150 
 0
 
 
-10
-2 2 0 1 1 0
-2 2 1 1 1 1
-0 0 0 2 2 0
-3 3 0 5 5 1
-4 4 0 6 6 1
-6 6 1 0 0 0
-5 5 1 4 4 0
-24 18 0 3 3 0
-24 18 1 5 5 0
-24 18 1 6 6 0
+-1 0 9
+3 0 0 0 5 0 1 0
+4 0 0 0 6 0 1 0
+6 0 1 0 0 0 0 0
+5 0 1 0 4 0 0 0
+24 0 0 0 3 0 0 0
+24 0 1 0 5 0 0 0
+24 0 1 0 6 0 0 0
+0 0 0 0 1 0 0 1
+0 0 0 0 1 0 1 1
 

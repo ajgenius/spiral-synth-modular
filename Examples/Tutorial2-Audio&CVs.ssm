@@ -1,133 +1,104 @@
-SpiralSynthModular File Ver 3
-288 90 724 420 292 545 724 420
+SpiralSynthModular File Ver 4
+64 80 700 600 0 0 0 0
 SectionList
-25
+19
 
 Device 2 Plugin 0
-631 196 1 539 111 
+398 586 3 OSS 0 408 586 
 
 
 Device 3 Plugin 23
-236 103 1 104 120 
+248 586 9 WaveTable 0 258 586 
 1 0 0 1 1 
 
-Device 24 Plugin 2
-171 176 0 100 100 
-2 0 0 0
-
-
 Device 38 Plugin 5
-446 190 1 374 121 
+323 586 8 Envelope 0 333 586 
 1 0.0529 0.8281 0 0 0.5 0.01
 
 Device 53 Plugin 1
-312 186 0 100 100 
+197 301 5 Scope 1 207 301 
 
 
 Device 55 Plugin 1
-382 103 0 100 100 
+195 111 5 Scope 1 205 111 
 
 
 Device 56 Plugin 1
-512 104 0 100 100 
+199 450 5 Scope 1 209 450 
 
 
 Device 58 Plugin -1
-372 -32 0 0 0
+67 9 0  0 0 0
 1 32 Tutorial 2 - CV's and Audio data
 
 
 Device 59 Plugin -1
-371 -16 0 0 0
+66 25 0  0 0 0
 1 107 This is a closer look at what is going on in tutorial 1. It's exactly the same design, but with some scopes
 
 
 Device 60 Plugin -1
-377 -2 0 0 0
+68 39 0  0 0 0
 1 60 to see what is beaing passed through the network of plugins.
 
 
-Device 61 Plugin -1
-378 88 0 0 0
-1 7 Scope 1
-
-
-Device 62 Plugin -1
-307 170 0 0 0
-1 7 Scope 2
-
-
-Device 63 Plugin -1
-506 89 0 0 0
-1 7 Scope 3
-
-
 Device 64 Plugin -1
-390 21 0 0 0
-1 113 All data in SSM is treated the same, anything can be plugged into anything else. However, it is important to know
+67 54 0  0 0 0
+1 95 All data in SSM is treated the same, anything can be plugged into anything else. However, it is
 
 
 Device 65 Plugin -1
-199 33 0 0 0
-1 32 the different uses of this data.
+68 68 0  0 0 0
+1 50 important to know the different uses of this data.
 
 
 Device 66 Plugin -1
-367 58 0 0 0
-1 104 Open Scope 1, you will see the output of the WaveTable oscillator, which is used here to generate audio.
+68 91 0  0 0 0
+1 105 In this scope, you will see the output of the WaveTable oscillator, which is used here to generate audio.
 
 
 Device 67 Plugin -1
-315 270 0 0 0
-1 76 Now open scope 2, and press a key. What you see is the value going from zero
-
-
-Device 68 Plugin -1
-322 284 0 0 0
-1 85 in the center, to a high value (if using a midi keyboard - the velocity of the note).
+76 240 0  0 0 0
+1 97 Now press a key. What you see is the value going from zero to a high value and then back to zero.
 
 
 Device 69 Plugin -1
-389 298 0 0 0
-1 109 This data is CV, or Control Voltage data (the name comes from old synths that acually used votages to control
+75 267 0  0 0 0
+1 99 This data is CV, or Control Voltage data (the name comes from old synths that acually used voltages
 
 
 Device 70 Plugin -1
-388 313 0 0 0
-1 112 bits of the synth.) You wouldn't actually want to output this data to the speaker, but you use it to control the
+78 280 0  0 0 0
+1 30 to control bits of the synth.)
 
 
 Device 71 Plugin -1
-168 327 0 0 0
+-99 382 0  0 0 0
 1 14 other plugins.
 
 
-Device 72 Plugin -1
-395 341 0 0 0
-1 115 If you open Scope 3, you'll see the amount the envelope is amplifying the WaveTable's signal, triggered by the midi
-
-
 Device 73 Plugin -1
-314 356 0 0 0
-1 80 Look at scope 4 (the actual output), and all together they make it much clearer.
+227 432 0  0 0 0
+1 38 This scope displays the actual output.
 
 
-Device 74 Plugin 1
-543 196 0 100 100 
+Device 76 Plugin 40
+177 586 8 Keyboard 0 187 586 
+0
 
 
-Device 75 Plugin -1
-537 181 0 0 0
-1 7 Scope 4
+Device 77 Plugin -1
+75 255 0  0 0 0
+1 79 This is the signal that is used to shape or "modulate" the volume of the audio.
 
 
-8
-24 2 0 3 1 0
-24 2 1 53 4 0
-53 4 0 38 3 0
-3 1 0 55 5 0
-55 5 0 38 3 1
-38 3 0 56 6 0
-38 3 1 74 23 0
-74 23 0 2 0 0
+-1 0 8
+38 0 1 0 2 0 0 1
+38 0 1 0 2 0 1 1
+76 0 0 0 3 0 0 0
+3 0 0 0 38 0 1 0
+76 0 1 0 38 0 0 0
+3 0 0 0 55 0 0 0
+38 0 0 0 53 0 0 0
+38 0 1 0 56 0 0 0
 

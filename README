@@ -8,6 +8,7 @@ Public License (GPL). See the file COPYING.
 Dependancies:
 FLTK (www.fltk.org) If you build FLTK from source use 
 "./configure --enable-shared"
+LADSPA plugins
 
 Sound output can be provided by either OSS or JACK (and therefore alsa).
 
@@ -68,20 +69,6 @@ No representations are made about the suitability of this software
 for any purpose. This software is provided "as is" without express 
 or implied warranty. 
 (Damage to ears, speakers or buildings are not my fault :))
-
-Contributors of code large and small (in no particular order):
-Yves Usson
-Erik de Castro Lopo
-Takashi Iwai
-Nicolas Noble
-Dr Bill Bland
-Dan "Pawfal" Bethell
-Fade of pawfal fame
-Andy Preston
-Mike Rawes
-Joe Jones
-Patrick Shirkey
-Paul Davis
 
 Dave Griffiths - dave@pawfal.org
 www.pawfal.org

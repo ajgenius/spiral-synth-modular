@@ -89,9 +89,17 @@ m_Minimised(true)
 	
 	int Centx=x()+w()/2;
 	int Centy=y()+h()/2;
-	m_IconButton = new Fl_Button(Centx-m_Icon->w()/2,Centy-m_Icon->h()/2,m_Icon->w(),m_Icon->h());
-	m_IconButton->box(FL_NO_BOX);
-	if (m_Icon) m_IconButton->image(m_Icon);
+	
+	if (m_Icon)
+	{
+		m_IconButton = new Fl_Button(Centx-m_Icon->w()/2,Centy-m_Icon->h()/2,m_Icon->w(),m_Icon->h());
+		m_IconButton->box(FL_NO_BOX);
+	    m_IconButton->image(m_Icon);
+	}
+	else
+	{
+		m_IconButton = NULL;
+	}
 	
 	m_PluginWindow = PW;
 	if (m_PluginWindow)
@@ -115,7 +123,7 @@ int  Fl_DeviceGUI::handle(int event)
 {	
 	int t=Fl_Group::handle(event);
 	
-	if (m_IconButton->value()) 
+	if (m_IconButton && m_IconButton->value()) 
 	{
 		m_IconButton->value(false);
 		
@@ -132,7 +140,7 @@ int  Fl_DeviceGUI::handle(int event)
 	if (m_Minimised==false && !m_PluginWindow->visible()) 
 	{
 		Minimise();
-		m_IconButton->show();
+		if (m_IconButton) m_IconButton->show();
 	}
 	
 	return 1;

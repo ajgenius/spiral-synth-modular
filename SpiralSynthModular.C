@@ -887,7 +887,12 @@ istream &operator>>(istream &s, SynthModular &o)
 					// position the plugin window in the main window
 					//o.m_DeviceWinMap[ID]->m_DeviceGUI->GetPluginWindow()->position(px,py);
 						
-					if (ps) o.m_DeviceWinMap[ID]->m_DeviceGUI->Maximise();
+					if (ps) 
+					{
+						o.m_DeviceWinMap[ID]->m_DeviceGUI->Maximise();
+						// reposition after maximise
+						o.m_DeviceWinMap[ID]->m_DeviceGUI->position(x,y);
+					}
 					else o.m_DeviceWinMap[ID]->m_DeviceGUI->Minimise();
 				}
 
@@ -1067,6 +1072,10 @@ inline void SynthModular::cb_Save_i(Fl_Button* o, void* v)
 					
 			TITLEBAR=LABEL+" "+fn;
 			m_TopWindow->label(TITLEBAR.c_str());
+		}
+		else
+		{
+			fl_message(string("Error saving "+string(fn)).c_str());
 		}
 	}
 }

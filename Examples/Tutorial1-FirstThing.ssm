@@ -1,195 +1,136 @@
-SpiralSynthModular File Ver 3
-0 0 700 300 0 300 700 300
+SpiralSynthModular File Ver 4
+64 80 700 600 0 0 0 0
 SectionList
-38
+26
 
-Device 0 Plugin -1
-371 320 0 0 0
-1 36 Tutorial 1 - First principles of SSM
-
-
-Device 1 Plugin -1
-371 336 0 0 0
-1 91 This is a comment, click somewhere in the middle of me to move me, double click to edit me.
+Device 0 Plugin 0
+409 82 3 OSS 1 419 82 
 
 
-Device 2 Plugin 0
-541 411 1 492 26 
-
-
-Device 3 Plugin 23
-216 411 1 178 26 
+Device 1 Plugin 23
+79 82 9 WaveTable 1 89 82 
 1 0 0 1 1 
 
-Device 4 Plugin -1
-230 377 0 0 0
-1 31 The simplest noisemaking layout
-
-
-Device 5 Plugin -1
-230 377 0 0 0
-1 31 The simplest noisemaking layout
-
-
-Device 6 Plugin -1
-254 389 0 0 0
-1 41 A sinewave generating wavetable plugin...
-
-
-Device 7 Plugin -1
-537 389 0 0 0
-1 18 ... and an output.
-
-
-Device 15 Plugin -1
-222 480 0 0 0
-1 36 Change the frequency and wave shape.
-
-
-Device 16 Plugin -1
-540 472 0 0 0
-1 40 This outputs the sound to the soundcard.
-
-
-Device 17 Plugin -1
-534 485 0 0 0
-1 55 You can change the volume, or record the sound to disk.
-
-
-Device 18 Plugin -1
-374 429 0 0 0
-1 41 This connects the output of the wavetable
-
-
-Device 21 Plugin -1
-374 429 0 0 0
-1 41 This connects the output of the wavetable
-
-
-Device 22 Plugin -1
-370 440 0 0 0
-1 38 To the input of the OSS output plugin.
-
-
-Device 23 Plugin -1
-373 410 0 0 0
-1 51 Create/Delete connections by clicking on the ports.
-
-
-Device 26 Plugin -1
-258 591 0 0 0
-1 9 <--------
-
-
-Device 27 Plugin -1
-165 361 0 0 0
-1 3 (1)
-
-
-Device 28 Plugin -1
-166 546 0 0 0
-1 3 (2)
-
-
-Device 29 Plugin -1
-389 584 0 0 0
-1 44 To get this to work, click on this port, and
-
-
-Device 30 Plugin -1
-400 597 0 0 0
-1 45 then on the WaveTable's one free input above.
-
-
-Device 31 Plugin -1
-253 562 0 0 0
-1 39 Controlling the sound with PC keyboard.
-
-
-Device 32 Plugin -1
-410 624 0 0 0
-1 63 To change the pitch of the tone, press keys on your PC keyboard
-
-
-Device 37 Plugin -1
-396 522 0 0 0
-1 103 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-
-Device 38 Plugin 5
-401 766 1 485 140 
-1 0.0529 0.8281 0 0 0.5 0.01
-
-Device 39 Plugin -1
-386 690 0 0 0
-1 103 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-
-Device 40 Plugin -1
-168 717 0 0 0
-1 3 (3)
-
-
-Device 41 Plugin -1
-248 731 0 0 0
-1 36 Using an envelope to shape the sound
-
-
-Device 42 Plugin -1
-242 787 0 0 0
-1 47 Connect this to the WaveTable's output ------->
-
-
-Device 43 Plugin -1
-270 762 0 0 0
-1 33 Connect this to the second output
-
-
-Device 44 Plugin -1
-264 775 0 0 0
-1 37 down on the keyboard plugin. ------->
-
-
-Device 45 Plugin -1
-518 784 0 0 0
-1 34 <------ Connect this to one of the
-
-
-Device 46 Plugin -1
-529 797 0 0 0
-1 20 OSS plugin's inputs.
-
-
-Device 47 Plugin -1
-398 843 0 0 0
-1 65 The layout will now look a little messy, but should now cause the
-
-
-Device 48 Plugin -1
-405 856 0 0 0
-1 67 sound to appear and then slowly die away after a note is triggered.
-
-
-Device 49 Plugin -1
-420 869 0 0 0
-1 74 Try changing the [A]ttack [D]ecay [S]ustain and [R]elease of the envelope.
-
-
-Device 51 Plugin -1
-325 743 0 0 0
-1 73 Click on the WaveTable's output port, so the first connection is deleted.
-
-
-Device 52 Plugin -1
-284 830 0 0 0
-1 14 Now hit a key.
-
-
-Device 54 Plugin 40
-209 582 1 152 151 
+Device 2 Plugin 40
+75 246 8 Keyboard 1 85 246 
 0
 
 
-1
-3 3 0 2 2 0
+Device 3 Plugin 5
+241 411 8 Envelope 1 251 411 
+1 0 0.5 0 1 0.5 0.01
+
+Device 4 Plugin -1
+218 1 0  0 0 0
+1 36 Tutorial 1 - First Principles of SSM
+
+
+Device 5 Plugin -1
+119 67 0  0 0 0
+1 35 Wavetable - creates an audio signal
+
+
+Device 6 Plugin -1
+386 67 0  0 0 0
+1 30 Output signal to the soundcard
+
+
+Device 7 Plugin -1
+87 197 0  0 0 0
+1 53 Try manually changing the frequency, or the waveshape
+
+
+Device 8 Plugin -1
+182 230 0  0 0 0
+1 20 Add keyboard control
+
+
+Device 9 Plugin -1
+401 254 0  0 0 0
+1 16 <-- Connect this
+
+
+Device 10 Plugin -1
+398 266 0  0 0 0
+1 27 to the frequency input port
+
+
+Device 11 Plugin -1
+400 276 0  0 0 0
+1 16 on the WaveTable
+
+
+Device 12 Plugin -1
+70 344 0  0 0 0
+1 56 You should now be able to play notes on your PC keyboard
+
+
+Device 13 Plugin -1
+74 356 0  0 0 0
+1 42 or by clicking on the keys with the mouse.
+
+
+Device 14 Plugin -1
+71 403 0  0 0 0
+1 36 Now connect this port to the trigger
+
+
+Device 15 Plugin -1
+116 416 0  0 0 0
+1 21 on the KeyboardPlugin
+
+
+Device 16 Plugin -1
+224 418 0  0 0 0
+1 3 -->
+
+
+Device 17 Plugin -1
+180 378 0  0 0 0
+1 55 Now disconnect the Wavetable output from the OSS plugin
+
+
+Device 18 Plugin -1
+66 41 0  0 0 0
+1 57 I am a comment, drag to move me, double click to edit me.
+
+
+Device 19 Plugin -1
+64 14 0  0 0 0
+1 103 Build connections by clicking the left mouse on the ports, disconnect them by clicking the right mouse.
+
+
+Device 20 Plugin -1
+66 27 0  0 0 0
+1 88 You can delete or rename plugins by right clicking over them to display the plugin menu.
+
+
+Device 21 Plugin -1
+69 430 0  0 0 0
+1 36 This one to the WaveTable output -->
+
+
+Device 22 Plugin -1
+405 430 0  0 0 0
+1 27 <-- Connect this out to the
+
+
+Device 23 Plugin -1
+413 443 0  0 0 0
+1 26 OSS plugin left/right outs
+
+
+Device 24 Plugin -1
+110 556 0  0 0 0
+1 86 You have now made a simple synth! Play notes and try changing the envelope parameters.
+
+
+Device 25 Plugin -1
+167 528 0  0 0 0
+1 53 The envelope shapes the volume of the note over time.
+
+
+-1 0 2
+1 0 0 0 0 0 0 1
+1 0 0 0 0 0 1 1
 

@@ -44,6 +44,11 @@ int Fl_CommentGUI::handle(int event)
 			{
 				m_Comment=temp;	
 				m_DragBar->label(m_Comment.c_str());
+				int width,height;
+				fl_font(fl_font(),10);
+				fl_measure(m_Comment.c_str(),width,height);
+				m_DragBar->size(width,height);
+				resize(x(),y(),width,height);
 				redraw();
 				parent()->redraw();
 				//int x,y;
@@ -91,4 +96,9 @@ void Fl_CommentGUI::StreamIn(istream &s)
 	delete[] str;
 	
 	m_DragBar->label(m_Comment.c_str());
+	int width,height;
+	fl_font(fl_font(),10);
+	fl_measure(m_Comment.c_str(),width,height);
+	m_DragBar->size(width,height);
+	resize(x(),y(),width,height);
 }

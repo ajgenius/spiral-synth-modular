@@ -1,3 +1,35 @@
+Release 0.2.1
+
+New GUI - one window with minisable/maximisable modules, no more losing track of which module window is which.
+NotesnapPlugin can now filter midi notes.
+Preliminary OSX support
+Plugin Groups (new Maths/Logic group)
+Plugins are now loaded straight from the directory, no need to explicitly list them anymore.
+Renaming of modules
+More theming (and new default theme)
+Help window fixes
+Matrix pattern sequencer
+Misc fixes
+
+New Plugins:
+
+FormantFilterPlugin
+AnotherFilterPlugin
+NoisePlugin
+OperatorPlugin
+CounterPlugin
+FlipflopPlugin
+SwitchPlugin
+BeatMatchPlugin
+LogicPlugin
+MixSwitchPlugin
+SplitSwitchPlugin
+MeterPlugin (ported)
+WaveShaperPlugin (ported)
+TrigPlugin
+SpiralLoopPlugin (new code)
+MasherPlugin 
+
 Release 0.2.0
 
 App now multithreaded, and plugins use a new api to support this
