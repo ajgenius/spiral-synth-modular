@@ -50,7 +50,9 @@ string MidiDevice::m_DeviceName;
 #endif
 
 MidiDevice::MidiDevice() :
-m_Poly(1)
+m_Poly(1),
+m_Clock(1.0f),
+m_ClockCount(0)
 {
 #ifdef ALSA_MIDI
 	seq_handle=AlsaOpen();
@@ -196,9 +198,9 @@ void MidiDevice::SendEvent(int Device,const MidiEvent &Event)
 // little helper to strip out the realtime and unused messages
 void MidiDevice::ReadByte(unsigned char *c)
 {
-	*c=MIDI_CLOCK;
+	*c=ACTIVE_SENSE;
 	do read(m_MidiFd,c,1);				
-	while (*c>=STATUS_END);		
+	while (*c>=STATUS_END && *c!=MIDI_CLOCK);		
 }
 
 // collect events deals with the byte level messages, and sorts 
@@ -221,6 +223,16 @@ void MidiDevice::CollectEvents()
 	{
 		ReadByte(buf);
 		
+		if (*buf==MIDI_CLOCK) 
+		{
+			m_ClockCount++;
+			if (m_ClockCount==6)
+			{
+				m_Clock=-m_Clock;
+				m_ClockCount=0;
+			}
+		}
+		else
 		if (*buf>=STATUS_START) // we've got a status byte
 		{											
 			if (*buf==SYSEX_TERMINATOR) InSysex=false;
@@ -329,7 +341,7 @@ void MidiDevice::AddEvent(unsigned char* midi)
 		Volume=midi[2];			
 		EventDevice=midi[0]-STATUS_PITCH_WHEEL;
 	}
-
+	
 	if (EventDevice<0 || EventDevice>15)
 	{
 		cerr<<"Error - Midi device "<<EventDevice<<" ??"<<endl;
