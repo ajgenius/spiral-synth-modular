@@ -38,6 +38,8 @@
 #include "GUI/edit.xpm"
 #include "GUI/comment.xpm"
 
+//#define DEBUG_PLUGINS
+
 const static string LABEL = "SpiralSynthModular 0.1.1b1";
 static string TITLEBAR;
 
@@ -126,7 +128,15 @@ void SynthModular::Update()
 		map<int,DeviceWin*>::iterator di=m_DeviceWinMap.find(*i);
 		if (di!=m_DeviceWinMap.end() && di->second->m_Device) 
 		{
+			#ifdef DEBUG_PLUGINS
+			cerr<<"Executing plugin "<<di->second->m_PluginID<<endl;
+			#endif
+			
 			di->second->m_Device->Execute();
+			
+			#ifdef DEBUG_PLUGINS			
+			cerr<<"Finished executing"<<endl;
+			#endif
 		}
 	}
 }
@@ -187,7 +197,7 @@ SpiralWindowType *SynthModular::CreateWindow()
 	m_MainWindow->add(m_AppScroll);
 	//m_MainWindow->resizable(m_AppScroll);
 
-	m_AppGroup = new Fl_Group(-5000, -5000, 10000, 10000, "AppGroup");
+	m_AppGroup = new Fl_Group(-5000, -5000, 10000, 10000, "");
     m_AppGroup->type(1);
 	m_AppGroup->box(FL_FLAT_BOX);
     m_AppGroup->labeltype(FL_ENGRAVED_LABEL);
@@ -291,7 +301,7 @@ SpiralWindowType *SynthModular::CreateWindow()
 	m_EditorWindow->add(m_CanvasScroll);
 	m_EditorWindow->resizable(m_CanvasScroll);
 	
-	m_Canvas = new Fl_Canvas(-5000, -5000, 10000, 10000, "Canvas");
+	m_Canvas = new Fl_Canvas(-5000, -5000, 10000, 10000, "");
     m_Canvas->type(1);
 	m_Canvas->box(FL_FLAT_BOX);
     m_Canvas->labeltype(FL_ENGRAVED_LABEL);
@@ -371,6 +381,10 @@ void SynthModular::LoadPlugins()
 		ID=PluginManager::Get()->LoadPlugin(Fullpath.c_str());
 		if (ID!=PluginError)
 		{	
+			#ifdef DEBUG_PLUGINS
+			cerr<<"Plugin ["<<*i<<"] = "<<ID<<endl;
+			#endif
+			
 			if (Icon>=ICON_DEPTH)
 			{
 				Icon=0;
