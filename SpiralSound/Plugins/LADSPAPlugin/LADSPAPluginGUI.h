@@ -25,7 +25,6 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Check_Button.H>
 #include <FL/Fl_Box.H>
-#include <FL/Fl_Hold_Browser.H>
 #include <FL/Fl_Output.H>
 #include <FL/Fl_Scroll.H>
 #include "../Widgets/Fl_Knob.H"
@@ -64,13 +63,14 @@ public:
 	void ClearPortInfo();
 	void AddPortInfo(const char *Info);
 	void UpdatePortDisplay(int n, float v);
-	void SetMinMax(int n, float min, float max, bool clamp);
-	void GetMinMax(int n, float &min, float &max, bool &clamp);
+	void SetPortSettings(unsigned long n, float min, float max, bool clamp, float defolt);
+//	void SetMinMax(int n, float min, float max, bool clamp);
+//	void GetMinMax(int n, float &min, float &max, bool &clamp);
 
 private:
 	Fl_Scroll		*m_InputScroll;
 	Fl_Pack  		*m_InputPack;
-	Fl_Hold_Browser		*m_Browser;
+	Fl_Choice		*m_Browser;
 	Fl_Knob			*m_OutputGain;
 	Fl_Box			*m_Name;
 	Fl_Box			*m_Maker;
@@ -81,6 +81,7 @@ private:
 	std::vector<Fl_Input*>	 m_PortMin;
 	std::vector<Fl_Input*>	 m_PortMax;
 	std::vector<Fl_Check_Button*> m_PortClamp;
+	std::vector<Fl_Input*>	 m_PortDefault;
 
 	std::vector<LADSPAInfo::PluginEntry> PluginList;
 
@@ -90,8 +91,8 @@ private:
 
 	int inited;
 
-	inline void cb_Select_i(Fl_Hold_Browser* o);
-	static void cb_Select(Fl_Hold_Browser* o);
+	inline void cb_Select_i(Fl_Choice* o);
+	static void cb_Select(Fl_Choice* o);
 	inline void cb_Gain_i(Fl_Knob* o, void* v);
 	static void cb_Gain(Fl_Knob* o, void* v);
 	inline void cb_MinMax_i(Fl_Button* o, void* v);
@@ -107,7 +108,7 @@ private:
 		unsigned long   MaxInputPortCount;
 		unsigned long   InputPortCount;
 		char           *InputPortNames;
-		PortRange      *InputPortRanges;
+		PortSettings   *InputPortSettings;
 		float          *InputPortValues;
 	};
 

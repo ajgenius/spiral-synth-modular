@@ -26,11 +26,12 @@
 
 static const unsigned int NUM_PORTS = 8;
 
-struct PortRange
+struct PortSettings
 {
 	float   Min;
 	float   Max;
 	bool    Clamp;
+	float   Default;
 };
 
 class LADSPAPlugin : public SpiralPlugin
@@ -51,23 +52,27 @@ public:
 	const char    *GetName() { return (const char *)m_Name; }
 	const char    *GetMaker() { return (const char *)m_Maker; }
 	unsigned long  GetInputPortCount() { return m_InputPortCount; }
-	const char    *GetPortName(unsigned long p) { return (const char *)(m_OutData.InputPortNames + p * 256); }
-	PortRange      GetPortRange(unsigned long p)
+	const char    *GetPortName(unsigned long p)
 	{
-	    PortRange range;
-	    range.Min = m_PortMin[p];
-	    range.Max = m_PortMax[p];
-	    range.Clamp = m_PortClamp[p];
-	    return range;
+		return (const char *)(m_OutData.InputPortNames + p * 256); 
+	}
+	PortSettings GetPortSettings(unsigned long p)
+	{
+		PortSettings settings;
+		settings.Min = m_PortMin[p];
+		settings.Max = m_PortMax[p];
+		settings.Clamp = m_PortClamp[p];
+		settings.Default = m_PortDefault[p];
+		return settings;
 	}
 
-	enum GUICommands{NONE,SETRANGES,SELECTPLUGIN};
+	enum GUICommands{NONE,SETPORTSETTINGS,SELECTPLUGIN};
 
 private:
 
 	void UpdatePortRange(void);
 	bool UpdatePlugin(unsigned long UniqueID, bool PortClampReset=true);
-	void SetPortInfo(void);
+	void SetPortSettings(void);
 
 	void LoadPluginList(void);
 
@@ -81,12 +86,14 @@ private:
 	vector<float> m_PortMin;
 	vector<float> m_PortMax;
 	vector<bool>  m_PortClamp;
+	vector<float> m_PortDefault;
 
 	int           m_Version;
 
 	// our database of ladspa plugins
 	LADSPAInfo    m_LADSPAInfo;
 
+	unsigned long m_PluginIndex;
 	unsigned long m_UniqueID;
 
 	float         m_Gain;
@@ -100,7 +107,7 @@ private:
 	struct OutputChannelData
 	{
 		char         *InputPortNames;
-		PortRange    *InputPortRanges;
+		PortSettings *InputPortSettings;
 		float        *InputPortValues;
 	};
 
@@ -110,7 +117,7 @@ private:
 		unsigned long PluginIndex;
 		float         Gain;
 		bool          Amped;
-		PortRange    *InputPortRanges;
+		PortSettings *InputPortSettings;
 	};
 
 	OutputChannelData     m_OutData;
