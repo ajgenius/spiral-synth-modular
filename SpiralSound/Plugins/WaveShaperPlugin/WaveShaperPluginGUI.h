@@ -18,14 +18,12 @@
 */
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
 #include <FL/Fl_Widget.H>
-#include <FL/Fl_Group.H>
 #include <FL/Fl_Box.H>
-#include <FL/Fl_Round_Button.H>
-
 #include "../Widgets/Fl_Knob.H"
 #include "../Widgets/Fl_DragBar.H"
+#include "../Widgets/Fl_LED_Button.H"
+
 #include "WaveShaperPlugin.h"
 #include "../SpiralPluginGUI.h"
 
@@ -40,7 +38,11 @@ class FunctionPlot :  public Fl_Widget {
     float *fval;
     void draw ();
     int handle (int event);
+    Fl_Color m_IndColour, m_MrkColour, m_FGColour;
   public:
+    void SetColours (unsigned i, unsigned m, unsigned f) {
+         m_IndColour=(Fl_Color)i; m_MrkColour=(Fl_Color)m; m_FGColour=(Fl_Color)f;
+    }
     void set (const int index, const float v);
     float get (const int index) const;
 };
@@ -54,12 +56,11 @@ class WaveShaperPluginGUI : public SpiralPluginGUI {
     const string GetHelpText (const string &loc);
   private:
     FunctionPlot *fplot;
-    Fl_Round_Button *radio_polynomial;
-    Fl_Round_Button *radio_sines;
+    Fl_LED_Button *radio_polynomial, *radio_sines;
     Fl_Knob *knob[6];
     //// Callbacks ////
-    inline void cb_radio_i (Fl_Round_Button*, void*);
-    static void cb_radio (Fl_Round_Button* o, void* v);
+    inline void cb_radio_i (Fl_LED_Button*, void*);
+    static void cb_radio (Fl_LED_Button* o, void* v);
     inline void cb_knob_i (Fl_Knob*, void*);
     static void cb_knob (Fl_Knob* o, void* v);
 };

@@ -19,20 +19,16 @@
 #include "TransposePluginGUI.h"
 #include <FL/fl_draw.h>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 ////////////////////////////////////////////
 
 TransposePluginGUI::TransposePluginGUI (int w, int h,TransposePlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI (w, h, o, ch)
 {
      m_Amount = new Fl_Counter (10, 20, 50, 20, "Amount");
-     m_Amount->color (GUI_COLOUR);
+     m_Amount->color (Info->GUI_COLOUR);
      m_Amount->type (FL_SIMPLE_COUNTER);
      m_Amount->box (FL_PLASTIC_UP_BOX);
-     m_Amount->color (GUI_COLOUR);
+     m_Amount->color (Info->GUI_COLOUR);
      m_Amount->textsize (10);
      m_Amount->labelsize (10);
      m_Amount->step (1);

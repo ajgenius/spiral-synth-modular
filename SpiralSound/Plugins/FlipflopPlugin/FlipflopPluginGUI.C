@@ -20,17 +20,13 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 ////////////////////////////////////////////
 
 FlipflopPluginGUI::FlipflopPluginGUI(int w, int h,FlipflopPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
 {	
 	m_TriggerTime = new Fl_Knob(15, 15, 40, 40, "Trigger Time");
-    m_TriggerTime->color(GUI_COLOUR);
+    m_TriggerTime->color(Info->GUI_COLOUR);
     m_TriggerTime->labelsize(8);
     m_TriggerTime->maximum(1.0f);
     m_TriggerTime->minimum(0.0f);

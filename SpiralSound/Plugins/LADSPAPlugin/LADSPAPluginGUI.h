@@ -72,7 +72,8 @@ private:
 	void ClearPlugin(void);
 	void SelectPlugin(void);
 
-	Fl_Box                        *m_NameLabel;
+        Fl_Color m_GUIColour;
+        Fl_Box                        *m_NameLabel;
 	Fl_Box                        *m_MakerLabel;
 	Fl_Tabs                       *m_Tab;
 	Fl_Group                      *m_ControlGroup;
@@ -119,7 +120,7 @@ private:
 	PortValues                    *m_InputPortValues;
 	float                         *m_InputPortDefaults;
 
-	inline void cb_TabChange_i(Fl_Tabs *o);
+        inline void cb_TabChange_i(Fl_Tabs *o);
 	static void cb_TabChange(Fl_Tabs *o);
 	inline void cb_Select_i(Fl_Choice* o);
 	static void cb_Select(Fl_Choice* o);

@@ -21,10 +21,6 @@
 #include <FL/fl_draw.H>
 #include <stdio.h>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 ////////////////////////////////////////////
 
 TrigPluginGUI::TrigPluginGUI(int w, int h,TrigPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
@@ -36,19 +32,19 @@ SpiralPluginGUI(w,h,o,ch)
 	m_Sin->labelsize(8);
     m_Sin->type(1);
 	m_Sin->value(1);
-    m_Sin->selection_color(GUI_COLOUR);
+    m_Sin->selection_color(Info->GUI_COLOUR);
  	m_Sin->callback((Fl_Callback*)cb_Sin);
 
 	m_Cos = new Fl_Button(5, 30, 50, 15,"Cos");
 	m_Cos->labelsize(8);
     m_Cos->type(1);
-    m_Cos->selection_color(GUI_COLOUR);
+    m_Cos->selection_color(Info->GUI_COLOUR);
 	m_Cos->callback((Fl_Callback*)cb_Cos);
 	
 	m_Tan = new Fl_Button(5, 45, 50, 15,"Tan");
 	m_Tan->labelsize(8);
     m_Tan->type(1);
-    m_Tan->selection_color(GUI_COLOUR);
+    m_Tan->selection_color(Info->GUI_COLOUR);
  	m_Tan->callback((Fl_Callback*)cb_Tan);
 	
 	end();

@@ -20,10 +20,6 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 ////////////////////////////////////////////
 
 DelayPluginGUI::DelayPluginGUI(int w, int h, DelayPlugin *o, ChannelHandler *ch, const HostInfo *Info) :
@@ -31,7 +27,7 @@ SpiralPluginGUI (w, h, o, ch)
 {
        	m_TheTabs = new Fl_Tabs (2, 14, 118, 90, "");
 	m_TheTabs->box (FL_PLASTIC_DOWN_BOX);
-	m_TheTabs->color (GUI_COLOUR);
+	m_TheTabs->color (Info->GUI_COLOUR);
 	add (m_TheTabs);
 
 	m_CtlGroup = new Fl_Group (2, 28, 118, 66, "Control");
@@ -40,7 +36,7 @@ SpiralPluginGUI (w, h, o, ch)
 
         m_Delay = new Fl_Knob (12, 38, 45, 45, "Delay");
         m_Delay->user_data ((void*)(this));
-	m_Delay->color (GUI_COLOUR);
+	m_Delay->color (Info->GUI_COLOUR);
 	m_Delay->type (Fl_Knob::DOTLIN);
         m_Delay->labelsize (10);
 	m_Delay->minimum (0);
@@ -52,7 +48,7 @@ SpiralPluginGUI (w, h, o, ch)
 
 	m_Mix = new Fl_Knob (66, 38, 45, 45, "Mix");
         m_Mix->user_data ((void*)(this));
-        m_Mix->color (GUI_COLOUR);
+        m_Mix->color (Info->GUI_COLOUR);
 	m_Mix->type (Fl_Knob::DOTLIN);
         m_Mix->labelsize (10);
         m_Mix->maximum (1);
@@ -69,7 +65,7 @@ SpiralPluginGUI (w, h, o, ch)
         m_NumDelay->user_data ((void*)(this));
         m_NumDelay->labelsize (10);
         m_NumDelay->box (FL_PLASTIC_UP_BOX);
-        m_NumDelay->color (GUI_COLOUR);
+        m_NumDelay->color (Info->GUI_COLOUR);
         m_NumDelay->maximum (m_Delay->maximum());
 	m_NumDelay->minimum (m_Delay->minimum());
         m_NumDelay->step (m_Delay->step());
@@ -82,7 +78,7 @@ SpiralPluginGUI (w, h, o, ch)
         m_NumMix->user_data ((void*)(this));
         m_NumMix->labelsize (10);
         m_NumMix->box (FL_PLASTIC_UP_BOX);
-        m_NumMix->color (GUI_COLOUR);
+        m_NumMix->color (Info->GUI_COLOUR);
         m_NumMix->maximum (m_Mix->maximum());
 	m_NumMix->minimum (m_Mix->minimum());
         m_NumMix->step (m_Mix->step());

@@ -14,34 +14,30 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include <stdio.h>
 #include "SeqSelectorPluginGUI.h"
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 ////////////////////////////////////////////
 
-CountLine::CountLine(int n) :
+CountLine::CountLine (int n, Fl_Color col1, Fl_Color col2) :
 Fl_Group(0,0,250,14,"")
 {
 	box(FL_FLAT_BOX);
-	if (n%4==0) color(GUIBG2_COLOUR);
-	if (n%8==0) color(GUI_COLOUR);
+	if (n%4==0) color (col1);
+	if (n%8==0) color (col2);
 	m_Num=n;
-	
+
 	sprintf(m_Count,"%d",n);
 	Fl_Box *Num = new Fl_Box(5,2,30,20,m_Count);
 	Num->labelsize(10);
 	Num->labeltype(FL_ENGRAVED_LABEL);
     Num->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
 	add(Num);
-	
+
 	m_Flasher = new Fl_LED_Button(15,-3,20,20,"");
 	m_Flasher->selection_color(FL_BLUE);
 	add(m_Flasher);
@@ -49,11 +45,11 @@ Fl_Group(0,0,250,14,"")
 	for (int n=0; n<NUM_VALUES; n++)
 	{
 		m_Counter[n] = new Fl_Counter(30+n*25, 2, 25, 12, "");
-		m_Counter[n]->labelsize(8);		
-		m_Counter[n]->textsize(8);		
+		m_Counter[n]->labelsize(8);
+		m_Counter[n]->textsize(8);
 		m_Counter[n]->type(FL_SIMPLE_COUNTER);
 		m_Counter[n]->step(1);
-		m_Counter[n]->value(0);	
+		m_Counter[n]->value(0);
 		add(m_Counter[n]);
 	}
 	end();
@@ -92,7 +88,7 @@ int CountLine::handle(int event)
 			m_GUICH->Wait();
 		}
 	}
-	
+
 	return temp;
 }
 
@@ -100,13 +96,16 @@ int CountLine::handle(int event)
 
 SeqSelectorPluginGUI::SeqSelectorPluginGUI(int w, int h,SeqSelectorPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
-{	
-	m_Scroll = new Fl_Scroll(0, 20, w, h-50, "");
+{
+        m_Colour1 = (Fl_Color)Info->SCOPE_BG_COLOUR;
+        m_Colour2 = (Fl_Color)Info->GUI_COLOUR;
+
+        m_Scroll = new Fl_Scroll(0, 20, w, h-50, "");
 	m_Scroll->type(Fl_Scroll::VERTICAL_ALWAYS);
 	m_Scroll->box(FL_NO_BOX);
 	m_Scroll->position(0,0);
 	add(m_Scroll);
-	
+
 	m_Main = new Fl_Pack(0,20,w,h-50,"");
 	m_Main->box(FL_NO_BOX);
 	m_Scroll->add(m_Main);
@@ -115,28 +114,28 @@ SpiralPluginGUI(w,h,o,ch)
 	m_New->labelsize(10);
 	m_New->callback((Fl_Callback*)cb_New);
 	add(m_New);
-	
+
 	m_Delete = new Fl_Button(60,h-25,50,20,"Delete");
 	m_Delete->labelsize(10);
 	m_Delete->callback((Fl_Callback*)cb_Delete);
 	add(m_Delete);
-	
+
 	m_Begin = new Fl_Counter(115,h-28,50,15,"Begin");
 	m_Begin->labelsize(10);
 	m_Begin->type(FL_SIMPLE_COUNTER);
 	m_Begin->step(1);
-	m_Begin->value(0);		
+	m_Begin->value(0);
 	m_Begin->callback((Fl_Callback*)cb_Begin);
 	add(m_Begin);
-	
+
 	m_End = new Fl_Counter(175,h-28,50,15,"End");
 	m_End->labelsize(10);
 	m_End->type(FL_SIMPLE_COUNTER);
 	m_End->step(1);
-	m_End->value(0);		
+	m_End->value(0);
 	m_End->callback((Fl_Callback*)cb_End);
 	add(m_End);
-	
+
 	m_UseRange = new Fl_Button(230,h-25,55,20,"UseRange");
 	m_UseRange->labelsize(10);
 	m_UseRange->type(1);
@@ -144,7 +143,6 @@ SpiralPluginGUI(w,h,o,ch)
 	m_UseRange->callback((Fl_Callback*)cb_UseRange);
 	add(m_UseRange);
 
-	
 	end();
 }
 
@@ -165,12 +163,12 @@ float SeqSelectorPluginGUI::GetVal(int l, int v)
 
 void SeqSelectorPluginGUI::AddLine(int* Val)
 {
-	CountLine *NewLine = new CountLine(m_LineVec.size());
-	NewLine->m_GUICH = m_GUICH;
-	
+	CountLine *NewLine = new CountLine(m_LineVec.size(), m_Colour1, m_Colour2);
+        NewLine->m_GUICH = m_GUICH;
+
 	// copy the last line
 	list<CountLine*>::iterator i=m_LineVec.begin();
-	
+
 	if (Val)
 	{
 		for (int n=0; n<NUM_VALUES; n++)
@@ -188,11 +186,11 @@ void SeqSelectorPluginGUI::AddLine(int* Val)
 			}
 		}
 	}
-	
+
 	m_Main->add(NewLine);
 	m_LineVec.push_front(NewLine);
 	redraw();
-	
+
 	Fl::check();
 }
 

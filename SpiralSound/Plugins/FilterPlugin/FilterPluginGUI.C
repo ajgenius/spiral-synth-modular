@@ -14,58 +14,60 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include "FilterPluginGUI.h"
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 ////////////////////////////////////////////
 
 FilterPluginGUI::FilterPluginGUI(int w, int h,FilterPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
-{	
+{
 	Cutoff = new Fl_Slider(15, 20, 20, 70, "Cutoff");
-	Cutoff->type(4);
-	Cutoff->selection_color(GUI_COLOUR);
-    Cutoff->labelsize(10);
+	Cutoff->type (FL_VERT_NICE_SLIDER);
+        Cutoff->selection_color (Info->GUI_COLOUR);
+        Cutoff->box (FL_PLASTIC_DOWN_BOX);
+	Cutoff->selection_color (Info->GUI_COLOUR);
+        Cutoff->labelsize(10);
 	Cutoff->maximum(100);
-    Cutoff->step(0.01);
-    Cutoff->value(10);
-    Cutoff->callback((Fl_Callback*)cb_Cutoff);
-	
-	Resonance = new Fl_Knob(58, 28, 45, 45, "Emphasis");
-    Resonance->color(GUI_COLOUR);
+        Cutoff->step(0.01);
+        Cutoff->value(10);
+        Cutoff->callback((Fl_Callback*)cb_Cutoff);
+
+	Resonance = new Fl_Knob(58, 18, 45, 45, "");
+    Resonance->color(Info->GUI_COLOUR);
 	Resonance->type(Fl_Knob::DOTLIN);
     Resonance->labelsize(10);
     Resonance->maximum(10);
     Resonance->step(0.1);
-    Resonance->value(0);   
+    Resonance->value(0);
 	Resonance->callback((Fl_Callback*)cb_Resonance);
 
-	RevCutoff = new Fl_Button(57, 72, 50, 15, "RvCMod");
-    RevCutoff->type(1);
-    RevCutoff->down_box(FL_DOWN_BOX);
-    RevCutoff->labelsize(10);
-    RevCutoff->callback((Fl_Callback*)cb_RevCutoff);   
-	 
-	RevResonance = new Fl_Button(57, 88, 50, 15, "RvRMod");
-    RevResonance->type(1);
-    RevResonance->down_box(FL_DOWN_BOX);
-    RevResonance->labelsize(10);
-    RevResonance->callback((Fl_Callback*)cb_RevResonance);
-	
+	RevCutoff = new Fl_Button(57, 68, 50, 15, "RvCMod");
+        RevCutoff->type (FL_TOGGLE_BUTTON);
+        RevCutoff->box (FL_PLASTIC_UP_BOX);
+        RevCutoff->color (Info->GUI_COLOUR);
+        RevCutoff->selection_color (Info->GUI_COLOUR);
+        RevCutoff->labelsize(10);
+        RevCutoff->callback((Fl_Callback*)cb_RevCutoff);
+
+	RevResonance = new Fl_Button(57, 86, 50, 15, "RvRMod");
+        RevResonance->type (FL_TOGGLE_BUTTON);
+        RevResonance->box (FL_PLASTIC_UP_BOX);
+        RevResonance->color (Info->GUI_COLOUR);
+        RevResonance->selection_color (Info->GUI_COLOUR);
+        RevResonance->labelsize(10);
+        RevResonance->callback((Fl_Callback*)cb_RevResonance);
+
 	end();
 }
 
 void FilterPluginGUI::UpdateValues(SpiralPlugin *o)
 {
 	FilterPlugin *Plugin = (FilterPlugin*)o;
-	
+
 	Cutoff->value(100.0f-sqrt(Plugin->GetCutoff()-10.0f));
 	Resonance->value(Plugin->GetResonance()-1.0f);
 

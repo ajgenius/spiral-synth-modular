@@ -49,7 +49,7 @@ PluginInfo &SpiralPlugin::Initialise(const HostInfo *Host)
 {	
 	m_HostInfo=Host;
 
-	for (int n=0; n<m_PluginInfo.NumInputs; n++)
+        for (int n=0; n<m_PluginInfo.NumInputs; n++)
 	{
 		m_Input.push_back(NULL);
 	}
@@ -58,12 +58,12 @@ PluginInfo &SpiralPlugin::Initialise(const HostInfo *Host)
 	{
 		m_Output.push_back(new Sample(Host->BUFSIZE));
 	}
-	
+
 	for (int n=0; n<m_PluginInfo.NumInputs+m_PluginInfo.NumOutputs; n++)
  	{
  		m_PluginInfo.PortTypes.push_back(0);
  	}
-	
+
 	return m_PluginInfo;
 }
 
@@ -71,7 +71,7 @@ bool SpiralPlugin::GetOutput(unsigned int n, Sample **s)
 {
 	if (n>=m_Output.size()) return false;
 	*s = m_Output[n];
-	
+
 	return true;
 }
 
@@ -81,7 +81,7 @@ bool SpiralPlugin::SetInput(unsigned int n, const Sample *s)
 	m_Input[n]=s;
 	return true;
 }
-	
+
 void SpiralPlugin::UpdateChannelHandler()
 {
     m_AudioCH->UpdateDataNow();
@@ -90,11 +90,11 @@ void SpiralPlugin::UpdateChannelHandler()
 void SpiralPlugin::AddOutput()
 {
 	Sample* NewSample = new Sample(m_HostInfo->BUFSIZE);
-	m_Output.push_back(NewSample);			
+	m_Output.push_back(NewSample);
 }
 
 void SpiralPlugin::RemoveOutput()
-{		
+{
 	vector<Sample*>::iterator si=m_Output.end();
 	si--;
 	delete *si;
@@ -105,23 +105,23 @@ void SpiralPlugin::RemoveAllOutputs()
 {
 	for (vector<Sample*>::iterator i=m_Output.begin();
 		 i!=m_Output.end(); i++)
-	{	
+	{
 		delete *i;
 	}
-	
+
 	m_Output.clear();
 }
 
 void SpiralPlugin::AddInput()
 {
-	m_Input.push_back(NULL);		
+	m_Input.push_back(NULL);
 }
 
 void SpiralPlugin::RemoveInput()
-{	
+{
 	vector<const Sample*>::iterator si=m_Input.end();
 	si--;
-	m_Input.erase(si);	
+	m_Input.erase(si);
 }
 
 void SpiralPlugin::RemoveAllInputs()
@@ -129,19 +129,19 @@ void SpiralPlugin::RemoveAllInputs()
 	m_Input.clear();
 }
 
-void SpiralPlugin::UpdatePluginInfoWithHost() 
-{ 
-	if (UpdateInfo!=NULL) 
+void SpiralPlugin::UpdatePluginInfoWithHost()
+{
+	if (UpdateInfo!=NULL)
 	{
 		UpdateInfo(m_HostID,(void*)&m_PluginInfo);
 	}
 }
-void SpiralPlugin::SetUpdateInfoCallback(int ID, void(*s)(int, void *)) 
-{ 
-	m_HostID=ID; 
-	UpdateInfo=s; 
+void SpiralPlugin::SetUpdateInfoCallback(int ID, void(*s)(int, void *))
+{
+	m_HostID=ID;
+	UpdateInfo=s;
 }
-	
+
 void SpiralPlugin::SetInPortType(PluginInfo &pinfo, int port, Sample::SampleType type)
 {
     pinfo.PortTypes[port] = type;

@@ -2,9 +2,6 @@
 
 #include "Fl_SevenSeg.H"
 
-// Andy Preston changed
-// Fl_SevenSeg::Fl_SevenSeg(int x,int y,int w,int h):Fl_Widget(x,y,w,h) {
-// to
 Fl_SevenSeg::Fl_SevenSeg(int x, int y, int w, int h) :
 Fl_Widget (x, y, w, h),
 decpt (off) {
@@ -20,16 +17,6 @@ decpt (off) {
 Fl_SevenSeg::~Fl_SevenSeg(void) {
 }
 
-// Andy Preston changed
-//void Fl_SevenSeg::value(int v) {
-//  if (v <0) digit = -1;
-//	else
-//	if (v>9) digit = 9;
-//	else
-//	digit = v;
-//	if (active()) redraw();
-//}
-// to
 void Fl_SevenSeg::value (int v) {
      if (v>9) digit = 9;
      else digit = v;
@@ -45,18 +32,10 @@ const int Fl_SevenSeg::value(void) {
   return digit;
 }
 
-// Andy Preston changed
-// void Fl_SevenSeg::dp(int onoff) {
-//  decpt =(onoff!=0);
-// }
-// to
 void Fl_SevenSeg::dp (dp_type state) {
   decpt = state;
 }
 
-// Andy Preston changed
-// const int Fl_SevenSeg::dp(void) {
-// to
 const dp_type Fl_SevenSeg::dp(void) {
   return decpt;
 }
@@ -77,28 +56,14 @@ int	val;
 
 	draw_box();
 
-        // andy preston
         fl_color (color2());
 	fl_rectf (x(), y(), w(), h());
 
-        // Andy Preston Changed
-        // int xx = x()+4;
-	// int ww = w()-8;
-	// int yy = y()+4;
-	// int hh = h()-8;
-        // to
         int xx = x()+2;
 	int ww = w()-4;
 	int yy = y()+2;
 	int hh = h()-4;
 
-        // Andy Preston removed
-	// fl_clip(xx,yy,ww,hh);
-	// fl_color(color2());
-	// fl_rectf(xx,yy,ww,hh);
-
-	// Andy Preston changed
-        // if (digit == -1) return;
 	if (digit < -1) return;
 
         Fl::get_color(color(),r,g,b);
@@ -114,7 +79,6 @@ int	val;
 
 	switch(digit)
 	{
-                // Andy Preston
                 case -1:
 			draw_seg_g (xx, yy, ww, hh);
 			break;
@@ -191,10 +155,6 @@ int	val;
 			break;
 	}
 
-        // Andy Preston changed (naughty, naughty, who missed out the dp drawing code then?)
-        // fl_line_style(FL_SOLID,1);
-        // if (decpt) { }
-        // to
         if (decpt==point) draw_seg_dp (xx, yy, ww, hh);
         else if (decpt==colon) draw_seg_col (xx, yy, ww, hh);
         fl_line_style(FL_SOLID,1);
@@ -203,7 +163,6 @@ int	val;
 }
 
 
-// Andy Preston
 void Fl_SevenSeg::draw_seg_dp (int xx, int yy, int ww, int hh) {
      int x1 = xx - segwidth / 2;
      int y1 = yy + hh - segwidth;
@@ -211,7 +170,6 @@ void Fl_SevenSeg::draw_seg_dp (int xx, int yy, int ww, int hh) {
      fl_line (x1, y1, x2, y1);
 }
 
-// Andy Preston
 void Fl_SevenSeg::draw_seg_col (int xx, int yy, int ww, int hh) {
      int x1 = xx - segwidth/2;
      int x2 = x1 + segwidth/3;

@@ -33,6 +33,12 @@ string SpiralInfo::OUTPUTFILE  = "/dev/dsp";
 string SpiralInfo::MIDIFILE    = "/dev/midi";
 int    SpiralInfo::POLY        = 1;
 bool   SpiralInfo::USEPLUGINLIST = false;
+unsigned SpiralInfo::GUI_COLOUR = 179;
+unsigned SpiralInfo::SCOPE_BG_COLOUR = fl_rgb_color (20, 60, 20);
+unsigned SpiralInfo::SCOPE_FG_COLOUR = fl_rgb_color (100, 200, 100);
+unsigned SpiralInfo::SCOPE_SEL_COLOUR = FL_WHITE;
+unsigned SpiralInfo::SCOPE_IND_COLOUR = fl_rgb_color (203, 255, 0);
+unsigned SpiralInfo::SCOPE_MRK_COLOUR = fl_rgb_color (155, 155, 50);
 
 /*int SpiralSynthModularInfo::GUICOL_Tool=179;
 int SpiralSynthModularInfo::GUICOL_Button=181;

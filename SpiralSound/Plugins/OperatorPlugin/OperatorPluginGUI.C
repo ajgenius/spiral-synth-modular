@@ -21,10 +21,6 @@
 #include <FL/fl_draw.H>
 #include <stdio.h>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 ////////////////////////////////////////////
 
 OperatorPluginGUI::OperatorPluginGUI(int w, int h,OperatorPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
@@ -35,26 +31,26 @@ SpiralPluginGUI(w,h,o,ch)
 	m_Add = new Fl_Button(5, 15, 15, 15,"+");
     m_Add->type(1);
 	m_Add->value(1);
-    m_Add->selection_color(GUI_COLOUR);
+    m_Add->selection_color(Info->GUI_COLOUR);
  	m_Add->callback((Fl_Callback*)cb_Add);
 
 	m_Sub = new Fl_Button(5, 30, 15, 15,"-");
     m_Sub->type(1);
-    m_Sub->selection_color(GUI_COLOUR);
+    m_Sub->selection_color(Info->GUI_COLOUR);
 	m_Sub->callback((Fl_Callback*)cb_Sub);
 	
 	m_Mul = new Fl_Button(5, 45, 15, 15,"*");
     m_Mul->type(1);
-    m_Mul->selection_color(GUI_COLOUR);
+    m_Mul->selection_color(Info->GUI_COLOUR);
  	m_Mul->callback((Fl_Callback*)cb_Mul);
 	
 	m_Div = new Fl_Button(5, 60, 15, 15,"/");
     m_Div->type(1);
-    m_Div->selection_color(GUI_COLOUR);
+    m_Div->selection_color(Info->GUI_COLOUR);
 	m_Div->callback((Fl_Callback*)cb_Div);
 	
 	m_Constant = new Fl_Input(25, 15, 50, 20, "Constant");
-    m_Constant->color(GUI_COLOUR);
+    m_Constant->color(Info->GUI_COLOUR);
     m_Constant->labelsize(8);
 	m_Constant->align(FL_ALIGN_BOTTOM|FL_ALIGN_CENTER);
     m_Constant->textsize(10);

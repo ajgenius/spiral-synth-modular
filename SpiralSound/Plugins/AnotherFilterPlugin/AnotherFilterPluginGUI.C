@@ -14,15 +14,11 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include "AnotherFilterPluginGUI.h"
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
-
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
 
 ////////////////////////////////////////////
 
@@ -30,21 +26,23 @@ AnotherFilterPluginGUI::AnotherFilterPluginGUI(int w, int h,AnotherFilterPlugin 
 SpiralPluginGUI(w,h,o,ch)
 {
 	Cutoff = new Fl_Slider(15, 20, 20, 70, "Cutoff");
-	Cutoff->type(4);
-	Cutoff->selection_color(GUI_COLOUR);
-    Cutoff->labelsize(10);
+	Cutoff->type (FL_VERT_NICE_SLIDER);
+        Cutoff->selection_color (Info->GUI_COLOUR);
+        Cutoff->box (FL_PLASTIC_DOWN_BOX);
+	Cutoff->selection_color (Info->GUI_COLOUR);
+        Cutoff->labelsize(10);
 	Cutoff->maximum(1);
-    Cutoff->step(0.0001);
-    Cutoff->value(1);
-    Cutoff->callback((Fl_Callback*)cb_Cutoff);
+        Cutoff->step(0.0001);
+        Cutoff->value(1);
+        Cutoff->callback((Fl_Callback*)cb_Cutoff);
 
 	Resonance = new Fl_Knob(58, 18, 45, 45, "Emphasis");
-    Resonance->color(GUI_COLOUR);
+        Resonance->color(Info->GUI_COLOUR);
 	Resonance->type(Fl_Knob::DOTLIN);
-    Resonance->labelsize(10);
-    Resonance->maximum(1);
-    Resonance->step(0.00001);
-    Resonance->value(0);
+        Resonance->labelsize(10);
+        Resonance->maximum(1);
+        Resonance->step(0.00001);
+        Resonance->value(0);
 	Resonance->callback((Fl_Callback*)cb_Resonance);
 
 	end();

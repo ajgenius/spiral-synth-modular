@@ -19,10 +19,6 @@
 #include "MeterPluginGUI.h"
 #include <stdio.h>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 char label_buf[10];
 
 MeterPluginGUI::MeterPluginGUI (int w, int h, MeterPlugin *o, ChannelHandler *ch, const HostInfo *Info) :
@@ -37,15 +33,15 @@ m_Bypass (false)
   Bypass->labelsize (10);
   Bypass->type (FL_TOGGLE_BUTTON);
   Bypass->box (FL_PLASTIC_UP_BOX);
-  Bypass->color (GUI_COLOUR);
-  Bypass->selection_color (GUI_COLOUR);
+  Bypass->color (Info->GUI_COLOUR);
+  Bypass->selection_color (Info->GUI_COLOUR);
   Bypass->callback ((Fl_Callback*)cb_Bypass);
   add (Bypass);
   VUMode = new Fl_Button (118, 18, 54, 20, "VU");
   VUMode->type (FL_RADIO_BUTTON);
   VUMode->box (FL_PLASTIC_UP_BOX);
-  VUMode->color (GUI_COLOUR);
-  VUMode->selection_color (GUI_COLOUR);
+  VUMode->color (Info->GUI_COLOUR);
+  VUMode->selection_color (Info->GUI_COLOUR);
   VUMode->labelsize (10);
   VUMode->callback ((Fl_Callback*)cb_Mode);
   VUMode->set();
@@ -53,16 +49,16 @@ m_Bypass (false)
   MMMode = new Fl_Button (174, 18, 54, 20, "Min/Max");
   MMMode->type (FL_RADIO_BUTTON);
   MMMode->box (FL_PLASTIC_UP_BOX);
-  MMMode->color (GUI_COLOUR);
-  MMMode->selection_color (GUI_COLOUR);
+  MMMode->color (Info->GUI_COLOUR);
+  MMMode->selection_color (Info->GUI_COLOUR);
   MMMode->labelsize (10);
   MMMode->callback ((Fl_Callback*)cb_Mode);
   add (MMMode);
   for (int display=0; display<8; display++) {
     Digits[display] = new Fl_SevenSeg ((display*28)+2, 40, 28, 40);
     Digits[display]->bar_width (4);
-    Digits[display]->color (FL_BLACK);
-    Digits[display]->color2 (FL_GRAY);
+    Digits[display]->color (Info->SCOPE_FG_COLOUR);
+    Digits[display]->color2 (Info->SCOPE_BG_COLOUR);
     add (Digits[display]);
   }
   MinBox = new Fl_Output (2, 104, 84, 20);
@@ -73,8 +69,8 @@ m_Bypass (false)
   Reset->labelsize (10);
   Reset->type (0);
   Reset->box (FL_PLASTIC_UP_BOX);
-  Reset->color (GUI_COLOUR);
-  Reset->selection_color (GUI_COLOUR);
+  Reset->color (Info->GUI_COLOUR);
+  Reset->selection_color (Info->GUI_COLOUR);
   Reset->callback ((Fl_Callback*)cb_Reset);
   add (Reset);
   MaxBox = new Fl_Output (144, 104, 84, 20);
@@ -82,7 +78,7 @@ m_Bypass (false)
   MaxBox->box (FL_PLASTIC_DOWN_BOX);
   add (MaxBox);
   Meter = new Fl_VU_Meter (2, 82, 226, 20);
-  Meter->color (FL_BLACK);
+  Meter->color (Info->SCOPE_BG_COLOUR);
   Meter->vu_mode (true);
   cb_Reset_i (Reset, NULL);
   end ();

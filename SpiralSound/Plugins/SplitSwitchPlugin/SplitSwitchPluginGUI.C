@@ -16,16 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-
-
 #include "SplitSwitchPluginGUI.h"
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
-#include <stdio.h>
-
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
 
 ////////////////////////////////////////////
 
@@ -36,8 +29,8 @@ SpiralPluginGUI (w, h, o, ch)
   m_Chans->labelsize (10);
   m_Chans->type (FL_SIMPLE_COUNTER);
   m_Chans->box (FL_PLASTIC_UP_BOX);
-  m_Chans->color (GUI_COLOUR);
-  m_Chans->selection_color (GUI_COLOUR);
+  m_Chans->color (Info->GUI_COLOUR);
+  m_Chans->selection_color (Info->GUI_COLOUR);
   m_Chans->step (1);
   m_Chans->value (2);
   m_Chans->callback ((Fl_Callback*) cb_Chans);
@@ -47,8 +40,8 @@ SpiralPluginGUI (w, h, o, ch)
   m_Switch->labelsize (10);
   m_Switch->type (FL_SIMPLE_COUNTER);
   m_Switch->box (FL_PLASTIC_UP_BOX);
-  m_Switch->color (GUI_COLOUR);
-  m_Switch->selection_color (GUI_COLOUR);
+  m_Switch->color (Info->GUI_COLOUR);
+  m_Switch->selection_color (Info->GUI_COLOUR);
   m_Switch->step (1);
   m_Switch->value (1);
   m_Switch->callback ((Fl_Callback*) cb_Switch);

@@ -19,10 +19,6 @@
 #include "JoystickPluginGUI.h"
 #include <FL/fl_draw.h>
 
-static const int GUI_COLOUR = 154;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 JoystickPluginGUI::JoystickPluginGUI(int w, int h,JoystickPlugin *o,const HostInfo *Info) :
   SpiralPluginGUI(w,h,o)
 {	

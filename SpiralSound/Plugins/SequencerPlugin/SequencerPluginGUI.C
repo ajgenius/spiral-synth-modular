@@ -23,10 +23,6 @@
 #include <FL/fl_file_chooser.h>
 #include <FL/Fl_Color_Chooser.H>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 ////////////////////////////////////////////
 
 SequencerPluginGUI::PatternWin::PatternWin(int w,int h,const char* n) :
@@ -85,7 +81,7 @@ SpiralPluginGUI(w,h,o,ch)
 	m_ArrangementMap->SetCallbacks(cb);
 	
 	m_Length = new Fl_Input(12, 15, 24, 12, "LengthBars");
-    m_Length->color(GUI_COLOUR);
+    m_Length->color(Info->GUI_COLOUR);
     m_Length->labelsize(8);
     m_Length->align(FL_ALIGN_BOTTOM|FL_ALIGN_CENTER);
     m_Length->textsize(8);
@@ -94,7 +90,7 @@ SpiralPluginGUI(w,h,o,ch)
 	add(m_Length);
 	
 	m_BeatsPerBar = new Fl_Input(12, 38, 24, 12, "BeatsPerBar");
-    m_BeatsPerBar->color(GUI_COLOUR);
+    m_BeatsPerBar->color(Info->GUI_COLOUR);
     m_BeatsPerBar->labelsize(8);
 	m_BeatsPerBar->align(FL_ALIGN_BOTTOM|FL_ALIGN_CENTER);
     m_BeatsPerBar->textsize(8);
@@ -103,7 +99,7 @@ SpiralPluginGUI(w,h,o,ch)
 	add(m_BeatsPerBar);
 	
 	m_BarLength = new Fl_Knob(5, 60, 40, 40, "BarLength");
-    m_BarLength->color(GUI_COLOUR);
+    m_BarLength->color(Info->GUI_COLOUR);
 	m_BarLength->type(Fl_Knob::DOTLIN);
     m_BarLength->labelsize(10);
     m_BarLength->maximum(10);
@@ -113,7 +109,7 @@ SpiralPluginGUI(w,h,o,ch)
 	add(m_BarLength);
 	
 	m_Speed = new Fl_Knob(5, 115, 40, 40, "Speed");
-    m_Speed->color(GUI_COLOUR);
+    m_Speed->color(Info->GUI_COLOUR);
 	m_Speed->type(Fl_Knob::DOTLIN);
     m_Speed->labelsize(10);
     m_Speed->maximum(4);
@@ -123,7 +119,7 @@ SpiralPluginGUI(w,h,o,ch)
 	add(m_Speed);
 	
 	m_Zoom = new Fl_Knob(5,170,40,40,"Zoom");
-	m_Zoom->color(GUI_COLOUR);
+	m_Zoom->color(Info->GUI_COLOUR);
 	m_Zoom->type(Fl_Knob::DOTLIN);
     m_Zoom->labelsize(10);
     m_Zoom->maximum(6);

@@ -21,9 +21,6 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
 static const float TIMED_SLIDER_MAX = 3.0f;
 
 /////////////////////////////////////////////////////////////////////////
@@ -319,7 +316,7 @@ SpiralPluginGUI(w,h,o)
 	m_Type->callback((Fl_Callback*)cb_Type);
 	
 	m_Length = new Fl_Knob(w-60,h-55,40,40,"Length");
-	m_Length->color(GUI_COLOUR);
+	m_Length->color(Info->GUI_COLOUR);
 	m_Length->labelsize(10);	
 	m_Length->maximum(5);
     m_Length->step(0.001);

@@ -42,6 +42,7 @@ class MixerPluginGUI : public SpiralPluginGUI {
       vector<Fl_Slider*> m_SlidVec;
       Fl_Pack *m_MainPack, *m_Buttons;
       Fl_Button *m_Add, *m_Delete;
+      Fl_Color m_GUIColour;
       //// Callbacks ////
       inline void cb_Chan_i (Fl_Slider* o, void* v);
       static void cb_Chan (Fl_Slider* o, void* v);

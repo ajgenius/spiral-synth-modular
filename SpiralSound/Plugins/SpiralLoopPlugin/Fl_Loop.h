@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
@@ -27,11 +27,11 @@ class Fl_Loop : public Fl_Group
 {
 public:
 	Fl_Loop(int x, int y, int w, int h, const char* label=0);
-	
+
 	virtual void draw();
 	virtual int  handle(int  event);
-	
-	void SetData(float const *set, const int Len);
+
+        void SetData(float const *set, const int Len);
 	void SetLength(const int Len);
 	int  GetLength() { return m_Length; }
 	void SetPos(float p) {m_Pos=p;}
@@ -44,15 +44,20 @@ public:
 	void DrawEveryThing();
 	void DrawPosMarker();
 	void SetSnap(bool s) {m_Snap=s;}
-	void SetSnapAngle(int s) {m_SnapDegrees=s;}
-	
+	void SetSnapAngle(int s) { m_SnapDegrees=s; }
+        void SetBGColour (unsigned c) { m_BGColour=(Fl_Color)c; }
+        void SetWaveColour (unsigned c) { m_WaveColour=(Fl_Color)c; }
+        void SetSelColour (unsigned c) { m_SelColour=(Fl_Color)c; }
+        void SetIndColour (unsigned c) { m_IndColour=(Fl_Color)c; }
+        void SetMrkColour (unsigned c) { m_MrkColour=(Fl_Color)c; }
+
 	typedef void (cb)(Fl_Widget *, int);
 	void SetMoveCallback(cb *cb_Move);
-	
-	void SelectAll();		   	
-	long GetRangeStart() { return m_RangeStart; }						
-	long GetRangeEnd()   { return m_RangeEnd; }						
-	
+
+	void SelectAll();
+	long GetRangeStart() { return m_RangeStart; }
+	long GetRangeEnd()   { return m_RangeEnd; }
+
 private:
 
 	float const *m_data;
@@ -65,7 +70,7 @@ private:
 	int    m_BorderRad;
 	int    m_IndSX,m_IndSY,m_IndEX,m_IndEY;
 	int    m_MidX,m_MidY;
-	
+
 	float  m_StartAngle;
 	float  m_EndAngle;
 	float  m_MoveAngle;
@@ -81,9 +86,11 @@ private:
 	bool   m_Snap;
 	int    m_SnapDegrees;
 	int    m_PosMarkerCount;
-	
+
 	cb *cb_Move;
-	
+
+        Fl_Color m_BGColour, m_WaveColour, m_SelColour, m_IndColour, m_MrkColour;
+
 };
 
 #endif

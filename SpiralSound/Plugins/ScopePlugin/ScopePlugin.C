@@ -48,8 +48,10 @@ string SpiralPlugin_GetGroupName()
 ScopePlugin::ScopePlugin()
 {
 	m_PluginInfo.Name="Scope";
-	m_PluginInfo.Width=220;
-	m_PluginInfo.Height=125;
+	//m_PluginInfo.Width=220;
+	m_PluginInfo.Width=260;
+	//m_PluginInfo.Height=125;
+	m_PluginInfo.Height=115;
 	m_PluginInfo.NumInputs=1;
 	m_PluginInfo.NumOutputs=1;
 	m_PluginInfo.PortTips.push_back("Input");

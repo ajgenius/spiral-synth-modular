@@ -20,9 +20,6 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
 static const float TIMED_SLIDER_MAX = 3.0f;
 
 ////////////////////////////////////////////
@@ -32,7 +29,7 @@ SpiralPluginGUI(w,h,o,ch)
 {		
 	Thresh = new Fl_Slider(10, 20, 20, 70, "T");
 	Thresh->type(4);
-	Thresh->selection_color(GUI_COLOUR);
+	Thresh->selection_color(Info->GUI_COLOUR);
     Thresh->labelsize(10);
 	Thresh->maximum(1.0);
     Thresh->step(0.01);
@@ -42,7 +39,7 @@ SpiralPluginGUI(w,h,o,ch)
 	
 	Attack = new Fl_Slider(30, 20, 20, 70, "A");
 	Attack->type(4);
-	Attack->selection_color(GUI_COLOUR);
+	Attack->selection_color(Info->GUI_COLOUR);
     Attack->labelsize(10);
 	Attack->maximum(TIMED_SLIDER_MAX);
     Attack->step(0.01);
@@ -52,7 +49,7 @@ SpiralPluginGUI(w,h,o,ch)
 	
 	Decay = new Fl_Slider(50, 20, 20, 70, "D");
 	Decay->type(4);
-	Decay->selection_color(GUI_COLOUR);
+	Decay->selection_color(Info->GUI_COLOUR);
     Decay->labelsize(10);
 	Decay->maximum(TIMED_SLIDER_MAX);
     Decay->step(0.01);
@@ -62,7 +59,7 @@ SpiralPluginGUI(w,h,o,ch)
 	
 	Sustain = new Fl_Slider(70, 20, 20, 70, "S");
 	Sustain->type(4);	  
-	Sustain->selection_color(GUI_COLOUR);
+	Sustain->selection_color(Info->GUI_COLOUR);
     Sustain->labelsize(10);
 	Sustain->maximum(1);
     Sustain->step(0.01);
@@ -72,7 +69,7 @@ SpiralPluginGUI(w,h,o,ch)
 		 
 	Release = new Fl_Slider(90, 20, 20, 70, "R");
 	Release->type(4);
-	Release->selection_color(GUI_COLOUR);
+	Release->selection_color(Info->GUI_COLOUR);
     Release->labelsize(10);
 	Release->maximum(TIMED_SLIDER_MAX);
     Release->step(0.01);
@@ -82,7 +79,7 @@ SpiralPluginGUI(w,h,o,ch)
 	      
 	Volume = new Fl_Slider(110, 20, 20, 70, "V");
 	Volume->type(4);
-	Volume->selection_color(GUI_COLOUR);
+	Volume->selection_color(Info->GUI_COLOUR);
     Volume->labelsize(10);
 	Volume->maximum(1);
     Volume->step(0.01);

@@ -21,10 +21,6 @@
 #include <FL/fl_draw.H>
 #include <stdio.h>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 ////////////////////////////////////////////
 
 LogicPluginGUI::LogicPluginGUI(int w, int h,LogicPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
@@ -36,46 +32,45 @@ SpiralPluginGUI(w,h,o,ch)
     m_AND->type(1);
 	m_AND->value(1);
 	m_AND->labelsize(10);
-    m_AND->selection_color(GUI_COLOUR);
+    m_AND->selection_color(Info->GUI_COLOUR);
  	m_AND->callback((Fl_Callback*)cb_AND);
 
 	m_OR = new Fl_Button(5, 35, Width, Depth,"OR");
     m_OR->type(1);
 	m_OR->labelsize(10);
-    m_OR->selection_color(GUI_COLOUR);
+    m_OR->selection_color(Info->GUI_COLOUR);
 	m_OR->callback((Fl_Callback*)cb_OR);
 	
 	m_NOT = new Fl_Button(5, 55, Width, Depth,"NOT");
     m_NOT->type(1);
 	m_NOT->labelsize(10);
-    m_NOT->selection_color(GUI_COLOUR);
+    m_NOT->selection_color(Info->GUI_COLOUR);
  	m_NOT->callback((Fl_Callback*)cb_NOT);
 	
 	m_NAND = new Fl_Button(5, 75, Width, Depth,"NAND");
     m_NAND->type(1);
  	m_NAND->labelsize(10);
-  	m_NAND->selection_color(GUI_COLOUR);
+  	m_NAND->selection_color(Info->GUI_COLOUR);
 	m_NAND->callback((Fl_Callback*)cb_NAND);
 	
 	m_NOR = new Fl_Button(37, 15, Width, Depth,"NOR");
     m_NOR->type(1);
 	m_NOR->labelsize(10);
-    m_NOR->selection_color(GUI_COLOUR);
+    m_NOR->selection_color(Info->GUI_COLOUR);
 	m_NOR->callback((Fl_Callback*)cb_NOR);
 	
 	m_XOR = new Fl_Button(37, 35, Width, Depth,"XOR");
     m_XOR->type(1);
 	m_XOR->labelsize(10);
-    m_XOR->selection_color(GUI_COLOUR);
+    m_XOR->selection_color(Info->GUI_COLOUR);
  	m_XOR->callback((Fl_Callback*)cb_XOR);
 	
 	m_XNOR = new Fl_Button(37, 55, Width, Depth,"XNOR");
     m_XNOR->type(1);
 	m_XNOR->labelsize(10);
-    m_XNOR->selection_color(GUI_COLOUR);
+    m_XNOR->selection_color(Info->GUI_COLOUR);
 	m_XNOR->callback((Fl_Callback*)cb_XNOR);
 
-  // Andy Preston - multiple inputs
   m_Inputs = new Fl_Counter (17, 97, 40, 20, "Inputs");
   m_Inputs->labelsize (10);
   m_Inputs->type (FL_SIMPLE_COUNTER);
@@ -111,13 +106,11 @@ void LogicPluginGUI::UpdateValues(SpiralPlugin *o)
 		case LogicPlugin::XOR  : m_XOR->value(true); break;
 		case LogicPlugin::XNOR : m_XNOR->value(true); break;
 	}
-        // Andy Preston - multiple inputs
         m_Inputs->value (Plugin->GetInputs());
 }
 
 //// Callbacks ////
 
-// Andy Preston - multiple inputs
 inline void LogicPluginGUI::cb_Inputs_i (Fl_Counter* o, void* v) {
   if (o->value() < 2) o->value(2);
   else {

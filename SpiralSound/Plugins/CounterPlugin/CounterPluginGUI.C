@@ -21,17 +21,13 @@
 #include <FL/fl_draw.H>
 #include <stdio.h>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 ////////////////////////////////////////////
 
 CounterPluginGUI::CounterPluginGUI(int w, int h,CounterPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
 {	
 	m_Count = new Fl_Input(5, 20, 50, 20, "Count");
-    m_Count->color(GUI_COLOUR);
+    m_Count->color(Info->GUI_COLOUR);
     m_Count->labelsize(8);
 	m_Count->align(FL_ALIGN_BOTTOM|FL_ALIGN_CENTER);
     m_Count->textsize(10);

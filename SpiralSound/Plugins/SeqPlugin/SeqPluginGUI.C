@@ -22,10 +22,6 @@
 #include <FL/fl_draw.H>
 #include <FL/fl_file_chooser.h>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 ////////////////////////////////////////////
 
 SeqPluginGUI::SeqPluginGUI(int w, int h,SeqPlugin *o,const HostInfo *Info) :
@@ -58,7 +54,7 @@ SpiralPluginGUI(w,h,o)
 	add(m_Pattern);
 	
 	m_Length = new Fl_Knob(5, 60, 40, 40, "Length");
-        m_Length->color(GUI_COLOUR);
+        m_Length->color(Info->GUI_COLOUR);
 	m_Length->type(Fl_Knob::DOTLIN);
         m_Length->labelsize(10);
         m_Length->maximum(30);
@@ -68,7 +64,7 @@ SpiralPluginGUI(w,h,o)
 	add(m_Length);
 	
 	m_Speed = new Fl_Knob(5, 115, 40, 40, "Speed");
-    m_Speed->color(GUI_COLOUR);
+    m_Speed->color(Info->GUI_COLOUR);
 	m_Speed->type(Fl_Knob::DOTLIN);
     m_Speed->labelsize(10);
     m_Speed->maximum(4);
@@ -78,7 +74,7 @@ SpiralPluginGUI(w,h,o)
 	add(m_Speed);
 	
 	m_Zoom = new Fl_Knob(5,170,40,40,"Zoom");
-	m_Zoom->color(GUI_COLOUR);
+	m_Zoom->color(Info->GUI_COLOUR);
 	m_Zoom->type(Fl_Knob::DOTLIN);
     m_Zoom->labelsize(10);
     m_Zoom->maximum(2);

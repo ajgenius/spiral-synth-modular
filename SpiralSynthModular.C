@@ -75,9 +75,9 @@ DeviceWin::~DeviceWin()
 
 SynthModular::SynthModular():
 m_NextID(0),
-m_NextPluginButton(1),
-m_NextPluginButtonXPos(5),
-m_NextPluginButtonYPos(20),
+//m_NextPluginButton(1),
+//m_NextPluginButtonXPos(5),
+//m_NextPluginButtonYPos(20),
 m_PauseAudio(false)
 {
 	m_Info.BUFSIZE    = SpiralInfo::BUFSIZE;
@@ -87,6 +87,13 @@ m_PauseAudio(false)
 	m_Info.OUTPUTFILE = SpiralInfo::OUTPUTFILE;
 	m_Info.MIDIFILE   = SpiralInfo::MIDIFILE;
 	m_Info.POLY       = SpiralInfo::POLY;
+        m_Info.GUI_COLOUR       = SpiralInfo::GUI_COLOUR;
+        m_Info.SCOPE_BG_COLOUR  = SpiralInfo::SCOPE_BG_COLOUR;
+        m_Info.SCOPE_FG_COLOUR  = SpiralInfo::SCOPE_FG_COLOUR;
+        m_Info.SCOPE_SEL_COLOUR = SpiralInfo::SCOPE_SEL_COLOUR;
+        m_Info.SCOPE_IND_COLOUR = SpiralInfo::SCOPE_IND_COLOUR;
+        m_Info.SCOPE_MRK_COLOUR = SpiralInfo::SCOPE_MRK_COLOUR;
+
 	//m_Info.SpiralSynthModularInfo::GUICOL_Button = SpiralInfo::SpiralSynthModularInfo::GUICOL_Button;
 
 	for (int n=0; n<512; n++) Numbers[n]=n;
@@ -530,7 +537,7 @@ void SynthModular::LoadPlugins(string pluginPath)
 
 			the_group->redraw();
 
-			m_NextPluginButton++;
+//			m_NextPluginButton++;
 			Fl::check();
 		}
 	}
@@ -701,30 +708,30 @@ void SynthModular::AddComment(int n)
 //////////////////////////////////////////////////////////
 
 void SynthModular::UpdateHostInfo()
-{   
-	// used to use string streams, but this seems to cause a compiler bug 
-	// at the moment, so fall back to using a temporary file 
-	
+{
+	// used to use string streams, but this seems to cause a compiler bug
+	// at the moment, so fall back to using a temporary file
+
 	//std::stringstream str;
-	fstream ofs("___temp.ssmtmp",ios::out);		
+	fstream ofs("___temp.ssmtmp",ios::out);
 	//str<<*this;
 	ofs<<*this;
-	
+
 	ClearUp();
-				
+
 	// update the settings
 	m_Info.BUFSIZE    = SpiralInfo::BUFSIZE;
 	m_Info.FRAGSIZE   = SpiralInfo::FRAGSIZE;
-	m_Info.FRAGCOUNT  = SpiralInfo::FRAGCOUNT;	
+	m_Info.FRAGCOUNT  = SpiralInfo::FRAGCOUNT;
 	m_Info.SAMPLERATE = SpiralInfo::SAMPLERATE;
 	m_Info.OUTPUTFILE = SpiralInfo::OUTPUTFILE;
-	m_Info.MIDIFILE   = SpiralInfo::MIDIFILE; 
+	m_Info.MIDIFILE   = SpiralInfo::MIDIFILE;
 	m_Info.POLY       = SpiralInfo::POLY;
 
-	fstream ifs("___temp.ssmtmp",ios::in);			
+	fstream ifs("___temp.ssmtmp",ios::in);
 	//str>>*this;
 	ifs>>*this;
-	
+
 	system("rm -f ___temp.ssmtmp");
 
 }
@@ -1102,15 +1109,9 @@ void SynthModular::cb_NewComment(Fl_Button* o, void* v)
 
 //////////////////////////////////////////////////////////
 
-// andy preston
 inline void SynthModular::cb_GroupTab_i(Fl_Tabs* o, void* v)
 {
         m_GroupTab->redraw();
-        //m_CurrentGroup->second->GetToolPack()->hide();
-        //m_CurrentGroup = o->value();
-	// if (m_CurrentGroup==m_PluginGroupMap.end()) m_CurrentGroup=m_PluginGroupMap.begin();
-	// m_CurrentGroup->second->GetToolPack()->show();
-        // m_GroupName->label(m_CurrentGroup->first.c_str());
 }
 
 void SynthModular::cb_GroupTab(Fl_Tabs* o, void* v)

@@ -20,10 +20,6 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 ////////////////////////////////////////////
 
 EchoPluginGUI::EchoPluginGUI(int w, int h, EchoPlugin *o, ChannelHandler *ch, const HostInfo *Info) :
@@ -31,7 +27,7 @@ SpiralPluginGUI (w, h, o, ch)
 {
        	m_TheTabs = new Fl_Tabs (2, 14, 118, 90, "");
 	m_TheTabs->box (FL_PLASTIC_DOWN_BOX);
-        m_TheTabs->color (GUI_COLOUR);
+        m_TheTabs->color (Info->GUI_COLOUR);
 	add (m_TheTabs);
 
 	m_CtlGroup = new Fl_Group (2, 28, 118, 66, "Control");
@@ -40,7 +36,7 @@ SpiralPluginGUI (w, h, o, ch)
 
         m_Delay = new Fl_Knob (12, 38, 45, 45, "Delay");
         m_Delay->user_data ((void*)(this));
-	m_Delay->color (GUI_COLOUR);
+	m_Delay->color (Info->GUI_COLOUR);
 	m_Delay->type (Fl_Knob::DOTLIN);
         m_Delay->labelsize (10);
 	m_Delay->minimum (0);
@@ -52,7 +48,7 @@ SpiralPluginGUI (w, h, o, ch)
 
         m_Feedback = new Fl_Knob (66, 38, 45, 45, "Feedback");
         m_Feedback->user_data ((void*)(this));
-        m_Feedback->color (GUI_COLOUR);
+        m_Feedback->color (Info->GUI_COLOUR);
 	m_Feedback->type (Fl_Knob::DOTLIN);
         m_Feedback->labelsize (10);
         m_Feedback->maximum (1.1);
@@ -69,7 +65,7 @@ SpiralPluginGUI (w, h, o, ch)
         m_NumDelay->user_data ((void*)(this));
         m_NumDelay->labelsize (10);
         m_NumDelay->box (FL_PLASTIC_UP_BOX);
-        m_NumDelay->color (GUI_COLOUR);
+        m_NumDelay->color (Info->GUI_COLOUR);
         m_NumDelay->maximum (m_Delay->maximum());
 	m_NumDelay->minimum (m_Delay->minimum());
         m_NumDelay->step (m_Delay->step());
@@ -82,7 +78,7 @@ SpiralPluginGUI (w, h, o, ch)
         m_NumFeedback->user_data ((void*)(this));
         m_NumFeedback->labelsize (10);
         m_NumFeedback->box (FL_PLASTIC_UP_BOX);
-        m_NumFeedback->color (GUI_COLOUR);
+        m_NumFeedback->color (Info->GUI_COLOUR);
         m_NumFeedback->maximum (m_Feedback->maximum());
 	m_NumFeedback->minimum (m_Feedback->minimum());
         m_NumFeedback->step (m_Feedback->step());

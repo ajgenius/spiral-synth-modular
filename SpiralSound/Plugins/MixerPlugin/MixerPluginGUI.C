@@ -20,15 +20,12 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 ////////////////////////////////////////////
 
 MixerPluginGUI::MixerPluginGUI(int w, int h,MixerPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
 {
+        m_GUIColour=(Fl_Color)Info->GUI_COLOUR;
         for (int n=0; n<MAX_CHANNELS; n++) Numbers[n]=n;
 	m_MainPack = new Fl_Pack(0, 20, w, 100);
 	m_MainPack->type (FL_HORIZONTAL);
@@ -42,22 +39,22 @@ SpiralPluginGUI(w,h,o,ch)
         add (m_Buttons);
         m_Delete = new Fl_Button (2, 0, 20, 20, "-");
         m_Delete->box (FL_PLASTIC_UP_BOX);
-        m_Delete->color (GUI_COLOUR);
-        m_Delete->selection_color (GUI_COLOUR);
+        m_Delete->color (Info->GUI_COLOUR);
+        m_Delete->selection_color (Info->GUI_COLOUR);
 	m_Delete->callback ((Fl_Callback*)cb_Delete);
 	m_Buttons->add (m_Delete);
         m_Add = new Fl_Button (24, 0, 20, 20, "+");
         m_Add->box (FL_PLASTIC_UP_BOX);
-        m_Add->color (GUI_COLOUR);
-        m_Add->selection_color (GUI_COLOUR);
+        m_Add->color (Info->GUI_COLOUR);
+        m_Add->selection_color (Info->GUI_COLOUR);
 	m_Add->callback ((Fl_Callback*)cb_Add);
 	m_Buttons->add (m_Add);
 }
 
 void MixerPluginGUI::AddChan (bool SendData, bool ResizeIt) {
      Fl_Slider *NewSlide = new Fl_Slider (0, 0, 20, 100, "");
-     NewSlide->type (4);
-     NewSlide->selection_color (GUI_COLOUR);
+     NewSlide->type (FL_VERT_NICE_SLIDER);
+     NewSlide->selection_color (m_GUIColour);
      NewSlide->box (FL_PLASTIC_DOWN_BOX);
      NewSlide->labelsize (10);
      NewSlide->maximum (2);

@@ -29,49 +29,48 @@
 #ifndef SCOPEGUI
 #define SCOPEGUI
 
-class ScopeWidget : public Fl_Widget 
+class ScopeWidget : public Fl_Widget
 {
-public:
-    ScopeWidget(int x,int y,int w,int h,const char *l, int BUFSIZE);
-	~ScopeWidget();
-	
-    void draw(); 
-	void SetNumChannels(int s) {m_Channels=s;}
-	
-	const float *m_Data;
-	int    m_Channels;
-private:
-
-	int m_GUIColour;
-	int m_GUIBGColour;
-	int m_Bufsize;
+   public:
+      ScopeWidget (int x, int y, int w, int h, const char *l, int BUFSIZE);
+      ~ScopeWidget();
+      void draw();
+      //void SetNumChannels (int s) { m_Channels=s; }
+      void SetWaveColour (unsigned c) { m_WaveColour=(Fl_Color)c; }
+      void SetAttenuation (float c) { m_Attenuation=c; }
+      void SetTimeBase (float c) { m_TimeBase=c; }
+      const float *m_Data;
+      //int m_Channels;
+   private:
+      //int m_GUIColour, m_GUIBGColour;
+      Fl_Color m_WaveColour;
+      float m_Attenuation, m_TimeBase;
+      int m_Bufsize;
 };
 
 
 class ScopePluginGUI : public SpiralPluginGUI
 {
-public:
-	ScopePluginGUI(int w, int h, SpiralPlugin *o, ChannelHandler *ch, const HostInfo *Info);
-	
-	virtual void UpdateValues(SpiralPlugin* o);
-	virtual void Update();	
-	virtual void draw();
-	void Display(const float *data);
-	
-protected:
-    const string GetHelpText(const string &loc);	
-
-private:
-
-	bool m_Bypass;
-
-	Fl_Button       *Bypass;
-	ScopeWidget		*m_Scope;	
-  
-	//// Callbacks ////
-	
-	inline void cb_Bypass_i(Fl_Button* o, void* v);
-    static void cb_Bypass(Fl_Button* o, void* v);
+   public:
+      ScopePluginGUI (int w, int h, SpiralPlugin *o, ChannelHandler *ch, const HostInfo *Info);
+      virtual void UpdateValues (SpiralPlugin* o);
+      virtual void Update();
+      virtual void draw();
+      void Display (const float *data);
+   protected:
+      const string GetHelpText (const string &loc);
+   private:
+      bool m_Bypass;
+      // Fl_Button *Bypass;
+      ScopeWidget *m_Scope;
+      Fl_Knob *m_Attenuation, *m_TimeBase;
+      //// Callbacks ////
+      inline void cb_Attenuation_i (Fl_Knob* o, void* v);
+      static void cb_Attenuation (Fl_Knob* o, void* v);
+      inline void cb_TimeBase_i (Fl_Knob* o, void* v);
+      static void cb_TimeBase (Fl_Knob* o, void* v);
+      // inline void cb_Bypass_i(Fl_Button* o, void* v);
+      // static void cb_Bypass(Fl_Button* o, void* v);
 };
 
 #endif

@@ -14,73 +14,74 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include "SpiralLoopPluginGUI.h"
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 #include <FL/fl_file_chooser.h>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 ////////////////////////////////////////////
 
 SpiralLoopPluginGUI::SpiralLoopPluginGUI(int w, int h,SpiralLoopPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
-{		
+{
 	m_LoopGUI = new Fl_Loop(0,15,w,h-15);
-	
+        m_LoopGUI->SetBGColour (Info->SCOPE_BG_COLOUR);
+        m_LoopGUI->SetWaveColour (Info->SCOPE_FG_COLOUR);
+        m_LoopGUI->SetSelColour (Info->SCOPE_SEL_COLOUR);
+        m_LoopGUI->SetIndColour (Info->SCOPE_IND_COLOUR);
+        m_LoopGUI->SetMrkColour (Info->SCOPE_MRK_COLOUR);
+
 	m_Play = new Fl_LED_Button(255, h-35, 40, 25, "Play");
-	m_Play->color(GUIBG2_COLOUR);
+	//m_Play->color(GUIBG2_COLOUR);
     m_Play->type(1);
 	m_Play->value(1);
     m_Play->down_box(FL_DOWN_BOX);
     m_Play->labelsize(10);
-    m_Play->callback((Fl_Callback*)cb_Play); 
+    m_Play->callback((Fl_Callback*)cb_Play);
 	m_LoopGUI->add(m_Play);
-	
+
 	m_Volume = new Fl_Knob(95, 100, 45, 45, "Volume");
-    m_Volume->color(GUI_COLOUR);
+    m_Volume->color(Info->GUI_COLOUR);
 	m_Volume->type(Fl_Knob::DOTLIN);
     m_Volume->labelsize(8);
     m_Volume->maximum(2);
     m_Volume->step(0.0001);
-    m_Volume->value(1);   
+    m_Volume->value(1);
 	m_Volume->callback((Fl_Callback*)cb_Volume);
 	m_LoopGUI->add(m_Volume);
-	
+
 	m_Speed = new Fl_Knob(60, 150, 45, 45, "Speed");
-    m_Speed->color(GUI_COLOUR);
+    m_Speed->color(Info->GUI_COLOUR);
 	m_Speed->type(Fl_Knob::DOTLIN);
     m_Speed->labelsize(8);
     m_Speed->maximum(2);
     m_Speed->step(0.0001);
-    m_Speed->value(1);   
+    m_Speed->value(1);
 	m_Speed->callback((Fl_Callback*)cb_Speed);
 	m_LoopGUI->add(m_Speed);
-	
+
 	m_Length = new Fl_Knob(120, 160, 45, 45, "Length");
-    m_Length->color(GUI_COLOUR);
+    m_Length->color(Info->GUI_COLOUR);
 	m_Length->type(Fl_Knob::DOTLIN);
     m_Length->labelsize(8);
     m_Length->maximum(1);
     m_Length->step(0.0001);
-    m_Length->value(1);   
+    m_Length->value(1);
 	m_Length->callback((Fl_Callback*)cb_Length);
 	m_LoopGUI->add(m_Length);
-	
+
 	m_WavSize = new Fl_Knob(w-45, 15, 30, 30, "WaveSize");
-    m_WavSize->color(GUI_COLOUR);
+    m_WavSize->color(Info->GUI_COLOUR);
 	m_WavSize->type(Fl_Knob::DOTLIN);
     m_WavSize->labelsize(8);
     m_WavSize->maximum(3);
     m_WavSize->step(0.0001);
-    m_WavSize->value(1);   
+    m_WavSize->value(1);
 	m_WavSize->callback((Fl_Callback*)cb_WavSize);
 	m_LoopGUI->add(m_WavSize);
-	
+
 	m_Ticks = new Fl_Counter(5,h-30,30,14,"Ticks/Loop");
 	m_Ticks->labelsize(8);
 	m_Ticks->textsize(8);
@@ -89,81 +90,81 @@ SpiralPluginGUI(w,h,o,ch)
 	m_Ticks->value(64);
 	m_Ticks->callback((Fl_Callback*)cb_Ticks);
 	m_LoopGUI->add(m_Ticks);
-	
+
 	int X=w/2-30,Y=60,WIDTH=60,HEIGHT=12;
 	int ycount=0;
-	
+
 	float phase=0.19f;
 	float scale=70.0f;
 	Fl_Boxtype   boxtype=FL_THIN_UP_BOX;
-	
+
 	m_Rec = new Fl_Button(X+(int)(sin(ycount*phase)*scale), Y+ycount*HEIGHT, WIDTH, HEIGHT, "Record");
     m_Rec->type(1);
     m_Rec->box(boxtype);
     m_Rec->labelsize(8);
-    m_Rec->labelcolor(FL_RED);	
+    m_Rec->labelcolor(FL_RED);
     m_Rec->callback((Fl_Callback*)cb_Rec);
-	m_LoopGUI->add(m_Rec); 
+	m_LoopGUI->add(m_Rec);
 	ycount++;
-	
+
 	m_OverDub = new Fl_Button(X+(int)(sin(ycount*phase)*scale), Y+ycount*HEIGHT, WIDTH, HEIGHT, "OverDub");
     m_OverDub->type(1);
     m_OverDub->box(boxtype);
     m_OverDub->labelsize(8);
-    m_OverDub->labelcolor(FL_RED);	
+    m_OverDub->labelcolor(FL_RED);
     m_OverDub->callback((Fl_Callback*)cb_OverDub);
-	m_LoopGUI->add(m_OverDub); 
+	m_LoopGUI->add(m_OverDub);
 	ycount++;
-	
+
 	m_Hold = new Fl_Button(X+(int)(sin(ycount*phase)*scale), Y+ycount*HEIGHT, WIDTH, HEIGHT, "Keep Dub");
     m_Hold->box(boxtype);
     m_Hold->labelsize(8);
     m_Hold->callback((Fl_Callback*)cb_Hold);
-	m_LoopGUI->add(m_Hold); 
+	m_LoopGUI->add(m_Hold);
 	ycount++;
 
 	m_Undo = new Fl_Button(X+(int)(sin(ycount*phase)*scale), Y+ycount*HEIGHT, WIDTH, HEIGHT, "Undo Dub");
     m_Undo->box(boxtype);
     m_Undo->labelsize(8);
     m_Undo->callback((Fl_Callback*)cb_Undo);
-	m_LoopGUI->add(m_Undo); 
+	m_LoopGUI->add(m_Undo);
 	ycount++;
-	
+
 	m_Load = new Fl_Button(X+(int)(sin(ycount*phase)*scale), Y+ycount*HEIGHT, WIDTH, HEIGHT, "Load");
     m_Load->box(boxtype);
     m_Load->labelsize(8);
     m_Load->callback((Fl_Callback*)cb_Load);
-	m_LoopGUI->add(m_Load); 
+	m_LoopGUI->add(m_Load);
 	ycount++;
-	
+
 	m_Save = new Fl_Button(X+(int)(sin(ycount*phase)*scale), Y+ycount*HEIGHT, WIDTH, HEIGHT, "Save");
     m_Save->box(boxtype);
     m_Save->labelsize(8);
     m_Save->callback((Fl_Callback*)cb_Save);
-	m_LoopGUI->add(m_Save); 
+	m_LoopGUI->add(m_Save);
 	ycount++;
 
 	m_Trig = new Fl_Button(X+(int)(sin(ycount*phase)*scale), Y+ycount*HEIGHT, WIDTH, HEIGHT, "New trigger");
     m_Trig->box(boxtype);
     m_Trig->labelsize(8);
     m_Trig->callback((Fl_Callback*)cb_Trig);
-	m_LoopGUI->add(m_Trig); 
+	m_LoopGUI->add(m_Trig);
 	ycount++;
-	
+
 	m_Cut = new Fl_Button(X+(int)(sin(ycount*phase)*scale), Y+ycount*HEIGHT, WIDTH, HEIGHT, "Cut");
     m_Cut->box(boxtype);
     m_Cut->labelsize(8);
     m_Cut->callback((Fl_Callback*)cb_Cut);
-	m_LoopGUI->add(m_Trig); 
+	m_LoopGUI->add(m_Trig);
 	ycount++;
-	
+
 	m_Copy = new Fl_Button(X+(int)(sin(ycount*phase)*scale), Y+ycount*HEIGHT, WIDTH, HEIGHT, "Copy");
     m_Copy->box(boxtype);
     m_Copy->labelsize(8);
     m_Copy->callback((Fl_Callback*)cb_Copy);
-	m_LoopGUI->add(m_Trig); 
+	m_LoopGUI->add(m_Trig);
 	ycount++;
-	
+
 	m_Paste = new Fl_Button(X+(int)(sin(ycount*phase)*scale), Y+ycount*HEIGHT, WIDTH, HEIGHT, "Paste");
     m_Paste->box(boxtype);
     m_Paste->labelsize(8);

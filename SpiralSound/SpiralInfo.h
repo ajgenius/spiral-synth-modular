@@ -56,16 +56,17 @@ public:
 	static bool   USEPLUGINLIST;
 	static int    POLY;
 	static string LOCALE;
-	
-	//static int   GUI_COLOUR;
-	//static int   GUIBG_COLOUR;
-	//static int   GUIBG2_COLOUR;		
+        static unsigned GUI_COLOUR;
+        static unsigned SCOPE_BG_COLOUR;
+        static unsigned SCOPE_FG_COLOUR;
+        static unsigned SCOPE_SEL_COLOUR;
+        static unsigned SCOPE_IND_COLOUR;
+        static unsigned SCOPE_MRK_COLOUR;
 
-	string GetHomeDir() {return m_HomeDir;}
+        string GetHomeDir() {return m_HomeDir;}
 
 protected:
-	
-	SpiralInfo() : m_HomeDir(getenv("HOME")), m_Version(0) {}
+	SpiralInfo() : m_HomeDir(getenv("HOME")), m_Version(1) {}
 	virtual ~SpiralInfo() {}
 
 	virtual string GetResFileName() { return "Spiralrc"; }

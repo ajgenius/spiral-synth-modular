@@ -20,10 +20,6 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
-static const int GUI_COLOUR = 154;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 ////////////////////////////////////////////
 
 DistributorPluginGUI::DistributorPluginGUI(int w, int h,DistributorPlugin *o,ChannelHandler *ch,const HostInfo *Info) :

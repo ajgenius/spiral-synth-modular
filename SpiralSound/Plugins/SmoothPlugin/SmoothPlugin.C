@@ -50,8 +50,8 @@ m_Down(0.5),
 m_Value(0)
 {
 	m_PluginInfo.Name="Smooth";
-	m_PluginInfo.Width=140;
-	m_PluginInfo.Height=100;
+	m_PluginInfo.Width=120;
+	m_PluginInfo.Height=80;
 	m_PluginInfo.NumInputs=1;
 	m_PluginInfo.NumOutputs=1;
 	m_PluginInfo.PortTips.push_back("Input");	

@@ -21,10 +21,6 @@
 #include <FL/fl_draw.H>
 #include <FL/fl_file_chooser.h>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 ////////////////////////////////////////////
 
 SamplerPluginGUI::SamplerPluginGUI(int w, int h,SamplerPlugin *o,const HostInfo *Info) :
@@ -42,7 +38,7 @@ SpiralPluginGUI(w,h,o)
 		add(m_Load[n]);
 	
 		m_Volume[n] = new Fl_Knob(60, 15+n*50, 38, 38, "Volume");
-    	m_Volume[n]->color(GUI_COLOUR);
+    	m_Volume[n]->color(Info->GUI_COLOUR);
 		m_Volume[n]->type(Fl_Knob::LINELIN);
     	m_Volume[n]->labelsize(10);
     	m_Volume[n]->maximum(2);
@@ -52,7 +48,7 @@ SpiralPluginGUI(w,h,o)
 		add(m_Volume[n]);
 	
 		m_Pitch[n] = new Fl_Knob(100, 15+n*50, 38, 38, "Pitch");
-    	m_Pitch[n]->color(GUI_COLOUR);
+    	m_Pitch[n]->color(Info->GUI_COLOUR);
 		m_Pitch[n]->type(Fl_Knob::LINELIN);
     	m_Pitch[n]->labelsize(10);
     	m_Pitch[n]->maximum(10);

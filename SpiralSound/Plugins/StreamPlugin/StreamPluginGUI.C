@@ -21,10 +21,6 @@
 #include <FL/fl_draw.H>
 #include <FL/fl_file_chooser.h>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 ////////////////////////////////////////////
 
 StreamPluginGUI::StreamPluginGUI(int w, int h,StreamPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
@@ -35,14 +31,14 @@ m_PitchValue (1.0f)
         for (int dis=0; dis<6; dis++) {
             m_Display[dis] = new Fl_SevenSeg (5 + 28*dis, 20, 28, 60);
             m_Display[dis] -> bar_width (4);
-            m_Display[dis] -> color (FL_BLACK);
-	    m_Display[dis] -> color2 (FL_GRAY);
+            m_Display[dis] -> color (Info->SCOPE_FG_COLOUR);
+	    m_Display[dis] -> color2 (Info->SCOPE_BG_COLOUR);
             if (dis > 0 && dis % 2 == 0) m_Display[dis] -> dp (colon);
             add (m_Display[dis]);
         }
         // volume control
         m_Volume = new Fl_Knob (180, 15, 50, 50, "Volume");
-        m_Volume->color (GUI_COLOUR);
+        m_Volume->color (Info->GUI_COLOUR);
 	m_Volume->type (Fl_Knob::LINELIN);
         m_Volume->labelsize (10);
         m_Volume->maximum (2);
@@ -54,9 +50,9 @@ m_PitchValue (1.0f)
 	m_Pitch = new Fl_Slider (5, 85, 235, 20, "");
         m_Pitch->type (FL_HORIZONTAL);
         m_Pitch->labelsize (10);
-	m_Pitch->labelcolor (GUI_COLOUR);
+	m_Pitch->labelcolor (Info->GUI_COLOUR);
         m_Pitch->label (m_PitchLabel);
-	m_Pitch->selection_color (GUI_COLOUR);
+	m_Pitch->selection_color (Info->GUI_COLOUR);
         m_Pitch->box (FL_PLASTIC_DOWN_BOX);
 	m_Pitch->maximum (20);
         m_Pitch->step (0.001);
@@ -67,8 +63,8 @@ m_PitchValue (1.0f)
 	m_Pos = new Fl_Slider (5, 108, 235, 20, "");
 	m_Pos->type (FL_HORIZONTAL);
         m_Pos->box (FL_PLASTIC_DOWN_BOX);
-	m_Pos->labelcolor (GUI_COLOUR);
-	m_Pos->selection_color (GUI_COLOUR);
+	m_Pos->labelcolor (Info->GUI_COLOUR);
+	m_Pos->selection_color (Info->GUI_COLOUR);
 	m_Pos->maximum (1);
 	m_Pos->callback ((Fl_Callback*)cb_Pos);
 	add (m_Pos);
@@ -76,8 +72,8 @@ m_PitchValue (1.0f)
         m_Load = new Fl_Button (2, 130, 30, 30, "Load");
         m_Load->labelsize (9);
         m_Load->box (FL_PLASTIC_UP_BOX);
-	m_Load->color (GUI_COLOUR);
-	m_Load->selection_color (GUI_COLOUR);
+	m_Load->color (Info->GUI_COLOUR);
+	m_Load->selection_color (Info->GUI_COLOUR);
 	m_Load->callback ((Fl_Callback*)cb_Load);
 	add (m_Load);
         // reset btn
@@ -85,8 +81,8 @@ m_PitchValue (1.0f)
         m_ToStart->labelsize (10);
 	m_ToStart->labeltype (FL_SYMBOL_LABEL);
         m_ToStart->box (FL_PLASTIC_UP_BOX);
-	m_ToStart->color (GUI_COLOUR);
-	m_ToStart->selection_color (GUI_COLOUR);
+	m_ToStart->color (Info->GUI_COLOUR);
+	m_ToStart->selection_color (Info->GUI_COLOUR);
 	m_ToStart->callback ((Fl_Callback*)cb_ToStart);
 	add (m_ToStart);
         // stop btn
@@ -94,8 +90,8 @@ m_PitchValue (1.0f)
         m_Stop->labelsize (10);
 	m_Stop->labeltype (FL_SYMBOL_LABEL);
         m_Stop->box (FL_PLASTIC_UP_BOX);
-	m_Stop->color (GUI_COLOUR);
-	m_Stop->selection_color (GUI_COLOUR);
+	m_Stop->color (Info->GUI_COLOUR);
+	m_Stop->selection_color (Info->GUI_COLOUR);
 	m_Stop->callback ((Fl_Callback*)cb_Stop);
 	add (m_Stop);
         // play btn
@@ -103,40 +99,40 @@ m_PitchValue (1.0f)
         m_Play->labelsize (10);
 	m_Play->labeltype (FL_SYMBOL_LABEL);
         m_Play->box (FL_PLASTIC_UP_BOX);
-	m_Play->color (GUI_COLOUR);
-	m_Play->selection_color (GUI_COLOUR);
+	m_Play->color (Info->GUI_COLOUR);
+	m_Play->selection_color (Info->GUI_COLOUR);
 	m_Play->callback ((Fl_Callback*)cb_Play);
 	add (m_Play);
         // 1/2 speed btn
 	m_Div = new Fl_Button (122, 130, 30, 30, "/2");
         m_Div->labelsize (9);
         m_Div->box (FL_PLASTIC_UP_BOX);
-	m_Div->color (GUI_COLOUR);
-	m_Div->selection_color (GUI_COLOUR);
+	m_Div->color (Info->GUI_COLOUR);
+	m_Div->selection_color (Info->GUI_COLOUR);
 	m_Div->callback ((Fl_Callback*)cb_Div);
 	add (m_Div);
         // normal speed btn
 	m_Reset = new Fl_Button (152, 130, 30, 30, "Reset");
         m_Reset->labelsize (9);
         m_Reset->box (FL_PLASTIC_UP_BOX);
-	m_Reset->color (GUI_COLOUR);
-	m_Reset->selection_color (GUI_COLOUR);
+	m_Reset->color (Info->GUI_COLOUR);
+	m_Reset->selection_color (Info->GUI_COLOUR);
 	m_Reset->callback ((Fl_Callback*)cb_Reset);
 	add (m_Reset);
         // dbl speed btn
 	m_Dbl = new Fl_Button (182, 130, 30, 30, "X2");
         m_Dbl->labelsize (9);
         m_Dbl->box (FL_PLASTIC_UP_BOX);
-	m_Dbl->color (GUI_COLOUR);
-	m_Dbl->selection_color (GUI_COLOUR);
+	m_Dbl->color (Info->GUI_COLOUR);
+	m_Dbl->selection_color (Info->GUI_COLOUR);
 	m_Dbl->callback ((Fl_Callback*)cb_Dbl);
 	add (m_Dbl);
         // nudge btn
 	m_Nudge = new Fl_Repeat_Button (212, 130, 30, 30, "Nudge");
         m_Nudge->labelsize (9);
         m_Nudge->box (FL_PLASTIC_UP_BOX);
-       	m_Nudge->color (GUI_COLOUR);
-	m_Nudge->selection_color (GUI_COLOUR);
+       	m_Nudge->color (Info->GUI_COLOUR);
+	m_Nudge->selection_color (Info->GUI_COLOUR);
         m_Nudge->callback ((Fl_Callback*)cb_Nudge);
 	add (m_Nudge);
 }

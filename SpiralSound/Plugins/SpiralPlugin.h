@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include <vector>
 #include <map>
@@ -44,19 +44,24 @@ struct PluginInfo
 	int NumOutputs;
 	vector<string> PortTips;
 	vector<int> PortTypes;
-	char BitMap[40][40][3]; 
+	char BitMap[40][40][3];
 };
 
 struct HostInfo
 {
-	int    BUFSIZE;	
-	int    FRAGSIZE;  
-	int    FRAGCOUNT; 	
+	int    BUFSIZE;
+	int    FRAGSIZE;
+	int    FRAGCOUNT;
 	int    SAMPLERATE;
 	string OUTPUTFILE;
 	string MIDIFILE;
 	int    POLY;
-	int    GUI_COLOUR;
+        unsigned GUI_COLOUR;
+        unsigned SCOPE_BG_COLOUR;
+        unsigned SCOPE_FG_COLOUR;
+        unsigned SCOPE_SEL_COLOUR;
+        unsigned SCOPE_IND_COLOUR;
+        unsigned SCOPE_MRK_COLOUR;
 };
 
 /////////////////////////////////////////////////////////////////////

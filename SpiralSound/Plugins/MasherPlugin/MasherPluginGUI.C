@@ -20,10 +20,6 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 ////////////////////////////////////////////
 
 MasherPluginGUI::MasherPluginGUI(int w, int h,MasherPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
@@ -33,7 +29,7 @@ SpiralPluginGUI(w,h,o,ch)
 	
 	m_Pitch = new Fl_Knob(5,15,40,40,"GrainPitch");
 	m_Pitch->type(Fl_Knob::DOTLIN);
-	m_Pitch->color(GUI_COLOUR);
+	m_Pitch->color(Info->GUI_COLOUR);
     m_Pitch->labelsize(10);
 	m_Pitch->maximum(5);
     m_Pitch->step(0.001);
@@ -42,7 +38,7 @@ SpiralPluginGUI(w,h,o,ch)
 		
 	m_Random = new Fl_Knob(70,15,40,40,"Randomness");
 	m_Random->type(Fl_Knob::DOTLIN);
-	m_Random->color(GUI_COLOUR);
+	m_Random->color(Info->GUI_COLOUR);
     m_Random->labelsize(10);
 	m_Random->maximum(100);
     m_Random->step(1);
@@ -51,7 +47,7 @@ SpiralPluginGUI(w,h,o,ch)
 
 	m_GrainStoreSize = new Fl_Knob(5,70,40,40,"Num Grains");
 	m_GrainStoreSize->type(Fl_Knob::DOTLIN);
-	m_GrainStoreSize->color(GUI_COLOUR);
+	m_GrainStoreSize->color(Info->GUI_COLOUR);
     m_GrainStoreSize->labelsize(10);
 	m_GrainStoreSize->maximum(MAX_GRAINSTORE_SIZE-2);
     m_GrainStoreSize->step(1);
@@ -60,7 +56,7 @@ SpiralPluginGUI(w,h,o,ch)
 
 	m_Density = new Fl_Knob(70,70,40,40,"Density");
 	m_Density->type(Fl_Knob::DOTLIN);
-	m_Density->color(GUI_COLOUR);
+	m_Density->color(Info->GUI_COLOUR);
     m_Density->labelsize(10);
 	m_Density->maximum(MAX_GRAINSTORE_SIZE);
     m_Density->step(1);

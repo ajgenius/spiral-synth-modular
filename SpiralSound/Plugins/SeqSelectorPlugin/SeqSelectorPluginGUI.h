@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include "list"
 #include <FL/Fl.H>
@@ -37,17 +37,16 @@
 class CountLine : public Fl_Group
 {
 public:
-	CountLine(int n);
+	CountLine (int n, Fl_Color col1, Fl_Color col2);
 	~CountLine();
-	
+
 	void  SetVal(int n, float val);
 	float GetVal(int n);
 	void  SetLED(bool s) { m_Flasher->value(s); }
-	
 	virtual int handle(int event);
-	
+
 	ChannelHandler *m_GUICH;
-	
+
 private:
 	Fl_LED_Button *m_Flasher;
 	Fl_Counter    *m_Counter[NUM_VALUES];
@@ -59,26 +58,26 @@ class SeqSelectorPluginGUI : public SpiralPluginGUI
 {
 public:
 	SeqSelectorPluginGUI(int w, int h, SeqSelectorPlugin *o,ChannelHandler *ch,const HostInfo *Info);
-	
+
 	virtual void UpdateValues(SpiralPlugin *o);
 	virtual void Update();
-		
+
 	void  AddLine(int* Val=NULL);
 	void  RemoveLine();
 	float GetVal(int l, int v);
 	int   GetNumLines() { return m_LineVec.size(); }
 	void  SetLED(int n);
-	
+
 	void StreamOut(ostream &s);
 	void StreamIn(istream &s);
-	
+
 protected:
-    const string GetHelpText(const string &loc);	
-	
+    const string GetHelpText(const string &loc);
+
 private:
-	
+
 	int m_LastLight;
-	
+        Fl_Color m_Colour1, m_Colour2;
 	Fl_Pack    *m_Main;
 	Fl_Scroll  *m_Scroll;
 	Fl_Button  *m_New;
@@ -86,12 +85,12 @@ private:
 	Fl_Counter *m_Begin;
 	Fl_Counter *m_End;
 	Fl_Button  *m_UseRange;
-	
+
 	list<CountLine*> m_LineVec;
-	
+
 	//// Callbacks ////
 	inline void cb_New_i(Fl_Button* o, void* v);
-	static void cb_New(Fl_Button* o, void* v); 
+	static void cb_New(Fl_Button* o, void* v);
 	inline void cb_Delete_i(Fl_Button* o, void* v);
 	static void cb_Delete(Fl_Button* o, void* v); 
 	inline void cb_Begin_i(Fl_Counter* o, void* v);

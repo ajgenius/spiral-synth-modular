@@ -43,6 +43,7 @@ HEADERS =	../SpiralPlugin.h \
 		../../ChannelHandler.h \
 		../Widgets/Fl_Knob.H \
 		../Widgets/Fl_DragBar.H \
+		../Widgets/Fl_LED_Button.H \
 		../../Sample.h \
 		WaveShaperPlugin.h \
 		WaveShaperPluginGUI.h
@@ -51,6 +52,7 @@ SOURCES =	../SpiralPlugin.C \
 		../../ChannelHandler.C \
 		../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_DragBar.cxx \
+		../Widgets/Fl_LED_Button.cxx \
 		../../Sample.C \
 		WaveShaperPlugin.C \
 		WaveShaperPluginGUI.C
@@ -59,6 +61,7 @@ OBJECTS =	../SpiralPlugin.o \
 		../../ChannelHandler.o \
 		../Widgets/Fl_Knob.o \
 		../Widgets/Fl_DragBar.o \
+		../Widgets/Fl_LED_Button.o \
 		../../Sample.o \
 		WaveShaperPlugin.o \
 		WaveShaperPluginGUI.o
@@ -94,7 +97,7 @@ TARGET	=	WaveShaperPlugin.so
 
 all: $(TARGET)
 
-$(TARGET): $(UICDECLS) $(OBJECTS) $(OBJMOC) 
+$(TARGET): $(UICDECLS) $(OBJECTS) $(OBJMOC)
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(OBJMOC) $(LIBS)
 
 moc: $(SRCMOC)
@@ -109,7 +112,7 @@ dist:
 clean:
 	-rm -f $(OBJECTS) $(OBJMOC) $(SRCMOC) $(UICIMPLS) $(UICDECLS) $(TARGET)
 	-rm -f *~ core
-	
+
 install:
 	$(INSTALL) $(TARGET) $(libdir)/SpiralPlugins
 
@@ -128,11 +131,16 @@ install:
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
 		../Widgets/Fl_DragBar.H \
+		../Widgets/Fl_Knob.H \
+		../Widgets/Fl_LED_Button.H \
 		../SpiralPlugin.h \
 		../../Sample.h
 
 ../Widgets/Fl_Knob.o: ../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_Knob.H
+
+../Widgets/Fl_LED_Button.o: ../Widgets/Fl_LED_Button.cxx \
+		../Widgets/Fl_LED_Button.H
 
 ../Widgets/Fl_DragBar.o: ../Widgets/Fl_DragBar.cxx \
 		../Widgets/Fl_DragBar.H
@@ -144,27 +152,25 @@ install:
 WaveShaperPlugin.o: WaveShaperPlugin.C \
 		WaveShaperPlugin.h \
 		../SpiralPlugin.h \
-		../../Sample.h \
 		../../SpiralInfo.h \
 		../../Sample.h \
 		WaveShaperPluginGUI.h \
 		../Widgets/Fl_Knob.H \
 		../Widgets/Fl_DragBar.H \
+		../Widgets/Fl_LED_Button.H \
 		../SpiralPluginGUI.h \
-		../Widgets/Fl_DragBar.H \
 		SpiralIcon.xpm
 
 WaveShaperPluginGUI.o: WaveShaperPluginGUI.C \
 		WaveShaperPluginGUI.h \
 		../Widgets/Fl_Knob.H \
 		../Widgets/Fl_DragBar.H \
+		../Widgets/Fl_LED_Button.H \
 		WaveShaperPlugin.h \
 		../SpiralPlugin.h \
-		../../Sample.h \
 		../../SpiralInfo.h \
 		../../Sample.h \
-		../SpiralPluginGUI.h \
-		../Widgets/Fl_DragBar.H
+		../SpiralPluginGUI.h
 
 ../../ChannelHandler.o: ../../ChannelHandler.C \
 		../../ChannelHandler.h

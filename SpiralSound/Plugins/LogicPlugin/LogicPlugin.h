@@ -38,15 +38,11 @@ public:
 	enum OperatorType{NONE,AND,OR,NOT,NAND,NOR,XOR,XNOR};
 
 	OperatorType GetOperator() { return m_Operator; }
-	// float        GetConstant() { return m_Constant; }       Andy Preston - this value is not used
-        // Andy Preston - Multiple Inputs
         enum GUICommands {NOCMD, SETINPUTS};
         int GetInputs (void) { return m_Inputs; }
 
 private:
 	OperatorType m_Operator;
-	// float        m_Constant;      Andy Preston - this value is not used
-        // Andy Preston - Multiple Inputs
         int m_Inputs;
         void SetInputs (int n);
         void CreatePorts (int n = 2, bool AddPorts = false);

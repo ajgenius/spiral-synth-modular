@@ -20,10 +20,6 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 static unsigned char *image_Sine[] = {
 (unsigned char*)"20 20 2 1",
 (unsigned char*)" \tc None",
@@ -154,7 +150,7 @@ m_PixmapSaw (image_Saw) {
 
        	m_TheTabs = new Fl_Tabs (40, 14, 119, 90, "");
 	m_TheTabs->box (FL_PLASTIC_DOWN_BOX);
-	m_TheTabs->color (GUI_COLOUR);
+	m_TheTabs->color (Info->GUI_COLOUR);
 	add (m_TheTabs);
 
 	m_CtlGroup = new Fl_Group (40, 28, 119, 66, "Control");
@@ -163,7 +159,7 @@ m_PixmapSaw (image_Saw) {
 
         m_Perd = new Fl_Knob (70, 30, 60, 60, "Period");
         m_Perd->user_data ((void*)(this));
-        m_Perd->color (GUI_COLOUR);
+        m_Perd->color (Info->GUI_COLOUR);
 	m_Perd->type (Fl_Knob::LINELIN);
         m_Perd->labelsize (10);
         m_Perd->scaleticks (20);
@@ -183,7 +179,7 @@ m_PixmapSaw (image_Saw) {
         m_NumPerd->textsize (10);
         m_NumPerd->labelsize (10);
         m_NumPerd->box (FL_PLASTIC_UP_BOX);
-        m_NumPerd->color (GUI_COLOUR);
+        m_NumPerd->color (Info->GUI_COLOUR);
         m_NumPerd->value (m_Perd->value());
         m_NumPerd->step (m_Perd->step());
         m_NumPerd->lstep (0.1);
@@ -197,7 +193,7 @@ m_PixmapSaw (image_Saw) {
         m_NumFreq->textsize (10);
         m_NumFreq->labelsize (10);
         m_NumFreq->box (FL_PLASTIC_UP_BOX);
-        m_NumFreq->color (GUI_COLOUR);
+        m_NumFreq->color (Info->GUI_COLOUR);
         m_NumFreq->value (1 / m_Perd->value());
         m_NumFreq->step (0.001);
         m_NumFreq->lstep (0.1);

@@ -38,22 +38,24 @@ class Fl_MatrixButton : public Fl_Button
 public:
 	Fl_MatrixButton(int x, int y, int w, int h, char* n);
 	~Fl_MatrixButton() {}
-	
+
 	virtual int handle(int event);
-	
+
 	float GetVolume() { return m_VolVal/255.0f; }
-	void  SetVolume(float s) 
-	{ 
-		m_VolVal=s*255; 
+	void  SetVolume(float s)
+	{
+		m_VolVal=s*255;
 		fl_color((char)m_VolVal,(char)m_VolVal,255);
 		selection_color(fl_color());
 	}
-	void  SetVolCallback(Fl_Callback* s, void *c)   { cb_VolChange=s; cb_context=c; }
+	void SetVolCallback(Fl_Callback* s, void *c)   { cb_VolChange=s; cb_context=c; }
+        void SetSelColour (unsigned c) { m_SelCol=(Fl_Color)c; }
 
 private:
 	bool       m_SliderHidden;
 	Fl_Slider *m_Volume;
 	float      m_VolVal;
+        Fl_Color   m_SelCol;
 	
 	void (*cb_VolChange)(Fl_Widget*, void*);
 	void  *cb_context;

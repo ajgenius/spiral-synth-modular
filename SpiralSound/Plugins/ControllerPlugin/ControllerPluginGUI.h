@@ -49,11 +49,12 @@ protected:
 private:
 
 	void Clear();
+        Fl_Color m_GUIColour;
 
 	class CVGUI
 	{
 	public:
-		CVGUI::CVGUI(int n, ControllerPluginGUI *p);
+		CVGUI::CVGUI(int n, ControllerPluginGUI *p, Fl_Color SelColour);
 
 		Fl_Group     *m_SliderGroup;
 		Fl_Input     *m_Title;

@@ -20,10 +20,6 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 ////////////////////////////////////////////
 
 SampleHoldPluginGUI::SampleHoldPluginGUI(int w, int h,SampleHoldPlugin *o,ChannelHandler *ch,const HostInfo *Info) :

@@ -1,6 +1,6 @@
 /*  WaveShaper Plugin Copyleft (C) 2001 Yves Usson
  *  for SpiralSynthModular
-/ *  Copyleft (C) 2000 David Griffiths <dave@pawfal.org>
+ *  Copyleft (C) 2000 David Griffiths <dave@pawfal.org>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,11 +21,12 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
-FunctionPlot::FunctionPlot(int ox, int oy, int ww, int hh) : Fl_Widget (ox, oy, ww, hh) {
+FunctionPlot::FunctionPlot(int ox, int oy, int ww, int hh) :
+Fl_Widget (ox, oy, ww, hh),
+m_IndColour(FL_YELLOW),
+m_MrkColour(FL_BLUE),
+m_FGColour(FL_GREEN)
+{
   fval = new float[256];
   for (int i=0;i<256;i++) fval[i] = i / 128.0 - 1.0;
 }
@@ -45,17 +46,19 @@ void FunctionPlot::draw() {
         fl_clip(ox,oy,ww,hh);
 	coefx = ww / 256.0;
 	coefy = hh / 2.0;
-	for (int i = -5; i < 5; i++)
+	for (int i = -5; i <= 5; i++)
 	{
-		if (i==0) fl_color(FL_BLUE); else fl_color(FL_CYAN);
+		if (i==0) fl_color (m_IndColour);
+                else fl_color (m_MrkColour);
 		fl_line(ox,oy+hh/2+i*hh/10,ox+ww,oy+hh/2+i*hh/10);
 	}
-	for (int i = -5; i < 5; i++)
+	for (int i = -5; i <= 5; i++)
 	{
-		if (i==0) fl_color(FL_BLUE); else fl_color(FL_CYAN);
+		if (i==0) fl_color (m_IndColour);
+                else fl_color (m_MrkColour);
 		fl_line(ox+i*ww/10+ww/2,oy,ox+i*ww/10+ww/2,oy+hh);
 	}
-	fl_color(FL_RED);
+	fl_color (m_FGColour);
 	float y1 = oy+hh/2-coefy*fval[0];
 	for (int i = 0; i < 255; i++)
 	{
@@ -63,7 +66,7 @@ void FunctionPlot::draw() {
 		fl_line((int)(ox+i*coefx),(int)y1,(int)(ox+(i+1)*coefx),(int)y2);
 		y1 = y2;
 	}
-	fl_color(FL_BLACK);
+	fl_color (FL_BLACK);
 	fl_pop_clip();
 }
 
@@ -90,10 +93,11 @@ WaveShaperPluginGUI::WaveShaperPluginGUI (int w, int h, WaveShaperPlugin *o, Cha
 SpiralPluginGUI(w, h, o, ch)
 {
   fplot = new FunctionPlot(3, 20, 268, 195);
-  fplot->box(FL_ENGRAVED_BOX);
-  fplot->color(7);
+  fplot->box (FL_UP_BOX);
+  fplot->color (Info->SCOPE_BG_COLOUR);
+  fplot->SetColours (Info->SCOPE_IND_COLOUR, Info->SCOPE_MRK_COLOUR, Info->SCOPE_FG_COLOUR);
 
-  radio_polynomial = new Fl_Round_Button(3, 218, 30, 20, "S");
+  radio_polynomial = new Fl_LED_Button(3, 218, 30, 20, "S");
   radio_polynomial->down_box(FL_ROUND_DOWN_BOX);
   radio_polynomial->value(1);
   radio_polynomial->type(102);
@@ -101,7 +105,7 @@ SpiralPluginGUI(w, h, o, ch)
   radio_polynomial->labelsize(12);
   radio_polynomial->callback((Fl_Callback*)cb_radio);
 
-  radio_sines = new Fl_Round_Button(3, 238, 30, 20, "S");
+  radio_sines = new Fl_LED_Button(3, 238, 30, 20, "S");
   radio_sines->down_box(FL_ROUND_DOWN_BOX);
   radio_sines->value(0);
   radio_sines->type(102);
@@ -132,7 +136,7 @@ SpiralPluginGUI(w, h, o, ch)
 
   for (int i=0; i<6; i++) {
     knob[i] = new Fl_Knob (70+i*35, 220, 30, 30, "");
-    knob[i]->color (GUI_COLOUR);
+    knob[i]->color (Info->GUI_COLOUR);
     knob[i]->type (Fl_Knob::DOTLIN);
     knob[i]->labelsize (10);
     knob[i]->maximum (1);
@@ -162,12 +166,12 @@ void WaveShaperPluginGUI::Update () {
   fplot->redraw ();
 }
 
-inline void WaveShaperPluginGUI::cb_radio_i (Fl_Round_Button*, void*) {
+inline void WaveShaperPluginGUI::cb_radio_i (Fl_LED_Button*, void*) {
   m_GUICH->Set ("WaveType", (int)radio_polynomial->value ());
   m_GUICH->SetCommand (WaveShaperPlugin::SETWAVETYPE);
 }
 
-void WaveShaperPluginGUI::cb_radio (Fl_Round_Button* o, void* v) {
+void WaveShaperPluginGUI::cb_radio (Fl_LED_Button* o, void* v) {
   ((WaveShaperPluginGUI*)(o->parent()))->cb_radio_i (o, v);
 }
 

@@ -22,10 +22,6 @@
 #include <FL/Fl_Hold_Browser.H>
 #include <FL/Fl_Double_Window.H>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 ////////////////////////////////////////////////////////////////////////
 
 int OptionsList(const vector<string> &List)

@@ -14,23 +14,21 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include "MatrixPluginGUI.h"
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 #include <FL/fl_file_chooser.h>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
 static const char NoteText[12][3] = {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};
 
 ////////////////////////////////////////////
 
-Fl_MatrixButton::Fl_MatrixButton(int x, int y, int w, int h, char* n) : 
+Fl_MatrixButton::Fl_MatrixButton(int x, int y, int w, int h, char* n) :
 Fl_Button(x,y,w,h,n),
 m_Volume(NULL),
+m_SelCol(FL_BLUE),
 cb_VolChange(NULL),
 cb_context(NULL)
 {
@@ -42,11 +40,11 @@ int Fl_MatrixButton::handle(int event)
 {
 	if (value()==true && event==FL_PUSH && Fl::event_button()==3)
 	{
-		if (m_SliderHidden) 
+		if (m_SliderHidden)
 		{
 			m_Volume = new Fl_Slider(x(),y()+h(),w(),50,"");
 			m_Volume->type(4);
-			m_Volume->selection_color(GUI_COLOUR);
+			m_Volume->selection_color(m_SelCol);
 			m_Volume->maximum(255);
     		m_Volume->step(1);
     		m_Volume->value(255-m_VolVal);
@@ -57,7 +55,7 @@ int Fl_MatrixButton::handle(int event)
 			parent()->redraw();
 			m_SliderHidden=false;
 		}
-		else 
+		else
 		{
 			m_Volume->hide();
 			m_VolVal=255-m_Volume->value();
@@ -66,10 +64,10 @@ int Fl_MatrixButton::handle(int event)
 			m_Volume=NULL;
 			m_SliderHidden=true;
 		}
-		
+
 		return 1;
 	}
-	
+
 	if (event==FL_PUSH && Fl::event_button()==1 && !m_SliderHidden)
 	{
 		m_Volume->hide();
@@ -79,9 +77,9 @@ int Fl_MatrixButton::handle(int event)
 		m_Volume=NULL;
 		m_SliderHidden=true;
 	}
-	
+
 	if (Fl::event_button()!=3) return Fl_Button::handle(event);
-	
+
 	return 1;
 }
 
@@ -90,7 +88,7 @@ inline void Fl_MatrixButton::cb_Vol_i(Fl_Slider* o, void* v)
 	m_VolVal=255-m_Volume->value();
 	fl_color((char)m_VolVal,(char)m_VolVal,255);
 	selection_color(fl_color());
-	
+
 	if (cb_VolChange) cb_VolChange(this,cb_context);
 	redraw();
 }
@@ -137,7 +135,7 @@ m_LastPatSeqLight(0)
 	add(m_Length);
 	
 	m_Speed = new Fl_Knob (50, 60, 40, 40, "Speed");
-    m_Speed->color(GUI_COLOUR);
+    m_Speed->color(Info->GUI_COLOUR);
 	m_Speed->type(Fl_Knob::DOTLIN);
     m_Speed->labelsize(10);
     m_Speed->maximum(200);
@@ -196,13 +194,13 @@ m_LastPatSeqLight(0)
 	int yoff=40;
 	int butsize=7;
 	int n=0;
-	
+
 	fl_color(150,150,150);
 	int markercol=fl_color();
 
 	fl_color(170,170,170);
 	int blcolour=fl_color();
-	
+
 	for(int x=0; x<MATX; x++)
 	for(int y=0; y<MATY; y++)
 	{
@@ -210,17 +208,18 @@ m_LastPatSeqLight(0)
 		m_Matrix[x][y] = new Fl_MatrixButton(xoff+x*butsize,yoff+((MATY-1)*butsize)-(y*butsize),butsize+1,butsize+1,"");
 		m_Matrix[x][y]->type(1);
 		m_Matrix[x][y]->box(FL_BORDER_BOX);
+                m_Matrix[x][y]->SetSelColour (Info->GUI_COLOUR);
 		if ((x%8)==0) m_Matrix[x][y]->color(markercol);
 		else if ((y%12)==1 || (y%12)==3 || (y%12)==6 || (y%12)==8 || (y%12)==10) m_Matrix[x][y]->color(blcolour);
 		else m_Matrix[x][y]->color(FL_GRAY);
-				
+
 		m_Matrix[x][y]->selection_color(FL_WHITE);
 		m_Matrix[x][y]->callback((Fl_Callback*)cb_Matrix,(void*)&Numbers[n]);
 		m_Matrix[x][y]->SetVolCallback((Fl_Callback*)cb_MatVol,(void*)&Numbers[n]);
 		add(m_Matrix[x][y]);
 		n++;
 	}
-	
+
 	yoff=37;
 	for(int y=0; y<MATY; y++)
 	{

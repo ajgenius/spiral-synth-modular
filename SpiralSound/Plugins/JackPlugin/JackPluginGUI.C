@@ -22,10 +22,6 @@
 #include <FL/fl_file_chooser.H>
 #include <FL/Fl_Hold_Browser.H>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 static int Numbers[255];
 
 ////////////////////////////////////////////////////////////////////////

@@ -114,10 +114,10 @@ private:
 	// cb_UpdatePluginInfo to access the map.
 	static map<int,DeviceWin*> m_DeviceWinMap;
 
-	int m_NextID;
-	int m_NextPluginButton;
-	int m_NextPluginButtonXPos;
-	int m_NextPluginButtonYPos;
+        int m_NextID;
+//	int m_NextPluginButton;
+//	int m_NextPluginButtonXPos;
+//	int m_NextPluginButtonYPos;
 
 	static bool m_CallbackUpdateMode;
 	static bool m_BlockingOutputPluginIsReady;
@@ -127,11 +127,10 @@ private:
 	void CreateGUI(int xoff=0, int yoff=0, char *name="");
 
         Fl_Pack 	*m_Topbar, *m_ToolbarPanel, *m_Toolbar;
-        Fl_Group 	*m_ToolbarFiller, *m_GroupFiller;
+        Fl_Group 	*m_GroupFiller;
 	Fl_Button       *m_Load;
 	Fl_Button       *m_Save;
 	Fl_Button       *m_New;
-	Fl_Button       *m_OpenEditor;
 	Fl_Button       *m_Options;
 	Fl_Button       *m_NewComment;
         Fl_Tabs         *m_GroupTab;

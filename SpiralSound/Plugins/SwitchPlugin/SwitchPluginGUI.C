@@ -20,17 +20,13 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 ////////////////////////////////////////////
 
 SwitchPluginGUI::SwitchPluginGUI(int w, int h,SwitchPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
 {	
 	m_Mix = new Fl_Button(20, 30, 50, 20, "Mix");
-    m_Mix->selection_color(GUI_COLOUR);
+    m_Mix->selection_color(Info->GUI_COLOUR);
     m_Mix->labelsize(8);
     m_Mix->type(1);
 	m_Mix->callback((Fl_Callback*)cb_Mix);

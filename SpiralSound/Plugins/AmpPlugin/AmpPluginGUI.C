@@ -20,10 +20,6 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 ////////////////////////////////////////////
 
 AmpPluginGUI::AmpPluginGUI(int w, int h,AmpPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
@@ -33,7 +29,7 @@ SpiralPluginGUI(w,h,o,ch)
 	
 	m_Amp = new Fl_Slider(15, 20, 20, 70, "Amp");
 	m_Amp->type(4);
-	m_Amp->selection_color(GUI_COLOUR);
+	m_Amp->selection_color(Info->GUI_COLOUR);
     m_Amp->labelsize(10);
 	m_Amp->maximum(4);
     m_Amp->step(0.0001);
@@ -42,7 +38,7 @@ SpiralPluginGUI(w,h,o,ch)
 	
 	m_DC = new Fl_Slider(70, 20, 20, 70, "DC Offset");
 	m_DC->type(4);
-	m_DC->selection_color(GUI_COLOUR);
+	m_DC->selection_color(Info->GUI_COLOUR);
     m_DC->labelsize(10);
 	m_DC->maximum(4);
     m_DC->step(0.0001);

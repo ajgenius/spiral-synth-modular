@@ -32,9 +32,9 @@ class Fl_WaveDisplay : public Fl_Widget
 {
 	public:
 		Fl_WaveDisplay(int x,int y,int w,int h, char* Name);
-		~Fl_WaveDisplay();		
-		virtual void draw();		
-		virtual int handle(int event);		
+		~Fl_WaveDisplay();
+		virtual void draw();
+		virtual int handle(int event);
 		void SetSample(const float* s, long len);
 		long GetRangeStart()      { return m_StartPos; }
 		long GetRangeEnd()        { return m_EndPos; }
@@ -52,9 +52,12 @@ class Fl_WaveDisplay : public Fl_Widget
 		void SetPosMarker(bool s) { m_PosMarker=s; }
 		void ZoomIn();
 		void ZoomOut();
-		
-	private:	
-			
+                void SetColours (unsigned b, unsigned f, unsigned s, unsigned i, unsigned m) {
+  		     m_BGColour=(Fl_Color)b;  m_FGColour=(Fl_Color)f;  m_SelColour=(Fl_Color)s;
+                     m_IndColour=(Fl_Color)i; m_MrkColour=(Fl_Color)m;
+                }
+	private:
+		Fl_Color m_BGColour, m_FGColour, m_SelColour, m_IndColour, m_MrkColour;
 		Sample *m_Sample;
 		long m_StartPos;
 		long m_EndPos;

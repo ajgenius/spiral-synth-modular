@@ -33,64 +33,72 @@ void SpiralInfo::LoadPrefs()
 {
 	string rcfn(m_HomeDir+"/"+GetResFileName());
 	ifstream i(rcfn.c_str());
-	
+
 	if (!i)
 	{
 		cerr<<"Creating "<<rcfn<<endl;
 		SavePrefs();
 		return;
 	}
-		
+
 	StreamInPrefs(i);
 }
 
 void SpiralInfo::SavePrefs()
 {
-	string rcfn(m_HomeDir+"/"+GetResFileName());
+        string rcfn(m_HomeDir+"/"+GetResFileName());
 	ofstream o(rcfn.c_str());
-	
-	StreamOutPrefs(o);
-}	
 
-void SpiralInfo::StreamInPrefs(istream &s)
+	StreamOutPrefs(o);
+}
+
+void SpiralInfo::StreamInPrefs (istream &s)
 {
 	char temp[256];
-	s>>temp>>temp>>temp;
-	s>>temp>>temp>>m_Version;
-	s>>temp>>temp>>LOCALE;
-	s>>temp>>temp>>BUFSIZE;
-	s>>temp>>temp>>FRAGSIZE;
-	s>>temp>>temp>>FRAGCOUNT;
-	s>>temp>>temp>>SAMPLERATE;
-	s>>temp>>temp>>WANTMIDI;
-	s>>temp>>temp>>FILTERGRAN;
-	s>>temp>>temp>>OUTPUTFILE;
-	s>>temp>>temp>>MIDIFILE;
-	s>>temp>>temp>>USEPLUGINLIST;
-	s>>temp>>temp>>POLY;
-	//s>>temp>>temp>>GUI_COLOUR;
-	//s>>temp>>temp>>GUIBG_COLOUR;
-	//s>>temp>>temp>>GUIBG2_COLOUR;	
+	s >> temp >> temp >> temp;
+	s >> temp >> temp >> m_Version;
+	s >> temp >> temp >> LOCALE;
+	s >> temp >> temp >> BUFSIZE;
+	s >> temp >> temp >> FRAGSIZE;
+	s >> temp >> temp >> FRAGCOUNT;
+	s >> temp >> temp >> SAMPLERATE;
+	s >> temp >> temp >> WANTMIDI;
+	s >> temp >> temp >> FILTERGRAN;
+	s >> temp >> temp >> OUTPUTFILE;
+	s >> temp >> temp >> MIDIFILE;
+	s >> temp >> temp >> USEPLUGINLIST;
+	s >> temp >> temp >> POLY;
+        if (m_Version>0) {
+           s >> temp >> temp >> GUI_COLOUR;
+           s >> temp >> temp >> SCOPE_BG_COLOUR;
+           s >> temp >> temp >> SCOPE_FG_COLOUR;
+           s >> temp >> temp >> SCOPE_SEL_COLOUR;
+           s >> temp >> temp >> SCOPE_IND_COLOUR;
+           s >> temp >> temp >> SCOPE_MRK_COLOUR;
+        }
 }
 
 void SpiralInfo::StreamOutPrefs(ostream &s)
 {
-	s<<"SpiralSound resource file"<<endl<<endl;
-	s<<"Version           = "<<m_Version<<endl;	
-	s<<"Locale            = "<<LOCALE<<endl;	
-	s<<"BufferSize        = "<<BUFSIZE<<endl;	
-	s<<"FragmentSize      = "<<FRAGSIZE<<endl;	
-	s<<"FragmentCount     = "<<FRAGCOUNT<<endl;	
-	s<<"Samplerate        = "<<SAMPLERATE<<endl;
-	s<<"WantMidi          = "<<WANTMIDI<<endl;
-	s<<"FilterGranularity = "<<FILTERGRAN<<endl;
-	s<<"Output            = "<<OUTPUTFILE<<endl;
-	s<<"Midi              = "<<MIDIFILE<<endl;
-	s<<"UsePluginList     = "<<USEPLUGINLIST<<endl;
-	s<<"Polyphony         = "<<POLY<<endl;
-	//s<<"GUIColour         = "<<GUI_COLOUR<<endl;
-	//s<<"GUIBGColour       = "<<GUIBG_COLOUR<<endl;
-	//s<<"GUIBG2Colour      = "<<GUIBG2_COLOUR<<endl;
+	s << "SpiralSound resource file" << endl << endl;
+	s << "Version           = " << m_Version << endl;
+	s << "Locale            = " << LOCALE << endl;
+	s << "BufferSize        = " << BUFSIZE << endl;
+	s << "FragmentSize      = " << FRAGSIZE << endl;
+	s << "FragmentCount     = " << FRAGCOUNT << endl;
+	s << "Samplerate        = " << SAMPLERATE << endl;
+	s << "WantMidi          = " << WANTMIDI << endl;
+	s << "FilterGranularity = " << FILTERGRAN << endl;
+	s << "Output            = " << OUTPUTFILE << endl;
+	s << "Midi              = " << MIDIFILE << endl;
+	s << "UsePluginList     = " << USEPLUGINLIST << endl;
+	s << "Polyphony         = " << POLY << endl;
+        s << "GUIColour         = " << GUI_COLOUR << endl;
+        s << "ScopeBGColour     = " << SCOPE_BG_COLOUR << endl;
+        s << "ScopeFGColour     = " << SCOPE_FG_COLOUR << endl;
+        s << "ScopeSelColour    = " << SCOPE_SEL_COLOUR << endl;
+        s << "ScopeIndColour    = " << SCOPE_IND_COLOUR << endl;
+        s << "ScopeMrkColour    = " << SCOPE_MRK_COLOUR << endl;
 }
 
 void SpiralInfo::Alert(string Text)

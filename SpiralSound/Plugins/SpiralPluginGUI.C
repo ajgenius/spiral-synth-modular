@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include "SpiralPluginGUI.h"
 #include "SpiralPlugin.h"
@@ -23,10 +23,6 @@
 #include <FL/Fl_Multiline_Output.h>
 #include <FL/Fl_Text_Display.h>
 #include <FL/Fl_Text_Buffer.h>
-
-static const int GUI_COLOUR = 154;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
 
 Fl_Double_Window* SpiralPluginGUI::m_HelpWin=NULL;
 Fl_Text_Display* SpiralPluginGUI::m_HelpWin_text=NULL;

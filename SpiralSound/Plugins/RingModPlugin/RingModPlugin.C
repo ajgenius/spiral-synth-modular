@@ -49,8 +49,8 @@ RingModPlugin::RingModPlugin() :
 m_Amount(1.0f)
 {
 	m_PluginInfo.Name="Ring Mod";
-	m_PluginInfo.Width=120;
-	m_PluginInfo.Height=110;
+	m_PluginInfo.Width=90;
+	m_PluginInfo.Height=80;
 	m_PluginInfo.NumInputs=2;
 	m_PluginInfo.NumOutputs=1;
 	m_PluginInfo.PortTips.push_back("Input 1");	

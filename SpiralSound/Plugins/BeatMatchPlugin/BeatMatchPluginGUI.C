@@ -20,17 +20,13 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 ////////////////////////////////////////////
 
 BeatMatchPluginGUI::BeatMatchPluginGUI(int w, int h,BeatMatchPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
 {	
 	m_Sense = new Fl_Knob(20, 15, 50, 50, "Sensitivity");
-    m_Sense->color(GUI_COLOUR);
+    m_Sense->color(Info->GUI_COLOUR);
     m_Sense->labelsize(8);
 	m_Sense->callback((Fl_Callback*)cb_Sense);
 	

@@ -40,7 +40,6 @@ class EchoPlugin : public SpiralPlugin
 	float m_Delay, m_Feedback;
         bool m_Bounce;
 	int m_HeadPos, m_Buf0, m_Buf1;
-	//Sample m_Buffer1, m_Buffer2;
 	Sample m_Buffer[2];
 	friend istream &operator>>(istream &s, EchoPlugin &o);
 	friend ostream &operator<<(ostream &s, EchoPlugin &o);

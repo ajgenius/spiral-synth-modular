@@ -30,10 +30,6 @@
 #include "LADSPAPluginGUI.h"
 #include "LADSPAInfo.h"
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 LADSPAPluginGUI::LADSPAPluginGUI(int w, int h,
                                  LADSPAPlugin *o,
                                  ChannelHandler *ch,
@@ -41,7 +37,8 @@ LADSPAPluginGUI::LADSPAPluginGUI(int w, int h,
                                  const vector<LADSPAInfo::PluginEntry> &PVec) :
 SpiralPluginGUI(w,h,o,ch)
 {
-	m_PluginList = PVec;
+        m_GUIColour = (Fl_Color)Info->GUI_COLOUR;
+        m_PluginList = PVec;
 
 	int Width=20;
 	int Height=100;
@@ -63,13 +60,13 @@ SpiralPluginGUI(w,h,o,ch)
 // Set up widgets
 	m_NameLabel = new Fl_Box(10,20,480,15,"None");
 	m_NameLabel->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
-	m_NameLabel->labelcolor(GUI_COLOUR);
+	m_NameLabel->labelcolor(Info->GUI_COLOUR);
 	m_NameLabel->labelsize(12);
 	add(m_NameLabel);
 
 	m_MakerLabel = new Fl_Box(10,40,480,15,"None");
 	m_MakerLabel->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
-	m_MakerLabel->labelcolor(GUI_COLOUR);
+	m_MakerLabel->labelcolor(Info->GUI_COLOUR);
 	m_MakerLabel->labelsize(12);
 	add(m_MakerLabel);
 
@@ -467,7 +464,7 @@ void LADSPAPluginGUI::AddPortInfo(const char *Info)
 	Fl_Knob* NewKnob = new Fl_Knob(0,0,40,40,"");
 	NewKnob->label(m_PortDefaultAdjustLabels[m_PortDefaultAdjustLabels.size() - 1]);
 	NewKnob->labelsize(10);
-	NewKnob->color(GUI_COLOUR);
+	NewKnob->color(m_GUIColour);
 	NewKnob->maximum(1.0f);
 	NewKnob->step(0.001f);
 	NewKnob->callback((Fl_Callback *)cb_DefaultAdjust);

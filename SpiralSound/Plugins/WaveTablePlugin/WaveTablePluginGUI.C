@@ -20,10 +20,6 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 static unsigned char *image_Square[] = {
 (unsigned char*)"20 20 2 1",
 (unsigned char*)" \tc None",
@@ -240,7 +236,7 @@ m_Octave(0)
 	ShapeSine = new Fl_Check_Button(5, 15, 55, 30);
     ShapeSine->type(102);
     ShapeSine->down_box(FL_DIAMOND_DOWN_BOX);
-    ShapeSine->selection_color(GUI_COLOUR);
+    ShapeSine->selection_color(Info->GUI_COLOUR);
     pixmap_Sine.label(ShapeSine); 
 	ShapeSine->set();     
     ShapeSine->callback((Fl_Callback*)cb_Sine);
@@ -248,56 +244,56 @@ m_Octave(0)
     ShapeSquare = new Fl_Check_Button(5, 35, 55, 30);
     ShapeSquare->type(102);
     ShapeSquare->down_box(FL_DIAMOND_DOWN_BOX);
-    ShapeSquare->selection_color(GUI_COLOUR);
+    ShapeSquare->selection_color(Info->GUI_COLOUR);
     pixmap_Square.label(ShapeSquare);
 	ShapeSquare->callback((Fl_Callback*)cb_Square);
 	  
 	ShapeSaw = new Fl_Check_Button(5, 55, 55, 30);
     ShapeSaw->type(102);
     ShapeSaw->down_box(FL_DIAMOND_DOWN_BOX);
-    ShapeSaw->selection_color(GUI_COLOUR);
+    ShapeSaw->selection_color(Info->GUI_COLOUR);
     pixmap_Saw.label(ShapeSaw);      
     ShapeSaw->callback((Fl_Callback*)cb_Saw);	  	  		  
 		   
 	ShapeRevSaw = new Fl_Check_Button(5, 75, 55, 30);
     ShapeRevSaw->type(102);
     ShapeRevSaw->down_box(FL_DIAMOND_DOWN_BOX);
-    ShapeRevSaw->selection_color(GUI_COLOUR);
+    ShapeRevSaw->selection_color(Info->GUI_COLOUR);
     pixmap_RevSaw.label(ShapeRevSaw);      
     ShapeRevSaw->callback((Fl_Callback*)cb_RevSaw);
 		   
 	ShapeTri = new Fl_Check_Button(55, 15, 55, 30);
     ShapeTri->type(102);
     ShapeTri->down_box(FL_DIAMOND_DOWN_BOX);
-    ShapeTri->selection_color(GUI_COLOUR);
+    ShapeTri->selection_color(Info->GUI_COLOUR);
     pixmap_Tri.label(ShapeTri);      
     ShapeTri->callback((Fl_Callback*)cb_Tri);
 
     Pulse1 = new Fl_Check_Button(55, 35, 55, 30);
     Pulse1->type(102);
     Pulse1->down_box(FL_DIAMOND_DOWN_BOX);
-    Pulse1->selection_color(GUI_COLOUR);
+    Pulse1->selection_color(Info->GUI_COLOUR);
     pixmap_Pulse1.label(Pulse1);  
 	Pulse1->callback((Fl_Callback*)cb_Pulse1);
 	  
 	Pulse2 = new Fl_Check_Button(55, 55, 55, 30);
     Pulse2->type(102);
     Pulse2->down_box(FL_DIAMOND_DOWN_BOX);
-    Pulse2->selection_color(GUI_COLOUR);
+    Pulse2->selection_color(Info->GUI_COLOUR);
     pixmap_Pulse2.label(Pulse2);
 	Pulse2->callback((Fl_Callback*)cb_Pulse2);
 	  	   
 	ShapeInvSine = new Fl_Check_Button(55, 75, 55, 30);
     ShapeInvSine->type(102);
     ShapeInvSine->down_box(FL_DIAMOND_DOWN_BOX);
-    ShapeInvSine->selection_color(GUI_COLOUR);
+    ShapeInvSine->selection_color(Info->GUI_COLOUR);
     pixmap_InvSine.label(ShapeInvSine);
 	ShapeInvSine->callback((Fl_Callback*)cb_InvSine);
 		   
 		   
 		   
 	Freq = new Fl_Knob(188, 2, 40, 40, "Octave");
-    Freq->color(GUI_COLOUR);
+    Freq->color(Info->GUI_COLOUR);
 	Freq->type(Fl_Knob::LINELIN);
     Freq->labelsize(10);
     Freq->maximum(6);
@@ -308,7 +304,7 @@ m_Octave(0)
 	Freq->callback((Fl_Callback*)cb_Freq);
 	  
     FineTune = new Fl_Knob(112, 22, 65, 65, "Fine Tune");
-    FineTune->color(GUI_COLOUR);
+    FineTune->color(Info->GUI_COLOUR);
 	FineTune->type(Fl_Knob::LINELIN);
     FineTune->labelsize(10);
     FineTune->scaleticks(20);
@@ -318,7 +314,7 @@ m_Octave(0)
 	FineTune->callback((Fl_Callback*)cb_FineTune);
       
 	ModAmount = new Fl_Knob(188, 54, 40, 40, "Mod Depth");
-    ModAmount->color(GUI_COLOUR);
+    ModAmount->color(Info->GUI_COLOUR);
 	ModAmount->type(Fl_Knob::LINELIN);
 	ModAmount->labelsize(10);
     ModAmount->maximum(2.0f);

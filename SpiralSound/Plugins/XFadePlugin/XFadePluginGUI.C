@@ -14,15 +14,11 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include "XFadePluginGUI.h"
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
-
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
 
 ////////////////////////////////////////////
 
@@ -32,7 +28,7 @@ SpiralPluginGUI(w,h,o,ch)
 	m_Mix = new Fl_Slider(5, 20, 200, 20, "");
 	m_Mix->type(FL_HOR_NICE_SLIDER);
         m_Mix->box (FL_PLASTIC_DOWN_BOX);
-	m_Mix->selection_color(GUI_COLOUR);
+	m_Mix->selection_color(Info->GUI_COLOUR);
         m_Mix->labelsize(10);
 	m_Mix->maximum(1);
         m_Mix->step(0.0001);

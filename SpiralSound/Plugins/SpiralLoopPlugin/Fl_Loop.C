@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include "Fl_Loop.h"
 #include <iostream>
@@ -32,8 +32,8 @@ static const int   UPDATECYCLES = 4;
 
 static const int   POSMARKER_MAX = 50;
 
-Fl_Loop::Fl_Loop(int x, int y, int w, int h, const char* label) : 
-Fl_Group(x,y,w,h,label), 
+Fl_Loop::Fl_Loop(int x, int y, int w, int h, const char* label) :
+Fl_Group(x,y,w,h,label),
 m_data(NULL),
 m_MainWin(NULL),
 m_Length(1000),
@@ -59,26 +59,31 @@ m_LastMove(0),
 m_Snap(false),
 m_SnapDegrees(45),
 m_PosMarkerCount(0),
-cb_Move(NULL)
+cb_Move(NULL),
+m_BGColour (FL_BLACK),
+m_WaveColour (FL_GREEN),
+m_SelColour (FL_WHITE),
+m_IndColour (FL_BLUE),
+m_MrkColour (FL_YELLOW)
 {
 	box(FL_NO_BOX);
 	m_MidX=(w/2)+x;
 	m_MidY=(h/2)+y-20;
 }
-	
+
 void Fl_Loop::SetData(float const *set, const int Len)
 {
 	if (m_data!=NULL) delete[] m_data;
 	m_data = new float[Len];
 	memcpy((void*)m_data,(void*)set,Len*sizeof(float));
-	
+
 	SetLength(Len);
 }
 
 void Fl_Loop::SetLength(const int Len)
 {
 	m_Length=Len;
-	
+
 	// recalc start and end points
 	m_RangeStart=(long)(m_StartAngle*(m_Length/360.0f));
 	while (m_RangeStart < 0) m_RangeStart += m_Length;
@@ -104,7 +109,7 @@ void Fl_Loop::DrawWav()
 	float Sample=0;
 	float SampleAngle=360.0f/(float)(REZ);
 			
-	fl_color(100,155,100);				
+	fl_color (m_WaveColour);				
 		
 	while(m_Length>0 && n<m_Length)
 	{
@@ -130,21 +135,21 @@ void Fl_Loop::DrawWav()
 		if (Angle>m_StartAngle && Angle<m_EndAngle)
 		{
 			// draw the selection indicator
-			fl_color(255,255,255);
+			fl_color (m_SelColour);
 		}
 		else
 		{
-			fl_color(100,155,100);
+			fl_color (m_WaveColour);
 		}
 				
 		if (!FirstTime) fl_line(X,Y,ox,oy);
-		
+
 		// draw the snap points
 		if(m_SnapDegrees && (int)Angle%m_SnapDegrees==0)
 		{
 			if (!DrawnSnap)
 			{
-				fl_color(155,155,50);
+				fl_color (m_MrkColour);
 				fl_line((int)(m_MidX+x()+sin(Angle*RADCONV)*m_InnerRad),
 						(int)(m_MidY+y()+cos(Angle*RADCONV)*m_InnerRad),
 						(int)(m_MidX+x()+sin(Angle*RADCONV)*m_OuterRad),
@@ -186,7 +191,7 @@ void Fl_Loop::DrawPosMarker()
 #endif
 	fl_line(m_IndSX,m_IndSY,m_IndEX,m_IndEY);
 		
-	fl_color(FL_BLUE);
+	fl_color (m_IndColour);
 		
 	m_IndSX=(int)(m_MidX+x()+sin(Angle*RADCONV)*m_InnerRad);
 	m_IndSY=(int)(m_MidY+y()+cos(Angle*RADCONV)*m_InnerRad);
@@ -211,8 +216,8 @@ void Fl_Loop::DrawPosMarker()
 }
 
 void Fl_Loop::DrawWidgets()
-{	
-	Fl_Group::draw();	
+{
+	Fl_Group::draw();
 }
 
 void Fl_Loop::DrawEveryThing()
@@ -223,15 +228,15 @@ void Fl_Loop::DrawEveryThing()
 		{
 			m_PosMarkerCount=0;
 		}
-		
+
 		//fl_color(color());
 		//fl_rectf(x(),y(),w(),h());
-		
+
 		m_InnerRad-=5;
 		m_OuterRad+=5;
-		fl_color(20,60,20);
+		fl_color (m_BGColour);
 		fl_pie(m_MidX+x()-m_OuterRad, m_MidY+y()-m_OuterRad, m_OuterRad*2, m_OuterRad*2, 0, 360);
-		fl_color(color());
+		fl_color (color());
 		fl_pie(m_MidX+x()-m_InnerRad, m_MidY+y()-m_InnerRad, m_InnerRad*2, m_InnerRad*2, 0, 360);
 		m_OuterRad-=5;
 		m_InnerRad+=5;	

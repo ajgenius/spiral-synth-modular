@@ -20,10 +20,6 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 static unsigned char *image_Square[] = {
 (unsigned char*)"20 20 2 1",
 (unsigned char*)" \tc None",
@@ -111,7 +107,7 @@ m_Octave(0)
     ShapeSquare = new Fl_Check_Button(5, 15, 55, 30);
     ShapeSquare->type(102);
     ShapeSquare->down_box(FL_DIAMOND_DOWN_BOX);
-    ShapeSquare->selection_color(GUI_COLOUR);
+    ShapeSquare->selection_color(Info->GUI_COLOUR);
     ShapeSquare->set();
     pixmap_Square.label(ShapeSquare);
 	ShapeSquare->callback((Fl_Callback*)cb_Square);
@@ -119,19 +115,19 @@ m_Octave(0)
 	ShapeNoise = new Fl_Check_Button(5, 65, 55, 30);
     ShapeNoise->type(102);
     ShapeNoise->down_box(FL_DIAMOND_DOWN_BOX);
-    ShapeNoise->selection_color(GUI_COLOUR);
+    ShapeNoise->selection_color(Info->GUI_COLOUR);
     pixmap_Noise.label(ShapeNoise);      
     ShapeNoise->callback((Fl_Callback*)cb_Noise);
 	  
 	ShapeSaw = new Fl_Check_Button(5, 40, 55, 30);
     ShapeSaw->type(102);
     ShapeSaw->down_box(FL_DIAMOND_DOWN_BOX);
-    ShapeSaw->selection_color(GUI_COLOUR);
+    ShapeSaw->selection_color(Info->GUI_COLOUR);
     pixmap_Saw.label(ShapeSaw);      
     ShapeSaw->callback((Fl_Callback*)cb_Saw);
 	  	   
 	Freq = new Fl_Knob(188, 2, 40, 40, "Octave");
-    Freq->color(GUI_COLOUR);
+    Freq->color(Info->GUI_COLOUR);
 	Freq->type(Fl_Knob::LINELIN);
     Freq->labelsize(10);
     Freq->maximum(6);
@@ -142,7 +138,7 @@ m_Octave(0)
 	Freq->callback((Fl_Callback*)cb_Freq);
 	  
     FineTune = new Fl_Knob(112, 22, 65, 65, "Fine Tune");
-    FineTune->color(GUI_COLOUR);
+    FineTune->color(Info->GUI_COLOUR);
 	FineTune->type(Fl_Knob::LINELIN);
     FineTune->labelsize(10);
     FineTune->scaleticks(20);
@@ -152,7 +148,7 @@ m_Octave(0)
 	FineTune->callback((Fl_Callback*)cb_FineTune);
       
 	ModAmount = new Fl_Knob(188, 54, 40, 40, "Mod Depth");
-    ModAmount->color(GUI_COLOUR);
+    ModAmount->color(Info->GUI_COLOUR);
 	ModAmount->type(Fl_Knob::LINELIN);
 	ModAmount->labelsize(10);
     ModAmount->maximum(2.0f);
@@ -162,7 +158,7 @@ m_Octave(0)
              
 	PulseWidth = new Fl_Slider(60, 20, 20, 70, "PW");
 	PulseWidth->type(4);
-	PulseWidth->selection_color(GUI_COLOUR);
+	PulseWidth->selection_color(Info->GUI_COLOUR);
     PulseWidth->labelsize(10);
 	PulseWidth->maximum(1);
     PulseWidth->step(0.01);
@@ -171,7 +167,7 @@ m_Octave(0)
 	  
 	SHLen = new Fl_Slider(80, 20, 20, 70, "SH");
 	SHLen->type(4);
-	SHLen->selection_color(GUI_COLOUR);
+	SHLen->selection_color(Info->GUI_COLOUR);
     SHLen->labelsize(10);
 	SHLen->maximum(0.2);
     SHLen->step(0.001);

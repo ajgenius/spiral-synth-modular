@@ -20,15 +20,11 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_file_chooser.H>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 OutputPluginGUI::OutputPluginGUI(int w, int h, SpiralPlugin *o, ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
 {	
     Volume = new Fl_Knob(30, 22, 40, 40, "Volume");
-    Volume->color(GUI_COLOUR);
+    Volume->color(Info->GUI_COLOUR);
 	Volume->type(Fl_Knob::DOTLIN);
     Volume->labelsize(10);
     Volume->maximum(1);

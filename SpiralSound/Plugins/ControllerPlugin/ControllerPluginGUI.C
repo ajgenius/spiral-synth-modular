@@ -21,16 +21,12 @@
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 ////////////////////////////////////////////
 
-ControllerPluginGUI::CVGUI::CVGUI(int n, ControllerPluginGUI *p)
+ControllerPluginGUI::CVGUI::CVGUI(int n, ControllerPluginGUI *p, Fl_Color SelColour)
 {
 	m_SliderGroup = new Fl_Group(0,0,60,153,"");
-	m_SliderGroup->box(FL_UP_BOX);
+	//m_SliderGroup->box (FL_PLASTIC_UP_BOX);
 	m_SliderGroup->user_data((void *)p);
 
 	m_Title = new Fl_Input(5,2,50,15,"");
@@ -50,8 +46,9 @@ ControllerPluginGUI::CVGUI::CVGUI(int n, ControllerPluginGUI *p)
 	m_SliderGroup->add(m_Max);
 
 	m_Chan = new Fl_Slider(20, 34, 20, 100, "");
-	m_Chan->type(4);
-	m_Chan->selection_color(GUI_COLOUR);
+	m_Chan->type (FL_VERT_NICE_SLIDER);
+        m_Chan->box (FL_PLASTIC_DOWN_BOX);
+	m_Chan->selection_color (SelColour);
 	m_Chan->maximum(1);
 	m_Chan->step(0.01);
 	m_Chan->value(0.5);
@@ -80,6 +77,7 @@ m_CVCount(0)
 		Numbers[n]=n;
 	}
 
+        m_GUIColour = (Fl_Color)Info->GUI_COLOUR;
 	m_MainPack = new Fl_Pack(0,20,w,h-44);
 	m_MainPack->type(FL_HORIZONTAL);
         add (m_MainPack);
@@ -91,19 +89,24 @@ m_CVCount(0)
 	AddCV();
 
         m_Buttons = new Fl_Pack (0, h-22, 45, 20);
-	m_Buttons->type(FL_HORIZONTAL);
+	m_Buttons->type (FL_HORIZONTAL);
         add (m_Buttons);
-        m_Delete = new Fl_Button(2,0,20,20,"-");
-	m_Delete->callback((Fl_Callback*)cb_Delete);
-	m_Buttons->add(m_Delete);
-        m_Add = new Fl_Button(24,0,20,20,"+");
-	m_Add->callback((Fl_Callback*)cb_Add);
-	m_Buttons->add(m_Add);
+        m_Delete = new Fl_Button(2, 0, 20, 20, "-");
+        m_Delete->box (FL_PLASTIC_UP_BOX);
+        m_Delete->color (m_GUIColour);
+	m_Delete->callback ((Fl_Callback*)cb_Delete);
+	m_Buttons->add (m_Delete);
+        m_Add = new Fl_Button (24, 0, 20, 20, "+");
+        m_Add->box (FL_PLASTIC_UP_BOX);
+        m_Add->color (m_GUIColour);
+	m_Add->callback ((Fl_Callback*)cb_Add);
+	m_Buttons->add (m_Add);
+
 }
 
 void ControllerPluginGUI::AddCV()
 {
-        CVGUI *NewCV = new CVGUI(m_CVCount,this);
+        CVGUI *NewCV = new CVGUI (m_CVCount, this, m_GUIColour);
 	m_GUIVec.push_back(NewCV);
 	m_MainPack->add(NewCV->m_SliderGroup);
 	m_CVCount++;

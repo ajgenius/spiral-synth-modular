@@ -14,23 +14,19 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include "RingModPluginGUI.h"
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 ////////////////////////////////////////////
 
-RingModPluginGUI::RingModPluginGUI(int w, int h,RingModPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
-SpiralPluginGUI(w,h,o,ch)
-{	
-	m_Amount = new Fl_Knob(34, 24, 50, 50, "Amount");
-    m_Amount->color(GUI_COLOUR);
+RingModPluginGUI::RingModPluginGUI (int w, int h, RingModPlugin *o, ChannelHandler *ch, const HostInfo *Info) :
+SpiralPluginGUI (w, h, o, ch)
+{
+	m_Amount = new Fl_Knob (20, 12, 50, 50, "Amount");
+    m_Amount->color(Info->GUI_COLOUR);
 	m_Amount->type(Fl_Knob::DOTLIN);
     m_Amount->labelsize(10);
     m_Amount->maximum(3);

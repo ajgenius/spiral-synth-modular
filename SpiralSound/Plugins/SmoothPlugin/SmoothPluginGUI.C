@@ -14,38 +14,34 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include "SmoothPluginGUI.h"
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
-
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
 
 ////////////////////////////////////////////
 
 SmoothPluginGUI::SmoothPluginGUI(int w, int h,SmoothPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
 {	
-	m_Up = new Fl_Knob(20, 25, 40, 40, "Up");	
-	m_Up->color(GUI_COLOUR);
+	m_Up = new Fl_Knob (8, 18, 40, 40, "Up");
+	m_Up->color(Info->GUI_COLOUR);
 	m_Up->type(Fl_Knob::DOTLIN);
    	m_Up->labelsize(10);
    	m_Up->maximum(1);
    	m_Up->step(0.001);
-   	m_Up->value(0.5);   
+   	m_Up->value(0.5);
 	m_Up->callback((Fl_Callback*)cb_Up);
 	add(m_Up);
-	
-	m_Down = new Fl_Knob(75, 25, 40, 40, "Down");	
-	m_Down->color(GUI_COLOUR);
+
+	m_Down = new Fl_Knob (64, 18, 40, 40, "Down");
+	m_Down->color(Info->GUI_COLOUR);
 	m_Down->type(Fl_Knob::DOTLIN);
    	m_Down->labelsize(10);
    	m_Down->maximum(1);
    	m_Down->step(0.001);
-   	m_Down->value(0.5);   
+   	m_Down->value(0.5);
 	m_Down->callback((Fl_Callback*)cb_Down);
 	add(m_Down);
 	

@@ -23,10 +23,6 @@
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Scroll.H>
 
-static const int GUI_COLOUR = 179;
-static const int GUIBG_COLOUR = 144;
-static const int GUIBG2_COLOUR = 145;
-
 static int NKEYS = 30;
 static char KEYMAP[30]={'z','s','x','d','c','v','g','b','h','n','j','m','q',
 						'2','w','3','e','r','5','t','6','y','7','u','i','9',
