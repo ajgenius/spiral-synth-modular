@@ -40,7 +40,7 @@
 #include "GUI/Widgets/PawfalYesNo.h"
 
 //#define DEBUG_PLUGINS
-#define DEBUG_STREAM
+//#define DEBUG_STREAM
 
 const static string LABEL = "SpiralSynthModular "+VER_STRING;
 static string TITLEBAR;
@@ -262,7 +262,7 @@ SpiralWindowType *SynthModular::CreateWindow()
 	Fl_Pixmap *tPix = new Fl_Pixmap(load_xpm);
 	m_Load->image(tPix->copy(tPix->w(),tPix->h()));		
 	m_Load->selection_color(SpiralSynthModularInfo::GUICOL_Tool);
-    m_Load->tooltip("Load a design file");		 
+    m_Load->tooltip("Load a patch file");		 
 	m_Load->callback((Fl_Callback*)cb_Load);
 	m_MainButtons->add(m_Load);
 	n++;
@@ -273,7 +273,7 @@ SpiralWindowType *SynthModular::CreateWindow()
 	m_Save->image(tPix->copy(tPix->w(),tPix->h()));	
 	delete tPix;	
 	m_Save->selection_color(SpiralSynthModularInfo::GUICOL_Tool);
- 	m_Save->tooltip("Save a design file");		 
+ 	m_Save->tooltip("Save a patch file");		 
 	m_Save->callback((Fl_Callback*)cb_Save);
 	m_MainButtons->add(m_Save);
 	n++;
@@ -284,7 +284,7 @@ SpiralWindowType *SynthModular::CreateWindow()
 	m_New->image(tPix->copy(tPix->w(),tPix->h()));	
 	delete tPix;	
 	m_New->selection_color(SpiralSynthModularInfo::GUICOL_Tool);
-  	m_New->tooltip("New design");		 
+  	m_New->tooltip("New patch");		 
 	m_New->callback((Fl_Callback*)cb_New);
 	m_MainButtons->add(m_New);
 	n++;
@@ -649,8 +649,13 @@ void SynthModular::AddComment(int n)
 
 void SynthModular::UpdateHostInfo()
 {   
-	std::stringstream str;		
-	str<<*this;
+	// used to use string streams, but this seems to cause a compiler bug 
+	// at the moment, so fall back to using a temporary file 
+	
+	//std::stringstream str;
+	fstream ofs("___temp.ssmtmp",ios::out);		
+	//str<<*this;
+	ofs<<*this;
 	
 	ClearUp();
 				
@@ -663,7 +668,12 @@ void SynthModular::UpdateHostInfo()
 	m_Info.MIDIFILE   = SpiralInfo::MIDIFILE; 
 	m_Info.POLY       = SpiralInfo::POLY;
 
-	str>>*this;
+	fstream ifs("___temp.ssmtmp",ios::in);			
+	//str>>*this;
+	ifs>>*this;
+	
+	system("rm -f ___temp.ssmtmp");
+	
 }
 
 //////////////////////////////////////////////////////////
@@ -901,12 +911,12 @@ void SynthModular::cb_Close(Fl_Window* o, void* v)
 
 inline void SynthModular::cb_Load_i(Fl_Button* o, void* v)
 {
-	if (m_DeviceWinMap.size()>0 && !Pawfal_YesNo("Load - Loose changes to current design?"))
+	if (m_DeviceWinMap.size()>0 && !Pawfal_YesNo("Load - Lose changes to current patch?"))
 	{
 		return;
 	}	
 	
-	char *fn=fl_file_chooser("Load a design", "*.ssm", NULL);
+	char *fn=fl_file_chooser("Load a patch", "*.ssm", NULL);
 	
 	if (fn && fn!='\0')
 	{
@@ -932,7 +942,7 @@ void SynthModular::cb_Load(Fl_Button* o, void* v)
 
 inline void SynthModular::cb_Save_i(Fl_Button* o, void* v)
 {
-	char *fn=fl_file_chooser("Save a design", "*.ssm", NULL);
+	char *fn=fl_file_chooser("Save a patch", "*.ssm", NULL);
 	
 	if (fn && fn!='\0')
 	{	
@@ -965,7 +975,7 @@ void SynthModular::cb_Save(Fl_Button* o, void* v)
 
 inline void SynthModular::cb_New_i(Fl_Button* o, void* v)
 {
-	if (m_DeviceWinMap.size()>0 && !Pawfal_YesNo("New - Loose changes to current design?"))
+	if (m_DeviceWinMap.size()>0 && !Pawfal_YesNo("New - Lose changes to current patch?"))
 	{
 		return;
 	}	

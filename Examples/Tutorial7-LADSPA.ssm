@@ -1,125 +1,59 @@
 SpiralSynthModular File Ver 3
-291 68 724 461 289 564 724 420
+0 0 700 300 0 300 700 300
 SectionList
-19
+10
 
 Device 0 Plugin 23
-279 186 1 100 100 
-1 3 1 1 1 
-
-Device 1 Plugin 2
-160 215 0 100 100 
-2 0 0 0
-
+243 432 1 99 11 
+1 3 0 1 1 
 
 Device 2 Plugin 5
-280 251 1 481 220 
-1 0.0036 0.3844 0 0.1156 0.5 0.01
+244 500 1 485 13 
+1 0.0289 0.16 0.08 1.0404 0.58 0.01
 
 Device 3 Plugin 13
-347 187 1 350 100 
-1 0.3208 0.26683 
+359 433 1 349 12 
+1 0 0.37137 
 
 Device 4 Plugin 0
-638 187 0 100 100 
+575 412 0 593 -19 
 
 
-Device 25 Plugin 6
-487 157 0 0 0
+Device 7 Plugin -1
+358 303 0 0 0
+1 10 Tutorial 7
 
 
-Device 31 Plugin 6
-212 144 0 0 0
+Device 8 Plugin -1
+358 320 0 0 0
+1 37 The subtractive synth from tutorial 3
 
 
-Device 32 Plugin 5
-413 144 1 482 101 
-1 0 0.0784 1 0.2601 0.43 0.01
-
-Device 33 Plugin 22
-571 187 0 415 148 
-2 0.714 /usr/local/lib/ladspa/cmt.so freeverb3 8 -1 -1 -1 0 0 0 0 0 1 1 1 1 1 1 1 1 
-
-Device 34 Plugin 3
-435 245 1 95 215 
-3 6 -0.06 0.78 -0.52 0.5 0.22 0.82 1
-6
-6
-Freeze -1 1 0.53
-4
-Room -1 1 0.11
-4
-Damp -1 1 0.76
-3
-Wet -1 1 0.25
-3
-Dry -1 1 0.39
-5
-Width -1 1 0.09
+Device 31 Plugin 40
+157 465 0 200 -38 
+0
 
 
-Device 35 Plugin -1
-374 13 0 0 0
-1 33 Tutorial 6 - Using LADSPA Plugins
+Device 32 Plugin 22
+472 410 1 119 124 
+8 0 1 1216 8 1 0.1 0 0 -70 -70 -70 -1 300 360 1 1 0 0 0 1 1 1 1 1 1 1 1 1 121.497 90.075 0.81 0.719 -16.38 0 -3.92 0.000776224 
+
+Device 33 Plugin -1
+361 336 0 0 0
+1 35 with a LADSPA reverb effect plugin.
 
 
-Device 36 Plugin -1
-375 29 0 0 0
-1 71 If you have LADSPA installed, the plugins should be fully connected up.
+Device 34 Plugin -1
+363 357 0 0 0
+1 65 This won't do much exiting if you don't have LADSPA installed. :)
 
 
-Device 37 Plugin -1
-377 43 0 0 0
-1 36 If not, then this won't work at all.
-
-
-Device 38 Plugin -1
-566 171 0 0 0
-1 10 (FreeVerb)
-
-
-Device 40 Plugin -1
-370 72 0 0 0
-1 82 This shows you how you can set up the CV slider plugin to control a LADSPA plugin.
-
-
-Device 41 Plugin -1
-380 86 0 0 0
-1 91 It's handy to name the sliders according to what they are controlling. Also important is to
-
-
-Device 42 Plugin -1
-385 99 0 0 0
-1 92 tweak the input scales so the plugin behaves correctly. Most plugins set these automatically
-
-
-Device 43 Plugin -1
-277 113 0 0 0
-1 45 as this one does, but you have to be careful.
-
-
-Device 44 Plugin -1
-387 356 0 0 0
-1 112 Open the LADSPA plugin to load other plugins. When a new plugin is selected, all the connections will be broken.
-
-
-18
-1 1 0 0 0 0
-2 2 0 3 3 1
-0 0 0 3 3 0
-1 1 1 31 6 0
-3 3 0 32 7 1
-31 6 0 32 7 0
-31 6 1 2 2 0
-34 9 0 33 8 2
-34 9 1 33 8 3
-34 9 2 33 8 4
-34 9 3 33 8 5
-34 9 4 33 8 6
-34 9 5 33 8 7
-33 8 0 4 4 0
-33 8 1 4 4 1
-25 5 0 33 8 0
-25 5 1 33 8 1
-32 7 1 25 5 0
+7
+2 1 0 3 2 1
+0 0 0 3 2 0
+31 6 0 0 0 0
+31 6 1 2 1 0
+3 2 0 32 7 7
+32 7 0 4 3 0
+32 7 1 4 3 1
 
