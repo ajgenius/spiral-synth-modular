@@ -51,6 +51,7 @@ public:
 	~LADSPAPluginGUI();
 
 	virtual void UpdateValues(SpiralPlugin *o);
+	virtual void Update(void);
 
 	void SetName(const char *s);
 	void SetMaker(const char *s);
@@ -61,8 +62,8 @@ public:
 	void SetMinMax(int n, float min, float max, bool clamp);
 	void GetMinMax(int n, float &min, float &max, bool &clamp);
 
-	string GetFilename() { return m_Filename; }
-	string GetLabel() { return m_Label; }
+	string GetFilename(void) { return m_Filename; }
+	string GetLabel(void) { return m_Label; }
 	void SetFilename(string s) { m_Filename=s; }
 	void SetLabel(string s) { m_Label=s; }
 
@@ -108,10 +109,11 @@ private:
 		float           Gain;
 		char            Name[256];
 		char            Maker[256];
-		unsigned long   MaxInputPorts;
-		unsigned long   InputPorts;
+		unsigned long   MaxInputPortCount;
+		unsigned long   InputPortCount;
 		char           *InputPortNames;
 		PortRange      *InputPortRanges;
+		float          *InputPortValues;
 	};
 
 	InChannelData  m_InData;

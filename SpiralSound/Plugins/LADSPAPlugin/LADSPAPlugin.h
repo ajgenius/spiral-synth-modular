@@ -131,6 +131,7 @@ private:
 	{
 		char         *InputPortNames;
 		PortRange    *InputPortRanges;
+		float        *InputPortValues;
 	};
 
 	// Data received from GUI

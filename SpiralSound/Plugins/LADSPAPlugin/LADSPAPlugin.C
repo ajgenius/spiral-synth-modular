@@ -155,6 +155,7 @@ m_Amped(false)
 
 	m_OutData.InputPortNames = (char *)malloc(256 * m_MaxInputPortCount);
 	m_OutData.InputPortRanges = (PortRange *)malloc(sizeof(PortRange) * m_MaxInputPortCount);
+	m_OutData.InputPortValues = (float *)malloc(sizeof(float) * m_MaxInputPortCount);
 	m_InData.InputPortRanges = (PortRange *)malloc(sizeof(PortRange) * m_MaxInputPortCount);
 
 	if (m_OutData.InputPortNames &&
@@ -162,6 +163,7 @@ m_Amped(false)
 	    m_InData.InputPortRanges) {
 		m_AudioCH->RegisterData("GetInputPortNames", ChannelHandler::OUTPUT, m_OutData.InputPortNames, 256 * m_MaxInputPortCount);
 		m_AudioCH->RegisterData("GetInputPortRanges", ChannelHandler::OUTPUT, m_OutData.InputPortRanges, sizeof(PortRange) * m_MaxInputPortCount);
+		m_AudioCH->RegisterData("GetInputPortValues", ChannelHandler::OUTPUT, m_OutData.InputPortValues, sizeof(float) * m_MaxInputPortCount);
 		m_AudioCH->RegisterData("SetInputPortRanges", ChannelHandler::INPUT, m_InData.InputPortRanges, sizeof(PortRange) * m_MaxInputPortCount);
 	} else {
 		cerr<<"Memory allocation error"<<endl;
@@ -173,6 +175,7 @@ LADSPAPlugin::~LADSPAPlugin()
 // Free allocated buffers
 	if (m_OutData.InputPortNames)  free(m_OutData.InputPortNames);
 	if (m_OutData.InputPortRanges) free(m_OutData.InputPortRanges);
+	if (m_OutData.InputPortValues) free(m_OutData.InputPortValues);
 	if (m_InData.InputPortRanges)  free(m_InData.InputPortRanges);
 }
 
@@ -220,6 +223,8 @@ void LADSPAPlugin::Execute()
 				}
 				// Update the GUI outputs with the first value in the buffer
 				//((LADSPAPluginGUI*)m_GUI)->UpdatePortDisplay(n,m_LADSPABufVec[n][0]);
+				// Copy values into OutData value buffer for display in GUI
+				m_OutData.InputPortValues[n] = m_LADSPABufVec[n][0];
 			}
 			else // zero
 			{

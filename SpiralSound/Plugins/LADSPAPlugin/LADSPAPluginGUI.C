@@ -51,11 +51,12 @@ SpiralPluginGUI(w,h,o,ch)
 	}
 
 // Get maximum input port count
-	m_GUICH->GetData("GetMaxInputPortCount",&(m_InData.MaxInputPorts));
+	m_GUICH->GetData("GetMaxInputPortCount",&(m_InData.MaxInputPortCount));
 
 // Set up buffers for data transfer via ChannelHandler
-	m_InData.InputPortNames = (char *)malloc(256 * m_InData.MaxInputPorts);
-	m_InData.InputPortRanges = (PortRange *)malloc(sizeof(PortRange) * m_InData.MaxInputPorts);
+	m_InData.InputPortNames = (char *)malloc(256 * m_InData.MaxInputPortCount);
+	m_InData.InputPortRanges = (PortRange *)malloc(sizeof(PortRange) * m_InData.MaxInputPortCount);
+	m_InData.InputPortValues = (float *)malloc(sizeof(float) * m_InData.MaxInputPortCount);
 
 	if (!(m_InData.InputPortNames && m_InData.InputPortRanges)) {
 		cerr<<"Memory allocation error\n"<<endl;
@@ -241,6 +242,16 @@ void LADSPAPluginGUI::UpdateValues(SpiralPlugin *o)
 	}
 }
 
+void LADSPAPluginGUI::Update(void)
+{
+	m_GUICH->GetData("GetInputPortCount", &(m_InData.InputPortCount));
+	m_GUICH->GetData("GetInputPortValues", m_InData.InputPortValues);
+	
+	for (unsigned long n=0; n < m_InData.InputPortCount; n++) {
+		UpdatePortDisplay(n, m_InData.InputPortValues[n]);
+	}
+}
+
 inline void LADSPAPluginGUI::cb_Gain_i(Fl_Knob* o, void* v)
 {
 	m_GUICH->Set("SetGain",(float)(o->value()));
@@ -264,7 +275,7 @@ inline void LADSPAPluginGUI::cb_Select_i(Fl_Hold_Browser* o)
 // Now get the new values to populate GUI controls
 	m_GUICH->GetData("GetName", m_InData.Name);
 	m_GUICH->GetData("GetMaker", m_InData.Maker);
-	m_GUICH->GetData("GetInputPortCount", &(m_InData.InputPorts));
+	m_GUICH->GetData("GetInputPortCount", &(m_InData.InputPortCount));
 	m_GUICH->GetData("GetInputPortNames", m_InData.InputPortNames);
 	m_GUICH->GetData("GetInputPortRanges", m_InData.InputPortRanges);
 
@@ -274,7 +285,7 @@ inline void LADSPAPluginGUI::cb_Select_i(Fl_Hold_Browser* o)
 // Clear out port info, and refresh
 	ClearPortInfo();
 
-	for (unsigned long n = 0; n < m_InData.InputPorts; n++) {
+	for (unsigned long n = 0; n < m_InData.InputPortCount; n++) {
 		AddPortInfo((const char *)(m_InData.InputPortNames + n * 256));
 		SetMinMax(n, m_InData.InputPortRanges[n].Min,
 		             m_InData.InputPortRanges[n].Max,
