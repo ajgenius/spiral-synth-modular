@@ -22,6 +22,8 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Box.H>
+#include <FL/Fl_Scroll.H>
+#include <FL/Fl_Pack.H>
 #include "../Widgets/Fl_Knob.H"
 #include "../Widgets/Fl_LED_Button.H"
 #include "JackPlugin.h"
@@ -29,6 +31,8 @@
 
 #ifndef JACK_GUI_H
 #define JACK_GUI_H
+
+using namespace std;	
 
 class JackPluginGUI : public SpiralPluginGUI
 {
@@ -42,28 +46,52 @@ protected:
     const std::string GetHelpText(const std::string &loc);	
 		
 private:
+        JackClient    *m_JackClient;
+        JackPlugin    *m_JackPlugin;
+
+        Fl_Color m_GUIColour;
 
 	Fl_LED_Button *m_Indicator;
+
+        Fl_Button     *m_Remove;
+        Fl_Button     *m_Add;
+        
 	Fl_Button     *m_Attach;
 	Fl_Button     *m_Detach;
 	
-	char           m_InputName[NUM_INPUTS][256];
-	Fl_Box        *m_InputLabel[NUM_INPUTS];
-	Fl_Button     *m_InputButton[NUM_INPUTS];
+	Fl_Scroll *m_Scroll;
+        Fl_Pack  *m_InputPack;
+        Fl_Pack  *m_OutputPack;
+        
+	std::vector<char*> m_InputName;
+	std::vector<Fl_Box*>      m_InputLabel;
+	std::vector<Fl_Button*>  m_InputButton;
 	
-	char           m_OutputName[NUM_INPUTS][256];
-	Fl_Box        *m_OutputLabel[NUM_OUTPUTS];
-	Fl_Button     *m_OutputButton[NUM_OUTPUTS];
-		
-	//// Callbacks ////
-	inline void cb_Attach_i(Fl_Button* o, void* v);
-	static void cb_Attach(Fl_Button* o, void* v); 
-	inline void cb_Detach_i(Fl_Button* o, void* v);
-	static void cb_Detach(Fl_Button* o, void* v); 
-	inline void cb_OutputConnect_i(Fl_Button* o, void* v);
-	static void cb_OutputConnect(Fl_Button* o, void* v); 
-	inline void cb_InputConnect_i(Fl_Button* o, void* v);
-	static void cb_InputConnect(Fl_Button* o, void* v); 
+	std::vector<char*> m_OutputName;
+	std::vector<Fl_Box*>      m_OutputLabel;
+	std::vector<Fl_Button*> m_OutputButton;
+
+	void RemoveInput() ;		
+	void RemoveOutput() ;		
+
+	void AddInput() ;		
+	void AddOutput() ;		
+	
+	//// inline Callbacks ////
+	inline void cb_Add_i(Fl_Button* o);
+	inline void cb_Remove_i(Fl_Button* o);
+	inline void cb_Attach_i(Fl_Button* o);
+	inline void cb_Detach_i(Fl_Button* o);
+	inline void cb_OutputConnect_i(Fl_Button* o);
+	inline void cb_InputConnect_i(Fl_Button* o);
+
+	//// Static Callbacks ////
+	static void cb_Add(Fl_Button* o, JackPluginGUI* v)  {v->cb_Add_i(o);}
+	static void cb_Remove(Fl_Button* o, JackPluginGUI* v) {v->cb_Remove_i(o);}
+	static void cb_Attach(Fl_Button* o, JackPluginGUI* v) {v->cb_Attach_i(o);} 
+	static void cb_Detach(Fl_Button* o, JackPluginGUI* v) {v->cb_Detach_i(o);}
+	static void cb_OutputConnect(Fl_Button* o, JackPluginGUI* v) {v->cb_OutputConnect_i(o);} 
+	static void cb_InputConnect(Fl_Button* o, JackPluginGUI* v) {v->cb_InputConnect_i(o);}
 };
 
 #endif
