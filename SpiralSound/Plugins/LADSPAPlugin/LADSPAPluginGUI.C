@@ -80,7 +80,7 @@ SpiralPluginGUI(w,h,o,ch)
 	m_Maker->labelsize(10);
 	add(m_Maker);
 
-	m_InputScroll = new Fl_Scroll(10,110,480,150,"   Value            Min               Max                Clamp?    Default             Port Name");
+	m_InputScroll = new Fl_Scroll(10,110,480,150,"   Value            Default         Min               Max                 Clamp?      Port Name");
 	m_InputScroll->labelsize(12);
 	m_InputScroll->align(FL_ALIGN_TOP_LEFT);
 	m_InputScroll->type(Fl_Scroll::VERTICAL);
@@ -197,32 +197,32 @@ void LADSPAPluginGUI::AddPortInfo(const char *Info)
 	NewGroup->add(NewOutput);
 	m_PortOutput.push_back(NewOutput);
 
-// Min
+// Fixed Value/Default
 	Fl_Input* NewInput = new Fl_Input(72,0,60,18,"");
+	NewInput->value(0);
+	NewInput->textsize(10);
+	NewGroup->add(NewInput);
+	m_PortDefault.push_back(NewInput);
+
+// Min
+	NewInput = new Fl_Input(134,0,60,18,"");
 	NewInput->value(0);
 	NewInput->textsize(10);
 	NewGroup->add(NewInput);
 	m_PortMin.push_back(NewInput);
 
 // Max
-	NewInput = new Fl_Input(134,0,60,18,"");
+	NewInput = new Fl_Input(196,0,60,18,"");
 	NewInput->value(0);
 	NewInput->textsize(10);
 	NewGroup->add(NewInput);
 	m_PortMax.push_back(NewInput);
 
 // Clamp
-	Fl_Check_Button* NewCheckButton = new Fl_Check_Button(200,0,10,18,"");
+	Fl_Check_Button* NewCheckButton = new Fl_Check_Button(270,0,10,18,"");
 	NewCheckButton->value(0);
 	NewGroup->add(NewCheckButton);
 	m_PortClamp.push_back(NewCheckButton);
-
-// Fixed Value
-	NewInput = new Fl_Input(250,0,60,18,"");
-	NewInput->value(0);
-	NewInput->textsize(10);
-	NewGroup->add(NewInput);
-	m_PortDefault.push_back(NewInput);
 
 // Port Name
 	Fl_Box* NewText = new Fl_Box(322,0,10,18,"");
