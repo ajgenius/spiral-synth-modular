@@ -19,6 +19,7 @@
 
 #include <cstdio>
 #include <cmath>
+#include <cstring>
 #include <dlfcn.h>
 #include <vector>
 #include <algorithm>
