@@ -54,7 +54,7 @@ public:
 	Pattern* GetPattern() 			 { return &m_Matrix[m_Current]; }
 		
 	enum GUICommands{NONE,MAT_LENGTH,MAT_SPEED,MAT_ACTIVATE,MAT_DEACTIVATE,
-						MAT_OCTAVE,COPY,PASTE,CLEAR,TUP,TDOWN,MAT_VOLUME};
+						MAT_OCTAVE,COPY,PASTE,CLEAR,TUP,TDOWN,MAT_VOLUME,SET_CURRENT};
 	
 	struct GUIArgs
 	{
@@ -86,6 +86,7 @@ private:
 	bool  m_NoteCut;
 	
 	int   m_Current;
+	int   m_GUICurrent;
 	Pattern m_Matrix[NUM_PATTERNS];
 	float m_TriggerLevel[MATY];
 	

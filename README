@@ -1,12 +1,13 @@
 ** SpiralSynthModular **
 
-Last changed Saturday March 23 2002.
+Last changed Saturday December 11 2002.
 
 SpiralSynthModular is open source software, distributed under the General
 Public License (GPL). See the file COPYING.
 
 Dependancies:
-FLTK (www.fltk.org)
+FLTK (www.fltk.org) If you build FLTK from source use 
+"./configure --enable-shared"
 
 Sound output can be provided by either OSS or JACK (and therefore alsa).
 
@@ -26,7 +27,10 @@ For more examples be sure to check out the noize farm
 (http://groups.yahoo.com/group/noize_farm) an open source repository of
 ssm patches.
 
-options list
+usage:
+spiralsynthmodular options [patch.ssm]
+
+options list:
 -h : help
 -v : print version
 --NoGUI : run without GUI (only useful when loading patch from command line
@@ -54,7 +58,7 @@ the realtime output doesn't.
 
 BufferSize        = 512         - Size of sample buffer to be calculated each cycle.
 FragmentSize      = 256         - Subbuffer size sent to the soundcard
-FragmentCount     = -1          - Subbuffer count, -1 computes a suitable size,
+FragmentCount     = 8           - Subbuffer count, -1 computes a suitable size,
                                   setting to 4 or 8 gets better latencies.
 Samplerate        = 44100       - Sets the samplerate
 

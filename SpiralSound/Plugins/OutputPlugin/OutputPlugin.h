@@ -88,7 +88,7 @@ public:
 private:
 	static int m_RefCount;
 	static int m_NoExecuted;
-	Mode m_Mode;
+	static Mode m_Mode;
 	bool m_CheckedAlready;
 	bool m_Recmode;
 };

@@ -49,6 +49,7 @@ m_Step(0),
 m_Loop(true),
 m_NoteCut(false),
 m_Current(0),
+m_GUICurrent(0),
 m_CurrentNoteCV(0),
 m_CurrentTriggerCV(0),
 m_Triggered(false),
@@ -109,7 +110,7 @@ m_PatReset(false)
 	
 	m_AudioCH->Register("NoteCut",&m_NoteCut,ChannelHandler::INPUT);
 	m_AudioCH->Register("Volume",&m_GUIArgs.Volume,ChannelHandler::INPUT);
-	m_AudioCH->Register("Current",&m_Current,ChannelHandler::INPUT);
+	m_AudioCH->Register("Current",&m_GUICurrent,ChannelHandler::INPUT);
 	m_AudioCH->Register("StepTime",&m_StepTime,ChannelHandler::INPUT);
 	m_AudioCH->Register("Num",&m_GUIArgs.Num,ChannelHandler::INPUT);
 	m_AudioCH->Register("Length",&m_GUIArgs.Length,ChannelHandler::INPUT);
@@ -153,6 +154,9 @@ void MatrixPlugin::Execute()
                 
 		// clear the pattern sync
         SetOutput(18, n, 0);
+		
+		bool ExternalClock = InputExists(4);
+		bool ExternalClockTriggered=false;
 		 
 		if (GetInputPitch(0,n)>0) 
 		{
@@ -174,7 +178,7 @@ void MatrixPlugin::Execute()
 				// will be the first one								
 				m_Time=m_StepTime*(1/m_Matrix[m_Current].Speed);
 				m_Step=-1;
-
+				ExternalClockTriggered=true;
 				m_Triggered=true;
 			}
 		}
@@ -186,10 +190,6 @@ void MatrixPlugin::Execute()
 
 		// set the individual triggers
 		for (int t=0; t<NUM_PATTERNS; t++) SetOutput(t+2,n,m_TriggerLevel[t]);
-
-
-		bool ExternalClock = InputExists(4);
-		bool ExternalClockTriggered=false;
 		
 		if (ExternalClock)
 		{
@@ -258,6 +258,7 @@ void MatrixPlugin::Execute()
 			m_Time=0;
 			m_Step++;
 			
+			
 			if (m_Step >= m_Matrix[m_Current].Length) 
 			{
 				SetOutput(18, n, 1);
@@ -300,22 +301,22 @@ void MatrixPlugin::ExecuteCommands()
 		switch (m_AudioCH->GetCommand())
 		{
 			case MAT_LENGTH   :
-				m_Matrix[m_Current].Length=m_GUIArgs.Length; 
+				m_Matrix[m_GUICurrent].Length=m_GUIArgs.Length; 
 			break;
 			
 			case MAT_SPEED    : 
-				m_Matrix[m_Current].Speed=m_GUIArgs.Speed/8.0f; 
+				m_Matrix[m_GUICurrent].Speed=m_GUIArgs.Speed; 
 			break;		
 			
 			case MAT_ACTIVATE : 
-				m_Matrix[m_Current].Matrix[m_GUIArgs.X][m_GUIArgs.Y]=true; 
+				m_Matrix[m_GUICurrent].Matrix[m_GUIArgs.X][m_GUIArgs.Y]=true; 
 			break;		
 			
 			case MAT_DEACTIVATE : 
-				m_Matrix[m_Current].Matrix[m_GUIArgs.X][m_GUIArgs.Y]=false; 
+				m_Matrix[m_GUICurrent].Matrix[m_GUIArgs.X][m_GUIArgs.Y]=false; 
 			break;
 			case MAT_OCTAVE : 
-				m_Matrix[m_Current].Octave=m_GUIArgs.Octave; 
+				m_Matrix[m_GUICurrent].Octave=m_GUIArgs.Octave; 
 			break;
 			case COPY : 
 				CopyPattern(); 
@@ -333,16 +334,19 @@ void MatrixPlugin::ExecuteCommands()
 				if (CanTransposeDown()) TransposeDown(); 
 			break;
 			case MAT_VOLUME : 
-				m_Matrix[m_Current].Volume[m_GUIArgs.X][m_GUIArgs.Y]=m_GUIArgs.Volume; 
+				m_Matrix[m_GUICurrent].Volume[m_GUIArgs.X][m_GUIArgs.Y]=m_GUIArgs.Volume; 
+			break;
+			case SET_CURRENT : 
+				m_Current=m_GUIArgs.Num; 
 			break;
 		}
 	}
 }
 
 void MatrixPlugin::PastePattern() {
-     m_Matrix[m_Current].Length = m_Matrix[m_CopyPattern].Length;
-     m_Matrix[m_Current].Speed = m_Matrix[m_CopyPattern].Speed;
-     m_Matrix[m_Current].Octave = m_Matrix[m_CopyPattern].Octave;
+     m_Matrix[m_GUICurrent].Length = m_Matrix[m_CopyPattern].Length;
+     m_Matrix[m_GUICurrent].Speed = m_Matrix[m_CopyPattern].Speed;
+     m_Matrix[m_GUICurrent].Octave = m_Matrix[m_CopyPattern].Octave;
      for (int y=0; y<MATY; y++) {
          for (int x=0; x<MATX; x++) {
              m_Matrix[m_Current].Matrix[x][y] = m_Matrix[m_CopyPattern].Matrix[x][y];
@@ -353,7 +357,7 @@ void MatrixPlugin::PastePattern() {
 void MatrixPlugin::ClearPattern() {
      for (int y=0; y<MATY; y++) {
          for (int x=0; x<MATX; x++) {
-             m_Matrix[m_Current].Matrix[x][y] = 0;
+             m_Matrix[m_GUICurrent].Matrix[x][y] = 0;
          }
      }
 }
@@ -362,11 +366,11 @@ void MatrixPlugin::TransposeUp() {
      int x, y;
      for (y=MATY-1; y>=0; y--) {
          for (x=0; x<MATX; x++) {
-             m_Matrix[m_Current].Matrix[x][y] = m_Matrix[m_Current].Matrix[x][y-1];
+             m_Matrix[m_GUICurrent].Matrix[x][y] = m_Matrix[m_GUICurrent].Matrix[x][y-1];
          }
      }
      for (x=0; x<MATX; x++) {
-         m_Matrix[m_Current].Matrix[x][0] = 0;
+         m_Matrix[m_GUICurrent].Matrix[x][0] = 0;
      }
 }
 
@@ -377,18 +381,18 @@ void MatrixPlugin::TransposeDown()
 	{
         for (x=0; x<MATX; x++) 
 		{
-            m_Matrix[m_Current].Matrix[x][y] = m_Matrix[m_Current].Matrix[x][y+1];
+            m_Matrix[m_GUICurrent].Matrix[x][y] = m_Matrix[m_GUICurrent].Matrix[x][y+1];
         }
     }
     for (x=0; x<MATX; x++) 
 	{
-    	m_Matrix[m_Current].Matrix[x][MATY-1] = 0;
+    	m_Matrix[m_GUICurrent].Matrix[x][MATY-1] = 0;
     }
 }
 
 bool MatrixPlugin::CanTransposeDown() 
 {
-    for (int x=0; x<MATX; x++) if (m_Matrix[m_Current].Matrix[x][0]) return False;
+    for (int x=0; x<MATX; x++) if (m_Matrix[m_GUICurrent].Matrix[x][0]) return False;
     return True;
 }
 

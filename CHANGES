@@ -1,10 +1,10 @@
 Release 0.2.0
 
 App now multithreaded, and plugins use a new api to support this
-Jack support fully functional
+Jack support fully functional and stable
 -Realtime commandline option (as root) runs ssm audio in SCHED_FIFO
 LADSPA plugin much improved with built in GUI generator
-App help added with Helptext for most of the plugins
+App help added with Helptext for all of the plugins
 Numerous fixes, additions and GUI improvements
 
 Release 0.1.1

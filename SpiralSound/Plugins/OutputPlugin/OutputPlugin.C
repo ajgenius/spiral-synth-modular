@@ -54,6 +54,7 @@ static const HostInfo* host;
 OSSOutput* OSSOutput::m_Singleton = NULL;
 int OutputPlugin::m_RefCount=0;
 int OutputPlugin::m_NoExecuted=0;
+OutputPlugin::Mode OutputPlugin::m_Mode=NO_MODE;
 
 
 #define CHECK_AND_REPORT_ERROR	if (result<0)         \
@@ -103,8 +104,6 @@ m_Volume(1.0f)
 	m_PluginInfo.PortTips.push_back("Right In");
 	
 	m_AudioCH->Register("Volume",&m_Volume);
-	
-	m_Mode=NO_MODE;
 }
 
 OutputPlugin::~OutputPlugin()
@@ -137,7 +136,7 @@ SpiralGUIType *OutputPlugin::CreateGUI()
 
 void OutputPlugin::Execute()
 {
-	if (m_Mode==NO_MODE)
+	if (m_Mode==NO_MODE && m_RefCount==1)
 	{
 		if (OSSOutput::Get()->OpenWrite())
 		{
@@ -192,12 +191,15 @@ void OutputPlugin::Execute()
 void OutputPlugin::ExecuteCommands()
 {
 	// Only Play() once per set of plugins
-	m_NoExecuted++;
-	if (m_NoExecuted==m_RefCount)
+	
+	cerr<<m_RefCount<<" "<<m_NoExecuted<<endl;
+	
+	m_NoExecuted--;
+	if (m_NoExecuted<=0)
 	{	
 		if (m_Mode==INPUT || m_Mode==DUPLEX) OSSOutput::Get()->Read();		
 		if (m_Mode==OUTPUT || m_Mode==DUPLEX) OSSOutput::Get()->Play();		
-		m_NoExecuted=0;
+		m_NoExecuted=m_RefCount;
 	}
 
 

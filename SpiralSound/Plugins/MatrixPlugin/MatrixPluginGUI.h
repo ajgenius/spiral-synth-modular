@@ -84,6 +84,7 @@ private:
 	
 	Fl_Button*  m_NoteCut;
 	Fl_Counter* m_Pattern;
+	Fl_Counter* m_PlayPattern;
 	Fl_Counter* m_Length;
 	Fl_Knob*    m_Speed;
 	Fl_MatrixButton*  m_Matrix[MATX][MATY];
@@ -104,6 +105,8 @@ private:
 	static void cb_MatVol(Fl_Button* o, void* v); 
 	inline void cb_Pattern_i(Fl_Counter* o, void* v);
 	static void cb_Pattern(Fl_Counter* o, void* v); 
+	inline void cb_PlayPattern_i(Fl_Counter* o, void* v);
+	static void cb_PlayPattern(Fl_Counter* o, void* v); 
 	inline void cb_Length_i(Fl_Counter* o, void* v);
 	static void cb_Length(Fl_Counter* o, void* v); 
 	inline void cb_Speed_i(Fl_Knob* o, void* v);

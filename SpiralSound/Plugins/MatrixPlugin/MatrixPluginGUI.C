@@ -111,13 +111,21 @@ m_LastLight(0)
 	m_NoteCut->callback((Fl_Callback*)cb_NoteCut);
 	add(m_NoteCut);
 	
-	m_Pattern = new Fl_Counter(5, 20, 40, 20, "Pattern");
+	m_Pattern = new Fl_Counter(5, 20, 40, 20, "View");
     m_Pattern->labelsize(10);
 	m_Pattern->type(FL_SIMPLE_COUNTER);
 	m_Pattern->step(1);
 	m_Pattern->value(0);
 	m_Pattern->callback((Fl_Callback*)cb_Pattern);
 	add(m_Pattern);
+	
+	m_PlayPattern = new Fl_Counter(50, 20, 40, 20, "Play");
+    m_PlayPattern->labelsize(10);
+	m_PlayPattern->type(FL_SIMPLE_COUNTER);
+	m_PlayPattern->step(1);
+	m_PlayPattern->value(0);
+	m_PlayPattern->callback((Fl_Callback*)cb_PlayPattern);
+	add(m_PlayPattern);
 	
 	m_Length = new Fl_Counter(5, 55, 40, 20, "Length");
     m_Length->labelsize(10);
@@ -248,7 +256,7 @@ void MatrixPluginGUI::UpdateValues(SpiralPlugin *o)
 	
 	m_Pattern->value(Plugin->GetCurrent());
 	m_Length->value(Plugin->GetPattern()->Length);
-	m_Speed->value(Plugin->GetPattern()->Speed);
+	m_Speed->value(Plugin->GetPattern()->Speed*8);
 	m_SpeedVal->value((int)m_Speed->value());
 	m_Octave->value(Plugin->GetPattern()->Octave);
 	
@@ -266,11 +274,18 @@ void MatrixPluginGUI::UpdateMatrix()
 	m_GUICH->RequestChannelAndWait("Matrix");
 	m_GUICH->GetData("Matrix",(void*)m_GUIMatrix);
 	
+	Pattern *p=&m_GUIMatrix[(int)m_Pattern->value()];
+	
+	m_Length->value(p->Length);
+	m_Speed->value(p->Speed*8);
+	m_SpeedVal->value((int)m_Speed->value());
+	m_Octave->value(p->Octave);
+
 	for(int x=0; x<MATX; x++)
 	for(int y=0; y<MATY; y++)
 	{
-		m_Matrix[x][y]->value(m_GUIMatrix[(int)m_Pattern->value()].Matrix[x][y]);
-		m_Matrix[x][y]->SetVolume(m_GUIMatrix[(int)m_Pattern->value()].Volume[x][y]);
+		m_Matrix[x][y]->value(p->Matrix[x][y]);
+		m_Matrix[x][y]->SetVolume(p->Volume[x][y]);
 	}        
 
 }
@@ -315,6 +330,16 @@ inline void MatrixPluginGUI::cb_Pattern_i(Fl_Counter* o, void* v)
 void MatrixPluginGUI::cb_Pattern(Fl_Counter* o, void* v)
 { ((MatrixPluginGUI*)(o->parent()))->cb_Pattern_i(o,v);}
 
+inline void MatrixPluginGUI::cb_PlayPattern_i(Fl_Counter* o, void* v)
+{ 	
+	if (o->value()<0) o->value(0);
+	if (o->value()>NUM_PATTERNS-1) o->value(NUM_PATTERNS-1);
+	m_GUICH->Set("Num",(int)o->value());
+	m_GUICH->SetCommand(MatrixPlugin::SET_CURRENT);
+}
+void MatrixPluginGUI::cb_PlayPattern(Fl_Counter* o, void* v)
+{ ((MatrixPluginGUI*)(o->parent()))->cb_PlayPattern_i(o,v);}
+
 inline void MatrixPluginGUI::cb_Length_i(Fl_Counter* o, void* v)
 {
 	if (o->value()<1) o->value(1);
@@ -333,7 +358,7 @@ inline void MatrixPluginGUI::cb_Speed_i(Fl_Knob* o, void* v)
 	float value=o->value()+((int)o->value()-o->value());
 	m_SpeedVal->value(value);
 		
-	m_GUICH->Set("Speed",(float)value);
+	m_GUICH->Set("Speed",(float)value/8.0f);
 	m_GUICH->SetCommand(MatrixPlugin::MAT_SPEED);
 }
 void MatrixPluginGUI::cb_Speed(Fl_Knob* o, void* v)
