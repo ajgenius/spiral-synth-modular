@@ -32,12 +32,12 @@ public:
 	string Label;
 	string Name;
 	string Maker;
-	unsigned long InputPorts;
+	unsigned long InputPortCount;
 
 	struct LPortDetails
 	{
 		string Name;
-		float Min,Max;
+		float Min, Max;
 		bool Clamped;
 	};
 
@@ -76,17 +76,29 @@ public:
 	virtual void StreamOut(ostream &s);
 	virtual void StreamIn(istream &s);
 
-	float GetGain() { return m_Gain; }
-	bool GetAmped() { return m_Amped; }
+	float          GetGain() { return m_Gain; }
+	bool           GetAmped() { return m_Amped; }
+	const char    *GetName() { return (const char *)m_Name; }
+	const char    *GetMaker() { return (const char *)m_Maker; }
+	unsigned long  GetInputPortCount() { return m_InputPortCount; }
+	const char    *GetPortName(unsigned long p) { return (const char *)(m_OutData.InputPortNames + p * 256); }
+	PortRange      GetPortRange(unsigned long p)
+	{
+	    PortRange range;
+	    range.Min = m_PortMin[p];
+	    range.Max = m_PortMax[p];
+	    range.Clamp = m_PortClamp[p];
+	    return range;
+	}
 
-	enum GUICommands{NONE,UPDATERANGES,UPDATEPLUGIN};
+	enum GUICommands{NONE,SETRANGES,SELECTPLUGIN};
 
 private:
 
 	void UpdatePortRange(void);
 	bool UpdatePlugin(int n);
 	bool UpdatePlugin(const char * filename, const char * label, bool PortClampReset=true);
-	void UpdatePortRanges(void);
+	void SetPortInfo(void);
 
 	friend void describePluginLibrary(const char * pcFullFilename, void * pvPluginHandle, LADSPA_Descriptor_Function pfDescriptorFunction);
 	void LoadPluginList(void);
@@ -108,20 +120,30 @@ private:
 
 	float         m_Gain;
 	bool          m_Amped;
+	unsigned long m_MaxInputPortCount;
+	unsigned long m_InputPortCount;
+	char          m_Name[256];
+	char          m_Maker[256];
 
-	struct ChannelData
+
+	// Data sent to GUI
+	struct OutputChannelData
 	{
-		unsigned long PluginIndex;
-		char          Name[256];
-		char          Maker[256];
-		unsigned long MaxInputPorts;
-		unsigned long InputPorts;
 		char         *InputPortNames;
-		PortRange    *SetInputPortRanges;
-		PortRange    *GetInputPortRanges;
+		PortRange    *InputPortRanges;
 	};
 
-	ChannelData     m_ChannelData;
+	// Data received from GUI
+	struct InputChannelData
+	{
+		unsigned long PluginIndex;
+		float         Gain;
+		bool          Amped;
+		PortRange    *InputPortRanges;
+	};
+
+	OutputChannelData     m_OutData;
+	InputChannelData      m_InData;
 };
 
 #endif

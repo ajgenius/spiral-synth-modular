@@ -103,8 +103,9 @@ private:
 	inline void cb_PowerAmp_i(Fl_Button* o, void* v);
 	static void cb_PowerAmp(Fl_Button* o, void* v);
 
-	struct ChannelData
+	struct InChannelData
 	{
+		float           Gain;
 		char            Name[256];
 		char            Maker[256];
 		unsigned long   MaxInputPorts;
@@ -112,8 +113,8 @@ private:
 		char           *InputPortNames;
 		PortRange      *InputPortRanges;
 	};
-	
-	ChannelData     m_ChannelData;
+
+	InChannelData  m_InData;
 };
 
 
