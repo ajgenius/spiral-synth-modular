@@ -113,6 +113,7 @@ OutputPlugin::~OutputPlugin()
 	{	
 		cb_Blocking(m_Parent,false);
 		OSSOutput::PackUpAndGoHome();
+		m_Mode=NO_MODE;
 	}
 }
 
@@ -191,9 +192,7 @@ void OutputPlugin::Execute()
 void OutputPlugin::ExecuteCommands()
 {
 	// Only Play() once per set of plugins
-	
-	cerr<<m_RefCount<<" "<<m_NoExecuted<<endl;
-	
+		
 	m_NoExecuted--;
 	if (m_NoExecuted<=0)
 	{	
