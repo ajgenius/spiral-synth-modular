@@ -20,8 +20,8 @@
 #include <config.h>
 #endif
 
-#include <iostream.h>
-#include <stdlib.h>
+#include <iostream>
+#include <cstdlib>
 #include <FL/Fl.H>
 #include <FL/Fl_Tooltip.h>
 #include <unistd.h>

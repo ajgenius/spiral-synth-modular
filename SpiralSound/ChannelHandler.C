@@ -19,6 +19,8 @@
 #include "ChannelHandler.h"
 #include <unistd.h>
 
+using namespace std;
+
 //#define CHANNEL_DEBUG
 
 ChannelHandler::ChannelHandler() :

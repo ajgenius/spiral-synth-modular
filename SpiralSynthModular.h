@@ -28,7 +28,7 @@
 #include <FL/Fl_Scroll.H>
 #include <FL/Fl_Pack.H>
 #include <FL/Fl_Tile.H>
-#include <strstream>
+#include <sstream>
 #include <iostream>
 #include <map>
 #include "SpiralSynthModularInfo.h"
