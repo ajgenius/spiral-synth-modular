@@ -68,7 +68,7 @@ void StereoMixerPluginGUI::UpdateValues (SpiralPlugin *o) {
 
   for (int n=0; n<NUM_CHANNELS; n++) {
     m_Chan[n]->value (2.0f - Plugin->GetChannel (n));
-    m_Pan[n]->value (Plugin->GetPan (n));
+    m_Pan[n]->value (1.0f - Plugin->GetPan (n));
   }
 }
 
