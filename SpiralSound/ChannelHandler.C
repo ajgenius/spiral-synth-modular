@@ -19,6 +19,8 @@
 #include "ChannelHandler.h"
 #include <unistd.h>
 
+//#define CHANNEL_DEBUG
+
 ChannelHandler::ChannelHandler() :
 m_UpdateIndicator(false)
 {
@@ -48,28 +50,41 @@ ChannelHandler::~ChannelHandler()
 
 void ChannelHandler::UpdateDataNow()
 {
+	#ifdef CHANNEL_DEBUG
+	cerr<<"Started update"<<endl;
+	#endif
 	// make sure the command is cleared even if 
 	// we can't get a lock on the data
 	m_Command[0]=0;
 
     if (pthread_mutex_trylock(m_Mutex))
     {
-		m_UpdateIndicator=!m_UpdateIndicator;
+		#ifdef CHANNEL_DEBUG
+		cerr<<"Got lock"<<endl;
+		#endif
 		
+		m_UpdateIndicator=!m_UpdateIndicator;
+
         for(map<string, Channel*>::iterator i=m_ChannelMap.begin();
             i!=m_ChannelMap.end(); i++)
         {
 			Channel *ch = i->second;
-			
+
             switch (ch->type)
 			{
 				case INPUT :
             	{
+					#ifdef CHANNEL_DEBUG
+					cerr<<"memcpy input channel: ["<<i->first<<"]"<<endl;
+					#endif
 	               	memcpy(ch->data,ch->data_buf,ch->size);
             	} break;
 				
 				case OUTPUT :
 			    {
+					#ifdef CHANNEL_DEBUG
+					cerr<<"memcpy output channel: ["<<i->first<<"]"<<endl;
+					#endif
             	    memcpy(ch->data_buf,ch->data,ch->size);
             	} break;
 				
@@ -82,11 +97,17 @@ void ChannelHandler::UpdateDataNow()
 						if (m_BulkPos+ch->size>m_BulkSize)
 						{
 							// last transfer
+							#ifdef CHANNEL_DEBUG
+							cerr<<"memcpy (last) bulk output channel: ["<<i->first<<"]"<<endl;
+							#endif
 							memcpy(ch->data_buf,((char*)m_BulkSrc)+m_BulkPos,m_BulkSize-m_BulkPos);
 							m_BulkPos=-1;
 						}
 						else
 						{
+							#ifdef CHANNEL_DEBUG
+							cerr<<"memcpy bulk output channel: ["<<i->first<<"]"<<endl;
+							#endif
 							memcpy(ch->data_buf,((char*)m_BulkSrc)+m_BulkPos,ch->size);
 							m_BulkPos+=ch->size;
 						}	
@@ -97,6 +118,9 @@ void ChannelHandler::UpdateDataNow()
 						// normal request transfer
 		           	    if (ch->requested)
 						{					
+							#ifdef CHANNEL_DEBUG
+							cerr<<"memcpy output channel: ["<<i->first<<"]"<<endl;
+							#endif
 							memcpy(ch->data_buf,ch->data,ch->size);
 							ch->updated=true;
 						}
@@ -117,7 +141,11 @@ void ChannelHandler::UpdateDataNow()
     else
     {
         //cerr<<"Couldn't get lock"<<endl;
-    }
+    }	
+	
+	#ifdef CHANNEL_DEBUG
+	cerr<<"Ended update"<<endl;
+	#endif
 }
 
 void ChannelHandler::RegisterData(const string &ID, Type t,void* pData, int size)
@@ -126,7 +154,9 @@ void ChannelHandler::RegisterData(const string &ID, Type t,void* pData, int size
     // the channels have been set up they won't work anyway, but...
     //pthread_mutex_lock(m_Mutex);
 
-cerr<<"Registering ["<<ID<<"] "<<hex<<pData<<dec<<" as "<<size<<" bytes big"<<endl;
+	#ifdef CHANNEL_DEBUG
+	cerr<<"Registering ["<<ID<<"] "<<hex<<pData<<dec<<" as "<<size<<" bytes big"<<endl;
+	#endif
 
     map<string,Channel*>::iterator i=m_ChannelMap.find(ID);
     if (i!=m_ChannelMap.end())
