@@ -21,6 +21,35 @@
 #include "../../SpiralSynthModularInfo.h"
 
 int Fl_DeviceGUI::Numbers[512];
+		
+Fl_PortButton::Fl_PortButton(int x, int y, int w, int h, char *n) : 
+Fl_Button(x,y,w,h,n) 
+{
+	m_ConnectionCount=0;
+}
+
+int Fl_PortButton::handle(int event)
+{
+	if (event==FL_PUSH)
+	{
+		m_LastButton=Fl::event_button();
+	
+		if (m_LastButton == 1) 
+		{
+			if (m_Type==INPUT && value()) return 1;
+			do_callback();
+			return 1;
+		}
+
+		if (m_LastButton == 3) 
+		{
+			do_callback();
+			return 1;
+		}
+	}
+		
+	return 1;
+}
 
 Fl_DeviceGUI::Fl_DeviceGUI(const DeviceGUIInfo& Info, Fl_Group *PW, Fl_Pixmap *Icon) :
 Fl_Group(Info.XPos, Info.YPos, Info.Width+(PortGroupWidth*2), Info.Height+TitleBarHeight, ""),
@@ -107,7 +136,7 @@ void Fl_DeviceGUI::Setup(const DeviceGUIInfo& Info, bool FirstTime)
 	}
 
 	// delete the current ports
-	for(vector<Fl_Button*>::iterator i=m_PortVec.begin();
+	for(vector<Fl_PortButton*>::iterator i=m_PortVec.begin();
 			i!=m_PortVec.end(); i++)
 	{		
 		remove(*i);
@@ -126,8 +155,9 @@ void Fl_DeviceGUI::Setup(const DeviceGUIInfo& Info, bool FirstTime)
 	
 	for (int n=0; n<Info.NumInputs; n++)
 	{
-		Fl_Button* NewInput = new Fl_Button(InputX,StartY+PortDist*n,PortSize,PortSize,"");
+		Fl_PortButton* NewInput = new Fl_PortButton(InputX,StartY+PortDist*n,PortSize,PortSize,"");
 		NewInput->type(1);
+		NewInput->SetType(Fl_PortButton::INPUT);
 		NewInput->value(false);
 		NewInput->box(FL_ROUNDED_BOX);
 		
@@ -157,8 +187,9 @@ void Fl_DeviceGUI::Setup(const DeviceGUIInfo& Info, bool FirstTime)
 	
 	for (int n=0; n<Info.NumOutputs; n++)
 	{
-		Fl_Button* NewOutput = new Fl_Button(OutputX,StartY+PortDist*n,PortSize,PortSize,"");
+		Fl_PortButton* NewOutput = new Fl_PortButton(OutputX,StartY+PortDist*n,PortSize,PortSize,"");
 		NewOutput->type(1);
+		NewOutput->SetType(Fl_PortButton::OUTPUT);
 		NewOutput->value(false);
 		NewOutput->box(FL_ROUNDED_BOX);
 
@@ -188,9 +219,27 @@ void Fl_DeviceGUI::Setup(const DeviceGUIInfo& Info, bool FirstTime)
 	}
 }
 
+void Fl_DeviceGUI::AddConnection(int n)  		 
+{ 
+	m_PortVec[n]->Add();
+	m_PortVec[n]->value(1);
+	redraw();
+}
+	
+void Fl_DeviceGUI::RemoveConnection(int n)  		 
+{ 
+	m_PortVec[n]->Remove(); 
+	if (!m_PortVec[n]->GetCount()) 
+	{ 
+		m_PortVec[n]->value(0); 
+		redraw();
+	} 
+}
+
 inline void Fl_DeviceGUI::cb_Port_i(Fl_Button* o, void* v)
 {
 	int Port=*(int*)(v);
+	Fl_PortButton *PortButton = (Fl_PortButton *)o;
 	PortType Pt;
 	
 	if (m_DelMe) return;
@@ -205,9 +254,15 @@ inline void Fl_DeviceGUI::cb_Port_i(Fl_Button* o, void* v)
 		Pt=OUTPUT;
 		Port-=m_Info.NumInputs;
 	}
-			
-	((Fl_Canvas*)(parent()))->PortClicked(this,Pt,Port,o->value());
-		
+	
+	if (PortButton->GetLastButton()==1)
+	{
+		((Fl_Canvas*)(parent()))->PortClicked(this,Pt,Port,1);
+	}
+	else
+	{
+		((Fl_Canvas*)(parent()))->PortClicked(this,Pt,Port,0);	
+	}
 		
 }
 void Fl_DeviceGUI::cb_Port(Fl_Button* o, void* v)

@@ -23,7 +23,6 @@
 #include <FL/Fl.H>
 #include <FL/Enumerations.H>
 #include <FL/fl_file_chooser.h>
-#include <FL/fl_ask.h>
 #include <FL/Fl_Box.h>
 #include <FL/Fl_Tooltip.h>
 
@@ -38,10 +37,11 @@
 #include "GUI/options.xpm"
 #include "GUI/edit.xpm"
 #include "GUI/comment.xpm"
+#include "GUI/Widgets/PawfalYesNo.h"
 
 //#define DEBUG_PLUGINS
 
-const static string LABEL = "SpiralSynthModular 0.1.1 MultiThreaded";
+const static string LABEL = "SpiralSynthModular "+VER_STRING;
 static string TITLEBAR;
 
 static const int FILE_VERSION = 3;
@@ -210,6 +210,8 @@ void SynthModular::UpdatePluginGUIs()
 			break;
 		}
 	}
+	
+	m_Canvas->Poll();
 }
 
 //////////////////////////////////////////////////////////
@@ -358,7 +360,7 @@ SpiralWindowType *SynthModular::CreateWindow()
 	m_Canvas->SetAddDeviceCallback((Fl_Callback*)cb_NewDeviceFromMenu);
 	m_CanvasScroll->add(m_Canvas);   
 
-	m_NewComment = new Fl_Button(TOOLBOX_WIDTH/2-16, MAIN_HEIGHT*2-25, 32, 20, "");
+	m_NewComment = new Fl_Button(TOOLBOX_WIDTH/2-16, MAIN_HEIGHT*2-25, 40, 40, "");
 	m_NewComment->box(FL_NO_BOX);
 	m_Canvas->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
 	tPix = new Fl_Pixmap(comment_xpm);
@@ -560,9 +562,16 @@ DeviceWin* SynthModular::NewDeviceWin(int n, int x, int y)
 
 //////////////////////////////////////////////////////////
 
-void SynthModular::AddDevice(int n, int x=TOOLBOX_WIDTH+50, int y=400)
+void SynthModular::AddDevice(int n, int x=-1, int y=-1)
 {
 	//cerr<<"Adding "<<m_NextID<<endl;
+	
+	if (x==-1)
+	{	
+		x = m_CanvasScroll->x()+50; 
+		y = m_CanvasScroll->y()+50; 
+	}
+
 	DeviceWin* temp = NewDeviceWin(n,x,y);
 	if (temp)
 	{
@@ -576,10 +585,16 @@ void SynthModular::AddDevice(int n, int x=TOOLBOX_WIDTH+50, int y=400)
 
 //////////////////////////////////////////////////////////
 
-DeviceWin* SynthModular::NewComment(int n, int x=TOOLBOX_WIDTH+50, int y=400)
+DeviceWin* SynthModular::NewComment(int n, int x=-1, int y=-1)
 {	
 	DeviceWin *nlw = new DeviceWin;
-	
+
+	if (x==-1)
+	{	
+		x = m_CanvasScroll->x()+50; 
+		y = m_CanvasScroll->y()+50; 
+	}
+		
 	nlw->m_Device=NULL;
 	nlw->m_PluginID  = COMMENT_ID;
 	
@@ -858,7 +873,7 @@ void SynthModular::cb_Close(Fl_Window* o, void* v)
 
 inline void SynthModular::cb_Load_i(Fl_Button* o, void* v)
 {
-	if (m_DeviceWinMap.size()>0 && !fl_ask("Load - Loose changes to current design?"))
+	if (m_DeviceWinMap.size()>0 && !Pawfal_YesNo("Load - Loose changes to current design?"))
 	{
 		return;
 	}	
@@ -896,7 +911,7 @@ inline void SynthModular::cb_Save_i(Fl_Button* o, void* v)
 		ifstream ifl(fn);
 		if (ifl)
 		{
-			if (!fl_ask("File [%s] exists, overwrite?",fn))
+			if (!Pawfal_YesNo("File [%s] exists, overwrite?",fn))
 			{
 				return;
 			}			
@@ -922,7 +937,7 @@ void SynthModular::cb_Save(Fl_Button* o, void* v)
 
 inline void SynthModular::cb_New_i(Fl_Button* o, void* v)
 {
-	if (m_DeviceWinMap.size()>0 && !fl_ask("New - Loose changes to current design?"))
+	if (m_DeviceWinMap.size()>0 && !Pawfal_YesNo("New - Loose changes to current design?"))
 	{
 		return;
 	}	

@@ -250,6 +250,7 @@ void MatrixPluginGUI::UpdateValues(SpiralPlugin *o)
 	
 void MatrixPluginGUI::UpdateMatrix()
 {
+	m_GUICH->Wait();
 	m_GUICH->RequestChannelAndWait("Matrix");
 	m_GUICH->GetData("Matrix",(void*)m_GUIMatrix);
 	

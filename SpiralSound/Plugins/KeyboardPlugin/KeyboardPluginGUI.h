@@ -17,47 +17,40 @@
 */ 
 
 #include <FL/Fl.H>
-#include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Window.H>
+#include <FL/Fl_Group.H>
 #include <FL/Fl_Button.H>
-#include <iostream>
-#include <math.h>
+#include <FL/Fl_Pixmap.H>
+#include <FL/Fl_Counter.H>
 
-#include "Widgets/Fl_DragBar.H"
-#include "SpiralPlugin.h" // for the channel handler
+#include "../Widgets/Fl_Knob.H"
+#include "../Widgets/Fl_DragBar.H"
+#include "KeyboardPlugin.h"
+#include "../SpiralPluginGUI.h"
 
-#ifndef SPIRALPLUGINGUI
-#define SPIRALPLUGINGUI
+#ifndef MIDIGUI
+#define MIDIGUI
 
-#define SpiralGUIType Fl_Group
- 
-class SpiralPluginGUI : public SpiralGUIType
+const int NUM_KEYS = 132;
+
+class KeyboardPluginGUI : public SpiralPluginGUI
 {
 public:
-	SpiralPluginGUI(int w, int h, SpiralPlugin* o, ChannelHandler *ch);
-	~SpiralPluginGUI();
+	KeyboardPluginGUI(int w, int h, KeyboardPlugin *o,ChannelHandler *ch,const HostInfo *Info);
 	
+	virtual void UpdateValues(SpiralPlugin *o);
 	virtual void Update();
-	
-	// called while audio thread is suspended, so direct access to the
-	// spiralplugin is acceptable
-	virtual void UpdateValues(SpiralPlugin *o)=0;
-
-protected:
-
-	ChannelHandler *m_GUICH;
-	virtual const string GetHelpText();
-	
+		
 private:
-	Fl_DragBar*      m_DragBar;
-	Fl_Button*		 m_Hide;
-	Fl_Button*		 m_Help;
-	Fl_Double_Window *m_HelpWin;
-	
+	int         m_Num[NUM_KEYS];
+	Fl_Button*  m_Key[NUM_KEYS];
+	char        m_Label[NUM_KEYS][2];
+	int         m_Last;
+	int         m_Oct;
+
 	//// Callbacks ////
-	inline void cb_Hide_i(Fl_Button* o, void* v);
-    static void cb_Hide(Fl_Button*, void*);
-	inline void cb_Help_i(Fl_Button* o, void* v);
-    static void cb_Help(Fl_Button*, void*);
+	inline void cb_Key_i(Fl_Button* o, void* v);
+	static void cb_Key(Fl_Button* o, void* v); 
 };
 
 #endif

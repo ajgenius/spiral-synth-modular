@@ -43,6 +43,7 @@ public:
 		InputChild=-1;
 		InputPort=-1;
 		InputID=-1;
+		DelMe=false;
 	}
 
 	int OutputID;
@@ -51,6 +52,7 @@ public:
 	int InputID;
 	int InputChild;
 	int InputPort;
+	bool DelMe;
 };
 
 class Fl_Canvas : public Fl_Group
@@ -73,10 +75,13 @@ public:
 	void AddPluginName(const string &s, int ID) 
 		{ m_PluginNameList.push_back(pair<string,int>(s,ID)); }
 	GraphSort* GetGraph() { return &m_Graph; }
+	
+	void Poll();
 
 private:
 
 	void DrawWires();
+	void ClearIncompleteWire();
 
 	Fl_Image  *m_BG;
 	char      *m_BGData;

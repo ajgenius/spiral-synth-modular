@@ -52,6 +52,8 @@ HEADERS =	SpiralSynthModular.h \
 		GUI/Widgets/Fl_CommentGUI.h \
 		GUI/Widgets/Fl_DragBar.H \
 		GUI/Widgets/Fl_Canvas.h \
+		GUI/Widgets/PawfalYesNo.h \
+		GUI/Widgets/PawfalInput.h \
 		SpiralSound/SpiralInfo.h \
 		SpiralSound/Sample.h \
 		SpiralSound/Plugins/SpiralPlugin.h \
@@ -68,6 +70,8 @@ SOURCES =	main.cpp \
 		GUI/Widgets/Fl_CommentGUI.C \
 		GUI/Widgets/Fl_DragBar.cxx \
 		GUI/Widgets/Fl_Canvas.C \
+		GUI/Widgets/PawfalYesNo.C \
+		GUI/Widgets/PawfalInput.C \
 		SpiralSound/SpiralInfo.C \
 		SpiralSound/Sample.C \
 		SpiralSound/Plugins/SpiralPlugin.C \
@@ -83,6 +87,8 @@ OBJECTS =	main.o \
 		GUI/Widgets/Fl_CommentGUI.o \
 		GUI/Widgets/Fl_DragBar.o \
 		GUI/Widgets/Fl_Canvas.o \
+		GUI/Widgets/PawfalYesNo.o \
+		GUI/Widgets/PawfalInput.o \
 		SpiralSound/SpiralInfo.o \
 		SpiralSound/Sample.o \
 		SpiralSound/Plugins/SpiralPlugin.o \
@@ -180,6 +186,8 @@ SpiralSynthModular.o: SpiralSynthModular.C \
 		GUI/Widgets/Fl_DeviceGUI.h \
 		GUI/Widgets/Fl_CommentGUI.h \
 		GUI/Widgets/Fl_Canvas.h \
+		GUI/Widgets/PawfalYesNo.h \
+		GUI/Widgets/PawfalInput.h \
 		SpiralSound/Plugins/SpiralPlugin.h \
 		SettingsWindow.h \
 		SpiralSound/PluginManager.h \
@@ -227,6 +235,12 @@ GUI/Widgets/Fl_Canvas.o: GUI/Widgets/Fl_Canvas.C \
 		GUI/Widgets/Fl_DragBar.H \
 		GUI/Widgets/../../SpiralSynthModularInfo.h \
 		SpiralSound/SpiralInfo.h
+
+GUI/Widgets/PawfalInput.o: GUI/Widgets/PawfalInput.C \
+		GUI/Widgets/PawfalInput.h
+
+GUI/Widgets/PawfalYesNo.o: GUI/Widgets/PawfalYesNo.C \
+		GUI/Widgets/PawfalYesNo.h
 
 SpiralSound/SpiralInfo.o: SpiralSound/SpiralInfo.C \
 		SpiralSound/SpiralInfo.h \

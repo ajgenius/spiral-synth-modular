@@ -79,6 +79,21 @@ int main(int argc, char **argv)
 			if (!strcmp(argv[a],"--NoGUI")) GUI = false;
 			else if (!strcmp(argv[a],"--SHED_FIFO")) FIFO = true;
 			else if (!strcmp(argv[a],"--CallbackOnly")) CallbackOnly = true;			
+			else if (!strcmp(argv[a],"-h")) 
+			{	
+				cout<<"usage: spiralsynthmodular [options] [patch.ssm]"<<endl<<endl
+				<<"options list"<<endl
+				<<"-h : help"<<endl
+				<<"-v : print version"<<endl
+				<<"--NoGUI : run without GUI (only useful when loading patch from command line"<<endl
+				<<"--SHED_FIFO : spawn audio thread with FIFO sheduling (run as root)"<<endl
+				<<"--CallbackOnly : prevents 100% cpu usage when idle, but makes OSS output unsable"<<endl;
+				exit(0);
+			}
+			else if (!strcmp(argv[a],"-v")) 
+			{
+				cout<<VER_STRING<<endl; exit(0);
+			} 			
 			else 
 			{
 				cmd_filename = argv[1];
@@ -86,6 +101,11 @@ int main(int argc, char **argv)
 			}
 		}
     }	
+	// set some fltk defaults
+	Fl_Tooltip::size(10);	
+	Fl::visible_focus(false);
+	
+	//Fl::set_font(FL_HELVETICA,FL_SCREEN);
 	
 	Fl::visual(FL_DOUBLE|FL_RGB);
 	
@@ -96,10 +116,6 @@ int main(int argc, char **argv)
 	synth->LoadPlugins();
 	win->xclass("");
 	if (GUI) win->show(1, argv); // prevents stuff happening before the plugins have loaded
-	
-	// set some fltk defaults
-	Fl_Tooltip::size(10);	
-	Fl::visible_focus(false);
 	
 	// spawn the audio thread
 	int ret;

@@ -164,8 +164,6 @@ inline void ControllerPluginGUI::cb_Chan_i(Fl_Slider* o, void* v)
 	char temp[256];
 	sprintf(temp,"%s",m_GuiVec[num]->m_Title->value());
 	
-	cerr<<"sending "<<temp<<endl;
-	
 	m_GUICH->SetData("Name",(void*)temp);	
 	m_GUICH->SetCommand(ControllerPlugin::SETCHANNEL);
 }

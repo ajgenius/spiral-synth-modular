@@ -72,6 +72,7 @@ SpiralSynthModularInfo::SpiralSynthModularInfo()
 	PLUGINVEC.push_back("OutputPlugin.so");	
 	PLUGINVEC.push_back("ScopePlugin.so");	
 	PLUGINVEC.push_back("MidiPlugin.so");	
+	PLUGINVEC.push_back("KeyboardPlugin.so");	
 	PLUGINVEC.push_back("ControllerPlugin.so");	
 	PLUGINVEC.push_back("WaveTablePlugin.so");	
 	PLUGINVEC.push_back("OscillatorPlugin.so");	

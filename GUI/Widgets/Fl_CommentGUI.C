@@ -17,9 +17,9 @@
 */ 
 
 #include "Fl_CommentGUI.h"
-#include <FL/fl_ask.H>
 #include <FL/fl_draw.H>
 #include "../../SpiralSynthModularInfo.h"
+#include "../../GUI/Widgets/PawfalInput.h"
 
 Fl_CommentGUI::Fl_CommentGUI(const DeviceGUIInfo& Info, Fl_Window *PW, Fl_Pixmap *Icon) :
 Fl_DeviceGUI(Info,PW,Icon),
@@ -36,8 +36,8 @@ int Fl_CommentGUI::handle(int event)
 {
 	if (Fl::event_button()==1 && event==FL_PUSH && Fl::event_clicks()==1) 
 	{		
-		const char *t=fl_input("and your comment is:", m_Comment.c_str());
-		if (t)
+		char t[1024];
+		if (Pawfal_Input("and your comment is:", m_Comment.c_str(), t))
 		{
 			string temp(t);
 			if (temp!="")
@@ -45,6 +45,7 @@ int Fl_CommentGUI::handle(int event)
 				m_Comment=temp;	
 				m_DragBar->label(m_Comment.c_str());
 				redraw();
+				parent()->redraw();
 				//int x,y;
 				//fl_measure(m_Comment.c_str(),x,y);
 				//m_DragBar->size(x,y);

@@ -41,6 +41,28 @@ static const int TitleBarHeight = 12;
 static const int PortGroupWidth = 12;
 static const int PortSize=6;
 
+class Fl_PortButton : public Fl_Button
+{
+public:
+	enum Type {INPUT,OUTPUT};
+
+	Fl_PortButton(int x, int y, int w, int h, char *n);
+	virtual ~Fl_PortButton() {};
+	void SetType(Type s) { m_Type=s; }
+	virtual int handle(int event);	
+	
+	void Add()      { m_ConnectionCount++; }
+	void Remove()   { m_ConnectionCount--; }
+	int  GetCount() { return m_ConnectionCount; }
+	int  GetLastButton() { return m_LastButton; }
+	
+private:
+
+	Type m_Type;
+	int  m_ConnectionCount;
+	int  m_LastButton;
+};
+
 struct DeviceGUIInfo
 {
 	int XPos;
@@ -67,13 +89,16 @@ public:
 	int           GetID()           			 { return m_ID; }	
 	void          SetID(int s)      			 { m_ID=s; /*DisplayID(s);*/ } 		
 	
-	/*char did[8];
-	void DisplayID(int s) { sprintf(did,"%d",s); label(did); }*/
-											
 	bool          Killed()          			 { return m_DelMe; }	
 	int           GetPortX(int n)                { return m_PortVec[n]->x()+PortSize/2; }
 	int           GetPortY(int n)                { return m_PortVec[n]->y()+PortSize/2; }
-	void          ForcePortValue(int n, bool v)  { m_PortVec[n]->value(v); }	
+	
+	// aesthitic, to keep track of number of connections to know whether to 
+	// draw the port as occupied or not.
+	void          AddConnection(int n);
+	void          RemoveConnection(int n);
+	
+	bool          GetPortValue(int n)            { return m_PortVec[n]->value(); }	
 	const         DeviceGUIInfo* GetInfo()       { return &m_Info; }
 	Fl_Group*     GetPluginWindow()              { return m_PluginWindow; }
 	
@@ -95,7 +120,7 @@ private:
 	inline void cb_Port_i(Fl_Button* o, void* v);
 	static void cb_Port(Fl_Button* o, void* v);
 	
-	vector<Fl_Button*> m_PortVec;
+	vector<Fl_PortButton*> m_PortVec;
 	
 	static int Numbers[512];
 

@@ -20,28 +20,39 @@
 #include "SpiralPlugin.h"
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
+#include <FL/Fl_Multiline_Output.h>
 
 static const int GUI_COLOUR = 154;
 static const int GUIBG_COLOUR = 144;
 static const int GUIBG2_COLOUR = 145;
 
 SpiralPluginGUI::SpiralPluginGUI(int w, int h, SpiralPlugin* o, ChannelHandler *ch) :
-SpiralGUIType(0,0,w,h,"")
+SpiralGUIType(0,0,w,h,""),
+m_HelpWin(NULL)
 {	
 	Fl::visible_focus(false);
 	
 	m_GUICH = ch;
 	
 	box(FL_THIN_UP_BOX);
-	m_DragBar = new Fl_DragBar(0,0,w,20,o->GetName().c_str());
+	m_DragBar = new Fl_DragBar(0,0,w,15,o->GetName().c_str());
+	m_DragBar->labelsize(10);
 	m_DragBar->type(Fl_DragBar::FLDRAG);
 	add(m_DragBar);
   	
-  	m_Hide = new Fl_Button(2,2,18,16,"X");
+  	m_Hide = new Fl_Button(0,0,18,16,"X");
 	m_Hide->labeltype(FL_ENGRAVED_LABEL);
+	m_Hide->labelsize(10);	
 	m_Hide->box(FL_NO_BOX);
 	m_Hide->callback((Fl_Callback*)cb_Hide);
 	add(m_Hide);
+	
+  	m_Help = new Fl_Button(w-15,0,18,16,"?");
+	m_Help->labeltype(FL_ENGRAVED_LABEL);
+	m_Help->labelsize(10);	
+	m_Help->box(FL_NO_BOX);
+	m_Help->callback((Fl_Callback*)cb_Help);
+	add(m_Help);
 }
 
 SpiralPluginGUI::~SpiralPluginGUI()
@@ -54,6 +65,11 @@ void SpiralPluginGUI::Update()
 {
 }
 
+const string SpiralPluginGUI::GetHelpText()
+{
+	return "Help! I need some helptext!!!";
+}
+
 //// Callbacks ////
 
 inline void SpiralPluginGUI::cb_Hide_i(Fl_Button* o, void* v) 
@@ -61,4 +77,27 @@ inline void SpiralPluginGUI::cb_Hide_i(Fl_Button* o, void* v)
 void SpiralPluginGUI::cb_Hide(Fl_Button* o, void* v) 
 { ((SpiralPluginGUI*)(o->parent()))->cb_Hide_i(o,v); }
 
+inline void SpiralPluginGUI::cb_Help_i(Fl_Button* o, void* v) 
+{ 
+	if (m_HelpWin==NULL)
+	{
+		int w=300,h=200;
+		m_HelpWin = new Fl_Double_Window(w,h,"Help");
+				
+		Fl_Multiline_Output* text= new Fl_Multiline_Output(0,0,w,h);
+		text->value(GetHelpText().c_str());
+		text->textsize(10);
+		text->set_output();
+		m_HelpWin->add(text);
+		
+		m_HelpWin->show();
+	}
+	else
+	{
+		m_HelpWin->hide();
+		delete m_HelpWin;
+	}
+}
+void SpiralPluginGUI::cb_Help(Fl_Button* o, void* v) 
+{ ((SpiralPluginGUI*)(o->parent()))->cb_Help_i(o,v); }
 
