@@ -1137,6 +1137,7 @@ inline void LADSPAPluginGUI::cb_Select_i(Fl_Choice* o)
 		m_GUICH->Wait();
 	}
 	SelectPlugin();
+        needs_resize (true);
 }
 void LADSPAPluginGUI::cb_Select(Fl_Choice* o)
 {   //                     Group     GUI
