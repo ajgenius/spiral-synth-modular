@@ -158,7 +158,7 @@ m_LastPatSeqLight(0)
 	m_Speed->type (Fl_Knob::DOTLIN);
         m_Speed->labelsize (10);
         m_Speed->minimum (0);
-        m_Speed->maximum (200);
+        m_Speed->maximum (400);
         m_Speed->step (0.01);
         m_Speed->value (8);
 	m_Speed->callback ((Fl_Callback*)cb_Speed);
@@ -171,7 +171,7 @@ m_LastPatSeqLight(0)
         m_SpeedVal->box (FL_PLASTIC_UP_BOX);
         m_SpeedVal->color (Info->GUI_COLOUR);
 	m_SpeedVal->step (1);
-	m_SpeedVal->maximum (200);
+	m_SpeedVal->maximum (400);
 	m_SpeedVal->minimum (0);
         m_SpeedVal->value (8);
 	m_SpeedVal->callback ((Fl_Callback*)cb_SpeedVal);
