@@ -48,7 +48,7 @@ SpiralPluginGUI(w,h,o,ch)
 	m_Buttons->add (m_Add);
 }
 
-void MixerPluginGUI::AddChan (bool SendData = false, bool ResizeIt = false) {
+void MixerPluginGUI::AddChan (bool SendData, bool ResizeIt) {
      Fl_Slider *NewSlide = new Fl_Slider (0, 0, 20, 100, "");
      NewSlide->type (4);
      NewSlide->selection_color (GUI_COLOUR);
@@ -72,7 +72,7 @@ void MixerPluginGUI::AddChan (bool SendData = false, bool ResizeIt = false) {
      }
 }
 
-void MixerPluginGUI::DeleteChan (bool SendData = true, bool DrawIt = true) {
+void MixerPluginGUI::DeleteChan (bool SendData, bool DrawIt) {
      vector<Fl_Slider*>::iterator i = m_SlidVec.end ();
      i--;
      m_MainPack->remove (*i);

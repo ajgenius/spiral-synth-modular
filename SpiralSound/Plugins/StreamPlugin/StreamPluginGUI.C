@@ -152,7 +152,7 @@ void StreamPluginGUI::cb_Volume (Fl_Knob* o, void* v) {
 
 // pitch
 
-void StreamPluginGUI::UpdatePitch (bool UpdateIt = true, bool DrawIt = true, bool SendIt = true) {
+void StreamPluginGUI::UpdatePitch (bool UpdateIt, bool DrawIt, bool SendIt) {
      sprintf( PitchLabel, "%1.3f   ", m_PitchValue);
      m_Pitch->label (PitchLabel);
      if (UpdateIt) m_Pitch->value (m_PitchValue+10);
