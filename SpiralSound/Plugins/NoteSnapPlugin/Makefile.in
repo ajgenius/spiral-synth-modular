@@ -147,9 +147,18 @@ install:
 		../../SpiralInfo.h
 
 NoteSnapPlugin.o: NoteSnapPlugin.C \
+		NoteSnapPlugin.h \
+		NoteSnapPluginGUI.h \
+		../../NoteTable.h \
+		../SpiralPlugin.h \
+		../SpiralPluginGUI.h \
 		SpiralIcon.xpm
 
-NoteSnapPluginGUI.o: NoteSnapPluginGUI.C
+NoteSnapPluginGUI.o: NoteSnapPluginGUI.C \
+		NoteSnapPlugin.h \
+		NoteSnapPluginGUI.h \
+		../SpiralPlugin.h \
+		../SpiralPluginGUI.h
 
 ../../ChannelHandler.o: ../../ChannelHandler.C \
 		../../ChannelHandler.h
