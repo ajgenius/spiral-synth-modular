@@ -515,6 +515,12 @@ void LADSPAPluginGUI::ClearPlugin(void)
 	m_InputPack = new Fl_Pack(x()+5,y()+135,460,26,"");
 	m_InputScroll->add(m_InputPack);
 
+// Oh, and the knobs...
+	m_ControlScroll->remove(m_ControlPack);
+	delete m_ControlPack;
+	m_ControlPack = new Fl_Pack(x()+5,y()+90,460,50,"");
+	m_ControlScroll->add(m_ControlPack);
+
 	m_PortValue.clear();
 	m_PortMin.clear();
 	m_PortMax.clear();
