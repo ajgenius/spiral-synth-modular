@@ -54,15 +54,14 @@ int Fl_PortButton::handle(int event)
 }
 
 Fl_DeviceGUI::Fl_DeviceGUI(const DeviceGUIInfo& Info, SpiralGUIType *PW, Fl_Pixmap *Icon, bool Terminal) :
-Fl_Group(Info.XPos, Info.YPos, Info.Width+(PortGroupWidth*2), Info.Height+TitleBarHeight, ""),
-m_PluginWindow(NULL),
-m_Icon(NULL),
-m_Name(Info.Name),
-m_ID(-1),
-m_DelMe(false),
-m_IsTerminal(Terminal),
-m_Minimised(true),
-m_Maximising(false)
+Fl_Group (Info.XPos, Info.YPos, Info.Width+(PortGroupWidth*2), Info.Height+TitleBarHeight, ""),
+m_PluginWindow (NULL),
+m_Icon (NULL),
+m_Name (Info.Name),
+m_ID (-1),
+m_DelMe (false),
+m_IsTerminal (Terminal),
+m_Minimised (true)
 {
 	for (int n=0; n<512; n++) Numbers[n]=n;
 
@@ -119,7 +118,8 @@ void Fl_DeviceGUI::Clear()
 }
 
 inline void Fl_DeviceGUI::cb_Resize_i (void) {
-     if (m_PluginWindow && !m_DelMe && !m_Minimised && !m_Maximising) Maximise();
+     if (m_PluginWindow && m_PluginWindow->visible() && !m_DelMe && !m_Minimised)
+        ResizeToPluginWindow();
 }
 
 void Fl_DeviceGUI::cb_Resize (Fl_DeviceGUI *o) {
@@ -129,67 +129,55 @@ void Fl_DeviceGUI::cb_Resize (Fl_DeviceGUI *o) {
 
 int Fl_DeviceGUI::handle (int event) {
     int t=Fl_Group::handle(event);
-
+    // Click on icon in minimised device - Maximise, hide icon
     if (m_IconButton && m_IconButton->value()) {
        m_IconButton->value (false);
        if (m_PluginWindow && !m_DelMe) {
           if (!m_PluginWindow->visible()) Maximise();
        }
     }
-
-    // this bit might be supposed to be in cb_resize_i, I'm not sure - Andy Preston
+    // plugin GUI killed - minimise device, show icon
     if (!m_Minimised && !m_PluginWindow->visible()) {
        Minimise();
        if (m_IconButton) m_IconButton->show();
     }
-
     return 1;
 }
 
-void  Fl_DeviceGUI::Minimise()
-{
-	m_Minimised=true;
-	Resize(m_MiniWidth,m_MiniHeight);
-	parent()->redraw();
+void Fl_DeviceGUI::ResizeToPluginWindow (void) {
+     if (m_PluginWindow->h()+2 > m_MiniHeight)
+        Resize (m_PluginWindow->w()+(PortGroupWidth*2)-5, m_PluginWindow->h()+2);
+     else
+        Resize (m_PluginWindow->w()+(PortGroupWidth*2)-5, m_MiniHeight);
 }
 
-void  Fl_DeviceGUI::Maximise()
-{
-        m_Minimised=false;
-        m_Maximising=true;
-	if (m_PluginWindow->h()+2>m_MiniHeight)
-	{
-		Resize(m_PluginWindow->w()+(PortGroupWidth*2)-5,m_PluginWindow->h()+2);
-	}
-	else
-	{
-		Resize(m_PluginWindow->w()+(PortGroupWidth*2)-5,m_MiniHeight);
-	}
-	m_PluginWindow->show();
-	m_IconButton->hide();
-	parent()->redraw();
-	((Fl_Canvas*)parent())->ToTop(this);
-        m_Maximising=false;
+void Fl_DeviceGUI::Minimise() {
+     m_Minimised = true;
+     Resize (m_MiniWidth, m_MiniHeight);
+     parent()->redraw();
 }
 
-void  Fl_DeviceGUI::Resize(int width, int height)
-{
-	int oldw = w();
-	int oldh = h();
-	size(width,height);
-	m_DragBar->size(width,m_DragBar->h());
+void Fl_DeviceGUI::Maximise() {
+     m_Minimised=false;
+     ResizeToPluginWindow();
+     m_PluginWindow->show();
+     m_IconButton->hide();
+     parent()->redraw();
+     ((Fl_Canvas*)parent())->ToTop(this);
+}
 
-	for (int n=m_Info.NumInputs; n<(int)m_PortVec.size(); n++)
-	{
-		m_PortVec[n]->position(x()+width-8,m_PortVec[n]->y());
-	}
-
-	position(x()+(oldw-w())/2,y()+(oldh-h())/2);
-	m_Menu->resize(x(),y(),width,height);
-
-	int Centx=x()+w()/2;
-	int Centy=y()+h()/2;
-	m_IconButton->position(Centx-m_Icon->w()/2,Centy-m_Icon->h()/2);
+void Fl_DeviceGUI::Resize (int width, int height) {
+     int oldw = w();
+     int oldh = h();
+     size (width, height);
+     m_DragBar->size (width, m_DragBar->h());
+     for (int n=m_Info.NumInputs; n<(int)m_PortVec.size(); n++)
+         m_PortVec[n]->position (x()+width-8, m_PortVec[n]->y());
+     position (x()+(oldw-w())/2, y()+(oldh-h())/2);
+     m_Menu->resize (x(), y(), width, height);
+     int Centx = x()+w()/2;
+     int Centy = y()+h()/2;
+     m_IconButton->position (Centx-m_Icon->w()/2, Centy-m_Icon->h()/2);
 }
 
 void Fl_DeviceGUI::Setup(const DeviceGUIInfo& Info, bool FirstTime)

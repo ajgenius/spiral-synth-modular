@@ -13,7 +13,7 @@ CXXFLAGS=	@CXXFLAGS@ @FLTK_CXXFLAGS@
 INCPATH	=
 LINK	=	g++
 LFLAGS	=
-LIBS	=   @FLTK_LIBS@ -lm -ldl -lpng -lpthread
+LIBS	=   @FLTK_LIBS@ -lm -ldl -lpthread
 MOC     = moc
 UIC	=
 

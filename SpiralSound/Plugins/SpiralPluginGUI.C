@@ -66,7 +66,7 @@ SpiralPluginGUI::~SpiralPluginGUI()
 void SpiralPluginGUI::resize (int newx, int newy, int neww, int newh) {
      m_Help->position (x()+neww-11, y()+2);
      SpiralGUIType::resize (newx, newy, neww, newh);
-     DoResizeCallback ();
+     //DoResizeCallback ();
 }
 
 void SpiralPluginGUI::Update()

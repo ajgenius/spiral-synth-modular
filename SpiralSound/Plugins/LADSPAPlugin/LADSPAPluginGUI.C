@@ -284,6 +284,8 @@ void LADSPAPluginGUI::Update(void)
 		m_BSlider->resize(x()+60, y()+15, 50, 20);
 		m_BSetup->resize(x() + w() - 55, y()+15, 50, 20);
 	}
+        // Andy Preston bodged this bit in - might be better somewhere else
+        DoResizeCallback ();
 }
 
 // This lot is only done on patch load
@@ -522,6 +524,8 @@ void LADSPAPluginGUI::SetPage(int index)
 	m_BKnob->resize(x()+5, y()+15, 50, 20);
 	m_BSlider->resize(x()+60, y()+15, 50, 20);
 	m_BSetup->resize(x() + w() - 55, y()+15, 50, 20);
+        // Andy Preston bodged this bit in - might be better somewhere else
+        DoResizeCallback ();
 }
 
 void LADSPAPluginGUI::SetUniqueID(unsigned long n)
@@ -813,6 +817,8 @@ void LADSPAPluginGUI::UpdateKnobs(void)
 			m_KnobLabels[p]->hide();
 		}
 	}
+        // Andy Preston bodged this bit in - might be better somewhere else
+        DoResizeCallback ();
 }
 
 // Rearrange sliders depending on connections
@@ -919,6 +925,8 @@ void LADSPAPluginGUI::UpdateSliders(void)
 			m_SliderLabels[p]->hide();
 		}
 	}
+        // Andy Preston bodged this bit in - might be better somewhere else
+        DoResizeCallback ();
 }
 
 // Set value of slider and/or knob (both use the same settings)
