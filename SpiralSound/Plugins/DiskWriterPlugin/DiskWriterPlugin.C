@@ -74,15 +74,18 @@ DiskWriterPlugin::DiskWriterPlugin() :
 m_Recording(false)
 {		
 	m_PluginInfo.Name="DiskWriter";
-	m_PluginInfo.Width=100;
-	m_PluginInfo.Height=66;
+	m_PluginInfo.Width=140;
+	m_PluginInfo.Height=90;
 	m_PluginInfo.NumInputs=3;
 	m_PluginInfo.NumOutputs=0;
 	m_PluginInfo.PortTips.push_back("Left Out");
 	m_PluginInfo.PortTips.push_back("Right Out");
 	m_PluginInfo.PortTips.push_back("Record Controller");
 
+        m_GUIArgs.BitsPerSample = 16;
+        
 	m_AudioCH->RegisterData("Filename",ChannelHandler::INPUT,m_GUIArgs.Name,256);
+	m_AudioCH->Register("BitsPerSample",&m_GUIArgs.BitsPerSample,ChannelHandler::INPUT);
 }
 
 DiskWriterPlugin::~DiskWriterPlugin()
@@ -107,12 +110,12 @@ SpiralGUIType *DiskWriterPlugin::CreateGUI()
 
 void DiskWriterPlugin::Execute()
 {  
+    int Bps = m_GUIArgs.BitsPerSample/8;
 	if(m_Recording && m_Wav.IsOpen()) 
     {	
 		int on=0;
 		float t;
-		
-		short Buffer[host->BUFSIZE*2];
+		short Buffer[host->BUFSIZE*Bps];
 		
 		for (int n=0; n<host->BUFSIZE; n++)
 		{
@@ -130,8 +133,8 @@ void DiskWriterPlugin::Execute()
 			on++;
 		}
 		
-		// stereo 16bit * bufsize
-        m_Wav.Save(Buffer,host->BUFSIZE*2*2);
+		// stereo Bps * bufsize
+        m_Wav.Save(Buffer,host->BUFSIZE*2*Bps);
     }
 }
 
@@ -144,6 +147,9 @@ void DiskWriterPlugin::ExecuteCommands()
 			case OPENWAV :
 				if (m_Wav.GetSamplerate() != GetHostInfo()->SAMPLERATE) {
 					m_Wav.SetSamplerate(GetHostInfo()->SAMPLERATE);
+				}
+				if (m_Wav.GetBitsPerSample() != m_GUIArgs.BitsPerSample) {
+					m_Wav.SetBitsPerSample(m_GUIArgs.BitsPerSample);
 				}
 				m_Wav.Open(m_GUIArgs.Name,WavFile::WRITE, WavFile::STEREO);
 			break;

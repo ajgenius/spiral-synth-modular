@@ -45,6 +45,7 @@ HEADERS =	DiskWriterPlugin.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
 		../../RiffWav.h \
+		../Widgets/Fl_LED_Button.H \
 		../../../GUI/Widgets/SpiralGUI.H
 SOURCES =	DiskWriterPlugin.C \
 		DiskWriterPluginGUI.C \
@@ -53,6 +54,7 @@ SOURCES =	DiskWriterPlugin.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
 		../../RiffWav.C \
+		../Widgets/Fl_LED_Button.cxx \
 		../../../GUI/Widgets/SpiralGUI.C
 OBJECTS =	DiskWriterPlugin.o \
 		DiskWriterPluginGUI.o \
@@ -61,6 +63,7 @@ OBJECTS =	DiskWriterPlugin.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
 		../../RiffWav.o \
+		../Widgets/Fl_LED_Button.o \
 		../../../GUI/Widgets/SpiralGUI.o
 INTERFACES =
 UICDECLS =

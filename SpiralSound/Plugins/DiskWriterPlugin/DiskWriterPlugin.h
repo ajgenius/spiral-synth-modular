@@ -40,6 +40,7 @@ public:
 	struct GUIArgs
 	{
 		char Name[256];
+		int BitsPerSample;
 	};
 	
 private:

@@ -20,6 +20,7 @@
 #include <FL/Fl_Button.H>
 #include "DiskWriterPlugin.h"
 #include "../SpiralPluginGUI.h"
+#include "../Widgets/Fl_LED_Button.H"
 
 #ifndef DISK_WRITER_GUI_H
 #define DISK_WRITER_GUI_H
@@ -39,12 +40,23 @@ private:
 	Fl_Button		*Open;
 	Fl_Button		*Record;
 
+	Fl_LED_Button		*m_16bits;
+	Fl_LED_Button		*m_24bits;
+	Fl_LED_Button		*m_32bits;
+
 	//// Callbacks ////
 
 	inline void cb_Record_i(Fl_Button* o, void* v);
 	static void cb_Record(Fl_Button* o, void* v);
 	inline void cb_Open_i(Fl_Button* o, void* v);
 	static void cb_Open(Fl_Button* o, void* v);
+
+	inline void cb_16bits_i(Fl_Button* o, void* v);
+	static void cb_16bits(Fl_Button* o, void* v);
+	inline void cb_24bits_i(Fl_Button* o, void* v);
+	static void cb_24bits(Fl_Button* o, void* v);
+	inline void cb_32bits_i(Fl_Button* o, void* v);
+	static void cb_32bits(Fl_Button* o, void* v);
 };
 
 #endif

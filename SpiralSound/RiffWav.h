@@ -59,7 +59,7 @@ struct DataHeader
 class WavFile
 {
 public:
-	WavFile() : m_Stream(NULL), m_Samplerate(44100), m_DataStart(0) {}
+	WavFile() : m_Stream(NULL), m_Samplerate(44100), m_BitsPerSample(16), m_DataStart(0) {}
 	~WavFile() {Close();}	
 	
 	enum Mode{READ,WRITE};
@@ -77,6 +77,8 @@ public:
 	bool Recording() {return (m_Stream!=NULL);}
 	void SetSamplerate(int s) { m_Samplerate=s; }
 	int  GetSamplerate() { return m_Header.FmtSamplerate; }
+	void SetBitsPerSample(int s) { m_BitsPerSample=s; }
+	int  GetBitsPerSample() { return m_Header.FmtBitsPerSample; }
 	bool IsStereo() { return (m_Header.FmtChannels==2); }
 	bool IsOpen() { return m_Stream!=NULL; }
 		
@@ -84,6 +86,7 @@ private:
 
 	FILE *m_Stream;
 	int m_Samplerate;
+	int m_BitsPerSample;
 
 	long m_DataStart;
 	long m_CurSeekPos;

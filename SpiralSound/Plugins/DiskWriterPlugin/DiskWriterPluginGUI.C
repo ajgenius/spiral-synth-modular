@@ -25,7 +25,23 @@ using namespace std;
 DiskWriterPluginGUI::DiskWriterPluginGUI(int w, int h, SpiralPlugin *o, ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
 {	
-        Open = new Fl_Button(5, 15, 90, 20, "Open");
+        m_16bits = new Fl_LED_Button (0, 15, 23, 23, "16bit");
+        m_16bits->type (FL_RADIO_BUTTON);
+        m_16bits->labelsize(10);
+	m_16bits->set();
+        m_16bits->callback((Fl_Callback*)cb_16bits);
+
+        m_24bits = new Fl_LED_Button (0, 38, 23, 23, "24bit");
+        m_24bits->type (FL_RADIO_BUTTON);
+        m_24bits->labelsize(10);
+        m_24bits->callback((Fl_Callback*)cb_24bits);
+
+        m_32bits = new Fl_LED_Button (0, 61, 23, 23, "32bit");
+        m_32bits->type (FL_RADIO_BUTTON);
+        m_32bits->labelsize(10);
+        m_32bits->callback((Fl_Callback*)cb_32bits);
+
+        Open = new Fl_Button(50, 20, 90, 20, "Open");
         Open->type(1);
         Open->box (FL_PLASTIC_UP_BOX);
         Open->color (Info->GUI_COLOUR);
@@ -33,7 +49,7 @@ SpiralPluginGUI(w,h,o,ch)
         Open->labelsize(10);
         Open->callback((Fl_Callback*)cb_Open);
 
-	Record = new Fl_Button(5, 38, 90, 20, "Record");
+	Record = new Fl_Button(50, 60, 90, 20, "Record");
         Record->type(1);
         Record->box (FL_PLASTIC_UP_BOX);
         Record->color (Info->GUI_COLOUR);
@@ -74,6 +90,7 @@ inline void DiskWriterPluginGUI::cb_Open_i(Fl_Button* o, void* v)
 		m_GUICH->SetCommand(DiskWriterPlugin::CLOSEWAV);
 	}
 }
+
 void DiskWriterPluginGUI::cb_Open(Fl_Button* o, void* v)
 { ((DiskWriterPluginGUI*)(o->parent()))->cb_Open_i(o,v); }
 
@@ -84,6 +101,27 @@ inline void DiskWriterPluginGUI::cb_Record_i(Fl_Button* o, void* v)
 }
 void DiskWriterPluginGUI::cb_Record(Fl_Button* o, void* v)
 { ((DiskWriterPluginGUI*)(o->parent()))->cb_Record_i(o,v); }
+
+inline void DiskWriterPluginGUI::cb_16bits_i(Fl_Button* o, void* v)
+{	
+  m_GUICH->Set("BitsPerSample",16);
+}
+void DiskWriterPluginGUI::cb_16bits(Fl_Button* o, void* v)
+{ ((DiskWriterPluginGUI*)(o->parent()))->cb_16bits_i(o,v); }
+
+inline void DiskWriterPluginGUI::cb_24bits_i(Fl_Button* o, void* v)
+{	
+  m_GUICH->Set("BitsPerSample",24);
+}
+void DiskWriterPluginGUI::cb_24bits(Fl_Button* o, void* v)
+{ ((DiskWriterPluginGUI*)(o->parent()))->cb_24bits_i(o,v); }
+
+inline void DiskWriterPluginGUI::cb_32bits_i(Fl_Button* o, void* v)
+{	
+  m_GUICH->Set("BitsPerSample",32);
+}
+void DiskWriterPluginGUI::cb_32bits(Fl_Button* o, void* v)
+{ ((DiskWriterPluginGUI*)(o->parent()))->cb_32bits_i(o,v); }
 
 const string DiskWriterPluginGUI::GetHelpText(const string &loc){
     return string("")
