@@ -322,19 +322,21 @@ void LADSPAPluginGUI::SetName(const char *s)
 	m_NameLabel->label(s);
 }
 
-char MakerLabelText[256];
-
 void LADSPAPluginGUI::SetMaker(const char *s)
 {
-        // If this has got an "@" in it FLTK thinks it's a special character not an E.mail address
-        int t=0;
-        for (unsigned int f=0; f<strlen (s); f++) {
-          if (t==255) break;
-          if (s[f]=='@') MakerLabelText[t++]='@';
-          MakerLabelText[t++]=s[f];
-        }
-        MakerLabelText[t]=0;
-        m_MakerLabel->label (MakerLabelText);
+	char temp[256];
+	unsigned int len = strlen(s);
+
+	strncpy(temp, s, len);
+	// If this has got an "@" in it FLTK thinks it's a special character not an E.mail address
+	int t=0;
+	for (unsigned int f=0; f<len; f++) {
+		if (t==255) break;
+		if (temp[f]=='@') m_Maker[t++]='@';
+		m_Maker[t++]=temp[f];
+	}
+	m_Maker[t]=0;
+	m_MakerLabel->label (m_Maker);
 }
 
 void LADSPAPluginGUI::SetPortSettings(unsigned long n, float min, float max, bool clamp, float defolt)
