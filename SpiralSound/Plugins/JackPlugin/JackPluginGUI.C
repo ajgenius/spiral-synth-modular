@@ -14,13 +14,14 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include "JackPlugin.h"
 #include "JackPluginGUI.h"
 #include <FL/fl_draw.h>
 #include <FL/fl_file_chooser.H>
 #include <FL/Fl_Hold_Browser.H>
+#include <algorithm>
 
 using namespace std;
 
@@ -32,9 +33,9 @@ int OptionsList(const std::vector<string> &List)
 	Fl_Button *Ok            = new Fl_Button(10,275,40,20,"Ok");
 	Ok->labelsize(10);
 	Fl_Button *Cancel        = new Fl_Button(50,275,40,20,"Cancel");
-	Cancel->labelsize(10);	
+	Cancel->labelsize(10);
 	Fl_Hold_Browser* Browser = new Fl_Hold_Browser(5,5,290,265,"");
-	
+
 	for (std::vector<string>::const_iterator i = List.begin();
 		 i!=List.end(); i++)
 	{
@@ -125,7 +126,7 @@ SpiralPluginGUI(w,h,o,ch)
 	m_Scroll->type(Fl_Scroll::VERTICAL_ALWAYS);
         m_Scroll->position(0, 0);
         add(m_Scroll);
-        
+
         m_OutputPack = new Fl_Pack(15, 90, 85, h - 102);
 	m_Scroll->add(m_OutputPack);
 	
@@ -178,7 +179,7 @@ void JackPluginGUI::Update()
 
 		for (unsigned int n=0; n<m_JackClient->m_InputPortsChanged.size(); n++) {
 			m_JackClient->m_InputPortsChanged[n]->Connected = jack_port_connected(m_JackClient->m_InputPortsChanged[n]->Port);
-			
+
 			if (m_JackClient->m_InputPortsChanged[n]->Connected) {
 				if (m_JackClient->m_InputPortsChanged[n]->ConnectedTo!="") {
 					m_InputButton[n]->label(m_JackClient->m_InputPortsChanged[n]->ConnectedTo.c_str());
@@ -197,7 +198,7 @@ void JackPluginGUI::Update()
 			{
 				m_InputButton[m_JackClient->m_InputPortsChanged[n]->PortNo]->value(0);
 				m_InputButton[m_JackClient->m_InputPortsChanged[n]->PortNo]->label("None");
-			}	
+			}
 
 		}
 
@@ -286,7 +287,7 @@ void JackPluginGUI::AddOutput() {
         m_OutputLabel.push_back(new Fl_Box(0,n*30,90,10,m_OutputName[n]));
         m_OutputLabel[n]->labelsize(8);
         m_OutputPack->add(m_OutputLabel[n]);
-        
+
         m_OutputButton.push_back(new Fl_Button(0,n*30+10,90,20,"None"));
         m_OutputButton[n]->type(1);
         m_OutputButton[n]->labelsize(8);
@@ -322,7 +323,7 @@ inline void  JackPluginGUI::cb_Remove_i(Fl_Button* o)
 { 
         int n = (int) m_InputName.size();
 
-        if (n > MIN_PORTS) 
+        if (n > MIN_PORTS)
         {
 	        RemoveOutput() ;		
 	        RemoveInput() ;	
@@ -394,7 +395,7 @@ inline void  JackPluginGUI::cb_Attach_i(Fl_Button* o)
 }
 
 inline void  JackPluginGUI::cb_Detach_i(Fl_Button* o)
-{ 
+{
 	for (int n=0; n<(int)m_OutputName.size(); n++)
 	{		
 		m_OutputButton[n]->value(false);
@@ -402,16 +403,16 @@ inline void  JackPluginGUI::cb_Detach_i(Fl_Button* o)
 	}
 	
 	for (int n=0; n<(int)m_InputName.size(); n++)
-	{		
+	{
 		m_InputButton[n]->value(false);
 		m_InputButton[n]->label("None");
 	}
-	
+
 	m_JackPlugin->Detach();
 }
 
 inline void JackPluginGUI::cb_OutputConnect_i(Fl_Button* o)
-{ 
+{
 	int index=0;
 	std::vector<Fl_Button *>::iterator it = std::find( m_OutputButton.begin(), m_OutputButton.end(), o );
 
@@ -420,14 +421,14 @@ inline void JackPluginGUI::cb_OutputConnect_i(Fl_Button* o)
 
 	if ((o->value()) && m_GUICH->GetBool("Connected"))
 	{
-		m_GUICH->SetCommand(JackPlugin::UPDATE_NAMES);	
+		m_GUICH->SetCommand(JackPlugin::UPDATE_NAMES);
 		m_GUICH->Wait();
-		
+
 		// bit of a hack for multithreaded safety
 		int ninputs=m_GUICH->GetInt("NumOutputPortNames");
 		char inputs[MAX_PORTS][256];
 		m_GUICH->GetData("InputPortNames",inputs);
-			
+
 		vector<string> Inputs;
 		for (int n=0; n<ninputs; n++) Inputs.push_back(inputs[n]);
 		int choice=OptionsList(Inputs);

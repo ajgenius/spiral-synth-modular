@@ -7,13 +7,13 @@
 CC	=	gcc
 CXX	=	g++
 CFLAGS	=	@CFLAGS@
-CXXFLAGS=	@CXXFLAGS@ 
+CXXFLAGS=	@CXXFLAGS@
 INCPATH	=	-I/usr/X11R6/include
 LINK	=	g++ -shared
-LFLAGS	=	
-LIBS	=   -L/usr/X11R6/lib @FLTK_LIBS@ -lGL -lXext -lX11  -ldl -pthread -lasound
+LFLAGS	=
+LIBS	=	@FLTK_LIBS@ @AMIDILIBS@
 MOC     = moc
-UIC	=	
+UIC	=
 
 TAR	=	tar -cf
 GZIP	=	gzip -9f

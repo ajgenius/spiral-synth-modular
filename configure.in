@@ -18,14 +18,13 @@ AC_C_INLINE
 
 dnl Check plugin directory
 AC_ARG_WITH(plugindir,
-  [ --with-plugindir=dir        give the plugin directory],
+  [  --with-plugindir=dir    give the plugin directory],
   plugindir="$withval",
   plugindir="/usr/lib/SpiralPlugins")
 AC_SUBST(PLUGINDIR, $plugindir)
 
 dnl Check whether to enable debugging
-
-AC_ARG_ENABLE(debug,  [  --enable-debug             enable debugging ],
+AC_ARG_ENABLE(debug,  [  --enable-debug          enable debugging ],
         ac_arg_debug="Y", ac_arg_debug="N")
 
 if test $ac_arg_debug = "Y" ; then
@@ -34,73 +33,126 @@ if test $ac_arg_debug = "Y" ; then
 else
 	CFLAGS="-pipe -Wall -O3 -ffast-math -DNO_DEBUG -Wno-unused "
 	CXXFLAGS="-pipe -Wall -O3 -ffast-math -DNO_DEBUG -Wno-unused "
-	fi
-echo "$PLUGINLIST" > SpiralSound/PluginList.txt
-
-AC_ARG_ENABLE(jack,  [  --enable-jack              build JackPlugin ],
-        ac_arg_jack="Y", ac_arg_jack="N")
-	
-if test $ac_arg_jack = "Y" ; then
-	PLUGINLIST="AmpPlugin ControllerPlugin DelayPlugin EchoPlugin EnvFollowerPlugin \
-	EnvelopePlugin FilterPlugin MatrixPlugin MidiPlugin MixerPlugin MoogFilterPlugin \
-	NoteSnapPlugin OscillatorPlugin OutputPlugin RingModPlugin SVFilterPlugin \
-	SampleHoldPlugin ScopePlugin SmoothPlugin SplitterPlugin StereoMixerPlugin StreamPlugin\
-	WaveTablePlugin LADSPAPlugin XFadePlugin PoshSamplerPlugin SeqSelectorPlugin\
-	DistributorPlugin LFOPlugin KeyboardPlugin DiskWriterPlugin FormantFilterPlugin \
-	AnotherFilterPlugin OperatorPlugin CounterPlugin FlipflopPlugin SwitchPlugin \
-	BeatMatchPlugin NoisePlugin LogicPlugin SplitSwitchPlugin \
-	MixSwitchPlugin MeterPlugin WaveShaperPlugin TrigPlugin SpiralLoopPlugin  \
-	MasherPlugin TransposePlugin JackPlugin"
-else
-	PLUGINLIST="AmpPlugin ControllerPlugin DelayPlugin EchoPlugin EnvFollowerPlugin \
-	EnvelopePlugin FilterPlugin MatrixPlugin MidiPlugin MixerPlugin MoogFilterPlugin \
-	NoteSnapPlugin OscillatorPlugin OutputPlugin RingModPlugin SVFilterPlugin \
-	SampleHoldPlugin ScopePlugin SmoothPlugin SplitterPlugin StereoMixerPlugin StreamPlugin\
-	WaveTablePlugin LADSPAPlugin XFadePlugin PoshSamplerPlugin SeqSelectorPlugin\
-	DistributorPlugin LFOPlugin KeyboardPlugin DiskWriterPlugin FormantFilterPlugin \
-	AnotherFilterPlugin OperatorPlugin CounterPlugin FlipflopPlugin SwitchPlugin \
-	BeatMatchPlugin NoisePlugin LogicPlugin SplitSwitchPlugin \
-	MixSwitchPlugin MeterPlugin WaveShaperPlugin TrigPlugin SpiralLoopPlugin \
-	MasherPlugin TransposePlugin"
-
-	fi
-echo "$PLUGINLIST" > SpiralSound/PluginList.txt
-
-dnl Check whether liblrdf has been enabled
-AC_ARG_ENABLE(
-    lrdf,
-    [  --enable-lrdf           Enable liblrdf for LADSPA Plugin [no]],
-    [use_liblrdf="y"],
-    [use_liblrdf="n"]
-)
-if test "$use_liblrdf" = "y"; then
-    AC_CHECK_HEADER(lrdf.h, , AC_MSG_ERROR( ** No lrdf.h found for liblrdf))
-    AC_CHECK_LIB(lrdf, lrdf_init, AC_DEFINE(HAVE_LIBLRDF, , [Enable liblrdf support for LADSPA Plugin]), AC_MSG_ERROR( ** No liblrdf found))
-    LRDFLIBS="-llrdf"
-    AC_SUBST(LRDFLIBS)
 fi
 
-dnl Check if POSIX SHM enabled (for sharing LADSPA Plugin database)
-dnl Nicked in part from JACK configure.in
+dnl build plugin list - plugins that do not require an optional component
+dnl (e.g. Jack)
+
+PLUGINLIST="AmpPlugin AnotherFilterPlugin BeatMatchPlugin ControllerPlugin \
+CounterPlugin DelayPlugin DiskWriterPlugin DistributorPlugin EchoPlugin \
+EnvFollowerPlugin EnvelopePlugin FilterPlugin FlipflopPlugin FormantFilterPlugin \
+KeyboardPlugin LADSPAPlugin LFOPlugin LogicPlugin MasherPlugin MatrixPlugin \
+MeterPlugin MidiPlugin MixSwitchPlugin MixerPlugin MoogFilterPlugin NoisePlugin \
+NoteSnapPlugin OperatorPlugin OscillatorPlugin OutputPlugin PoshSamplerPlugin \
+RingModPlugin SVFilterPlugin SampleHoldPlugin ScopePlugin SeqSelectorPlugin \
+SmoothPlugin SpiralLoopPlugin SplitSwitchPlugin SplitterPlugin StereoMixerPlugin \
+StreamPlugin SwitchPlugin TransposePlugin TrigPlugin WaveShaperPlugin \
+WaveTablePlugin XFadePlugin"
+
+dnl Check whether jack is present or has been disabled
+jack_message=""
+AC_ARG_ENABLE(
+    jack,
+    [  --disable-jack          Do not build JackPlugin],
+    [build_jack="n" ; jack_message="manually disabled"],
+    [build_jack="y"]
+)
+if test "$build_jack" = "y"; then
+   AC_CHECK_HEADER(jack/jack.h, [build_jack="y"], [build_jack="n" ; jack_message="No jack/jack.h found"])
+fi
+if test "$build_jack" = "y"; then
+   AC_CHECK_LIB(jack, jack_client_new, [build_jack="y"], [build_jack="n" ; jack_message="No libjack found"])
+fi
+if test $build_jack = "y" ; then
+   PLUGINLIST="$PLUGINLIST JackPlugin"
+fi
+
+dnl build plugin list
+echo "$PLUGINLIST" > SpiralSound/PluginList.txt
+
+dnl Check whether alsa-midi is present or has been disabled
+
+amidi_message=""
+AC_ARG_ENABLE(
+    alsa_midi,
+    [  --disable-alsa-midi     Disable alsa midi (use OSS)],
+    [use_alsa_midi="n"; amidi_message="manually disabled"],
+    [use_alsa_midi="y"]
+)
+if test "$use_alsa_midi" = "y"; then
+   AC_CHECK_HEADER(alsa/asoundlib.h, [use_alsa_midi="y"], [use_alsa_midi="n" ; amidi_message="No alsa/asoundlib.h found"])
+fi
+if test "$use_alsa_midi" = "y"; then
+   AC_CHECK_LIB(asound, snd_seq_open, [use_alsa_midi="y"], [use_alsa_midi="n" ; amidi_message="No libasound found"])
+fi
+if test "$use_alsa_midi" = "y"; then
+   AC_DEFINE(USE_ALSA_MIDI, , [Use ALSA MIDI not OSS])
+   AMIDILIBS="-lasound"
+   AC_SUBST(AMIDILIBS)
+else
+   AC_DEFINE(USE_OSS_MIDI, , [Use OSS MIDI not ALSA])
+fi
+
+dnl Check whether liblrdf is present or has been disabled
+lrdf_message=""
+AC_ARG_ENABLE(
+    lrdf,
+    [  --disable-lrdf          Disable liblrdf for LADSPA Plugin],
+    [use_liblrdf="n" ; lrdf_message="manually disabled"],
+    [use_liblrdf="y"]
+)
+if test "$use_liblrdf" = "y"; then
+   AC_CHECK_HEADER(lrdf.h, [use_liblrdf="y"], [use_liblrdf="n" ; lrdf_message="No lrdf.h found"])
+fi
+if test "$use_liblrdf" = "y"; then
+   AC_CHECK_LIB(lrdf, lrdf_init, [use_liblrdf="y"], [use_liblrdf="n" ; lrdf_message="No liblrdf found"])
+fi
+if test "$use_liblrdf" = "y"; then
+   AC_DEFINE(HAVE_LIBLRDF, , [Enable liblrdf support for LADSPA Plugin])
+   LRDFLIBS="-llrdf"
+   AC_SUBST(LRDFLIBS)
+fi
+
+dnl Check if POSIX SHM is present or has been disabled
+shm_message=""
 AC_ARG_ENABLE(
     posix-shm,
-    [  --enable-posix-shm      Enable POSIX SHM for LADSPA Plugin [no]
-                            This allows a single LADSPA plugin database
-                            to be shared between instances],
-    [use_posix_shm="y"],
-    [use_posix_shm="n"]
+    [  --disable-posix-shm     Disable POSIX SHM for LADSPA Plugin],
+    [use_posix_shm="n" ; shm_message="manually disabled"],
+    [use_posix_shm="y"]
 )
 if test "$use_posix_shm" = "y"; then
-    AC_MSG_CHECKING([POSIX SHM support ])
-    ls /dev/shm >/dev/null 2>&1
-    if test $? = 0; then
-        AC_DEFINE(USE_POSIX_SHM, ,[Enable POSIX SHM support for LADSPA Plugin])
-        AC_MSG_RESULT(found.)
-        SHMLIBS="-lrt"
-        AC_SUBST(SHMLIBS)
+   AC_MSG_CHECKING([POSIX SHM support ])
+   if test -d /dev/shm -a -w /dev/shm ; then
+       AC_DEFINE(USE_POSIX_SHM, ,[Enable POSIX SHM support for LADSPA Plugin])
+       AC_MSG_RESULT(found.)
+       SHMLIBS="-lrt"
+       AC_SUBST(SHMLIBS)
     else
-        AC_MSG_RESULT(not found.)
+       AC_MSG_RESULT(not found.)
+       use_posix_shm="n"
+       shm_message="/dev/shm not found";
     fi
+fi
+
+dnl Check whether libsndfile is present or has been disabled
+sndfile_message=""
+AC_ARG_ENABLE(
+    sndfile,
+    [  --disable-sndfile       Disable libsndfile for waveform loading],
+    [use_sndfile="n" ; sndfile_message="manually disabled"],
+    [use_sndfile="y"]
+)
+if test "$use_sndfile" = "y"; then
+   AC_CHECK_HEADER(sndfile.h, [use_sndfile="y"], [use_sndfile="n" ; sndfile_message="No sndfile.h found"])
+fi
+if test "$use_sndfile" = "y"; then
+   AC_CHECK_LIB(sndfile, sf_open, [use_sndfile="y"], [use_sndfile="n" ; sndfile_message="No libXXXX found"])
+fi
+if test "$use_sndfile" = "y"; then
+   AC_DEFINE(USE_LIBSNDFILE, , [Enable libsndfile for waveform loading])
+   SFLIBS="-lsndfile"
+   AC_SUBST(SFLIBS)
 fi
 
 dnl Checks for library functions.
@@ -148,8 +200,9 @@ AC_SUBST(FLTK_LIBS)
 AC_CHECK_HEADERS(dlfcn.h)
 AC_CHECK_LIB(dl, dlopen)
 
-AC_CHECK_HEADERS(png.h)
-AC_CHECK_LIB(png, png_get_copyright)
+dnl Do we need png?????
+dnl AC_CHECK_HEADERS(png.h)
+dnl AC_CHECK_LIB(png, png_get_copyright)
 
 dnl This is normally done with libtool but since we aren't using libtool
 dnl yet to it here.
@@ -163,11 +216,12 @@ AC_SUBST(CXXFLAGS)
 AC_SUBST(PLUGINLIST)
 
 dnl Modify the output files.
-
 AC_OUTPUT(
 SpiralSound/Plugins/AmpPlugin/Makefile
 SpiralSound/Plugins/AnotherFilterPlugin/Makefile
+SpiralSound/Plugins/BeatMatchPlugin/Makefile
 SpiralSound/Plugins/ControllerPlugin/Makefile
+SpiralSound/Plugins/CounterPlugin/Makefile
 SpiralSound/Plugins/DelayPlugin/Makefile
 SpiralSound/Plugins/DiskWriterPlugin/Makefile
 SpiralSound/Plugins/DistributorPlugin/Makefile
@@ -175,46 +229,76 @@ SpiralSound/Plugins/EchoPlugin/Makefile
 SpiralSound/Plugins/EnvFollowerPlugin/Makefile
 SpiralSound/Plugins/EnvelopePlugin/Makefile
 SpiralSound/Plugins/FilterPlugin/Makefile
+SpiralSound/Plugins/FlipflopPlugin/Makefile
 SpiralSound/Plugins/FormantFilterPlugin/Makefile
 SpiralSound/Plugins/JackPlugin/Makefile
 SpiralSound/Plugins/KeyboardPlugin/Makefile
 SpiralSound/Plugins/LADSPAPlugin/Makefile
 SpiralSound/Plugins/LFOPlugin/Makefile
+SpiralSound/Plugins/LogicPlugin/Makefile
+SpiralSound/Plugins/MasherPlugin/Makefile
 SpiralSound/Plugins/MatrixPlugin/Makefile
 SpiralSound/Plugins/MeterPlugin/Makefile
 SpiralSound/Plugins/MidiPlugin/Makefile
+SpiralSound/Plugins/MixSwitchPlugin/Makefile
 SpiralSound/Plugins/MixerPlugin/Makefile
 SpiralSound/Plugins/MoogFilterPlugin/Makefile
+SpiralSound/Plugins/NoisePlugin/Makefile
 SpiralSound/Plugins/NoteSnapPlugin/Makefile
+SpiralSound/Plugins/OperatorPlugin/Makefile
 SpiralSound/Plugins/OscillatorPlugin/Makefile
 SpiralSound/Plugins/OutputPlugin/Makefile
 SpiralSound/Plugins/PoshSamplerPlugin/Makefile
 SpiralSound/Plugins/RingModPlugin/Makefile
 SpiralSound/Plugins/SVFilterPlugin/Makefile
 SpiralSound/Plugins/SampleHoldPlugin/Makefile
-SpiralSound/Plugins/SeqSelectorPlugin/Makefile
 SpiralSound/Plugins/ScopePlugin/Makefile
+SpiralSound/Plugins/SeqSelectorPlugin/Makefile
 SpiralSound/Plugins/SmoothPlugin/Makefile
+SpiralSound/Plugins/SpiralLoopPlugin/Makefile
+SpiralSound/Plugins/SplitSwitchPlugin/Makefile
 SpiralSound/Plugins/SplitterPlugin/Makefile
 SpiralSound/Plugins/StereoMixerPlugin/Makefile
 SpiralSound/Plugins/StreamPlugin/Makefile
+SpiralSound/Plugins/SwitchPlugin/Makefile
+SpiralSound/Plugins/TransposePlugin/Makefile
+SpiralSound/Plugins/TrigPlugin/Makefile
 SpiralSound/Plugins/WaveShaperPlugin/Makefile
 SpiralSound/Plugins/WaveTablePlugin/Makefile
 SpiralSound/Plugins/XFadePlugin/Makefile
-SpiralSound/Plugins/OperatorPlugin/Makefile
-SpiralSound/Plugins/CounterPlugin/Makefile
-SpiralSound/Plugins/FlipflopPlugin/Makefile
-SpiralSound/Plugins/SwitchPlugin/Makefile
-SpiralSound/Plugins/BeatMatchPlugin/Makefile
-SpiralSound/Plugins/NoisePlugin/Makefile
-SpiralSound/Plugins/LogicPlugin/Makefile
-SpiralSound/Plugins/SplitSwitchPlugin/Makefile
-SpiralSound/Plugins/MixSwitchPlugin/Makefile
-SpiralSound/Plugins/TrigPlugin/Makefile
-SpiralSound/Plugins/SpiralLoopPlugin/Makefile
-SpiralSound/Plugins/MasherPlugin/Makefile
-SpiralSound/Plugins/TransposePlugin/Makefile
 SpiralSynthPluginLocation.h
 Makefile
 )
 
+echo -e "\nConfig options:"
+echo -n "libsndfile support for wave loading - "
+if test "$use_sndfile" = "y"; then
+   echo "Enabled"
+else
+   echo "Disabled - $sndfile_message"
+fi
+echo -n "        ALSA support for MidiPlugin - "
+if test "$use_alsa_midi" = "y"; then
+   echo "Enabled"
+else
+   echo "Disabled - $amidi_message - Using OSS instead"
+fi
+echo -n "      Jack support (via JackPlugin) - "
+if test "$build_jack" = "y"; then
+   echo "Enabled"
+else
+   echo "Disabled - $jack_message"
+fi
+echo -n "   liblrdf support for LADSPAPlugin - "
+if test "$use_liblrdf" = "y"; then
+   echo "Enabled"
+else
+   echo "Disabled - $lrdf_message"
+fi
+echo -n " POSIX SHM support for LADSPAPlugin - "
+if test "$use_posix_shm" = "y"; then
+   echo "Enabled"
+else
+   echo "Disabled - $shm_message"
+fi
+echo ""

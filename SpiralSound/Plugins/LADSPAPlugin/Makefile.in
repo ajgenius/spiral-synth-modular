@@ -6,12 +6,12 @@
 
 CC	=	gcc
 CXX	=	g++
-CFLAGS	=	@CFLAGS@ 
-CXXFLAGS=	@CXXFLAGS@ 
+CFLAGS	=	@CFLAGS@
+CXXFLAGS=	@CXXFLAGS@
 INCPATH	=	-I../../../ -I/usr/X11R6/include
 LINK	=	g++ -shared
-LFLAGS	=	
-LIBS	=   @FLTK_LIBS@ -L/usr/X11R6/lib -lGL -lXext -lX11 -ldl @SHMLIBS@ @LRDFLIBS@
+LFLAGS	=
+LIBS	=   @FLTK_LIBS@ @SHMLIBS@ @LRDFLIBS@
 MOC     = moc
 UIC	=	
 

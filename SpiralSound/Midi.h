@@ -16,6 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#ifndef MIDI
+#define MIDI
+
 #include <sys/types.h>
 #include <stdio.h>
 #include <fcntl.h>
@@ -24,18 +27,11 @@
 #include <limits.h>
 #include <queue>
 #include <string>
-
-#ifndef MIDI
-#define MIDI
+#include "../config.h"
 
 using namespace std;
 
-// comment out one of these to choose your MIDI driver (for non-Apple systems)
-// I'll stick this in the ./configue when it'd all working
-#define ALSA_MIDI
-//#define OSS_MIDI
-
-#ifdef ALSA_MIDI
+#ifdef USE_ALSA_MIDI
 #include <alsa/asoundlib.h>
 #endif
 
@@ -70,7 +66,7 @@ public:
 
 	static void Init(const string &name, Type t);
 	static void SetDeviceName(string s) {
-               #ifdef OSS_MIDI
+               #ifdef USE_OSS_MIDI
                m_DeviceName=s;
                #endif
         }
@@ -99,20 +95,21 @@ private:
 	pthread_mutex_t* m_Mutex;
 
 	static string m_AppName;
-#ifdef ALSA_MIDI
+#ifdef USE_ALSA_MIDI
 	static void *MidiReaderCallback (void *o) { ((MidiDevice*)o)->AlsaCollectEvents(); return NULL; }
 	void AlsaCollectEvents();
         void AlsaClose ();
 	snd_seq_t *seq_handle;
 	snd_seq_t *AlsaOpen(Type t);
 #endif
-#ifdef OSS_MIDI
+#ifdef USE_OSS_MIDI
         static void *MidiReaderCallback (void *o) { ((MidiDevice*)o)->OssCollectEvents(); return NULL; }
 	void OssCollectEvents();
 	void OssAddEvent(unsigned char* midi);
 	void OssReadByte(unsigned char *c);
 	void OssClose();
-	static string m_DeviceName;
+        bool OssOpen();
+        static string m_DeviceName;
 	int m_MidiFd, m_MidiWrFd;
 #endif
 #if __APPLE__

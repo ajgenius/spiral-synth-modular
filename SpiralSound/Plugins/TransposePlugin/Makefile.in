@@ -7,7 +7,7 @@ CXXFLAGS=	@CXXFLAGS@
 INCPATH	=	-I/usr/X11R6/include
 LINK	=	g++ -shared
 LFLAGS	=
-LIBS	=   -L/usr/X11R6/lib @FLTK_LIBS@ -lGL -lXext -lX11  -ldl
+LIBS	=	@FLTK_LIBS@
 MOC     = moc
 UIC	=
 
