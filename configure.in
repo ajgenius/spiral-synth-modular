@@ -43,7 +43,7 @@ if test $ac_arg_jack = "Y" ; then
 	NoteSnapPlugin OscillatorPlugin OutputPlugin RingModPlugin SVFilterPlugin \
 	SampleHoldPlugin ScopePlugin SmoothPlugin SplitterPlugin \
 	StereoMixerPlugin WaveTablePlugin LADSPAPlugin \
-    XFadePlugin JackPlugin \
+    XFadePlugin JackPlugin PoshSamplerPlugin\
 	DistributorPlugin LFOPlugin"
 else
 	PLUGINLIST="AmpPlugin ControllerPlugin DelayPlugin EchoPlugin EnvFollowerPlugin \
