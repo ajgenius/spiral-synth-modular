@@ -40,15 +40,23 @@ int GetID()
 
 ///////////////////////////////////////////////////////
 
-NoteSnapPlugin::NoteSnapPlugin()
+NoteSnapPlugin::NoteSnapPlugin() :
+m_Out(0)
 {
 	m_PluginInfo.Name="Note Snap";
-	m_PluginInfo.Width=220;
-	m_PluginInfo.Height=125;
+	m_PluginInfo.Width=90;
+	m_PluginInfo.Height=80;
 	m_PluginInfo.NumInputs=1;
 	m_PluginInfo.NumOutputs=1;
 	m_PluginInfo.PortTips.push_back("Input");	
 	m_PluginInfo.PortTips.push_back("Output");
+	
+	for (int n=0; n<12; n++)
+	{
+		m_Filter[n]=true;
+	}
+	
+	m_AudioCH->Register("Note",&m_Note);
 }
 
 NoteSnapPlugin::~NoteSnapPlugin()
@@ -62,13 +70,14 @@ PluginInfo &NoteSnapPlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *NoteSnapPlugin::CreateGUI()
 {
-	return NULL;
+	return new NoteSnapPluginGUI(m_PluginInfo.Width,
+						     m_PluginInfo.Height,
+							 this,m_AudioCH,m_HostInfo);
 }
 
 void NoteSnapPlugin::Execute()
 {	
 	float Freq=0, OldFreq=0;
-	float Out=0;
 	
 	for (int n=0; n<m_HostInfo->BUFSIZE; n++)
 	{
@@ -78,42 +87,46 @@ void NoteSnapPlugin::Execute()
 		{
 			for (int i=0; i<131; i++) // for every note
 			{			
-				if (Freq>=NoteTable[i] && Freq<NoteTable[i+1])
+				if (m_Filter[(i+1)%12] && Freq>=NoteTable[i] && Freq<NoteTable[i+1])
 				{	
-					Out=NoteTable[i];
+					m_Out=NoteTable[i];
 				}
 			}
 		}
 		
 		OldFreq=Freq;
-		SetOutputPitch(0,n,Out);		
+		SetOutputPitch(0,n,m_Out);		
 	}
 }
- 
-int main()
+
+void NoteSnapPlugin::ExecuteCommands()
 {
-	Fl::visual(FL_DOUBLE|FL_RGB);
-	
-	HostInfo host;
-	host.BUFSIZE=256;
-	host.SAMPLERATE=44100;
-	host.OUTPUTFILE="/dev/dsp";
-	host.MIDIFILE="/dev/midi";
-	host.POLY=1;
-	host.GUI_COLOUR=100;
-	
-	
-	SpiralPlugin* test = CreateInstance();
-	test->Initialise(&host);
-    test->CreateGUI();
-		
-    for (;;) 
+	if (m_AudioCH->IsCommandWaiting())
 	{
-    	if (!Fl::check()) break;
-		test->Execute();    	
-  	}
+		switch (m_AudioCH->GetCommand())
+		{
+			case NOTE_ON  : m_Filter[m_Note]=true; break;
+			case NOTE_OFF : m_Filter[m_Note]=false; break;
+		}
+	}
+}
 	
-	delete test;	
-	
-	return 1;	
+void NoteSnapPlugin::StreamOut(ostream &s) 
+{
+	s<<m_Version<<endl;
+	for (int n=0; n<12; n++)
+	{
+		s<<m_Filter[n]<<" ";
+	}
+
+}
+
+void NoteSnapPlugin::StreamIn(istream &s) 
+{
+	int version;
+	s>>version;
+	for (int n=0; n<12; n++)
+	{
+		s>>m_Filter[n];
+	}
 }

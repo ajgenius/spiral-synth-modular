@@ -29,7 +29,7 @@
 #ifndef SplitterGUI
 #define SplitterGUI
 
-
+static const int NUM_KEYS = 12;
 class NoteSnapPluginGUI : public SpiralPluginGUI
 {
 public:
@@ -41,8 +41,12 @@ protected:
     const string GetHelpText(const string &loc);	
 
 private:
-
+	int         m_Num[NUM_KEYS];
+	Fl_Button*  m_Key[NUM_KEYS];
+	
 	//// Callbacks ////
+	inline void cb_Key_i(Fl_Button* o, void* v);
+	static void cb_Key(Fl_Button* o, void* v); 
 };
 
 #endif

@@ -31,10 +31,19 @@ public:
 	virtual PluginInfo& Initialise(const HostInfo *Host);
 	virtual SpiralGUIType*  CreateGUI();
 	virtual void 		Execute();
-	virtual void	    StreamOut(ostream &s) {}
-	virtual void	    StreamIn(istream &s) {}
+	virtual void 		ExecuteCommands();
+	virtual void	    StreamOut(ostream &s);
+	virtual void	    StreamIn(istream &s);
+
+	bool GetFilter(int n) { return m_Filter[n]; }
+
+	enum GUICommands{NONE,NOTE_ON,NOTE_OFF};
 
 private:
+
+	int  m_Note;
+	bool m_Filter[12];
+	float m_Out;
 };
 
 #endif

@@ -29,6 +29,53 @@ static const int GUIBG2_COLOUR = 145;
 NoteSnapPluginGUI::NoteSnapPluginGUI(int w, int h,NoteSnapPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
 {	
+	int KeyWidth=10,Note,Pos=0,Count=0;
+	
+	for (int n=0; n<NUM_KEYS; n++)
+	{
+		m_Num[n]=n;
+		
+		Note = n%12;
+		if (Note!=1 && Note!=3 && Note!=6 && Note!=8 && Note!=10) 
+		{
+			Count++;
+			Pos=Count*KeyWidth;
+			m_Key[n] = new Fl_Button(Pos,20,KeyWidth,50,"");
+			m_Key[n]->type(1);
+			m_Key[n]->selection_color(FL_RED);		
+			m_Key[n]->box(FL_THIN_UP_BOX);
+			m_Key[n]->labelsize(10);
+			m_Key[n]->when(FL_WHEN_CHANGED);
+
+			m_Key[n]->color(FL_WHITE);
+			m_Key[n]->callback((Fl_Callback*)cb_Key, &m_Num[n]);
+			add(m_Key[n]);
+		}	
+	}
+	
+	Count=0;
+	for (int n=0; n<NUM_KEYS; n++)
+	{
+		Note = n%12;
+		if (Note==1 || Note==3 || Note==6 || Note==8 || Note==10) 
+		{
+			m_Key[n] = new Fl_Button(Pos+5,20,KeyWidth,30,"");
+			m_Key[n]->type(1);
+			m_Key[n]->selection_color(FL_RED);		
+			m_Key[n]->box(FL_THIN_UP_BOX);
+			m_Key[n]->labelsize(10);
+			m_Key[n]->when(FL_WHEN_CHANGED);
+			m_Key[n]->color(FL_BLACK);
+			m_Key[n]->callback((Fl_Callback*)cb_Key, &m_Num[n]);
+			add(m_Key[n]);
+		}
+		else
+		{
+			Count++;
+			Pos=Count*KeyWidth;
+		}
+	}
+	
 	end();
 }
 
@@ -36,10 +83,36 @@ SpiralPluginGUI(w,h,o,ch)
 
 void NoteSnapPluginGUI::UpdateValues(SpiralPlugin *o)
 {
+	NoteSnapPlugin *Plugin = (NoteSnapPlugin *)o;
+	for (int n=0; n<12; n++)
+	{
+		m_Key[n]->value(!Plugin->GetFilter(n));
+	}
 }
+
+//// Callbacks ////
+inline void NoteSnapPluginGUI::cb_Key_i(Fl_Button* o, void* v) 
+{ 
+	int k=*(int*)(v);
+	if (o->value()) 
+	{
+		m_GUICH->Set("Note",k);
+		m_GUICH->SetCommand(NoteSnapPlugin::NOTE_OFF); 
+	}
+	else
+	{
+		m_GUICH->Set("Note",k);
+		m_GUICH->SetCommand(NoteSnapPlugin::NOTE_ON); 
+	}
+	parent()->redraw();
+}
+void NoteSnapPluginGUI::cb_Key(Fl_Button* o, void* v) 
+{ ((NoteSnapPluginGUI*)(o->parent()))->cb_Key_i(o,v);}
 	
 const string NoteSnapPluginGUI::GetHelpText(const string &loc){
     return string("")
     + "Quantises the input value into a note frequency\n"
-    + "(using the midi note data).\n";
+    + "(using the midi note data).\n"
+	+ "Use the keyboard to select notes to be filtered out\n"
+	+ "for generating scales and chords";
 }
