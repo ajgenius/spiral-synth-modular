@@ -377,24 +377,24 @@ void MatrixPlugin::TransposeDown()
     }
 }
 
-bool MatrixPlugin::CanTransposeDown() 
+bool MatrixPlugin::CanTransposeDown()
 {
-    for (int x=0; x<MATX; x++) if (m_Matrix[m_GUICurrent].Matrix[x][0]) return False;
-    return True;
+    for (int x=0; x<MATX; x++) if (m_Matrix[m_GUICurrent].Matrix[x][0]) return false;
+    return true;
 }
 
-bool MatrixPlugin::CanTransposeUp() 
+bool MatrixPlugin::CanTransposeUp()
 {
-     for (int x=0; x<MATX; x++) if (m_Matrix[m_Current].Matrix[x][MATY-1]) return False;
-     return True;
+     for (int x=0; x<MATX; x++) if (m_Matrix[m_Current].Matrix[x][MATY-1]) return false;
+     return true;
 }
 
 void MatrixPlugin::StreamOut(ostream &s)
 {
 	s<<m_Version<<" ";
 	s<<m_Current<<" "<<m_Time<<" "<<m_Step<<" "<<m_Loop<<" "<<m_NoteCut<<" "<<endl;
-	
-	for (int n=0; n<NUM_PATTERNS; n++)	
+
+	for (int n=0; n<NUM_PATTERNS; n++)
 	{
 		s<<m_Matrix[n].Length<<" "<<m_Matrix[n].Speed<<" "<<m_Matrix[n].Octave<<endl;
 		
