@@ -32,13 +32,9 @@ char PitchLabel[256];
 StreamPluginGUI::StreamPluginGUI(int w, int h,StreamPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
 {	
-
-	//int Width=20;
-	//int Height=100;
-	//What are Width and Height for.
-
 	m_PitchValue=1.0f;
-		
+	m_TempPitch=1.0f;
+	
 	m_Load = new Fl_Button(2, 130, 30, 30, "Load");
     m_Load->labelsize(9);
 	m_Load->callback((Fl_Callback*)cb_Load);
@@ -84,9 +80,6 @@ SpiralPluginGUI(w,h,o,ch)
 	m_Nudge->callback((Fl_Callback*)cb_Nudge);
 	add(m_Nudge);
 	
-	// Andy Preston changed
-        // m_Volume = new Fl_Knob(170, 15, 50, 50, "Volume");
-        // to
 	m_Volume = new Fl_Knob (180, 15, 50, 50, "Volume");
     m_Volume->color(GUI_COLOUR);
 	m_Volume->type(Fl_Knob::LINELIN);
@@ -110,40 +103,7 @@ SpiralPluginGUI(w,h,o,ch)
 	m_Pitch->callback((Fl_Callback*)cb_Pitch);
 	add(m_Pitch);
 
-        // Andy Preston changed
-        // int k=4;
-        // m_Display[0] = new Fl_SevenSeg(10, 20, 30, 60);
-	// m_Display[0]->bar_width(k);
-	// m_Display[0]->color(FL_WHITE);
-	// m_Display[0]->color2(GUI_COLOUR);
-	// add(m_Display[0]);
-	// m_Display[1] = new Fl_SevenSeg(30, 20, 30, 60);
-	// m_Display[1]->bar_width(k);
-	// m_Display[1]->color(FL_WHITE);
-	// m_Display[1]->color2(GUI_COLOUR);
-	// add(m_Display[1]);
-        // m_Display[2] = new Fl_SevenSeg(60, 20, 30, 60);
-	// m_Display[2]->bar_width(k);
-	// m_Display[2]->color(FL_WHITE);
-	// m_Display[2]->color2(GUI_COLOUR);
-	// add(m_Display[2]);
-	// m_Display[3] = new Fl_SevenSeg(80, 20, 30, 60);
-	// m_Display[3]->bar_width(k);
-	// m_Display[3]->color(FL_WHITE);
-	// m_Display[3]->color2(GUI_COLOUR);
-	// add(m_Display[3]);
-        // m_Display[4] = new Fl_SevenSeg(110, 20, 30, 60);
-	// m_Display[4]->bar_width(k);
-	// m_Display[4]->color(FL_WHITE);
-	// m_Display[4]->color2(GUI_COLOUR);
-	// add(m_Display[4]);
-	// m_Display[5] = new Fl_SevenSeg(130, 20, 30, 60);
-	// m_Display[5]->bar_width(k);
-	// m_Display[5]->color(FL_WHITE);
-	// m_Display[5]->color2(GUI_COLOUR);
-	// add(m_Display[5]);
-        // to
-        for (int dis=0; dis<6; dis++) {
+         for (int dis=0; dis<6; dis++) {
             m_Display[dis] = new Fl_SevenSeg (5 + 28*dis, 20, 28, 60);
             m_Display[dis] -> bar_width (4);
             m_Display[dis] -> color (FL_WHITE);
@@ -163,7 +123,6 @@ SpiralPluginGUI(w,h,o,ch)
 
 StreamPluginGUI::~StreamPluginGUI()
 {
-	cerr << "~StreamPluginGUI" << endl;
 }
 
 void StreamPluginGUI::Update()
@@ -182,26 +141,9 @@ void StreamPluginGUI::Update()
         m_Display[0]->value((int)(t/600)%10);
         redraw();
 
+		SetMaxTime(m_GUICH->GetFloat("MaxTime"));
+
 }
-
-/*void StreamPluginGUI::SetTime()
-{
-	cerr << "foo" << endl;
-	float t=m_GUICH->GetFloat("TimeOut");
-
-	m_Pos->value(t);
-
-	m_Display[5]->value((int)(t*100)%10);
-	m_Display[4]->value((int)(t*10)%10);
-
-	m_Display[3]->value((int)t%10);
-	m_Display[2]->value((int)(t/10)%6);
-
-	m_Display[1]->value((int)(t/60)%10);
-	m_Display[0]->value((int)(t/600)%10);
-	redraw();
-}*/
-
 
 void StreamPluginGUI::UpdateValues(SpiralPlugin *o)
 {
@@ -219,8 +161,10 @@ inline void StreamPluginGUI::cb_Load_i(Fl_Button* o, void* v)
 	if (fn && fn!='\0')
 	{
 		strcpy(m_TextBuf,fn);
-		m_GUICH->Set("FileName",m_TextBuf);
+		m_GUICH->SetData("FileName",(void*)m_TextBuf);
 		m_GUICH->SetCommand(StreamPlugin::LOAD);
+		m_GUICH->Wait();
+		SetMaxTime(m_GUICH->GetFloat("MaxTime"));
 	}
 }
 void StreamPluginGUI::cb_Load(Fl_Button* o, void* v)
@@ -244,7 +188,7 @@ void StreamPluginGUI::cb_Pitch(Fl_Slider* o, void* v)
 inline void StreamPluginGUI::cb_Loop_i(Fl_Button* o, void* v) //Why is this function named so.
 { 
 	m_PitchValue*=2.0f;
-	m_GUICH->SetCommand(StreamPlugin::DOUBLE);
+	m_GUICH->Set("Pitch",m_PitchValue); 
 	sprintf(PitchLabel,"%1.3f   ",m_PitchValue);
 	m_Pitch->label(PitchLabel); 
 	m_Pitch->value(m_PitchValue+10); 
@@ -256,7 +200,7 @@ void StreamPluginGUI::cb_Loop(Fl_Button* o, void* v)
 inline void StreamPluginGUI::cb_Div_i(Fl_Button* o, void* v)
 { 
 	m_PitchValue/=2.0f;
-	m_GUICH->SetCommand(StreamPlugin::HALF);
+	m_GUICH->Set("Pitch",m_PitchValue); 
 	sprintf(PitchLabel,"%1.3f   ",m_PitchValue);
 	m_Pitch->label(PitchLabel); 
 	m_Pitch->value(m_PitchValue+10); 
@@ -271,18 +215,25 @@ void StreamPluginGUI::cb_ToStart(Fl_Button* o, void* v)
 { ((StreamPluginGUI*)(o->parent()))->cb_ToStart_i(o,v);}
 
 inline void StreamPluginGUI::cb_Stop_i(Fl_Button* o, void* v)
-{ m_GUICH->SetCommand(StreamPlugin::STOP); }
+{ 
+	m_TempPitch=m_PitchValue;
+	m_PitchValue=0;
+	m_GUICH->Set("Pitch",m_PitchValue); 
+}
 void StreamPluginGUI::cb_Stop(Fl_Button* o, void* v)
 { ((StreamPluginGUI*)(o->parent()))->cb_Stop_i(o,v);}
 
 inline void StreamPluginGUI::cb_Play_i(Fl_Button* o, void* v)
-{ m_GUICH->SetCommand(StreamPlugin::PLAY); }
+{ 	
+	m_PitchValue=m_TempPitch;
+	m_GUICH->Set("Pitch",m_PitchValue); 
+}
 void StreamPluginGUI::cb_Play(Fl_Button* o, void* v)
 { ((StreamPluginGUI*)(o->parent()))->cb_Play_i(o,v);}
 
 inline void StreamPluginGUI::cb_Reset_i(Fl_Button* o, void* v)
 { 
-	m_GUICH->SetCommand(StreamPlugin::RESET);
+	m_GUICH->Set("Pitch",1.0f); 
 	sprintf(PitchLabel,"%1.3f   ",1.0);
 	m_Pitch->label(PitchLabel); 
 	m_Pitch->value(11);
@@ -307,3 +258,13 @@ inline void StreamPluginGUI::cb_Pos_i(Fl_Slider* o, void* v)
 void StreamPluginGUI::cb_Pos(Fl_Slider* o, void* v)
 { ((StreamPluginGUI*)(o->parent()))->cb_Pos_i(o,v);}
 
+const string StreamPluginGUI::GetHelpText(const string &loc){
+    return string("") 
+	+ "If you want to mix whole tracks and add effects etc, then this is the\n" 
+	+ "way to do it. The StreamPlugin loads a wav in bit by bit, so it doesn't\n" 
+	+ "use much memory. The track can be pitched for mixing.\n"
+	+ "Operates pretty much like a media player such as XMMS (only wav\n"
+	+ "format though).\n\n"
+	+ "Note: Not realtime safe, if you're using JACK, use a client such as\n"
+	+ "alsaplayer.";
+}

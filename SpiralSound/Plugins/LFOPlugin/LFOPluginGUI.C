@@ -282,3 +282,9 @@ void LFOPluginGUI::cb_Saw (Fl_Check_Button* o, void* v) {
      ((LFOPluginGUI*)(o->parent()))->cb_Saw_i (o, v);
 }
 
+const string LFOPluginGUI::GetHelpText(const string &loc){
+    return string("")
+    + "A very low frequency oscillator. Also produces inverted and \"cosine\"\n"
+	+ "outputs (output phase shifted by 180 degrees)\n"
+	+ "Period length goes down to 2 minutes :]\n";
+}

@@ -45,6 +45,9 @@ public:
 	//void    SetTime();
 	void    SetMaxTime(float t) { m_Pos->maximum(t); }
 
+protected:
+    const string GetHelpText(const string &loc);	
+	
 private:
 	
 	Fl_Button* m_Load;
@@ -67,6 +70,7 @@ private:
 	char m_TextBuf[256];
 
 	float m_PitchValue;
+	float m_TempPitch;
 	
 	//// Callbacks ////
 	inline void cb_Load_i(Fl_Button* o, void* v);

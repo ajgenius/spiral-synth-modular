@@ -188,3 +188,13 @@ inline void KeyboardPluginGUI::cb_Key_i(Fl_Button* o, void* v)
 }
 void KeyboardPluginGUI::cb_Key(Fl_Button* o, void* v) 
 { ((KeyboardPluginGUI*)(o->parent()->user_data()))->cb_Key_i(o,v);}
+
+const string KeyboardPluginGUI::GetHelpText(const string &loc){
+    return string("") 
+	+ "This plugin provides you with a soft-keyboard if you don't have midi.\n"
+	+ "You can either use the mouse to play the keyboard GUI, or it will also\n"
+	+ "pick up PC keyboard presses in the ssm window.\n\n"
+	+ "The keyboard map follows the SoundTracker standard - i.e:\n"
+	+ "z=C4 s=C#4 x=D4 ... q=C5 2=C#5 w=D5...\n"
+	+ "The function keys change the octave.";
+}

@@ -415,3 +415,30 @@ void MatrixPluginGUI::cb_TransDnBtn (Fl_Button* o, void* v)
 {
      ((MatrixPluginGUI*)(o->parent())) -> cb_TransDnBtn_i (o, v);
 }
+
+const string MatrixPluginGUI::GetHelpText(const string &loc){
+    return string("")
+    + "This is a matrix style step sequencer for techno purists. Great for\n" 
+	+ "drum programming, but also capable of robotic bass and melodies.\n\n"
+	+ "Note events are turned on and off by activating the 64*32 grid of\n"
+	+ "toggle buttons on the GUI. The speed and octave of the notes can be\n" 
+	+ "set. The length of the pattern in notes and note cut are also\n" 
+	+ "present. The current play position is indicated by the row of LED's\n" 
+	+ "along the top of the plugin window. You can copy and paste between\n"
+	+ "different patterns and transpose the notes\n\n"
+	+ "16 triggers are supplied for simultaneous triggering of samples in the\n" 
+	+ "sampler plugin (for instance).\n\n"
+	+ "Each Matrix plugin can contain up to 16 different patterns, these are\n"  
+	+ "selectable on the plugin GUI, and triggerable by the play trigger CV.\n"  
+	+ "This CV input takes a note frequency CV rather than just a trigger,\n"  
+	+ "and the bottom 16 notes on the midi scale trigger the 16 patterns.\n" 
+	+ "This means that a matrix can trigger another matrix, if set to a much\n"  
+	+ "lower speed, and (set to octave 0) the notes trigger the differnt\n" 
+	+ "patterns in the slave matrix.\n\n"
+	+ "The external clock input is an important alternative to the matrixes\n" 
+	+ "internal clock, it allows you to have multiple matrixes powered from one\n"
+	+ "oscillator clock. To allow you to sync these matrixes, the matrix is\n"
+	+ "provided with a Reset Trigger, which when plugged into the Play Trigger\n"
+	+ "of another matrix, will synch the two so they start at the same clock\n" 
+	+ "pulse.";
+}

@@ -131,3 +131,15 @@ inline void OutputPluginGUI::cb_OpenWrite_i(Fl_Button* o, void* v)
 }
 void OutputPluginGUI::cb_OpenWrite(Fl_Button* o, void* v)
 { ((OutputPluginGUI*)(o->parent()))->cb_OpenWrite_i(o,v); }
+
+
+const string OutputPluginGUI::GetHelpText(const string &loc){
+    return string("") 
+	+ "Your basic OSS i/o plugin, It opens the OSS sound driver, and outputs\n"
+	+ "whatever is passed into it's inputs to the soundcard. It works in stereo,\n" 
+	+ "so you have seperate left and right inputs.\n\n"
+	+ "There are three modes of operation: read, write and duplex. You can select\n" 
+	+ "read to record/process sound from your soundcard, write to play sound\n" 
+	+ "(default) and if your card supports it - duplex, to play and record \n"
+	+ "simultaneously.";
+}

@@ -72,6 +72,9 @@ public:
 	void StreamOut(ostream &s);
 	void StreamIn(istream &s);
 	
+protected:
+    const string GetHelpText(const string &loc);	
+	
 private:
 	
 	int m_LastLight;

@@ -20,7 +20,6 @@
 #include "../../RiffWav.h"
 #include <FL/Fl_Pixmap.H>
 #include <map>
-#include <glib.h>
 #include <jack/jack.h>
 
 typedef jack_default_audio_sample_t sample_t;

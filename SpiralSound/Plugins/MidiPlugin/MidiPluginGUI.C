@@ -283,3 +283,26 @@ inline void MidiPluginGUI::cb_RemoveControl_i(Fl_Button* o, void* v)
 }
 void MidiPluginGUI::cb_RemoveControl(Fl_Button* o, void* v) 
 { ((MidiPluginGUI*)(o->parent()))->cb_RemoveControl_i(o,v);}
+
+const string MidiPluginGUI::GetHelpText(const string &loc){
+    return string("")
+    + "A plugin that converts midi signals into SSM's CVs. The midi plugin\n" 
+	+ "outputs a Frequency CV, which comes from the last note pressed and\n" 
+	+ "Trigger CV which lets you know the timing and the velocity of the\n" 
+	+ "event.\n"
+    + "It also detects pitchbend, channel pressure and aftertouch information,\n" 
+	+ "and outputs these as continuous CV data.\n\n"
+    + "You can select the Midi device used with the selector. Devices 0-16 are\n" 
+	+ "valid Midi channels. You can run multiple Midi plugins simultaneously\n" 
+	+ "to get data from different device numbers to make an externally\n" 
+	+ "controlled song.\n\n"
+    + "The note frequency CV can optionally be switched into \"Note Cut\" mode,\n" 
+	+ "where the frequecy is set to zero when the key is released. This is\n" 
+	+ "useful for a number of things, including retriggering samples from\n" 
+	+ "frequency information (see sampler).\n"
+	+ "Extra ports can be added to handle the 128 controller messages. Click\n" 
+	+ "add control, and you will get a menu window to pick the controller you\n" 
+	+ "need.\n"
+	+ "The MidiPlugin also supports midi note output to external devices";
+}
+

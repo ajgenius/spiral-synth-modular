@@ -82,3 +82,12 @@ inline void DiskWriterPluginGUI::cb_Record_i(Fl_Button* o, void* v)
 }
 void DiskWriterPluginGUI::cb_Record(Fl_Button* o, void* v)
 { ((DiskWriterPluginGUI*)(o->parent()))->cb_Record_i(o,v); }
+
+const string DiskWriterPluginGUI::GetHelpText(const string &loc){
+    return string("")
+    + "One way of recording your creations to disk. First open a file\n"
+    + "you wish to save to, then hit record to start recording.\n"
+    + "You are able to stop and restart recording without closing the\n"
+    + "file, which should make life a little easier if you are doing\n"
+    + "things like recording lots of little samples.";
+}

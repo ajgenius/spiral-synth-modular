@@ -675,3 +675,21 @@ inline void PoshSamplerPluginGUI::cb_ZoomOut_i(Fl_Button* o, void* v)
 }
 void PoshSamplerPluginGUI::cb_ZoomOut(Fl_Button* o, void* v)
 { ((PoshSamplerPluginGUI*)(o->parent()))->cb_ZoomOut_i(o,v);}
+
+const string PoshSamplerPluginGUI::GetHelpText(const string &loc){
+    return string("") 
+	+ "A sampler that allows simple sample editing (cut copy paste etc),\n"
+	+ "dirty time stretching (by modulating the start pos + retriggering +\n" 
+	+ "modulating pitch) and loop start/end points with ping pong loop mode.\n"
+	+ "Also implementations of controls, such as continuous pitch changing,\n" 
+	+ "so you can add portmento to samples, trigger velocity sets sample\n"
+	+ "volume.\n\n"
+	+ "Can records input data too.\n\n"
+	+ "Controls:\n"
+	+ "lmb: Select region\n"
+	+ "mmb: Move view\n"
+	+ "rmb: Draws samples at full zoom.\n\n"
+	+ "Left mouse also drags loop points. The Loop end marker defaults to the\n" 
+	+ "end of the sample.\n\n"
+	+ "Note: The loading and saving of samples is not yet realtime safe";
+}

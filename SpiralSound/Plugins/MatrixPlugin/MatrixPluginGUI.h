@@ -71,6 +71,9 @@ public:
 	virtual void UpdateValues(SpiralPlugin *o);
 	virtual void Update();
 	
+protected:
+    const string GetHelpText(const string &loc);	
+	
 private:
 	
 	void UpdateMatrix();

@@ -100,6 +100,7 @@ SpiralSynthModularInfo::SpiralSynthModularInfo()
 	PLUGINVEC.push_back("XFadePlugin.so");
 	PLUGINVEC.push_back("DistributorPlugin.so");
 	PLUGINVEC.push_back("SplitterPlugin.so");
+	PLUGINVEC.push_back("StreamPlugin.so");
 }
 
 void SpiralSynthModularInfo::StreamInPrefs(istream &s)

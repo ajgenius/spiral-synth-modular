@@ -81,6 +81,9 @@ public:
 	void SetPlayPos(long s) { m_Display->SetPlayPos(s); }
 	int  GetCurrentSample() { return (int)m_SampleNum->value(); }
 	
+protected:
+    const string GetHelpText(const string &loc);	
+	
 private:
 
 	void UpdateSampleDisplay(int num);

@@ -36,7 +36,10 @@ public:
 	DiskWriterPluginGUI(int w, int h, SpiralPlugin *o, ChannelHandler *ch, const HostInfo *Info);
 	
 	virtual void UpdateValues(SpiralPlugin *o);
-		
+
+protected:
+    const string GetHelpText(const string &loc);	
+	
 private:
 
 	Fl_Button		*Open;

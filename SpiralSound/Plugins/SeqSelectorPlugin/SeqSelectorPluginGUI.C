@@ -287,3 +287,14 @@ inline void SeqSelectorPluginGUI::cb_UseRange_i(Fl_Button* o, void* v)
 }
 void SeqSelectorPluginGUI::cb_UseRange(Fl_Button* o, void* v)
 { ((SeqSelectorPluginGUI*)(o->parent()))->cb_UseRange_i(o,v); }
+
+const string SeqSelectorPluginGUI::GetHelpText(const string &loc){
+    return string("") 
+	+ "The SeqSelector is designed to allow you to syncronise and select up\n"
+	+ "to 8 Sequencer or Matrix patterns into tracks. When the SeqSelector\n"
+	+ "recieves a trigger (which could come from a master pattern, or a clock\n"
+	+ "oscillator) it will briefly flash the next set of values to its outputs,\n"
+	+ "triggering the next patterns on it's slave sequencers or matrix plugins.\n\n"
+	+ "You can also specify a loop, which will be used if the \"use range\"\n"
+	+ "button is activated. This is useful for auditioning sections of a track.";
+}

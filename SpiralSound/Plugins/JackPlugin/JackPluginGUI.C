@@ -229,3 +229,21 @@ inline void JackPluginGUI::cb_InputConnect_i(Fl_Button* o, void* v)
 }
 void JackPluginGUI::cb_InputConnect(Fl_Button* o, void* v)
 { ((JackPluginGUI*)(o->parent()))->cb_InputConnect_i(o,v);}
+
+const string JackPluginGUI::GetHelpText(const string &loc){
+    return string("") 
+	+ "JACK is the Jack Audio Connection Kit, and allows multiple Linux audio\n"
+	+ "apps to be connected together and run simultaneously in a low latency.\n"
+	+ "environment.\n\n"	
+    + "This plugin allows you to connect up to 8 inputs and outputs to other\n"
+    + "JACK apps (providing a server is running)\n"
+    + "You can use the JackPlugin to connect the ports, or a external program\n"
+    + "such as the excellent qjackconnect app. Be aware however that if you\n"
+	+ "connect from an external app, the port GUI does not update itself yet.\n"
+	+ "Another problem yet to be fixed is that ssm will get confused if more\n"
+	+ "than one JackPlugin is being used. It's best to use one central\n"
+	+ "JackPlugin at this time.\n\n"
+	+ "When using JACK, make sure the buffer size and samplerate are set to\n"
+	+ "match the JACK server, otherwise glitchy playback, and/or crashes may\n"
+	+ "result";
+}

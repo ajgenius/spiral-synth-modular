@@ -44,7 +44,7 @@ class StreamPlugin : public SpiralPlugin
 public:
 	enum Mode{PLAYM,STOPM};
 
-	enum GUICommands{LOAD,RESTART,STOP,PLAY,HALF,RESET,DOUBLE,NUDGE,SET_TIME};
+	enum GUICommands{NONE,LOAD,RESTART,STOP,PLAY,HALF,RESET,DOUBLE,NUDGE,SET_TIME};
 
  	StreamPlugin();
 	virtual ~StreamPlugin();
@@ -92,6 +92,7 @@ private:
 	char m_FileNameArg[256];
 	float m_TimeArg;
 	float m_TimeOut;
+	float m_MaxTime;
 };
 
 #endif

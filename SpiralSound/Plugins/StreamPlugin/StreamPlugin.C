@@ -76,11 +76,11 @@ m_Mode(STOPM)
 	m_AudioCH->RegisterData("FileName",ChannelHandler::INPUT,&m_FileNameArg,sizeof(m_FileNameArg));
 	m_AudioCH->Register("Time",&m_TimeArg);
 	m_AudioCH->Register("TimeOut",&m_TimeOut,ChannelHandler::OUTPUT);
+	m_AudioCH->Register("MaxTime",&m_MaxTime,ChannelHandler::OUTPUT);
 }
 
 StreamPlugin::~StreamPlugin()
 {
-	cerr << "I'm deleted" << endl;
 }
 
 PluginInfo &StreamPlugin::Initialise(const HostInfo *Host)
@@ -141,10 +141,7 @@ void StreamPlugin::Execute()
 			m_Pos+=m_StreamDesc.PitchMod+CVPitch;
 			m_GlobalPos+=m_StreamDesc.PitchMod+CVPitch;
 		}
-		
-		//if (((StreamPluginGUI*)m_GUI)->visible()) 
-		//	((StreamPluginGUI*)m_GUI)->SetTime(GetTime());
-		//Joe must fix this.
+
 		m_TimeOut=GetTime();
 	}
 }
@@ -155,14 +152,11 @@ void StreamPlugin::ExecuteCommands()
 	{
 		switch(m_AudioCH->GetCommand())
 		{
-			case (LOAD)	: OpenStream(m_FileNameArg); break;
-	                case (RESTART)	: Restart(); break;
-	                case (STOP)     : Stop(); break;
-        	        case (PLAY)	: Play(); break;
-        	        case (HALF)     : m_StreamDesc.PitchMod/=2; break;
-        	        case (RESET)    : m_StreamDesc.PitchMod=1; break;
-        	        case (DOUBLE)   : m_StreamDesc.PitchMod*=2; break;
-        	        case (NUDGE)    : Nudge(); break;
+			case (LOAD)	    : OpenStream(m_FileNameArg); break;
+	        case (RESTART)	: Restart(); break;
+	        case (STOP)     : Stop(); break;
+        	case (PLAY)   	: Play(); break;
+         	case (NUDGE)    : Nudge(); break;
 			case (SET_TIME) : SetTime(m_TimeArg); break;
 		}
 	}
@@ -220,12 +214,10 @@ void StreamPlugin::OpenStream(const string &Name)
 	m_StreamDesc.Pitch = m_StreamDesc.SampleRate/(float)m_HostInfo->SAMPLERATE;												
 	if (m_StreamDesc.Stereo) 
 	{
-		m_StreamDesc.Pitch*=2;	
-		//((StreamPluginGUI*)m_GUI)->SetMaxTime(GetLength());
+		m_StreamDesc.Pitch*=2;
+		m_MaxTime=GetLength();
 	}
-	//else ((StreamPluginGUI*)m_GUI)->SetMaxTime(GetLength()/2);
-	//Joe this must use the chanel handler
-	
+	else m_MaxTime=GetLength()/2;
 }
 
 void StreamPlugin::Restart() 
