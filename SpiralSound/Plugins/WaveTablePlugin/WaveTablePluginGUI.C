@@ -381,7 +381,7 @@ void WaveTablePluginGUI::UpdateValues(SpiralPlugin *o)
 		case WaveTablePlugin::INVSINE  : ShapeInvSine->value(1); break;
 	}
 
-	Freq->value(Plugin->GetOctave());
+	Freq->value (Plugin->GetOctave () - 3);
 	ModAmount->value(Plugin->GetModAmount());
 	FineTune->value(sqrt(Plugin->GetFinefreq()));
 	
