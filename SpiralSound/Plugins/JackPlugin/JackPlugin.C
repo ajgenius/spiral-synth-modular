@@ -63,7 +63,6 @@ bool JackClient::Attach()
 	}
 
 	jack_set_process_callback(m_Client, JackClient::Process, 0);
-	jack_set_buffer_size_callback(m_Client, JackClient::OnBufSizeChange, 0);
 	jack_set_sample_rate_callback (m_Client, JackClient::OnSRateChange, 0);
 	jack_on_shutdown (m_Client, JackClient::OnJackShutdown, this);
 
@@ -74,7 +73,7 @@ bool JackClient::Attach()
 	for (int n=0; n<NUM_INPUTS; n++)
 	{
 		char Name[256];
-		sprintf(Name,"In %d",n);
+		sprintf(Name,"In%d",n);
 	
 		JackPort *NewPort = new JackPort;
 		NewPort->Name=Name;
@@ -86,7 +85,7 @@ bool JackClient::Attach()
 	for (int n=0; n<NUM_OUTPUTS; n++)
 	{
 		char Name[256];
-		sprintf(Name,"Out %d",n);
+		sprintf(Name,"Out%d",n);
 	
 		JackPort *NewPort = new JackPort;
 		NewPort->Name=Name;
@@ -129,6 +128,8 @@ void JackClient::Detach()
 
 int JackClient::Process(jack_nframes_t nframes, void *o)
 {	
+	m_BufferSize=nframes;
+	
 	for (int n=0; n<NUM_INPUTS; n++)
 	{
 		if (jack_port_connected(m_InputPortMap[n]->Port))
@@ -161,14 +162,6 @@ int JackClient::Process(jack_nframes_t nframes, void *o)
 		RunCallback(RunContext, true);
 	}
 	
-	return 0;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-int JackClient::OnBufSizeChange(long unsigned int n, void *o)
-{
-	m_BufferSize=n;
 	return 0;
 }
 

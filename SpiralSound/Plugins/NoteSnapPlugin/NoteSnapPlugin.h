@@ -44,6 +44,8 @@ private:
 	int  m_Note;
 	bool m_Filter[12];
 	float m_Out;
+	float m_LastFreq;
+	int   m_LastNote;
 };
 
 #endif

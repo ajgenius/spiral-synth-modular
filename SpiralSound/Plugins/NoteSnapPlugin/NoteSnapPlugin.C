@@ -52,9 +52,10 @@ m_Out(0)
 	m_PluginInfo.Width=90;
 	m_PluginInfo.Height=80;
 	m_PluginInfo.NumInputs=1;
-	m_PluginInfo.NumOutputs=1;
+	m_PluginInfo.NumOutputs=2;
 	m_PluginInfo.PortTips.push_back("Input");	
 	m_PluginInfo.PortTips.push_back("Output");
+	m_PluginInfo.PortTips.push_back("Changed Trigger");
 	
 	for (int n=0; n<12; n++)
 	{
@@ -82,24 +83,30 @@ SpiralGUIType *NoteSnapPlugin::CreateGUI()
 
 void NoteSnapPlugin::Execute()
 {	
-	float Freq=0, OldFreq=0;
+	float Freq=0;
 	
 	for (int n=0; n<m_HostInfo->BUFSIZE; n++)
 	{
 		Freq=GetInputPitch(0,n);
 		
-		if (Freq!=OldFreq) // if it's changed
+		SetOutput(1,n,0);	
+		if (Freq!=m_LastFreq) // if it's changed
 		{
 			for (int i=0; i<131; i++) // for every note
 			{			
 				if (m_Filter[(i+1)%12] && Freq>=NoteTable[i] && Freq<NoteTable[i+1])
-				{	
+				{		
 					m_Out=NoteTable[i];
+					if (i!=m_LastNote) 
+					{
+						SetOutput(1,n,1);
+						m_LastNote=i;
+					}
 				}
 			}
 		}
 		
-		OldFreq=Freq;
+		m_LastFreq=Freq;
 		SetOutputPitch(0,n,m_Out);		
 	}
 }
