@@ -85,7 +85,7 @@ void FilterPluginGUI::cb_Cutoff(Fl_Slider* o, void* v)
 { ((FilterPluginGUI*)(o->parent()))->cb_Cutoff_i(o,v); }
 
 inline void FilterPluginGUI::cb_Resonance_i(Fl_Knob* o, void* v) 
-{ m_GUICH->Set("Resonance",(float)o->value()+1.0f); }
+{ m_GUICH->Set("Resonance",(float)(o->value()+1.0f)); }
 void FilterPluginGUI::cb_Resonance(Fl_Knob* o, void* v) 
 { ((FilterPluginGUI*)(o->parent()))->cb_Resonance_i(o,v); }
 
