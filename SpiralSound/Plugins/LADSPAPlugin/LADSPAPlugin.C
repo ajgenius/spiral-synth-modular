@@ -18,6 +18,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <cmath>
 
 #include "SpiralIcon.xpm"
 #include "LADSPAPlugin.h"
@@ -545,7 +546,7 @@ bool LADSPAPlugin::UpdatePlugin(unsigned long UniqueID, bool PortClampReset)
 
 			for (int n=0; n<m_PluginInfo.NumInputs; n++)
 			{
-				float Max=1.0f, Min=-1.0f, defolt=0.0f;
+				float Max=1.0f, Min=-1.0f, Default=0.0f;
 				int Port=m_PortID[n];
 
 				// Get the bounding hints for the port
@@ -569,8 +570,55 @@ bool LADSPAPlugin::UpdatePlugin(unsigned long UniqueID, bool PortClampReset)
 
 #ifdef LADSPA_VERSION
 // We've got a version of the header that supports port defaults
+				if (LADSPA_IS_HINT_HAS_DEFAULT(HintDesc)) {
+				// LADSPA_HINT_DEFAULT_0 is assumed anyway, so we don't check for it
+					if (LADSPA_IS_HINT_DEFAULT_1(HintDesc)) {
+						Default = 1.0f;
+					} else if (LADSPA_IS_HINT_DEFAULT_100(HintDesc)) {
+						Default = 100.0f;
+					} else if (LADSPA_IS_HINT_DEFAULT_440(HintDesc)) {
+						Default = 440.0f;
+					} else {
+					// These hints may be affected by SAMPLERATE, LOGARITHMIC and INTEGER
+						if (LADSPA_IS_HINT_DEFAULT_MINIMUM(HintDesc) &&
+						    LADSPA_IS_HINT_BOUNDED_BELOW(HintDesc)) {
+							Default=PlugDesc->PortRangeHints[Port].LowerBound;
+						} else if (LADSPA_IS_HINT_DEFAULT_MAXIMUM(HintDesc) &&
+						           LADSPA_IS_HINT_BOUNDED_ABOVE(HintDesc)) {
+							Default=PlugDesc->PortRangeHints[Port].LowerBound;
+						} else if (LADSPA_IS_HINT_BOUNDED_BELOW(HintDesc) &&
+							   LADSPA_IS_HINT_BOUNDED_ABOVE(HintDesc)) {
+						// These hints require both upper and lower bounds
+							float lp = 0.0f, up = 0.0f;
+							float min = PlugDesc->PortRangeHints[Port].LowerBound;
+							float max = PlugDesc->PortRangeHints[Port].UpperBound;
+							if (LADSPA_IS_HINT_DEFAULT_LOW(HintDesc)) {
+								lp = 0.75f;
+								up = 0.25f;
+							} else if (LADSPA_IS_HINT_DEFAULT_MIDDLE(HintDesc)) {
+								lp = 0.5f;
+								up = 0.5f;
+							} else if (LADSPA_IS_HINT_DEFAULT_HIGH(HintDesc)) {
+								lp = 0.25f;
+								up = 0.75f;
+							}
 
+							if (LADSPA_IS_HINT_LOGARITHMIC(HintDesc)) {
+								Default = exp(log(min) * lp + log(max) * up);
+							} else {
+								Default = min * lp + max * up;
+							}
+						}
+						if (LADSPA_IS_HINT_SAMPLE_RATE(HintDesc)) {
+							Default *= m_HostInfo->SAMPLERATE;
+						}
+						if (LADSPA_IS_HINT_INTEGER(HintDesc)) {
+							Default = floorf(Default);
+						}
+					}
+				}
 #else
+// No LADSPA_VERSION - implies no defaults
 #warning ************************************
 #warning Your LADSPA header is out of date!
 #warning Please get the latest sdk from
@@ -582,7 +630,7 @@ bool LADSPAPlugin::UpdatePlugin(unsigned long UniqueID, bool PortClampReset)
 				m_PortMin.push_back(Min);
 				m_PortMax.push_back(Max);
 				m_PortClamp.push_back(true);
-				m_PortDefault.push_back(defolt);
+				m_PortDefault.push_back(Default);
 			}
 		}
 
