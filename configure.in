@@ -1,6 +1,9 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(SpiralSynthModular.C)
 
+dnl Automake (can't use AC_CONFIG_HEADER - get complaints!)
+AM_CONFIG_HEADER(config.h)
+
 dnl Checks for programs.
 AC_PROG_CC
 AC_PROG_CPP
@@ -63,6 +66,42 @@ else
 	fi
 echo "$PLUGINLIST" > SpiralSound/PluginList.txt
 
+dnl Check whether liblrdf has been enabled
+AC_ARG_ENABLE(
+    lrdf,
+    [  --enable-lrdf           Enable liblrdf for LADSPA Plugin [no]],
+    [use_liblrdf="y"],
+    [use_liblrdf="n"]
+)
+if test "$use_liblrdf" = "y"; then
+    AC_CHECK_HEADER(lrdf.h, , AC_MSG_ERROR( ** No lrdf.h found for liblrdf))
+    AC_CHECK_LIB(lrdf, lrdf_init, AC_DEFINE(HAVE_LIBLRDF, , [Enable liblrdf support for LADSPA Plugin]), AC_MSG_ERROR( ** No liblrdf found))
+    LRDFLIBS="-llrdf"
+    AC_SUBST(LRDFLIBS)
+fi
+
+dnl Check if POSIX SHM enabled (for sharing LADSPA Plugin database)
+dnl Nicked in part from JACK configure.in
+AC_ARG_ENABLE(
+    posix-shm,
+    [  --enable-posix-shm      Enable POSIX SHM for LADSPA Plugin [no]
+                            This allows a single LADSPA plugin database
+                            to be shared between instances],
+    [use_posix_shm="y"],
+    [use_posix_shm="n"]
+)
+if test "$use_posix_shm" = "y"; then
+    AC_MSG_CHECKING([POSIX SHM support ])
+    ls /dev/shm >/dev/null 2>&1
+    if test $? = 0; then
+        AC_DEFINE(USE_POSIX_SHM, ,[Enable POSIX SHM support for LADSPA Plugin])
+        AC_MSG_RESULT(found.)
+        SHMLIBS="-lrt"
+        AC_SUBST(SHMLIBS)
+    else
+        AC_MSG_RESULT(not found.)
+    fi
+fi
 
 dnl Checks for library functions.
 
