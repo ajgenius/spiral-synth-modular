@@ -29,6 +29,7 @@
 
 #include "SpiralSynthModular.h"
 #include "SpiralSound/PluginManager.h"
+#include "SpiralSound/Plugins/SpiralPluginGUI.h"
 
 #include "GUI/SSM.xpm"
 #include "GUI/load.xpm"
@@ -40,7 +41,7 @@
 
 //#define DEBUG_PLUGINS
 
-const static string LABEL = "SpiralSynthModular 0.1.1b1";
+const static string LABEL = "SpiralSynthModular 0.1.1 MultiThreaded";
 static string TITLEBAR;
 
 static const int FILE_VERSION = 3;
@@ -71,7 +72,8 @@ SynthModular::SynthModular():
 m_NextID(0),
 m_NextPluginButton(1),
 m_NextPluginButtonXPos(5),
-m_NextPluginButtonYPos(20)
+m_NextPluginButtonYPos(20),
+m_PauseAudio(false)
 { 	
 	m_Info.BUFSIZE    = SpiralInfo::BUFSIZE;
 	m_Info.FRAGSIZE   = SpiralInfo::FRAGSIZE;
@@ -83,6 +85,8 @@ m_NextPluginButtonYPos(20)
 	//m_Info.GUI_COLOUR = SpiralInfo::GUI_COLOUR;
 	
 	for (int n=0; n<512; n++) Numbers[n]=n;	
+	
+	m_CH.Register("PauseAudio",&m_PauseAudio);
 }
 
 //////////////////////////////////////////////////////////
@@ -97,6 +101,8 @@ SynthModular::~SynthModular()
 
 void SynthModular::ClearUp()
 {
+	PauseAudio();
+	
 	for(map<int,DeviceWin*>::iterator i=m_DeviceWinMap.begin();
 		i!=m_DeviceWinMap.end(); i++)
 	{
@@ -113,13 +119,29 @@ void SynthModular::ClearUp()
 	m_Canvas->Clear();
 	m_DeviceWinMap.clear();
 	m_NextID=0;
+	
+	ResumeAudio();
 }
 
 //////////////////////////////////////////////////////////
 
 void SynthModular::Update()
 {	
-	// run the plugins
+	m_CH.UpdateDataNow();
+		
+	if (m_PauseAudio) return;
+		
+	// for all the plugins
+	for(map<int,DeviceWin*>::iterator i=m_DeviceWinMap.begin();
+		i!=m_DeviceWinMap.end(); i++)
+	{
+		// updates the data from the gui thread, if it's not blocking
+ 		i->second->m_Device->UpdateChannelHandler();
+	    // run any commands we've received from the GUI's
+		i->second->m_Device->ExecuteCommands();
+	}
+	
+	// run the plugins (only ones connected to anything)
 	list<int> ExecutionOrder = m_Canvas->GetGraph()->GetSortedList();
 	for (list<int>::reverse_iterator i=ExecutionOrder.rbegin(); 
 		 i!=ExecutionOrder.rend(); i++)
@@ -127,7 +149,7 @@ void SynthModular::Update()
 		// use the graphsort order to remove internal latency
 		map<int,DeviceWin*>::iterator di=m_DeviceWinMap.find(*i);
 		if (di!=m_DeviceWinMap.end() && di->second->m_Device) 
-		{
+		{		
 			#ifdef DEBUG_PLUGINS
 			cerr<<"Executing plugin "<<di->second->m_PluginID<<endl;
 			#endif
@@ -149,6 +171,11 @@ void SynthModular::UpdatePluginGUIs()
 	for (map<int,DeviceWin*>::iterator i=m_DeviceWinMap.begin(); 
 		 i!=m_DeviceWinMap.end(); i++)
 	{	
+		if (i->second->m_DeviceGUI->GetPluginWindow())
+		{
+			i->second->m_DeviceGUI->GetPluginWindow()->redraw();
+		}
+		
 		if (i->second->m_DeviceGUI->Killed())
 		{
 			if (i->second->m_DeviceGUI->GetPluginWindow())
@@ -160,7 +187,12 @@ void SynthModular::UpdatePluginGUIs()
 			m_Canvas->RemoveDevice(i->second->m_DeviceGUI);			
 			// deleted by Canvas::Remove()? seems to cause random crashes 
 			//delete i->second->m_DeviceGUI;			
-			if (i->second->m_Device) delete i->second->m_Device;
+			if (i->second->m_Device) 
+			{
+				PauseAudio();
+				delete i->second->m_Device;
+				ResumeAudio();
+			}
 			m_DeviceWinMap.erase(i);
 			break;
 		}
@@ -497,6 +529,7 @@ DeviceWin* SynthModular::NewDeviceWin(int n, int x, int y)
 
 	if (temp) 
 	{	
+		temp->hide();
 		temp->position(200,50);
 		m_AppGroup->add(temp);		
 		m_MainWindow->redraw();
@@ -578,7 +611,7 @@ void SynthModular::UpdateHostInfo()
 	str<<*this;
 	
 	ClearUp();
-	
+				
 	// update the settings
 	m_Info.BUFSIZE    = SpiralInfo::BUFSIZE;
 	m_Info.FRAGSIZE   = SpiralInfo::FRAGSIZE;
@@ -603,6 +636,8 @@ void SynthModular::cb_Update(void* o, bool mode)
 
 istream &operator>>(istream &s, SynthModular &o)
 {	
+	o.PauseAudio();
+
 	string dummy;
 	int ver;
 	s>>dummy>>dummy>>dummy>>ver;
@@ -666,8 +701,19 @@ istream &operator>>(istream &s, SynthModular &o)
 				temp->m_Device->SetUpdateInfoCallback(ID,o.cb_UpdatePluginInfo);					
 				o.m_DeviceWinMap[ID]=temp;
 				o.m_DeviceWinMap[ID]->m_Device->StreamIn(s); // load the plugin
+ 				
 				if (ver>1 && o.m_DeviceWinMap[ID]->m_DeviceGUI->GetPluginWindow()) 
 				{
+					// set the GUI up with the loaded values
+					// looks messy, but if we do it here, the plugin and it's gui can remain
+					// totally seperated.
+					((SpiralPluginGUI*)(o.m_DeviceWinMap[ID]->m_DeviceGUI->GetPluginWindow()))->
+						UpdateValues(o.m_DeviceWinMap[ID]->m_Device);
+
+					// updates the data in the channel buffers, so the values don't
+					// get overwritten in the next tick. (should maybe be somewhere else)
+					o.m_DeviceWinMap[ID]->m_Device->GetChannelHandler()->FlushChannels();
+
 					// position the plugin window in the main window
 					o.m_DeviceWinMap[ID]->m_DeviceGUI->GetPluginWindow()->position(px,py);
 						
@@ -692,6 +738,8 @@ istream &operator>>(istream &s, SynthModular &o)
 
 	s>>*o.m_Canvas;
 
+	o.ResumeAudio();
+
 	return s;
 }
 
@@ -699,6 +747,8 @@ istream &operator>>(istream &s, SynthModular &o)
 
 ostream &operator<<(ostream &s, SynthModular &o)
 {
+	o.PauseAudio();
+
 	s<<"SpiralSynthModular File Ver "<<FILE_VERSION<<endl;
 		
 	// make external files dir
@@ -772,6 +822,8 @@ ostream &operator<<(ostream &s, SynthModular &o)
 		system(command.c_str());
 	}
 	
+	o.ResumeAudio();
+
 	return s;
 }
 
@@ -810,7 +862,7 @@ inline void SynthModular::cb_Load_i(Fl_Button* o, void* v)
 			
 			ClearUp();
 			inf>>*this;
-			
+						
 			TITLEBAR=LABEL+" "+fn;
 			m_TopWindow->label(TITLEBAR.c_str());
 		}
@@ -842,9 +894,9 @@ inline void SynthModular::cb_Save_i(Fl_Button* o, void* v)
 		if (of)
 		{	
 			m_FilePath=fn;
-		
+			
 			of<<*this;
-						
+					
 			TITLEBAR=LABEL+" "+fn;
 			m_TopWindow->label(TITLEBAR.c_str());
 		}
@@ -1024,7 +1076,7 @@ void SynthModular::LoadPatch(const char *fn)
 	{	
 	    m_FilePath=fn;	
 
-	    ClearUp();
+		ClearUp();
 	    inf>>*this;
 
 	    TITLEBAR=LABEL+" "+fn;
@@ -1033,46 +1085,3 @@ void SynthModular::LoadPatch(const char *fn)
 }
 
 //////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////
-
-int main(int argc, char **argv)
-{	
-	srand(time(NULL));
-	SpiralSynthModularInfo::Get()->LoadPrefs();
-	
-	// get args
-    string cmd_filename="";
-    bool cmd_specd = false;
-    if (argc>1) 
-	{
-        cmd_filename = argv[1];
-        cmd_specd = true;
-    }	
-	
-	Fl::visual(FL_DOUBLE|FL_RGB);
-	
-	SynthModular *synth=new SynthModular;
-	
-	Fl_Window* win = synth->CreateWindow();
-	synth->LoadPlugins();
-	win->xclass("");
-	win->show(argc, argv); // prevents stuff happening before the plugins have loaded
-	
-	Fl_Tooltip::size(10);	
-	Fl::visible_focus(false);
-		
-	// do we need to load a patch on startup? 
-    if (cmd_specd) synth->LoadPatch(cmd_filename.c_str());        
-
-    for (;;) 
-	{
-    	if (!Fl::check()) break;
-		if (!synth->CallbackMode()) synth->Update();
-		synth->UpdatePluginGUIs(); // deletes any if necc
-		//else Fl::wait();
-  	}
-	
-	delete synth;	
-	return 1;
-}
-

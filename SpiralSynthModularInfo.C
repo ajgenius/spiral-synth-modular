@@ -86,25 +86,15 @@ SpiralSynthModularInfo::SpiralSynthModularInfo()
 	PLUGINVEC.push_back("FilterPlugin.so");	
 	PLUGINVEC.push_back("SVFilterPlugin.so");	
 	PLUGINVEC.push_back("MoogFilterPlugin.so");	
-	PLUGINVEC.push_back("WaveShaperPlugin.so");	
 	PLUGINVEC.push_back("EchoPlugin.so");	
 	PLUGINVEC.push_back("DelayPlugin.so");	
-	PLUGINVEC.push_back("SamplerPlugin.so");	
-	PLUGINVEC.push_back("SeqPlugin.so");	
 	PLUGINVEC.push_back("MatrixPlugin.so");	
-	PLUGINVEC.push_back("SeqSelectorPlugin.so");	
 	PLUGINVEC.push_back("EnvFollowerPlugin.so");	
 	PLUGINVEC.push_back("SmoothPlugin.so");
 	PLUGINVEC.push_back("LADSPAPlugin.so");	
 	PLUGINVEC.push_back("XFadePlugin.so");
-	PLUGINVEC.push_back("StreamPlugin.so");
-	PLUGINVEC.push_back("SpiralLoopPlugin.so");
-	PLUGINVEC.push_back("PoshSamplerPlugin.so");
-	PLUGINVEC.push_back("ComplexEnvelopePlugin.so");
 	PLUGINVEC.push_back("DistributorPlugin.so");
-	PLUGINVEC.push_back("JoystickPlugin.so");
 	PLUGINVEC.push_back("LFOPlugin.so");
-	PLUGINVEC.push_back("MeterPlugin.so");
 }
 
 void SpiralSynthModularInfo::StreamInPrefs(istream &s)

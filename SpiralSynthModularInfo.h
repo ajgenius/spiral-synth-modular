@@ -40,7 +40,7 @@ public:
 protected:
 	SpiralSynthModularInfo();
 	
-	virtual string GetResFileName() { return ".SpiralSynthModular"; }
+	virtual string GetResFileName() { return ".SpiralSynthModularMT"; }
 	
 	static SpiralSynthModularInfo *m_SpiralSynthModularInfo;
 	

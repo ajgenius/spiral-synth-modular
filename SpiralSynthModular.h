@@ -36,6 +36,7 @@
 #include "GUI/Widgets/Fl_CommentGUI.h"
 #include "GUI/Widgets/Fl_Canvas.h"
 #include "SpiralSound/Plugins/SpiralPlugin.h"
+#include "SpiralSound/ChannelHandler.h"
 #include "SettingsWindow.h"
 
 typedef Fl_Double_Window SpiralWindowType;
@@ -70,6 +71,17 @@ public:
 	bool CallbackMode() { return m_CallbackUpdateMode; }
 	void UpdatePluginGUIs();
 	void LoadPatch(const char *fn);	
+	
+	void PauseAudio() 
+	{
+		m_CH.Set("PauseAudio",true);
+		m_CH.Wait();
+	}
+
+	void ResumeAudio()
+	{
+		m_CH.Set("PauseAudio",false);
+	}
 	
 private:
 
@@ -120,6 +132,9 @@ private:
 	Fl_Group* m_EditorWindow;
 
 	vector<Fl_Button*> m_DeviceVec;
+	
+	ChannelHandler m_CH; // used for threadsafe communication
+	bool m_PauseAudio;
 	
 	inline void cb_NewDevice_i(Fl_Button* o, void* v);
     static void cb_NewDevice(Fl_Button* o, void* v);

@@ -41,7 +41,7 @@ libdir = @libdir@
 infodir = @infodir@
 mandir = @mandir@
 
-SpiralPlugins = @PLUGINDIR@
+SpiralPlugins = $(libdir)/SpiralPlugins
 
 ####### Files
 
@@ -57,9 +57,11 @@ HEADERS =	SpiralSynthModular.h \
 		SpiralSound/Plugins/SpiralPlugin.h \
 		SpiralSound/Plugins/SpiralPluginGUI.h \
 		SpiralSound/PluginManager.h \
+		SpiralSound/ChannelHandler.h \
 		SettingsWindow.h \
 		SpiralSynthPluginLocation.h
-SOURCES =	SpiralSynthModular.C \
+SOURCES =	main.cpp \
+		SpiralSynthModular.C \
 		SpiralSynthModularInfo.C \
 		GraphSort.C \
 		GUI/Widgets/Fl_DeviceGUI.C \
@@ -71,8 +73,10 @@ SOURCES =	SpiralSynthModular.C \
 		SpiralSound/Plugins/SpiralPlugin.C \
 		SpiralSound/Plugins/SpiralPluginGUI.C \
 		SpiralSound/PluginManager.C \
+		SpiralSound/ChannelHandler.C \
 		SettingsWindow.C
-OBJECTS =	SpiralSynthModular.o \
+OBJECTS =	main.o \
+		SpiralSynthModular.o \
 		SpiralSynthModularInfo.o \
 		GraphSort.o \
 		GUI/Widgets/Fl_DeviceGUI.o \
@@ -84,6 +88,7 @@ OBJECTS =	SpiralSynthModular.o \
 		SpiralSound/Plugins/SpiralPlugin.o \
 		SpiralSound/Plugins/SpiralPluginGUI.o \
 		SpiralSound/PluginManager.o \
+		SpiralSound/ChannelHandler.o \
 		SettingsWindow.o
 INTERFACES =	
 UICDECLS =	
@@ -91,7 +96,7 @@ UICIMPLS =
 SRCMOC	=	
 OBJMOC	=	
 DIST	=	
-TARGET	=	SpiralSynthModular
+TARGET	=	spiralsynthmodular
 
 SUBDIRS	=	@PLUGINLIST@
 
@@ -165,6 +170,9 @@ uninstall:
 
 ####### Compile
 
+main.o : 	main.cpp \
+		SpiralSynthModular.h
+
 SpiralSynthModular.o: SpiralSynthModular.C \
 		SpiralSynthModular.h \
 		SpiralSynthModularInfo.h \
@@ -190,6 +198,9 @@ SpiralSynthModularInfo.o: SpiralSynthModularInfo.C \
 
 GraphSort.o: GraphSort.C \
 		GraphSort.h
+
+SpiralSound/ChannelHandler.o: SpiralSound/ChannelHandler.C \
+		SpiralSound/ChannelHandler.h
 
 GUI/Widgets/Fl_DeviceGUI.o: GUI/Widgets/Fl_DeviceGUI.C \
 		GUI/Widgets/Fl_DeviceGUI.h \

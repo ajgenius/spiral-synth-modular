@@ -41,18 +41,18 @@ if test $ac_arg_jack = "Y" ; then
 	PLUGINLIST="AmpPlugin ControllerPlugin DelayPlugin EchoPlugin EnvFollowerPlugin \
 	EnvelopePlugin FilterPlugin MatrixPlugin MidiPlugin MixerPlugin MoogFilterPlugin \
 	NoteSnapPlugin OscillatorPlugin OutputPlugin RingModPlugin SVFilterPlugin \
-	SampleHoldPlugin SamplerPlugin ScopePlugin SeqPlugin SmoothPlugin SplitterPlugin \
-	StereoMixerPlugin WaveTablePlugin SeqSelectorPlugin LADSPAPlugin WaveShaperPlugin \
-	StreamPlugin XFadePlugin SpiralLoopPlugin JackPlugin PoshSamplerPlugin \
-	ComplexEnvelopePlugin DistributorPlugin JoystickPlugin LFOPlugin MeterPlugin"
+	SampleHoldPlugin ScopePlugin SmoothPlugin SplitterPlugin \
+	StereoMixerPlugin WaveTablePlugin LADSPAPlugin \
+    XFadePlugin JackPlugin \
+	DistributorPlugin LFOPlugin"
 else
 	PLUGINLIST="AmpPlugin ControllerPlugin DelayPlugin EchoPlugin EnvFollowerPlugin \
 	EnvelopePlugin FilterPlugin MatrixPlugin MidiPlugin MixerPlugin MoogFilterPlugin \
 	NoteSnapPlugin OscillatorPlugin OutputPlugin RingModPlugin SVFilterPlugin \
-	SampleHoldPlugin SamplerPlugin ScopePlugin SeqPlugin SmoothPlugin SplitterPlugin \
-	StereoMixerPlugin WaveTablePlugin SeqSelectorPlugin LADSPAPlugin WaveShaperPlugin \
-	StreamPlugin XFadePlugin SpiralLoopPlugin PoshSamplerPlugin ComplexEnvelopePlugin \
-	DistributorPlugin JoystickPlugin LFOPlugin MeterPlugin"	
+	SampleHoldPlugin ScopePlugin SmoothPlugin SplitterPlugin \
+	StereoMixerPlugin WaveTablePlugin LADSPAPlugin \
+    XFadePlugin PoshSamplerPlugin\
+	DistributorPlugin LFOPlugin"
 	fi
 echo "$PLUGINLIST" > SpiralSound/PluginList.txt
 
@@ -93,9 +93,10 @@ AC_SUBST(FLTK_CXXFLAGS)
 AC_SUBST(FLTK_CFLAGS)
 AC_SUBST(FLTK_LIBS)
 
-if test $ac_arg_jack = "Y" ; then
-  AM_PATH_GLIB(1.2.0,,AC_MSG_ERROR([*** GLIB >= 1.2.0 not installed]))
-fi
+dnl I can't get this to work ?
+dnl if test $ac_arg_jack = "Y" ; then
+dnl   AM_PATH_GLIB(1.2.0,,AC_MSG_ERROR([*** GLIB >= 1.2.0 not installed]))
+dnl fi
 
 AC_CHECK_HEADERS(dlfcn.h)
 AC_CHECK_LIB(dl, dlopen)
