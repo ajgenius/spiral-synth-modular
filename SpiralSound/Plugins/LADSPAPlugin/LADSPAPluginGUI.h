@@ -68,8 +68,6 @@ public:
 	void GetMinMax(int n, float &min, float &max, bool &clamp);
 
 private:
-	LPluginInfo m_CurrentPlugin;
-
 	Fl_Scroll		*m_InputScroll;
 	Fl_Pack  		*m_InputPack;
 	Fl_Hold_Browser		*m_Browser;

@@ -202,7 +202,7 @@ void LADSPAPlugin::StreamOut(ostream &s)
 		case 4:
 		{
 			s<<m_Gain<<" ";
-			s<<m_CurrentPlugin.UniqueID<<" ";
+			s<<m_UniqueID<<" ";
 			s<<m_PortMin.size()<<" ";
 			assert(m_PortMin.size()==m_PortMax.size());
 			assert(m_PortMin.size()==m_PortClamp.size());
@@ -227,54 +227,53 @@ void LADSPAPlugin::StreamOut(ostream &s)
 		{
 // Here for consistency - should never actually happen, as
 // version is always 4!
-			s<<m_Gain<<" ";
-			s<<m_CurrentPlugin.Filename<<" ";
-			s<<m_CurrentPlugin.Label<<" ";
-			s<<m_PortMin.size()<<" ";
-			assert(m_PortMin.size()==m_PortMax.size());
-			assert(m_PortMin.size()==m_PortClamp.size());
-			for (vector<float>::iterator i=m_PortMin.begin();
-				 i!=m_PortMin.end(); i++)
-			{
-				s<<*i<<" ";
-			}
-			for (vector<float>::iterator i=m_PortMax.begin();
-				 i!=m_PortMax.end(); i++)
-			{
-				s<<*i<<" ";
-			}
-			for (vector<bool>::iterator i=m_PortClamp.begin();
-				 i!=m_PortClamp.end(); i++)
-			{
-				s<<*i<<" ";
-			}
+//			s<<m_Gain<<" ";
+//			s<<m_Filename<<" ";
+//			s<<m_Label<<" ";
+//			s<<m_PortMin.size()<<" ";
+//			assert(m_PortMin.size()==m_PortMax.size());
+//			assert(m_PortMin.size()==m_PortClamp.size());
+//			for (vector<float>::iterator i=m_PortMin.begin();
+//				 i!=m_PortMin.end(); i++)
+//			{
+//				s<<*i<<" ";
+//			}
+//			for (vector<float>::iterator i=m_PortMax.begin();
+//				 i!=m_PortMax.end(); i++)
+//			{
+//				s<<*i<<" ";
+//			}
+//			for (vector<bool>::iterator i=m_PortClamp.begin();
+//				 i!=m_PortClamp.end(); i++)
+//			{
+//				s<<*i<<" ";
+//			}
 		}
 		break;
 		case 2:
 		{
-			s<<m_Gain<<" ";
-			s<<m_CurrentPlugin.Filename<<" ";
-			s<<m_CurrentPlugin.Label<<" ";
-			s<<m_PortMin.size()<<" ";
-			assert(m_PortMin.size()==m_PortMax.size());
-			for (vector<float>::iterator i=m_PortMin.begin();
-				 i!=m_PortMin.end(); i++)
-			{
-				s<<*i<<" ";
-			}
-			for (vector<float>::iterator i=m_PortMax.begin();
-				 i!=m_PortMax.end(); i++)
-			{
-				s<<*i<<" ";
-			}
+//			s<<m_Gain<<" ";
+//			s<<m_Filename<<" ";
+//			s<<m_Label<<" ";
+//			s<<m_PortMin.size()<<" ";
+//			assert(m_PortMin.size()==m_PortMax.size());
+//			for (vector<float>::iterator i=m_PortMin.begin();
+//				 i!=m_PortMin.end(); i++)
+//			{
+//				s<<*i<<" ";
+//			}
+//			for (vector<float>::iterator i=m_PortMax.begin();
+//				 i!=m_PortMax.end(); i++)
+//			{
+//				s<<*i<<" ";
+//			}
 		}
 		break;
-
 		case 1:
 		{
-			s<<m_Gain<<" ";
-			s<<m_CurrentPlugin.Filename<<" ";
-			s<<m_CurrentPlugin.Label<<" ";
+//			s<<m_Gain<<" ";
+//			s<<m_Filename<<" ";
+//			s<<m_Label<<" ";
 		}
 		break;
 	}
@@ -316,15 +315,6 @@ void LADSPAPlugin::StreamIn(istream &s)
 			}
 
 			UpdatePlugin(UniqueID, false);
-
-			m_CurrentPlugin.Ports.reserve(PortCount);
-
-			for (int n=0; n<PortCount; n++)
-			{
-				m_CurrentPlugin.Ports[n].Min=m_PortMin[n];
-				m_CurrentPlugin.Ports[n].Max=m_PortMax[n];
-				m_CurrentPlugin.Ports[n].Clamped=m_PortClamp[n];
-			}
 		}
 		break;
 
@@ -362,15 +352,6 @@ void LADSPAPlugin::StreamIn(istream &s)
 				unsigned long id = m_LADSPAInfo.GetIDFromFilenameAndLabel(Filename, Label);
 				if (id) UpdatePlugin(id, false);
 			}
-
-			m_CurrentPlugin.Ports.reserve(PortCount);
-
-			for (int n=0; n<PortCount; n++)
-			{
-				m_CurrentPlugin.Ports[n].Min=m_PortMin[n];
-				m_CurrentPlugin.Ports[n].Max=m_PortMax[n];
-				m_CurrentPlugin.Ports[n].Clamped=m_PortClamp[n];
-			}
 		}
 		break;
 
@@ -406,15 +387,6 @@ void LADSPAPlugin::StreamIn(istream &s)
 			// Get Unique ID from filename and label
 				unsigned long id = m_LADSPAInfo.GetIDFromFilenameAndLabel(Filename, Label);
 				if (id) UpdatePlugin(id, false);
-			}
-
-			m_CurrentPlugin.Ports.reserve(PortCount);
-
-			for (int n=0; n<PortCount; n++)
-			{
-				m_CurrentPlugin.Ports[n].Min=m_PortMin[n];
-				m_CurrentPlugin.Ports[n].Max=m_PortMax[n];
-				m_CurrentPlugin.Ports[n].Clamped=m_PortClamp[n];
 			}
 		}
 		break;
@@ -521,12 +493,6 @@ bool LADSPAPlugin::UpdatePlugin(unsigned long UniqueID, bool PortClampReset)
 //////////////////////////////
 // Update the GUI stuff
 
-		m_CurrentPlugin.UniqueID = PlugDesc->UniqueID;
-		m_CurrentPlugin.Name=PlugDesc->Name;
-		m_CurrentPlugin.Maker=PlugDesc->Maker;
-
-		m_CurrentPlugin.Ports.clear();
-
 		m_PluginInfo.PortTips.clear();
 
 		string desc;
@@ -538,10 +504,6 @@ bool LADSPAPlugin::UpdatePlugin(unsigned long UniqueID, bool PortClampReset)
 				desc = string(PlugDesc->PortNames[i]) +
 					(LADSPA_IS_PORT_CONTROL(PlugDesc->PortDescriptors[i]) ? " (CV)" : " (AU)");
 				m_PluginInfo.PortTips.push_back(desc.c_str());
-
-				LPluginInfo::LPortDetails PortDetails;
-				PortDetails.Name=m_PluginInfo.PortTips[c].c_str();
-				m_CurrentPlugin.Ports.push_back(PortDetails);
 
 				c++;
 			}
@@ -592,34 +554,31 @@ bool LADSPAPlugin::UpdatePlugin(unsigned long UniqueID, bool PortClampReset)
 
 				m_PortMin.push_back(Min);
 				m_PortMax.push_back(Max);
-// PortClamp defaults to true
 				m_PortClamp.push_back(true);
-
-				m_CurrentPlugin.Ports[n].Min=Min;
-				m_CurrentPlugin.Ports[n].Max=Max;
-				m_CurrentPlugin.Ports[n].Clamped=true;
 			}
 		}
 
-		m_InputPortCount = m_PluginInfo.NumInputs;
 		int lbl_length;
 		char *lbl_start;
 
-		lbl_length = m_CurrentPlugin.Name.size();
+		m_UniqueID = PlugDesc->UniqueID;
+		m_InputPortCount = m_PluginInfo.NumInputs;
+
+		lbl_length = strlen(PlugDesc->Name);
 		lbl_length = lbl_length > 255 ? 255 : lbl_length;
-		strncpy(m_Name, m_CurrentPlugin.Name.substr(0, lbl_length).c_str(), lbl_length);
+		strncpy(m_Name, PlugDesc->Name, lbl_length);
 		m_Name[lbl_length] = '\0';
 
-		lbl_length = m_CurrentPlugin.Maker.size();
+		lbl_length = strlen(PlugDesc->Maker);
 		lbl_length = lbl_length > 255 ? 255 : lbl_length;
-		strncpy(m_Maker, m_CurrentPlugin.Maker.substr(0, lbl_length).c_str(), lbl_length);
+		strncpy(m_Maker, PlugDesc->Maker, lbl_length);
 		m_Maker[lbl_length] = '\0';
 
 		lbl_start = m_OutData.InputPortNames;
 		for (unsigned long n = 0; n < m_InputPortCount; n++) {
-			lbl_length = m_CurrentPlugin.Ports[n].Name.size();
+			lbl_length = m_PluginInfo.PortTips[n].size();
 			lbl_length = lbl_length > 255 ? 255 : lbl_length;
-			strncpy(lbl_start, m_CurrentPlugin.Ports[n].Name.substr(0, lbl_length).c_str(), lbl_length);
+			strncpy(lbl_start, m_PluginInfo.PortTips[n].c_str(), lbl_length);
 			lbl_start[lbl_length] = '\0';
 			lbl_start += 256;
 

@@ -26,37 +26,6 @@
 
 static const unsigned int NUM_PORTS = 8;
 
-class LPluginInfo {
-public:
-	unsigned long UniqueID;
-	string Filename;
-	string Label;
-	string Name;
-	string Maker;
-	unsigned long InputPortCount;
-
-	struct LPortDetails
-	{
-		string Name;
-		float Min, Max;
-		bool Clamped;
-	};
-
-	vector<LPortDetails> Ports;
-
-	bool operator<(const LPluginInfo & li) { return (Name < li.Name); }
-	bool operator==(const LPluginInfo& li) { return (Name == li.Name); }
-};
-
-// For sorting vectors of LPluginInfo's
-struct LPluginInfoSortAsc
-{
-	bool operator()(const LPluginInfo & begin, const LPluginInfo & end)
-	{
-		return begin.Name < end.Name;
-	}
-};
-
 struct PortRange
 {
 	float   Min;
@@ -100,7 +69,6 @@ private:
 	bool UpdatePlugin(unsigned long UniqueID, bool PortClampReset=true);
 	void SetPortInfo(void);
 
-	friend void describePluginLibrary(const char * pcFullFilename, void * pvPluginHandle, LADSPA_Descriptor_Function pfDescriptorFunction);
 	void LoadPluginList(void);
 
 	void * PlugHandle;
@@ -119,8 +87,7 @@ private:
 	// our database of ladspa plugins
 	LADSPAInfo    m_LADSPAInfo;
 
-	vector<LPluginInfo> m_LADSPAList;
-	LPluginInfo m_CurrentPlugin;
+	unsigned long m_UniqueID;
 
 	float         m_Gain;
 	bool          m_Amped;
