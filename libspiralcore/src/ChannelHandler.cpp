@@ -338,5 +338,19 @@ void ChannelHandler::Wait()
 		pthread_mutex_lock(m_Mutex);
 		current=m_UpdateIndicator;
 		pthread_mutex_unlock(m_Mutex);
+	}	
+	
+	// do this twice (messages have to get there and back?)
+	pthread_mutex_lock(m_Mutex);
+	current=m_UpdateIndicator;
+	last=m_UpdateIndicator;
+	pthread_mutex_unlock(m_Mutex);
+	
+	while (current==last)
+	{
+		usleep(10);
+		pthread_mutex_lock(m_Mutex);
+		current=m_UpdateIndicator;
+		pthread_mutex_unlock(m_Mutex);
 	}
 }
