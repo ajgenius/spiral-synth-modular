@@ -135,10 +135,13 @@ void SynthModular::Update()
 	for(map<int,DeviceWin*>::iterator i=m_DeviceWinMap.begin();
 		i!=m_DeviceWinMap.end(); i++)
 	{
-		// updates the data from the gui thread, if it's not blocking
- 		i->second->m_Device->UpdateChannelHandler();
-	    // run any commands we've received from the GUI's
-		i->second->m_Device->ExecuteCommands();
+		if (i->second->m_Device) // if it's not a comment
+		{
+			// updates the data from the gui thread, if it's not blocking
+ 			i->second->m_Device->UpdateChannelHandler();
+	    	// run any commands we've received from the GUI's
+			i->second->m_Device->ExecuteCommands();
+		}
 	}
 	
 	// run the plugins (only ones connected to anything)
