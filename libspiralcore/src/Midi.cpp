@@ -44,12 +44,12 @@ static int NKEYS = 30;
 MidiDevice *MidiDevice::m_Singleton;
 string MidiDevice::m_AppName;
 
-#ifdef OSS_MIDI
-string MidiDevice::m_DeviceName;
-#endif
-
 #if __APPLE__
 #define read	AppleRead
+#endif
+
+#ifdef USE_OSS_MIDI
+string MidiDevice::m_DeviceName;
 #endif
 
 void MidiDevice::Init(const string &name, Type t)
@@ -69,10 +69,10 @@ m_ClockCount (0)
 #if __APPLE__
      AppleOpen();
 #endif
-#ifdef ALSA_MIDI
+#ifdef USE_ALSA_MIDI
      seq_handle=AlsaOpen(t);
 #endif
-#ifdef OSS_MIDI
+#ifdef USE_OSS_MIDI
      if (!OssOpen()) return;
 #endif
      m_Mutex = new pthread_mutex_t;
@@ -88,10 +88,10 @@ MidiDevice::~MidiDevice() {
 #if __APPLE__
      AppleClose();
 #endif
-#ifdef ALSA_MIDI
+#ifdef USE_ALSA_MIDI
      AlsaClose();
 #endif
-#ifdef OSS_MIDI
+#ifdef USE_OSS_MIDI
      OssClose();
 #endif
 }
@@ -121,7 +121,7 @@ MidiEvent MidiDevice::GetEvent(int Device)
 }
 
 void MidiDevice::SendEvent (int Device, const MidiEvent &Event) {
-#ifdef ALSA_MIDI
+#ifdef USE_ALSA_MIDI
 	snd_seq_event_t ev;
 	snd_seq_ev_clear      (&ev);
   	snd_seq_ev_set_direct (&ev);
@@ -175,7 +175,7 @@ void MidiDevice::SendEvent (int Device, const MidiEvent &Event) {
 
 //////////////////////////////////////////// Oss Code Only ////////////////////////////////////////
 
-#ifdef OSS_MIDI
+#ifdef USE_OSS_MIDI
 
 bool MidiDevice::OssOpen() {
      //if (!SpiralInfo::WANTMIDI) return;
@@ -362,7 +362,7 @@ void MidiDevice::OssAddEvent(unsigned char* midi)
 
 //////////////////////////////////////////// Alsa Code Only ////////////////////////////////////////
 
-#ifdef ALSA_MIDI
+#ifdef USE_ALSA_MIDI
 
 // code taken and modified from jack_miniFMsynth
 
