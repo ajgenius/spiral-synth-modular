@@ -18,6 +18,7 @@
 #include "MeterPlugin.h"
 #include "MeterPluginGUI.h"
 #include "SpiralIcon.xpm"
+#include <stdio.h>
 
 using namespace std;
 
@@ -34,7 +35,8 @@ string SpiralPlugin_GetGroupName() { return "Control"; }
 }
 
 MeterPlugin::MeterPlugin():
-m_Data (NULL)
+m_Data (NULL),
+m_VUMode (true)
 {
   m_PluginInfo.Name = "Meter";
   m_PluginInfo.Width = 230;
@@ -43,6 +45,8 @@ m_Data (NULL)
   m_PluginInfo.NumOutputs = 1;
   m_PluginInfo.PortTips.push_back ("Input");
   m_PluginInfo.PortTips.push_back ("Output");
+  
+  m_Version = 1;
 }
 
 MeterPlugin::~MeterPlugin() {
@@ -86,5 +90,6 @@ void MeterPlugin::StreamOut (ostream &s) {
 
 void MeterPlugin::StreamIn (istream &s) {
   int Version;
-  s >> Version >> m_VUMode;
+  s >> Version;
+  s >> m_VUMode;
 }
