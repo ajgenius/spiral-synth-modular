@@ -47,7 +47,6 @@ HEADERS =	LADSPAPlugin.h \
 		LADSPAInfo.h \
 		../Widgets/Fl_Knob.H \
 		../Widgets/Fl_LED_Button.H \
-		../Widgets/Fl_DragBar.H \
 		../../../GUI/Widgets/SpiralGUI.H
 SOURCES =	LADSPAPlugin.C \
 		LADSPAPluginGUI.C \
@@ -58,7 +57,6 @@ SOURCES =	LADSPAPlugin.C \
 		LADSPAInfo.C \
 		../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_LED_Button.cxx \
-		../Widgets/Fl_DragBar.cxx \
 		../../../GUI/Widgets/SpiralGUI.C
 OBJECTS =	LADSPAPlugin.o \
 		LADSPAPluginGUI.o \
@@ -69,7 +67,6 @@ OBJECTS =	LADSPAPlugin.o \
 		LADSPAInfo.o \
 		../Widgets/Fl_Knob.o \
 		../Widgets/Fl_LED_Button.o \
-		../Widgets/Fl_DragBar.o \
 		../../../GUI/Widgets/SpiralGUI.o
 INTERFACES =
 UICDECLS =
@@ -172,8 +169,7 @@ LADSPAPluginGUI.o: LADSPAPluginGUI.C \
 		../../Sample.h \
 		../SpiralPluginGUI.h \
 		../Widgets/Fl_Knob.H \
-		../Widgets/Fl_LED_Button.H \
-		../Widgets/Fl_DragBar.H
+		../Widgets/Fl_LED_Button.H
 
 ../../ChannelHandler.o: ../../ChannelHandler.C \
 		../../ChannelHandler.h
