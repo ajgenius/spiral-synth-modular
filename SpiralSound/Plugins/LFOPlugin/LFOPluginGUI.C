@@ -217,7 +217,10 @@ void LFOPluginGUI::UpdateValues(SpiralPlugin *o) {
 // Callbacks for knobs and counters
 
 inline void LFOPluginGUI::cb_Perd_i (Fl_Knob* o, void* v) {
-       m_GUICH->Set("Freq",(float)(1.0f / o->value()));
+       NumPerd->value ((double)o->value());
+       float f = 1.0f / o->value();
+       NumFreq->value (f);
+       m_GUICH->Set ("Freq", f);
 }
 void LFOPluginGUI::cb_Perd (Fl_Knob* o, void* v) {
      ((LFOPluginGUI*)(o->parent()))->cb_Perd_i (o, v);
@@ -225,7 +228,10 @@ void LFOPluginGUI::cb_Perd (Fl_Knob* o, void* v) {
 
 
 inline void LFOPluginGUI::cb_NumPerd_i (Fl_Knob* o, void* v) {
-       m_GUICH->Set("Freq",(float)(1.0f / o->value()));
+       Perd->value (o->value());
+       float f = 1.0f / o->value();
+       NumFreq->value (f);
+       m_GUICH->Set ("Freq", f);
 }
 void LFOPluginGUI::cb_NumPerd (Fl_Knob* o, void* v) {
      ((LFOPluginGUI*)(o->parent()))->cb_NumPerd_i (o, v);
@@ -233,7 +239,10 @@ void LFOPluginGUI::cb_NumPerd (Fl_Knob* o, void* v) {
 
 
 inline void LFOPluginGUI::cb_NumFreq_i (Fl_Knob* o, void* v) {
-       m_GUICH->Set("Freq",(float)(o->value()));
+       float p = 1.0f / o->value();
+       Perd->value (p);
+       NumPerd->value (p);
+       m_GUICH->Set ("Freq", (float)(o->value()));
 }
 
 void LFOPluginGUI::cb_NumFreq (Fl_Knob* o, void* v) {
