@@ -383,7 +383,7 @@ SpiralWindowType *SynthModular::CreateWindow()
 
 //////////////////////////////////////////////////////////
 
-void SynthModular::LoadPlugins()
+void SynthModular::LoadPlugins(string pluginPath)
 {
 
 	int Width  = 40;
@@ -423,7 +423,15 @@ void SynthModular::LoadPlugins()
 	for (vector<string>::iterator i=SpiralSynthModularInfo::PLUGINVEC.begin();
 		 i!=SpiralSynthModularInfo::PLUGINVEC.end(); i++)
 	{
-		string Fullpath=SpiralSynthModularInfo::PLUGIN_PATH+*i;
+		string Fullpath;
+		if (pluginPath=="")
+		{
+			Fullpath=SpiralSynthModularInfo::PLUGIN_PATH+*i;
+		}
+		else
+		{
+			Fullpath=pluginPath+*"/"+*i;
+		}
 
 		ID=PluginManager::Get()->LoadPlugin(Fullpath.c_str());
 		if (ID!=PluginError)

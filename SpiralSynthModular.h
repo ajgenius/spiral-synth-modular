@@ -64,7 +64,7 @@ public:
 	~SynthModular();
 	
 	SpiralWindowType * CreateWindow();
-	void LoadPlugins();
+	void LoadPlugins(string pluginPath);
 	void Update();
 	void AddDevice(int n, int x, int y);
 	void AddComment(int n);

@@ -70,6 +70,7 @@ int main(int argc, char **argv)
 	// get args
     string cmd_filename="";
     bool cmd_specd = false;
+	string cmd_pluginPath="";
 	
 	// parse the args
     if (argc>1) 
@@ -87,13 +88,19 @@ int main(int argc, char **argv)
 				<<"-v : print version"<<endl
 				<<"--NoGUI : run without GUI (only useful when loading patch from command line"<<endl
 				<<"--SHED_FIFO : spawn audio thread with FIFO sheduling (run as root)"<<endl
-				<<"--CallbackOnly : prevents 100% cpu usage when idle, but makes OSS output unsable"<<endl;
+				<<"--CallbackOnly : prevents 100% cpu usage when idle, but makes OSS output unsable"<<endl
+				<<"--PluginPath <PATH> : look for plugins in the specified directory"<<endl;
 				exit(0);
 			}
 			else if (!strcmp(argv[a],"-v")) 
 			{
 				cout<<VER_STRING<<endl; exit(0);
-			} 			
+			}
+			else if (!strcmp(argv[a],"--PluginPath"))
+			{
+				a++;
+				cmd_pluginPath=argv[a];
+			}
 			else 
 			{
 				cmd_filename = argv[1];
@@ -113,7 +120,7 @@ int main(int argc, char **argv)
 	
 	// setup the synth
 	Fl_Window* win = synth->CreateWindow();
-	synth->LoadPlugins();
+	synth->LoadPlugins(cmd_pluginPath);
 	win->xclass("");
 	if (GUI) win->show(1, argv); // prevents stuff happening before the plugins have loaded
 	
