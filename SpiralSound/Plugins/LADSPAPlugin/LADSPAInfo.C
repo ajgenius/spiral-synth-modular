@@ -401,6 +401,7 @@ LADSPAInfo::ExaminePath(const char *path)
 											LibraryInfo li;
 											li.PathIndex = path_index;
 											li.Basename = ep->d_name;
+											li.RefCount = 0;
 											li.Handle = NULL;
 											m_Libraries.push_back(li);
 
