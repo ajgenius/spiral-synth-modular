@@ -16,6 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#ifndef StreamGUI
+#define StreamGUI
+
 #include <FL/Fl.H>
 #include <FL/Fl_Slider.H>
 #include <FL/Fl_Repeat_Button.H>
@@ -24,9 +27,6 @@
 #include "../SpiralPluginGUI.h"
 #include "../Widgets/Fl_SevenSeg.H"
 #include "../Widgets/Fl_Knob.H"
-
-#ifndef StreamGUI
-#define StreamGUI
 
 class StreamPluginGUI : public SpiralPluginGUI {
    public:
@@ -37,6 +37,7 @@ class StreamPluginGUI : public SpiralPluginGUI {
    protected:
       const string GetHelpText (const string &loc);
    private:
+      bool m_Playing;
       float m_PitchValue;
       char m_TextBuf[256], m_PitchLabel[256];
       void SetMaxTime (float t) { m_Pos->maximum(t); }
@@ -48,10 +49,10 @@ class StreamPluginGUI : public SpiralPluginGUI {
       Fl_Slider* m_Pos;
       Fl_Button* m_Load;
       Fl_Button* m_ToStart;
-      Fl_Button* m_Stop;
       Fl_Button* m_Play;
-      Fl_Button* m_Div;
       Fl_Button* m_Reset;
+      Fl_Button* m_Rev;
+      Fl_Button* m_Div;
       Fl_Button* m_Dbl;
       Fl_Repeat_Button* m_Nudge;
       //// Callbacks ////
@@ -65,14 +66,14 @@ class StreamPluginGUI : public SpiralPluginGUI {
       static void cb_Load (Fl_Button* o, void* v);
       inline void cb_ToStart_i (Fl_Button* o, void* v);
       static void cb_ToStart (Fl_Button* o, void* v);
-      inline void cb_Stop_i (Fl_Button* o, void* v);
-      static void cb_Stop (Fl_Button* o, void* v);
       inline void cb_Play_i (Fl_Button* o, void* v);
       static void cb_Play (Fl_Button* o, void* v);
-      inline void cb_Div_i (Fl_Button* o, void* v);
-      static void cb_Div (Fl_Button* o, void* v);
       inline void cb_Reset_i (Fl_Button* o, void* v);
       static void cb_Reset (Fl_Button* o, void* v);
+      inline void cb_Rev_i (Fl_Button* o, void* v);
+      static void cb_Rev (Fl_Button* o, void* v);
+      inline void cb_Div_i (Fl_Button* o, void* v);
+      static void cb_Div (Fl_Button* o, void* v);
       inline void cb_Dbl_i (Fl_Button* o, void* v);
       static void cb_Dbl (Fl_Button* o, void* v);
       inline void cb_Nudge_i (Fl_Button* o, void* v);

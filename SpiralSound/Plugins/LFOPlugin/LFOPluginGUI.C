@@ -169,7 +169,7 @@ void LFOPluginGUI::cb_NumFreq (Fl_Knob* o, void* v) {
 // Callbacks for waveform buttons
 
 inline void LFOPluginGUI::cb_Sine_i (Fl_LED_Button* o, void* v) {
-       m_GUICH->Set("Type", (char)(LFOPlugin::SINE));
+       m_GUICH->Set("Type", LFOPlugin::SINE);
 }
 void LFOPluginGUI::cb_Sine(Fl_LED_Button* o, void* v) {
      ((LFOPluginGUI*)(o->parent()))->cb_Sine_i (o, v);
@@ -177,7 +177,7 @@ void LFOPluginGUI::cb_Sine(Fl_LED_Button* o, void* v) {
 
 
 inline void LFOPluginGUI::cb_Tri_i (Fl_LED_Button* o, void* v) {
-       m_GUICH->Set("Type",(char)(LFOPlugin::TRIANGLE));
+       m_GUICH->Set("Type", LFOPlugin::TRIANGLE);
 }
 void LFOPluginGUI::cb_Tri (Fl_LED_Button* o, void* v) {
      ((LFOPluginGUI*)(o->parent()))->cb_Tri_i (o, v);
@@ -185,7 +185,7 @@ void LFOPluginGUI::cb_Tri (Fl_LED_Button* o, void* v) {
 
 
 inline void LFOPluginGUI::cb_Square_i (Fl_LED_Button* o, void* v) {
-       m_GUICH->Set("Type",(char)(LFOPlugin::SQUARE));
+       m_GUICH->Set("Type", LFOPlugin::SQUARE);
 }
 void LFOPluginGUI::cb_Square (Fl_LED_Button* o, void* v) {
      ((LFOPluginGUI*)(o->parent()))->cb_Square_i (o, v);
@@ -193,7 +193,7 @@ void LFOPluginGUI::cb_Square (Fl_LED_Button* o, void* v) {
 
 
 inline void LFOPluginGUI::cb_Saw_i (Fl_LED_Button* o, void* v) {
-       m_GUICH->Set("Type",(LFOPlugin::SAW));
+       m_GUICH->Set("Type", LFOPlugin::SAW);
 }
 void LFOPluginGUI::cb_Saw (Fl_LED_Button* o, void* v) {
      ((LFOPluginGUI*)(o->parent()))->cb_Saw_i (o, v);

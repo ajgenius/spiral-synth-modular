@@ -22,16 +22,15 @@
 #include "SpiralIcon.xpm"
 
 extern "C" {
+
 SpiralPlugin* SpiralPlugin_CreateInstance() { return new LFOPlugin; }
 
 char** SpiralPlugin_GetIcon() { return SpiralIcon_xpm; }
 
 int SpiralPlugin_GetID() { return 124; }
 
-string SpiralPlugin_GetGroupName()
-{
-	return "Oscillators";
-}
+string SpiralPlugin_GetGroupName() { return "Oscillators"; }
+
 }
 
 ///////////////////////////////////////////////////////
@@ -50,9 +49,8 @@ m_TableLength (DEFAULT_TABLE_LEN) {
 	m_PluginInfo.PortTips.push_back ("Output");
 	m_PluginInfo.PortTips.push_back ("'Cosine' Output");
 	m_PluginInfo.PortTips.push_back ("Inverted Output");
-	
-	m_AudioCH->Register("Freq",&m_Freq);
-	m_AudioCH->Register("Type",(char*)&m_Type);
+	m_AudioCH->Register("Freq", &m_Freq);
+	m_AudioCH->Register("Type", (char*)&m_Type);
 }
 
 LFOPlugin::~LFOPlugin() {

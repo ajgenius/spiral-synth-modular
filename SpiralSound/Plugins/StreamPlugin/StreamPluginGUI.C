@@ -25,6 +25,7 @@
 
 StreamPluginGUI::StreamPluginGUI(int w, int h,StreamPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch),
+m_Playing (false),
 m_PitchValue (1.0f)
 {
         // 7 seg displays
@@ -56,7 +57,6 @@ m_PitchValue (1.0f)
         m_Pitch->box (FL_PLASTIC_DOWN_BOX);
 	m_Pitch->maximum (20);
         m_Pitch->step (0.001);
-        UpdatePitch (true, false, false);
         m_Pitch->callback ((Fl_Callback*)cb_Pitch);
         add (m_Pitch);
         // position indicator
@@ -85,17 +85,8 @@ m_PitchValue (1.0f)
 	m_ToStart->selection_color (Info->GUI_COLOUR);
 	m_ToStart->callback ((Fl_Callback*)cb_ToStart);
 	add (m_ToStart);
-        // stop btn
-	m_Stop = new Fl_Button (62, 130, 30, 30, "@||");
-        m_Stop->labelsize (10);
-	m_Stop->labeltype (FL_SYMBOL_LABEL);
-        m_Stop->box (FL_PLASTIC_UP_BOX);
-	m_Stop->color (Info->GUI_COLOUR);
-	m_Stop->selection_color (Info->GUI_COLOUR);
-	m_Stop->callback ((Fl_Callback*)cb_Stop);
-	add (m_Stop);
         // play btn
-	m_Play = new Fl_Button (92, 130, 30, 30, "@>");
+	m_Play = new Fl_Button (62, 130, 30, 30, "@>");
         m_Play->labelsize (10);
 	m_Play->labeltype (FL_SYMBOL_LABEL);
         m_Play->box (FL_PLASTIC_UP_BOX);
@@ -103,22 +94,31 @@ m_PitchValue (1.0f)
 	m_Play->selection_color (Info->GUI_COLOUR);
 	m_Play->callback ((Fl_Callback*)cb_Play);
 	add (m_Play);
-        // 1/2 speed btn
-	m_Div = new Fl_Button (122, 130, 30, 30, "/2");
-        m_Div->labelsize (9);
-        m_Div->box (FL_PLASTIC_UP_BOX);
-	m_Div->color (Info->GUI_COLOUR);
-	m_Div->selection_color (Info->GUI_COLOUR);
-	m_Div->callback ((Fl_Callback*)cb_Div);
-	add (m_Div);
         // normal speed btn
-	m_Reset = new Fl_Button (152, 130, 30, 30, "Reset");
+	m_Reset = new Fl_Button (92, 130, 30, 30, "Reset");
         m_Reset->labelsize (9);
         m_Reset->box (FL_PLASTIC_UP_BOX);
 	m_Reset->color (Info->GUI_COLOUR);
 	m_Reset->selection_color (Info->GUI_COLOUR);
 	m_Reset->callback ((Fl_Callback*)cb_Reset);
 	add (m_Reset);
+        // Reverse Button
+        m_Rev = new  Fl_Button (122, 130, 30, 30, "@<-");
+        m_Rev->labelsize (10);
+	m_Rev->labeltype (FL_SYMBOL_LABEL);
+        m_Rev->box (FL_PLASTIC_UP_BOX);
+	m_Rev->color (Info->GUI_COLOUR);
+	m_Rev->selection_color (Info->GUI_COLOUR);
+	m_Rev->callback ((Fl_Callback*)cb_Rev);
+	add (m_Rev);
+        // 1/2 speed btn
+	m_Div = new Fl_Button (152, 130, 30, 30, "/2");
+        m_Div->labelsize (9);
+        m_Div->box (FL_PLASTIC_UP_BOX);
+	m_Div->color (Info->GUI_COLOUR);
+	m_Div->selection_color (Info->GUI_COLOUR);
+	m_Div->callback ((Fl_Callback*)cb_Div);
+	add (m_Div);
         // dbl speed btn
 	m_Dbl = new Fl_Button (182, 130, 30, 30, "X2");
         m_Dbl->labelsize (9);
@@ -135,6 +135,8 @@ m_PitchValue (1.0f)
 	m_Nudge->selection_color (Info->GUI_COLOUR);
         m_Nudge->callback ((Fl_Callback*)cb_Nudge);
 	add (m_Nudge);
+        end ();
+        UpdatePitch (true, false, false);
 }
 
 StreamPluginGUI::~StreamPluginGUI () {
@@ -177,8 +179,14 @@ void StreamPluginGUI::cb_Volume (Fl_Knob* o, void* v) {
 // pitch
 
 void StreamPluginGUI::UpdatePitch (bool UpdateIt, bool DrawIt, bool SendIt) {
-     if (m_PitchValue<0) m_Pitch->align (FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
-     else  m_Pitch->align (FL_ALIGN_INSIDE | FL_ALIGN_RIGHT);
+     if (m_PitchValue<0) {
+        m_Pitch->align (FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
+        m_Rev->label ("@->");
+     }
+     else {
+        m_Pitch->align (FL_ALIGN_INSIDE | FL_ALIGN_RIGHT);
+        m_Rev->label ("@<-");
+     }
      sprintf (m_PitchLabel, "    %1.3f   ", m_PitchValue);
      if (UpdateIt) m_Pitch->value (m_PitchValue+10);
      if (DrawIt) redraw();
@@ -232,35 +240,22 @@ void StreamPluginGUI::cb_ToStart (Fl_Button* o, void* v) {
      ((StreamPluginGUI*)(o->parent ()))->cb_ToStart_i (o, v);
 }
 
-// stop
-
-inline void StreamPluginGUI::cb_Stop_i (Fl_Button* o, void* v) {
-       m_GUICH->SetCommand (StreamPlugin::STOP);
-}
-
-void StreamPluginGUI::cb_Stop (Fl_Button* o, void* v) {
-     ((StreamPluginGUI*)(o->parent ()))->cb_Stop_i (o, v);
-}
-
 // play
 
 inline void StreamPluginGUI::cb_Play_i (Fl_Button* o, void* v) {
-       m_GUICH->SetCommand (StreamPlugin::PLAY);
+       if (m_Playing) {
+          m_Play->label ("@>");
+          m_GUICH->SetCommand (StreamPlugin::STOP);
+       }
+       else {
+          m_Play->label ("@||");
+          m_GUICH->SetCommand (StreamPlugin::PLAY);
+       }
+       m_Playing = ! m_Playing;
 }
 
 void StreamPluginGUI::cb_Play (Fl_Button* o, void* v) {
      ((StreamPluginGUI*)(o->parent ()))->cb_Play_i (o, v);
-}
-
-// div 2
-
-inline void StreamPluginGUI::cb_Div_i (Fl_Button* o, void* v) {
-       m_PitchValue /= 2.0f;
-       UpdatePitch ();
-}
-
-void StreamPluginGUI::cb_Div (Fl_Button* o, void* v) {
-     ((StreamPluginGUI*)(o->parent()))->cb_Div_i (o, v);
 }
 
 // reset
@@ -272,6 +267,28 @@ inline void StreamPluginGUI::cb_Reset_i (Fl_Button* o, void* v) {
 
 void StreamPluginGUI::cb_Reset (Fl_Button* o, void* v) {
      ((StreamPluginGUI*)(o->parent ()))->cb_Reset_i (o, v);
+}
+
+// Rev
+
+inline void StreamPluginGUI::cb_Rev_i (Fl_Button* o, void* v) {
+       m_PitchValue = -m_PitchValue;
+       UpdatePitch ();
+}
+
+void StreamPluginGUI::cb_Rev (Fl_Button* o, void* v) {
+     ((StreamPluginGUI*)(o->parent ()))->cb_Rev_i (o, v);
+}
+
+// div 2
+
+inline void StreamPluginGUI::cb_Div_i (Fl_Button* o, void* v) {
+       m_PitchValue /= 2.0f;
+       UpdatePitch ();
+}
+
+void StreamPluginGUI::cb_Div (Fl_Button* o, void* v) {
+     ((StreamPluginGUI*)(o->parent()))->cb_Div_i (o, v);
 }
 
 // mul 2

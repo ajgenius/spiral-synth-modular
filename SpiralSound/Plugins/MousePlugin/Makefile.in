@@ -1,0 +1,162 @@
+#############################################################################
+# Makefile for building MousePlugin.so
+#############################################################################
+
+####### Compiler, tools and options
+
+CC	=	gcc
+CXX	=	g++
+CFLAGS	=	@CFLAGS@
+CXXFLAGS=	@CXXFLAGS@
+INCPATH	=	-I/usr/X11R6/include
+LINK	=	g++ -shared
+LFLAGS	=
+LIBS	=   -L/usr/X11R6/lib @FLTK_LIBS@ -lGL -lXext -lX11  -ldl
+MOC     = moc
+UIC	=
+
+TAR	=	tar -cf
+GZIP	=	gzip -9f
+
+INSTALL	= @INSTALL@
+
+###### Autoconf variables
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+mandir = @mandir@
+
+####### Files
+
+HEADERS =	../SpiralPlugin.h \
+		../SpiralPluginGUI.h \
+		MousePlugin.h \
+		MousePluginGUI.h \
+		../../Sample.h \
+		../../ChannelHandler.h \
+		../../../GUI/Widgets/SpiralGUI.H \
+		scratch.h
+SOURCES =	../SpiralPlugin.C \
+		../SpiralPluginGUI.C \
+		MousePlugin.C \
+		MousePluginGUI.C \
+		../../Sample.C \
+		../../ChannelHandler.C \
+		../../../GUI/Widgets/SpiralGUI.C \
+		scratch.C
+OBJECTS =	../SpiralPlugin.o \
+		../SpiralPluginGUI.o \
+		MousePlugin.o \
+		MousePluginGUI.o \
+		../../Sample.o \
+		../../ChannelHandler.o \
+		../../../GUI/Widgets/SpiralGUI.o \
+		scratch.o
+INTERFACES =
+UICDECLS =
+UICIMPLS =
+SRCMOC	=
+OBJMOC	=
+DIST	=
+TARGET	=	MousePlugin.so
+
+####### Implicit rules
+
+.SUFFIXES: .cpp .cxx .cc .C .c
+
+.cpp.o:
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o $@ $<
+
+.cxx.o:
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o $@ $<
+
+.cc.o:
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o $@ $<
+
+.C.o:
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o $@ $<
+
+.c.o:
+	$(CC) -c $(CFLAGS) $(INCPATH) -o $@ $<
+
+####### Build rules
+
+all: $(TARGET)
+
+$(TARGET): $(UICDECLS) $(OBJECTS) $(OBJMOC)
+	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(OBJMOC) $(LIBS)
+
+moc: $(SRCMOC)
+
+dist:
+	$(TAR) MousePlugin.tar $(SOURCES) $(HEADERS) $(INTERFACES) $(DIST)
+	$(GZIP) MousePlugin.tar
+
+clean:
+	-rm -f $(OBJECTS) $(OBJMOC) $(SRCMOC) $(UICIMPLS) $(UICDECLS) $(TARGET)
+	-rm -f *~ core
+
+install:
+	$(INSTALL) $(TARGET) $(libdir)/SpiralPlugins
+
+####### Sub-libraries
+
+
+###### Combined headers
+
+
+####### Compile
+
+../SpiralPlugin.o: ../SpiralPlugin.C \
+		../SpiralPlugin.h \
+		../../Sample.h
+
+../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
+		../SpiralPlugin.h \
+		../SpiralPluginGUI.h \
+		../../../GUI/Widgets/SpiralGUI.H \
+		../../Sample.h
+
+../../../GUI/Widgets/SpiralGUI.o: ../../../GUI/Widgets/SpiralGUI.C \
+		../../../GUI/Widgets/SpiralGUI.H
+
+../../Sample.o: ../../Sample.C \
+		../../Sample.h \
+		../../SpiralInfo.h
+
+MousePlugin.o: MousePlugin.C \
+		MousePlugin.h \
+		MousePluginGUI.h \
+		../SpiralPlugin.h \
+		../SpiralPluginGUI.h \
+		../../SpiralInfo.h \
+		../../Sample.h \
+		scratch.h \
+		SpiralIcon.xpm
+
+MousePluginGUI.o: MousePluginGUI.C \
+		MousePluginGUI.h \
+		MousePlugin.h \
+		../SpiralPluginGUI.h \
+		../SpiralPlugin.h \
+		../../../GUI/Widgets/SpiralGUI.H \
+		../../SpiralInfo.h \
+		../../Sample.h \
+		scratch.h
+
+../../ChannelHandler.o: ../../ChannelHandler.C \
+		../../ChannelHandler.h
+
+scratch.o: scratch.C \
+		scratch.h
+

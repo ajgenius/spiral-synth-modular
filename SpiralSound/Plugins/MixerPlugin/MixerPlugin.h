@@ -16,11 +16,10 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include "../SpiralPlugin.h"
-//#include <FL/Fl_Pixmap.H>
+#ifndef MIXER_PLUGIN_H
+#define MIXER_PLUGIN_H
 
-#ifndef MixerPLUGIN
-#define MixerPLUGIN
+#include "../SpiralPlugin.h"
 
 static const int MAX_CHANNELS = 16;
 

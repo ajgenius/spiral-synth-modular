@@ -16,8 +16,8 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef LFOGUI
-#define LFOGUI
+#ifndef LFO_GUI_H
+#define LFO_GUI_H
 
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Tabs.H>
@@ -29,10 +29,10 @@
 
 class LFOPluginGUI : public SpiralPluginGUI {
    public:
-      LFOPluginGUI(int w, int h, LFOPlugin *o,ChannelHandler *ch,const HostInfo *Info);
-      virtual void UpdateValues(SpiralPlugin *o);
+      LFOPluginGUI (int w, int h, LFOPlugin *o, ChannelHandler *ch, const HostInfo *Info);
+      virtual void UpdateValues (SpiralPlugin *o);
    protected:
-      const string GetHelpText(const string &loc);
+      const string GetHelpText (const string &loc);
    private:
       Fl_Tabs *m_TheTabs;
       Fl_Group *m_CtlGroup, *m_NumGroup;

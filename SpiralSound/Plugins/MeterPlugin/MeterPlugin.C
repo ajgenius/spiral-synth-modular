@@ -27,13 +27,13 @@ char** SpiralPlugin_GetIcon() { return SpiralIcon_xpm; }
 
 int SpiralPlugin_GetID() { return 123; }
 
-string SpiralPlugin_GetGroupName()
-{
-	return "Control";
-}
+string SpiralPlugin_GetGroupName() { return "Control"; }
+
 }
 
-MeterPlugin::MeterPlugin() {
+MeterPlugin::MeterPlugin():
+m_Data (NULL)
+{
   m_PluginInfo.Name = "Meter";
   m_PluginInfo.Width = 230;
   m_PluginInfo.Height = 128;
@@ -41,7 +41,6 @@ MeterPlugin::MeterPlugin() {
   m_PluginInfo.NumOutputs = 1;
   m_PluginInfo.PortTips.push_back ("Input");
   m_PluginInfo.PortTips.push_back ("Output");
-  m_Data = NULL;
 }
 
 MeterPlugin::~MeterPlugin() {
