@@ -46,20 +46,24 @@ string GetGroupName()
 ///////////////////////////////////////////////////////
 
 FlipflopPlugin::FlipflopPlugin() :
-m_Count(4),
+m_TriggerTime(0.01f),
+m_Monostable(false),
 m_Current(0),
 m_Triggered(false),
-m_CurrentLevel(1.0f)
+m_CurrentLevel(1.0f),
+m_TriggerSamples(0)
 {
+	m_Version = 2;
 	m_PluginInfo.Name="Flipflop";
-	m_PluginInfo.Width=90;
-	m_PluginInfo.Height=80;
+	m_PluginInfo.Width=70;
+	m_PluginInfo.Height=100;
 	m_PluginInfo.NumInputs=1;
 	m_PluginInfo.NumOutputs=1;
 	m_PluginInfo.PortTips.push_back("Input");	
 	m_PluginInfo.PortTips.push_back("Output");
 
-	m_AudioCH->Register("Count",&m_Count);
+	m_AudioCH->Register("TriggerTime",&m_TriggerTime);
+	m_AudioCH->Register("Monostable",&m_Monostable);
 }
 
 FlipflopPlugin::~FlipflopPlugin()
@@ -73,32 +77,65 @@ PluginInfo &FlipflopPlugin::Initialise(const HostInfo *Host)
 
 SpiralGUIType *FlipflopPlugin::CreateGUI()
 {
-	return NULL;
+	return new FlipflopPluginGUI(m_PluginInfo.Width,
+						     m_PluginInfo.Height,
+							 this,m_AudioCH,m_HostInfo);
 }
 
 void FlipflopPlugin::Execute()
 {	
 	bool Triggered;
 	
-	for (int n=0; n<m_HostInfo->BUFSIZE; n++)
+	if (m_Monostable)
 	{
-		if (GetInput(0,n)>0)
+		for (int n=0; n<m_HostInfo->BUFSIZE; n++)
 		{
-			if(!m_Triggered)
+			if (GetInput(0,n)>0)
 			{
-				m_Triggered=true;
-				m_CurrentLevel=-m_CurrentLevel;
+				if(!m_Triggered)
+				{
+					m_Triggered=true;
+					m_CurrentLevel=1.0f;
+					m_TriggerSamples=(int)(m_TriggerTime*m_HostInfo->SAMPLERATE)+1;
+				}
 			}
-		}
-		else
-		{
-			if (m_Triggered)
+			else
 			{
 				m_Triggered=false;
 			}
+			
+			if (m_TriggerSamples<=0)
+			{
+				m_CurrentLevel=-1.0f;
+			}
+			
+			if (m_TriggerSamples>0) m_TriggerSamples--;
+			
+			SetOutput(0,n,m_CurrentLevel);
+		}	
+	}
+	else
+	{
+		for (int n=0; n<m_HostInfo->BUFSIZE; n++)
+		{
+			if (GetInput(0,n)>0)
+			{
+				if(!m_Triggered)
+				{
+					m_Triggered=true;
+					m_CurrentLevel=-m_CurrentLevel;
+				}
+			}
+			else
+			{
+				if (m_Triggered)
+				{
+					m_Triggered=false;
+				}
+			}
+			
+			SetOutput(0,n,m_CurrentLevel);
 		}
-		
-		SetOutput(0,n,m_CurrentLevel);
 	}
 }
 
@@ -108,11 +145,16 @@ void FlipflopPlugin::ExecuteCommands()
 	
 void FlipflopPlugin::StreamOut(ostream &s) 
 {
-	s<<m_Version<<endl;
+	s<<m_Version<<" ";
+	s<<m_TriggerTime<<" "<<m_Monostable<<" "<<endl;
 }
 
 void FlipflopPlugin::StreamIn(istream &s) 
 {
 	int version;
 	s>>version;
+	if (version>1)
+	{
+		s>>m_TriggerTime>>m_Monostable;
+	}
 }

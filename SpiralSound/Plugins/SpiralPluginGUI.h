@@ -19,6 +19,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Button.H>
+#include <FL/Fl_Text_Display.H>
 #include <iostream>
 #include <math.h>
 
@@ -50,7 +51,10 @@ protected:
 private:
 	Fl_Button*		 m_Hide;
 	Fl_Button*		 m_Help;
-	Fl_Double_Window *m_HelpWin;
+
+	static Fl_Double_Window* m_HelpWin;
+	static Fl_Text_Display* m_HelpWin_text;
+	static SpiralPluginGUI* Help_owner;
 	
 	string m_Title;
 	
@@ -59,6 +63,8 @@ private:
     static void cb_Hide(Fl_Button*, void*);
 	inline void cb_Help_i(Fl_Button* o, void* v);
     static void cb_Help(Fl_Button*, void*);
+    inline void cb_Help_close_i(Fl_Double_Window* w, void* v);
+    static void cb_Help_close(Fl_Double_Window*, void*);
 };
 
 #endif

@@ -42,8 +42,14 @@ protected:
     const string GetHelpText(const string &loc);	
 
 private:
+	Fl_Knob *m_TriggerTime;
+	Fl_Button *m_Monostable;
 	
 	//// Callbacks ////
+	inline void cb_TriggerTime_i(Fl_Knob* o, void*);
+  	static void cb_TriggerTime(Fl_Knob* o, void*);
+	inline void cb_Monostable_i(Fl_Button* o, void*);
+  	static void cb_Monostable(Fl_Button* o, void*);
 };
 
 #endif

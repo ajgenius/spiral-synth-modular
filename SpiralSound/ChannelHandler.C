@@ -93,7 +93,7 @@ void ChannelHandler::UpdateDataNow()
 				// one off request type
 				case OUTPUT_REQUEST :
 			    {
-					if (m_BulkID==i->first)
+					if (m_BulkID==i->first && ch->requested)
 					{
 						if (m_BulkPos!=-1)
 						{
@@ -103,6 +103,7 @@ void ChannelHandler::UpdateDataNow()
 								// last transfer
 								#ifdef CHANNEL_DEBUG
 								cerr<<"memcpy (last) bulk output channel: ["<<i->first<<"]"<<endl;
+								cerr<<"pos:"<<m_BulkPos<<" size:"<<m_BulkSize<<" chsize:"<<ch->size<<endl;
 								#endif
 								memcpy(ch->data_buf,((char*)m_BulkSrc)+m_BulkPos,m_BulkSize-m_BulkPos);
 								m_BulkPos=-1;
@@ -111,11 +112,13 @@ void ChannelHandler::UpdateDataNow()
 							{
 								#ifdef CHANNEL_DEBUG
 								cerr<<"memcpy bulk output channel: ["<<i->first<<"]"<<endl;
+								cerr<<"pos:"<<m_BulkPos<<" size:"<<m_BulkSize<<endl;
 								#endif
 								memcpy(ch->data_buf,((char*)m_BulkSrc)+m_BulkPos,ch->size);
 								m_BulkPos+=ch->size;
 							}							
 							ch->updated=true;
+							ch->requested=false;
 						}					
 					}
 					else
@@ -128,6 +131,7 @@ void ChannelHandler::UpdateDataNow()
 							#endif
 							memcpy(ch->data_buf,ch->data,ch->size);
 							ch->updated=true;
+							ch->requested=false;
 						}
 					}
             	} break;

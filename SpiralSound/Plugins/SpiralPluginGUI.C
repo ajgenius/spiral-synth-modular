@@ -28,9 +28,12 @@ static const int GUI_COLOUR = 154;
 static const int GUIBG_COLOUR = 144;
 static const int GUIBG2_COLOUR = 145;
 
+Fl_Double_Window* SpiralPluginGUI::m_HelpWin=NULL;
+Fl_Text_Display* SpiralPluginGUI::m_HelpWin_text=NULL;
+SpiralPluginGUI* SpiralPluginGUI::Help_owner=NULL;
+
 SpiralPluginGUI::SpiralPluginGUI(int w, int h, SpiralPlugin* o, ChannelHandler *ch) :
-SpiralGUIType(0,0,w,h,""),
-m_HelpWin(NULL)
+SpiralGUIType(0,0,w,h,"")
 {	
 	Fl::visible_focus(false);
 	
@@ -75,29 +78,47 @@ inline void SpiralPluginGUI::cb_Hide_i(Fl_Button* o, void* v)
 void SpiralPluginGUI::cb_Hide(Fl_Button* o, void* v) 
 { ((SpiralPluginGUI*)(o->parent()))->cb_Hide_i(o,v); }
 
+// Boo - changed to use one 'global' help win. for all plugins, coz Fl_Text_Display 
+// seems to be too buggy to create and destroy it multiple times.
+// (symptom was - ssm crashes after opening/closing plugin help window 4-7 times)
+// (i use FLTK 1.1.0 rc7)
 inline void SpiralPluginGUI::cb_Help_i(Fl_Button* o, void* v) 
 { 
+	//Boo - create 'global' help window
 	if (m_HelpWin==NULL)
 	{
-		int w=450,h=200;
-		m_HelpWin = new Fl_Double_Window(w,h,"Help");
+		int h_w=450,h_h=200;
+		
+		m_HelpWin = new Fl_Double_Window(h_w,h_h,"Help");
 
-		Fl_Text_Display* text = new Fl_Text_Display(0,0,10,10);
-		text->buffer(new Fl_Text_Buffer);
-		text->insert(GetHelpText(SpiralInfo::LOCALE).c_str());
-		text->textsize(12);
-		m_HelpWin->add(text);
-		m_HelpWin->resizable(text);
-		m_HelpWin->show();
-		text->size(w,h); // hack to get the text widget to appear???
+		m_HelpWin_text = new Fl_Text_Display(0,0,h_w,h_h);
+		m_HelpWin_text->buffer(new Fl_Text_Buffer);
+
+		m_HelpWin_text->textsize(12);
+		
+		m_HelpWin->add(m_HelpWin_text);
+		m_HelpWin->resizable(m_HelpWin_text);
+		
+		m_HelpWin->callback((Fl_Callback*)cb_Help_close);
 	}
-	else
+	
+	if(Help_owner!=this)
 	{
-		m_HelpWin->hide();
-		delete m_HelpWin;
-		m_HelpWin=NULL;
+		m_HelpWin_text->buffer()->text(GetHelpText(SpiralInfo::LOCALE).c_str());
+		m_HelpWin->show();
+		Help_owner=this;
 	}
+	else cb_Help_close_i(m_HelpWin, NULL);
 }
 void SpiralPluginGUI::cb_Help(Fl_Button* o, void* v) 
 { ((SpiralPluginGUI*)(o->parent()))->cb_Help_i(o,v); }
+
+inline void SpiralPluginGUI::cb_Help_close_i(Fl_Double_Window* w, void* v)
+{
+	w->hide();
+	Help_owner=NULL;
+}
+
+void SpiralPluginGUI::cb_Help_close(Fl_Double_Window* w, void* v) 
+{ ((SpiralPluginGUI*)(w->parent()))->cb_Help_close_i(w,v); }
 

@@ -35,13 +35,16 @@ public:
 	virtual void	    StreamOut(ostream &s);
 	virtual void	    StreamIn(istream &s);
 
-	int        GetCount() { return m_Count; }
+	float    GetTriggerTime() { return m_TriggerTime; }
+	bool     GetMonostable()  { return m_Monostable; }
 	
 private:
-	int        m_Count;
+	float      m_TriggerTime;
+	bool       m_Monostable;
 	int        m_Current;
 	bool       m_Triggered;
 	float      m_CurrentLevel;
+	int        m_TriggerSamples;
 };
 
 #endif

@@ -50,6 +50,7 @@ HEADERS =	../SpiralPlugin.h \
 		Fl_Trigger.h \
 		SpiralLoopPlugin.h \
 		SpiralLoopPluginGUI.h \
+		../Widgets/Fl_DragBar.H \
 		../Widgets/Fl_Knob.H \
 		../Widgets/Fl_LED_Button.H 
 SOURCES =	../SpiralPlugin.C \
@@ -61,6 +62,7 @@ SOURCES =	../SpiralPlugin.C \
 		Fl_Trigger.C \
 		SpiralLoopPlugin.C \
 		SpiralLoopPluginGUI.C \
+		../Widgets/Fl_DragBar.cxx \
 		../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_LED_Button.cxx
 OBJECTS =	../SpiralPlugin.o \
@@ -72,6 +74,7 @@ OBJECTS =	../SpiralPlugin.o \
 		Fl_Trigger.o \
 		SpiralLoopPlugin.o \
 		SpiralLoopPluginGUI.o \
+		../Widgets/Fl_DragBar.o \
 		../Widgets/Fl_Knob.o \
 		../Widgets/Fl_LED_Button.o
 INTERFACES =	
@@ -141,6 +144,9 @@ install:
 		../Widgets/Fl_DragBar.H \
 		../SpiralPlugin.h \
 		../../Sample.h
+
+../Widgets/Fl_DragBar.o: ../Widgets/Fl_DragBar.cxx \
+		../Widgets/Fl_DragBar.H
 
 ../../Sample.o: ../../Sample.C \
 		../../Sample.h \
