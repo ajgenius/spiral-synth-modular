@@ -80,7 +80,6 @@ SpiralPluginGUI(w,h,o,ch)
 {	
 	for (int n=0; n<255; n++) Numbers[n]=n;
 
-	m_Plugin=o;
 	m_Indicator	= new Fl_LED_Button(85,17,30,30,"");
 	m_Indicator->value(0);
 	m_Indicator->color(FL_RED);
@@ -96,17 +95,6 @@ SpiralPluginGUI(w,h,o,ch)
 	m_Detach->callback((Fl_Callback*)cb_Detach);
 
 	int yoff=90;
-
-	for (int n=0; n<NUM_INPUTS; n++)
-	{
-		sprintf(m_InputName[n],"Input %d",n);
-		m_InputLabel[n] = new Fl_Box(100,n*40+yoff,95,20,m_InputName[n]);
-		m_InputLabel[n]->labelsize(10);
-		m_InputLabel[n]->labeltype(FL_ENGRAVED_LABEL);
-		m_InputButton[n] = new Fl_Button(100,n*40+yoff+20,95,20,"None yet");
-		m_InputButton[n]->labelsize(10);
-		m_InputButton[n]->callback((Fl_Callback*)cb_InputConnect,&Numbers[n]);
-	}
 	
 	for (int n=0; n<NUM_OUTPUTS; n++)
 	{
@@ -118,6 +106,17 @@ SpiralPluginGUI(w,h,o,ch)
 		m_OutputButton[n]->labelsize(10);
 		m_OutputButton[n]->callback((Fl_Callback*)cb_OutputConnect,&Numbers[n]);
 	}
+	
+	for (int n=0; n<NUM_INPUTS; n++)
+	{
+		sprintf(m_InputName[n],"Input %d",n);
+		m_InputLabel[n] = new Fl_Box(100,n*40+yoff,95,20,m_InputName[n]);
+		m_InputLabel[n]->labelsize(10);
+		m_InputLabel[n]->labeltype(FL_ENGRAVED_LABEL);
+		m_InputButton[n] = new Fl_Button(100,n*40+yoff+20,95,20,"None yet");
+		m_InputButton[n]->labelsize(10);
+		m_InputButton[n]->callback((Fl_Callback*)cb_InputConnect,&Numbers[n]);
+	}
 
 	end();
 }
@@ -126,53 +125,49 @@ void JackPluginGUI::UpdateValues(SpiralPlugin *o)
 {
 	
 }
+
+void JackPluginGUI::draw() 
+{ 
+	SpiralPluginGUI::draw();
+	m_Indicator->value(m_GUICH->GetBool("Connected"));
+};
 	
 //// Callbacks ////
 inline void  JackPluginGUI::cb_Attach_i(Fl_Button* o, void* v)
 { 
-	m_Plugin->Attach();
+	m_GUICH->SetCommand(JackPlugin::ATTACH);
 }
 void  JackPluginGUI::cb_Attach(Fl_Button* o, void* v)
 { ((JackPluginGUI*)(o->parent()))->cb_Attach_i(o,v);}
 
 inline void  JackPluginGUI::cb_Detach_i(Fl_Button* o, void* v)
 { 
-	m_Plugin->Detach();
+	m_GUICH->SetCommand(JackPlugin::DETACH);
 }
 void  JackPluginGUI::cb_Detach(Fl_Button* o, void* v)
 { ((JackPluginGUI*)(o->parent()))->cb_Detach_i(o,v);}
 
 inline void JackPluginGUI::cb_OutputConnect_i(Fl_Button* o, void* v)
 { 
-cerr<<"cb_OutputConnect_i"<<endl;
-	vector<string> Inputs,Outputs;
-	m_GUICH->Set("UpdateNames",true);	
+	m_GUICH->SetCommand(JackPlugin::UPDATE_NAMES);	
+	m_GUICH->Wait();
 	
 	// bit of a hack for multithreaded safety
-	int ninputs=m_GUICH->GetInt("NumOutputPortNames"),
-	int noutputs=m_GUICH->GetInt("NumOutputPortNames");
-	char **inputs = new char[MAX_INPUTPORTS][256];
-	char **outputs = new char[MAX_OUTPUTPORTS][256];;
-	
-	for (int n=0 n<m_GUICH->GetInt("NumInputPortNames"); n++)
-	{
-		Inputs.push_back(inputs[n]);
-	}
-	
-	for (int n=0 n<m_GUICH->GetInt("NumOutputPortNames"); n++)
-	{
-		Inputs.push_back(outputs[n]);
-	}
-	
-	delete[] inputs;
-	delete[] outputs;
-	
-	// connect this plugin's output to a jack input
+	int ninputs=m_GUICH->GetInt("NumOutputPortNames");
+	char inputs[MAX_INPUTPORTS][256];
+	m_GUICH->GetData("InputPortNames",inputs);
+		
+	vector<string> Inputs;
+	for (int n=0; n<ninputs; n++) Inputs.push_back(inputs[n]);
 	int choice=OptionsList(Inputs);
+			
+	// connect this plugin's output to a jack input
 	if (choice>0)
 	{
-		m_Plugin->ConnectOutput(*(int*)v,Inputs[choice-1]);
-		o->label(Inputs[choice-1].c_str());
+		m_GUICH->Set("Num",(*(int*)v));
+		m_GUICH->SetData("Port",inputs[choice-1]);
+		m_GUICH->SetCommand(JackPlugin::CONNECTOUTPUT);
+		o->label(inputs[choice-1]);
 		o->redraw();
 	}
 }
@@ -181,16 +176,25 @@ void JackPluginGUI::cb_OutputConnect(Fl_Button* o, void* v)
 
 inline void JackPluginGUI::cb_InputConnect_i(Fl_Button* o, void* v)
 { 
-cerr<<"cb_InputConnect_i"<<endl;
-	vector<string> Inputs,Outputs;
-	m_Plugin->GetPortNames(Inputs,Outputs);	
+	m_GUICH->SetCommand(JackPlugin::UPDATE_NAMES);	
+	m_GUICH->Wait();
 	
-	// connect this plugin's input to a jack output
+	// bit of a hack for multithreaded safety
+	int noutputs=m_GUICH->GetInt("NumOutputPortNames");
+	char outputs[MAX_OUTPUTPORTS][256];
+	m_GUICH->GetData("OutputPortNames",outputs);
+		
+	vector<string> Outputs;
+	for (int n=0; n<noutputs; n++) Outputs.push_back(outputs[n]);
 	int choice=OptionsList(Outputs);
+
+	// connect this plugin's input to a jack output
 	if (choice>0)
 	{
-		m_Plugin->ConnectInput(*(int*)v,Outputs[choice-1]);
-		o->label(Outputs[choice-1].c_str());
+		m_GUICH->Set("Num",(*(int*)v));
+		m_GUICH->SetData("Port",outputs[choice-1]);
+		m_GUICH->SetCommand(JackPlugin::CONNECTINPUT);
+		o->label(outputs[choice-1]);
 		o->redraw();
 	}
 }

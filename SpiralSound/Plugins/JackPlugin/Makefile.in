@@ -65,7 +65,7 @@ SOURCES =	../SpiralPlugin.C \
 		JackPluginGUI.C
 OBJECTS =	../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
-		../ChannelHandler.o \
+		../../ChannelHandler.o \
 		../Widgets/Fl_Knob.o \
 		../Widgets/Fl_DragBar.o \
 		../Widgets/Fl_LED_Button.o \

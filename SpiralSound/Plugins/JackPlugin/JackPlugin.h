@@ -55,7 +55,7 @@ protected:
 	JackClient();
 	~JackClient();
 	
-	static int  Process(long unsigned int n, void *o);
+	static int  Process(jack_nframes_t nframes, void *o);
 	static int  OnBufSizeChange(long unsigned int n, void *o);
 	static int  OnSRateChange(long unsigned int n, void *o);
 	static void OnJackShutdown(void *o);
@@ -98,10 +98,11 @@ public:
 	virtual PluginInfo& Initialise(const HostInfo *Host);
 	virtual SpiralGUIType*  CreateGUI();
 	virtual void 		Execute();
+	virtual void 		ExecuteCommands();
 	virtual void	    StreamOut(ostream &s) {}
 	virtual void	    StreamIn(istream &s)  {}
 	
-	enum GUICommands{NONE,ATTACH,DETACH,CONNECTINPUT,CONNECTOUTPUT};
+	enum GUICommands{NONE,ATTACH,DETACH,CONNECTINPUT,CONNECTOUTPUT,UPDATE_NAMES};
 	struct GUIArgs
 	{
 		int Num;

@@ -38,7 +38,7 @@ public:
 	JackPluginGUI(int w, int h, JackPlugin *o,ChannelHandler *ch,const HostInfo *Info);
 	
 	virtual void UpdateValues(SpiralPlugin *o);
-	virtual void draw() { m_Indicator->value(m_GUICH->GetBool("Connected"); };
+	virtual void draw();
 		
 private:
 
