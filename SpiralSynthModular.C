@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include <string>
 #include <iostream>
@@ -74,7 +74,7 @@ DeviceWin::~DeviceWin()
 } 
 
 //////////////////////////////////////////////////////////
-		
+
 SynthModular::SynthModular():
 m_NextID(0),
 m_NextPluginButton(1),
@@ -409,7 +409,7 @@ vector<string> SynthModular::BuildPluginList(const string &Path)
 	if (!dp) 
 	{
 		cerr << "WARNING: Could not open path " << path << endl;
-	} 
+	}
 	else 
 	{
 		while ((ep = readdir(dp))) 
@@ -806,19 +806,19 @@ istream &operator>>(istream &s, SynthModular &o)
 	s>>dummy>>Num;
 
 	for(int n=0; n<Num; n++)
-	{	
+	{
 		#ifdef DEBUG_STREAM
 		cerr<<"Loading Device "<<n<<endl;
 		#endif
-		
-		s>>dummy;    
-		s>>ID;       
-		s>>dummy2;    
-		s>>PluginID; 
+
+		s>>dummy; // "Device"
+		s>>ID;
+		s>>dummy2; // "Plugin"
+		s>>PluginID;
 		s>>x>>y;
-		
+
 		string Name;
-		
+
 		if (ver>3)
 		{
 			// load the device name
@@ -826,23 +826,27 @@ istream &operator>>(istream &s, SynthModular &o)
 			char Buf[1024];
 			s>>size;
 			s.ignore(1);
-			s.get(Buf,size+1);
-			Name=Buf;
-		}
+			if (size > 0) {
+				s.get(Buf,size+1);
+				Name=Buf;
+			} else {
+				Name = "";
+			}
+        }
 
 		#ifdef DEBUG_STREAM
 		cerr<<dummy<<" "<<ID<<" "<<dummy2<<" "<<PluginID<<" "<<x<<" "<<y<<endl;
 		#endif
-		
+
 		if (ver>1) s>>ps>>px>>py;
-		
+
 		// Check we're not duplicating an ID
 		if (o.m_DeviceWinMap.find(ID)!=o.m_DeviceWinMap.end())
 		{
 			SpiralInfo::Alert("Duplicate device ID found in file - aborting load");
 			return s;
 		}
-				
+
 		if (PluginID==COMMENT_ID)
 		{		
 			DeviceWin* temp = o.NewComment(PluginID, x, y);
