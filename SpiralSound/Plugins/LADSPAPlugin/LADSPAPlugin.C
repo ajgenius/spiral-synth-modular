@@ -64,8 +64,6 @@ LADSPAPlugin::LADSPAPlugin()
 	m_MaxInputPortCount = m_LADSPAInfo.GetMaxInputPortCount();
 
 // For receiving from GUI
-	m_AudioCH->Register("SetGain",&(m_InData.Gain));
-	m_AudioCH->Register("SetAmped",&(m_InData.Amped));
 	m_AudioCH->RegisterData("SetPluginIndex", ChannelHandler::INPUT,&(m_InData.PluginIndex),sizeof(m_InData.PluginIndex));
 
 // For sending to GUI
@@ -77,7 +75,7 @@ LADSPAPlugin::LADSPAPlugin()
 
 	m_OutData.InputPortNames = (char *)malloc(256 * m_MaxInputPortCount);
 	m_OutData.InputPortSettings = (PortSettings *)malloc(sizeof(PortSettings) * m_MaxInputPortCount);
-	m_OutData.InputPortValues = (float *)calloc(m_MaxInputPortCount, sizeof(float));
+	m_OutData.InputPortValues = (PortValues *)calloc(m_MaxInputPortCount, sizeof(PortValues));
 	m_InData.InputPortSettings = (PortSettings *)malloc(sizeof(PortSettings) * m_MaxInputPortCount);
 
 	if (m_OutData.InputPortNames &&
@@ -85,7 +83,7 @@ LADSPAPlugin::LADSPAPlugin()
 	    m_InData.InputPortSettings) {
 		m_AudioCH->RegisterData("GetInputPortNames", ChannelHandler::OUTPUT, m_OutData.InputPortNames, 256 * m_MaxInputPortCount);
 		m_AudioCH->RegisterData("GetInputPortSettings", ChannelHandler::OUTPUT, m_OutData.InputPortSettings, sizeof(PortSettings) * m_MaxInputPortCount);
-		m_AudioCH->RegisterData("GetInputPortValues", ChannelHandler::OUTPUT, m_OutData.InputPortValues, sizeof(float) * m_MaxInputPortCount);
+		m_AudioCH->RegisterData("GetInputPortValues", ChannelHandler::OUTPUT, m_OutData.InputPortValues, sizeof(PortValues) * m_MaxInputPortCount);
 		m_AudioCH->RegisterData("SetInputPortSettings", ChannelHandler::INPUT, m_InData.InputPortSettings, sizeof(PortSettings) * m_MaxInputPortCount);
 	} else {
 		cerr<<"Memory allocation error"<<endl;
@@ -146,15 +144,17 @@ void LADSPAPlugin::Execute()
 						m_LADSPABufVec[n][i]=GetInput(n,i);
 					}
 				}
-				// Copy values into OutData value buffer for display in GUI
-				m_OutData.InputPortValues[n] = m_LADSPABufVec[n][0];
+				m_OutData.InputPortValues[n].Connected = true;
 			}
 			else // Use default
 			{
 				for (int i=0; i<m_HostInfo->BUFSIZE; i++) {
 					m_LADSPABufVec[n][i]=m_PortDefault[n];
 				}
+				m_OutData.InputPortValues[n].Connected = false;
 			}
+			// Copy values into OutData value buffer for display in GUI
+			m_OutData.InputPortValues[n].Value = m_LADSPABufVec[n][0];
 		}
 
 		// run plugin
@@ -163,19 +163,9 @@ void LADSPAPlugin::Execute()
 		// convert outputs
 		for (int n=0; n<m_PluginInfo.NumOutputs; n++)
 		{
-			/*if (m_Amped)
+			for (int i=0; i<m_HostInfo->BUFSIZE; i++)
 			{
-				for (int i=0; i<m_HostInfo->BUFSIZE; i++)
-				{
-					SetOutput(n,i,m_LADSPABufVec[n+m_PluginInfo.NumInputs][i]*m_Gain*10);
-				}
-			}
-			else*/
-			{
-				for (int i=0; i<m_HostInfo->BUFSIZE; i++)
-				{
-					SetOutput(n,i,m_LADSPABufVec[n+m_PluginInfo.NumInputs][i]*m_Gain);
-				}
+				SetOutput(n,i,m_LADSPABufVec[n+m_PluginInfo.NumInputs][i]);
 			}
 		}
 	}
@@ -210,9 +200,8 @@ void LADSPAPlugin::StreamOut(ostream &s)
 
 	switch (m_Version)
 	{
-		case 5:
+		case 6:
 		{
-			s<<m_Gain<<" ";
 			s<<m_UniqueID<<" ";
 			s<<m_PortMin.size()<<" ";
 			assert(m_PortMin.size()==m_PortMax.size());
@@ -239,11 +228,40 @@ void LADSPAPlugin::StreamOut(ostream &s)
 				s<<*i<<" ";
 			}
 		}
+		case 5:
+		{
+// Here for consistency - should never actually happen, as
+// version is always 6!
+//			s<<m_Gain<<" ";
+//			s<<m_UniqueID<<" ";
+//			s<<m_PortMin.size()<<" ";
+//			assert(m_PortMin.size()==m_PortMax.size());
+//			assert(m_PortMin.size()==m_PortClamp.size());
+//			assert(m_PortMin.size()==m_PortDefault.size());
+//			for (vector<float>::iterator i=m_PortMin.begin();
+//			     i!=m_PortMin.end(); i++)
+//			{
+//				s<<*i<<" ";
+//			}
+//			for (vector<float>::iterator i=m_PortMax.begin();
+//			     i!=m_PortMax.end(); i++)
+//			{
+//				s<<*i<<" ";
+//			}
+//			for (vector<bool>::iterator i=m_PortClamp.begin();
+//			     i!=m_PortClamp.end(); i++)
+//			{
+//				s<<*i<<" ";
+//			}
+//			for (vector<float>::iterator i=m_PortDefault.begin();
+//			     i!=m_PortDefault.end(); i++)
+//			{
+//				s<<*i<<" ";
+//			}
+		}
 		break;
 		case 4:
 		{
-// Here for consistency - should never actually happen, as
-// version is always 5!
 //			s<<m_Gain<<" ";
 //			s<<m_UniqueID<<" ";
 //			s<<m_PortMin.size()<<" ";
@@ -328,11 +346,52 @@ void LADSPAPlugin::StreamIn(istream &s)
 
 	switch (version)
 	{
+		case 6:
+		{
+			ClearPlugin();
+
+			unsigned long UniqueID;
+			s>>UniqueID;
+			int PortCount;
+			s>>PortCount;
+			float Min, Max;
+			bool Clamp;
+			float Default;
+
+			for (int n=0; n<PortCount; n++)
+			{
+				s>>Min;
+				m_PortMin.push_back(Min);
+			}
+
+			for (int n=0; n<PortCount; n++)
+			{
+				s>>Max;
+				m_PortMax.push_back(Max);
+			}
+			for (int n=0; n<PortCount; n++)
+			{
+				s>>Clamp;
+				m_PortClamp.push_back(Clamp);
+			}
+			for (int n=0; n<PortCount; n++)
+			{
+				s>>Default;
+				m_PortDefault.push_back(Default);
+			}
+
+			if (SelectPlugin(UniqueID)) {
+				SetGUIExports();
+			} else {
+				ClearPlugin();
+			}
+		}
 		case 5:
 		{
 			ClearPlugin();
 
-			s>>m_Gain;
+			float temp_gain;
+			s>>temp_gain;
 
 			unsigned long UniqueID;
 			s>>UniqueID;
@@ -375,7 +434,8 @@ void LADSPAPlugin::StreamIn(istream &s)
 		{
 			ClearPlugin();
 
-			s>>m_Gain;
+			float temp_gain;
+			s>>temp_gain;
 
 			unsigned long UniqueID;
 			s>>UniqueID;
@@ -418,7 +478,8 @@ void LADSPAPlugin::StreamIn(istream &s)
 		{
 			ClearPlugin();
 
-			s>>m_Gain;
+			float temp_gain;
+			s>>temp_gain;
 
 			string Filename,Label;
 			s>>Filename>>Label;
@@ -467,7 +528,8 @@ void LADSPAPlugin::StreamIn(istream &s)
 		{
 			ClearPlugin();
 
-			s>>m_Gain;
+			float temp_gain;
+			s>>temp_gain;
 
 			string Filename,Label;
 			s>>Filename>>Label;
@@ -513,7 +575,8 @@ void LADSPAPlugin::StreamIn(istream &s)
 
 		case 1:
 		{
-			s>>m_Gain;
+			float temp_gain;
+			s>>temp_gain;
 
 			string Filename,Label;
 			s>>Filename>>Label;
@@ -653,8 +716,6 @@ void LADSPAPlugin::ClearPlugin(void)
 
 	m_PluginIndex = 0;
 	m_InputPortCount = 0;
-	m_Gain = 1.0f;
-	m_Amped = false;
 	strncpy(m_Name, "None\0", 5);
 	strncpy(m_Maker, "None\0", 5);
 

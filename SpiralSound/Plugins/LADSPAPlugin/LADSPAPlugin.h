@@ -34,6 +34,11 @@ struct PortSettings
 	bool    Clamp;
 	float   Default;
 };
+struct PortValues
+{
+	float Value;
+	bool  Connected;
+};
 
 class LADSPAPlugin : public SpiralPlugin
 {
@@ -48,14 +53,12 @@ public:
 	virtual void StreamOut(ostream &s);
 	virtual void StreamIn(istream &s);
 
-	float          GetGain() { return m_Gain; }
-	bool           GetAmped() { return m_Amped; }
 	const char    *GetName() { return (const char *)m_Name; }
 	const char    *GetMaker() { return (const char *)m_Maker; }
 	unsigned long  GetInputPortCount() { return m_InputPortCount; }
 	const char    *GetPortName(unsigned long p)
 	{
-		return (const char *)(m_OutData.InputPortNames + p * 256); 
+		return (const char *)(m_OutData.InputPortNames + p * 256);
 	}
 	PortSettings GetPortSettings(unsigned long p)
 	{
@@ -99,8 +102,6 @@ private:
 	unsigned long m_PluginIndex;
 	unsigned long m_UniqueID;
 
-	float         m_Gain;
-	bool          m_Amped;
 	unsigned long m_MaxInputPortCount;
 	unsigned long m_InputPortCount;
 	char          m_Name[256];
@@ -111,15 +112,13 @@ private:
 	{
 		char         *InputPortNames;
 		PortSettings *InputPortSettings;
-		float        *InputPortValues;
+		PortValues   *InputPortValues;
 	};
 
 	// Data received from GUI
 	struct InputChannelData
 	{
 		unsigned long PluginIndex;
-		float         Gain;
-		bool          Amped;
 		PortSettings *InputPortSettings;
 	};
 

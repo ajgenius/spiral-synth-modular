@@ -50,14 +50,37 @@ SpiralPluginGUI(w,h,o,ch)
 // Set up buffers for data transfer via ChannelHandler
 	m_InData.InputPortNames = (char *)malloc(256 * m_InData.MaxInputPortCount);
 	m_InData.InputPortSettings = (PortSettings *)malloc(sizeof(PortSettings) * m_InData.MaxInputPortCount);
-	m_InData.InputPortValues = (float *)calloc(m_InData.MaxInputPortCount, sizeof(float));
+	m_InData.InputPortValues = (PortValues *)calloc(m_InData.MaxInputPortCount, sizeof(PortValues));
 
 	if (!(m_InData.InputPortNames && m_InData.InputPortSettings)) {
 		cerr<<"Memory allocation error\n"<<endl;
 	}
 
 // Set up widgets
-	m_Browser = new Fl_Choice(60,20,420,25,"Plugin:");
+	m_Name = new Fl_Box(10,20,480,15,"None");
+	m_Name->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+	m_Name->labelcolor(GUI_COLOUR);
+	m_Name->labelsize(12);
+	add(m_Name);
+
+	m_Maker = new Fl_Box(10,40,480,15,"None");
+	m_Maker->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+	m_Maker->labelcolor(GUI_COLOUR);
+	m_Maker->labelsize(12);
+	add(m_Maker);
+
+	m_Tab = new Fl_Tabs(5,60,490,255,"");
+	add(m_Tab);
+
+	m_ControlGroup = new Fl_Group(0,80,490,255,"Control");
+	m_ControlGroup->labelsize(12);
+
+	m_SetupGroup = new Fl_Group(0,80,490,255,"Setup");
+	m_SetupGroup->labelsize(12);
+
+	m_Browser = new Fl_Choice(50,85,440,22,"Plugin:");
+	m_Browser->labelsize(12);
+	m_Browser->textsize(12);
 	m_Browser->callback((Fl_Callback *)cb_Select);
 
 	m_Browser->add("(None)");
@@ -68,54 +91,36 @@ SpiralPluginGUI(w,h,o,ch)
 	}
 	m_Browser->value(0);
 
-	m_Name = new Fl_Box(10,50,480,20,"None");
-	m_Name->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
-	m_Name->labelcolor(GUI_COLOUR);
-	m_Name->labelsize(10);
-	add(m_Name);
+	m_SetupGroup->add(m_Browser);
 
-	m_Maker = new Fl_Box(10,70,480,20,"None");
-	m_Maker->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
-	m_Maker->labelcolor(GUI_COLOUR);
-	m_Maker->labelsize(10);
-	add(m_Maker);
-
-	m_InputScroll = new Fl_Scroll(10,110,480,150,"   Value            Default         Min               Max                 Clamp?      Port Name");
+	m_InputScroll = new Fl_Scroll(10,130,480,145,"   Value            Default         Min               Max                  Clamp?    Port Name");
 	m_InputScroll->labelsize(12);
 	m_InputScroll->align(FL_ALIGN_TOP_LEFT);
 	m_InputScroll->type(Fl_Scroll::VERTICAL);
 	m_InputScroll->box(FL_DOWN_BOX);
 	add(m_InputScroll);
-	m_InputPack = new Fl_Pack(5,115,460,20,"");
+	m_InputPack = new Fl_Pack(5,135,460,26,"");
 	m_InputScroll->add(m_InputPack);
 
-	m_PowerAmp = new Fl_Button(125,277,100,25,"PowerAmp");
-	m_PowerAmp->labelsize(10);
-	m_PowerAmp->value(0);
-	m_PowerAmp->type(1);
-	m_PowerAmp->callback((Fl_Callback*)cb_PowerAmp);
-	add(m_PowerAmp);
+	m_SetupGroup->add(m_InputScroll);
 
-	m_UpdateMinMax = new Fl_Button(230,277,100,25,"Update Settings");
-	m_UpdateMinMax->labelsize(10);
-	m_UpdateMinMax->callback((Fl_Callback*)cb_MinMax);
-	add(m_UpdateMinMax);
-
-	m_UpdateInputs = new Fl_Button(335,277,100,25,"Refresh");
-	m_UpdateInputs->labelsize(10);
+	m_UpdateInputs = new Fl_Button(10,282,120,25,"Refresh");
+	m_UpdateInputs->labelsize(12);
 	m_UpdateInputs->value(1);
 	m_UpdateInputs->type(1);
 	add(m_UpdateInputs);
 
-	m_OutputGain = new Fl_Knob(440,265,40,40,"Output Gain");
-	m_OutputGain->color(GUI_COLOUR);
-	m_OutputGain->type(Fl_Knob::DOTLIN);
-	m_OutputGain->maximum(2);
-	m_OutputGain->step(0.001);
-	m_OutputGain->value(1.0);
-	m_OutputGain->labelsize(10);
-	m_OutputGain->callback((Fl_Callback*)cb_Gain);
-	add(m_OutputGain);
+	m_SetupGroup->add(m_UpdateInputs);
+
+	m_UpdatePortSettings = new Fl_Button(140,282,120,25,"Update Settings");
+	m_UpdatePortSettings->labelsize(12);
+	m_UpdatePortSettings->callback((Fl_Callback*)cb_PortSettings);
+	add(m_UpdatePortSettings);
+
+	m_SetupGroup->add(m_UpdatePortSettings);
+
+	m_Tab->add(m_ControlGroup);
+	m_Tab->add(m_SetupGroup);
 
 	end();
 }
@@ -127,12 +132,26 @@ LADSPAPluginGUI::~LADSPAPluginGUI(void)
 	Fl::check();
 }
 
-void LADSPAPluginGUI::UpdatePortDisplay(int n, float v)
+void LADSPAPluginGUI::UpdatePortDisplay(int n, PortValues pv)
 {
+// Need to show that a connection is present
+// regardless of Refresh being set
+	if (pv.Connected) {
+	// Disable
+		m_PortDefault[n]->readonly(1);
+		m_PortDefault[n]->color(FL_BACKGROUND_COLOR);
+	} else {
+	// Enable
+		m_PortDefault[n]->readonly(0);
+		m_PortDefault[n]->color(FL_BACKGROUND2_COLOR);
+	}
+	m_PortDefault[n]->redraw();
+
+// Only update values if Refresh is set
 	if (!m_UpdateInputs->value()) return;
 
 	char temp[256];
-	sprintf(temp,"%.4f",v);
+	sprintf(temp,"%.4f",pv.Value);
 	m_PortOutput[n]->value(temp);
 }
 
@@ -172,7 +191,7 @@ void LADSPAPluginGUI::ClearPortInfo()
 
 	m_InputScroll->remove(m_InputPack);
 	delete m_InputPack;
-	m_InputPack = new Fl_Pack(x()+5,y()+115,460,20,"");
+	m_InputPack = new Fl_Pack(x()+5,y()+135,460,26,"");
 	m_InputScroll->add(m_InputPack);
 
 	m_PortOutput.clear();
@@ -185,7 +204,7 @@ void LADSPAPluginGUI::ClearPortInfo()
 
 void LADSPAPluginGUI::AddPortInfo(const char *Info)
 {
-	Fl_Group* NewGroup = new Fl_Group(0,0,430,18,"");
+	Fl_Group* NewGroup = new Fl_Group(0,0,430,24,"");
 	NewGroup->box(FL_FLAT_BOX);
 	m_InputPack->add(NewGroup);
 	m_PackVec.push_back(NewGroup);
@@ -194,6 +213,8 @@ void LADSPAPluginGUI::AddPortInfo(const char *Info)
 	Fl_Output* NewOutput = new Fl_Output(10,0,60,18,"");
 	NewOutput->value(0);
 	NewOutput->textsize(10);
+	NewOutput->color(FL_BACKGROUND_COLOR);
+	NewOutput->readonly(1);
 	NewGroup->add(NewOutput);
 	m_PortOutput.push_back(NewOutput);
 
@@ -219,13 +240,13 @@ void LADSPAPluginGUI::AddPortInfo(const char *Info)
 	m_PortMax.push_back(NewInput);
 
 // Clamp
-	Fl_Check_Button* NewCheckButton = new Fl_Check_Button(270,0,10,18,"");
+	Fl_Check_Button* NewCheckButton = new Fl_Check_Button(265,0,10,18,"");
 	NewCheckButton->value(0);
 	NewGroup->add(NewCheckButton);
 	m_PortClamp.push_back(NewCheckButton);
 
 // Port Name
-	Fl_Box* NewText = new Fl_Box(322,0,10,18,"");
+	Fl_Box* NewText = new Fl_Box(320,0,10,18,"");
 	NewText->label(Info);
 	NewText->labelsize(10);
 	NewText->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
@@ -239,8 +260,6 @@ void LADSPAPluginGUI::AddPortInfo(const char *Info)
 void LADSPAPluginGUI::UpdateValues(SpiralPlugin *o)
 {
 	LADSPAPlugin* Plugin = (LADSPAPlugin*)o;
-	m_OutputGain->value(Plugin->GetGain());
-	m_PowerAmp->value(Plugin->GetAmped());
 	SetName(Plugin->GetName());
 	SetMaker(Plugin->GetMaker());
 
@@ -267,15 +286,6 @@ void LADSPAPluginGUI::Update(void)
 	for (unsigned long n=0; n < m_InData.InputPortCount; n++) {
 		UpdatePortDisplay(n, m_InData.InputPortValues[n]);
 	}
-}
-
-inline void LADSPAPluginGUI::cb_Gain_i(Fl_Knob* o, void* v)
-{
-	m_GUICH->Set("SetGain",(float)(o->value()));
-}
-void LADSPAPluginGUI::cb_Gain(Fl_Knob* o, void* v)
-{
-	((LADSPAPluginGUI*)(o->parent()))->cb_Gain_i(o,v);
 }
 
 inline void LADSPAPluginGUI::cb_Select_i(Fl_Choice* o)
@@ -317,10 +327,10 @@ inline void LADSPAPluginGUI::cb_Select_i(Fl_Choice* o)
 }
 void LADSPAPluginGUI::cb_Select(Fl_Choice* o)
 {
-	((LADSPAPluginGUI*)(o->parent()))->cb_Select_i(o);
+	((LADSPAPluginGUI*)(o->parent()->parent()->parent()))->cb_Select_i(o);
 }
 
-inline void LADSPAPluginGUI::cb_MinMax_i(Fl_Button* o, void* v)
+inline void LADSPAPluginGUI::cb_PortSettings_i(Fl_Button* o, void* v)
 {
 	unsigned long n=0;
 	for (vector<Fl_Input*>::iterator i=m_PortMin.begin();
@@ -354,16 +364,7 @@ inline void LADSPAPluginGUI::cb_MinMax_i(Fl_Button* o, void* v)
 	m_GUICH->SetData("SetInputPortSettings", m_InData.InputPortSettings);
 	m_GUICH->SetCommand(LADSPAPlugin::SETPORTSETTINGS);
 }
-void LADSPAPluginGUI::cb_MinMax(Fl_Button* o, void* v)
+void LADSPAPluginGUI::cb_PortSettings(Fl_Button* o, void* v)
 {
-	((LADSPAPluginGUI*)(o->parent()))->cb_MinMax_i(o,v);
-}
-
-inline void LADSPAPluginGUI::cb_PowerAmp_i(Fl_Button* o, void* v)
-{
-	m_GUICH->Set("SetAmped",(bool)(o->value()));
-}
-void LADSPAPluginGUI::cb_PowerAmp(Fl_Button* o, void* v)
-{
-	((LADSPAPluginGUI*)(o->parent()))->cb_PowerAmp_i(o,v);
+	((LADSPAPluginGUI*)(o->parent()->parent()->parent()))->cb_PortSettings_i(o,v);
 }
