@@ -142,6 +142,7 @@ SpiralSound/Plugins/RingModPlugin/Makefile
 SpiralSound/Plugins/SVFilterPlugin/Makefile
 SpiralSound/Plugins/SampleHoldPlugin/Makefile
 SpiralSound/Plugins/SeqSelectorPlugin/Makefile
+SpiralSound/Plugins/ScopePlugin/Makefile
 SpiralSound/Plugins/SmoothPlugin/Makefile
 SpiralSound/Plugins/SplitterPlugin/Makefile
 SpiralSound/Plugins/StereoMixerPlugin/Makefile
