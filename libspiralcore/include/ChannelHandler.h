@@ -1,20 +1,18 @@
-/*  SpiralSound
- *  Copyleft (C) 2002 David Griffiths <dave@pawfal.org>
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+// Copyright (C) 2003 David Griffiths <dave@pawfal.org>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 #ifndef CHANNEL_HANDLER
 #define CHANNEL_HANDLER
@@ -23,6 +21,9 @@
 #include <string>
 #include <map>
 #include <iostream>
+
+namespace spiralcore
+{
 
 class ChannelHandler
 {
@@ -40,7 +41,7 @@ public:
 		{ RegisterData(ID, t,(bool*)pData,sizeof(bool)); }
     void     Register(const std::string &ID, char* pData,  Type t=ChannelHandler::INPUT)    
 		{ RegisterData(ID, t,(char*)pData,sizeof(char)); }
-    void     Register(const std::string &ID, int* pData,   Type t=ChannelHandler::INPUT)    
+    void     Register(const std::string &ID, int* pData,   Type t=ChannelHandler::INPUT)
 		{ RegisterData(ID, t,(int*)pData,sizeof(int)); }
     void     Register(const std::string &ID, long* pData,   Type t=ChannelHandler::INPUT)    
 		{ RegisterData(ID, t,(long*)pData,sizeof(long)); }
@@ -50,7 +51,10 @@ public:
 		{ RegisterData(ID, t,(float*)pData,sizeof(float)); }
     void     Register(const std::string &ID, double* pData, Type t=ChannelHandler::INPUT)    
 		{ RegisterData(ID, t,(double*)pData,sizeof(double)); }
-    
+    void     RegisterString(const std::string &ID, char *pData, Type t=ChannelHandler::INPUT)
+		{ RegisterData(ID, t,(char*)pData,sizeof(char)*4096); }
+    void     Register(const std::string &ID, void** pData, Type t=ChannelHandler::INPUT)    
+		{ RegisterData(ID, t,(void**)pData,sizeof(void*)); }
 	void     UpdateDataNow();
 		
 	bool     IsCommandWaiting() { return m_Command[0]; }
@@ -69,6 +73,8 @@ public:
     const short   GetShort(const std::string &ID)             { short t; GetData(ID,&t); return t; }
     const float   GetFloat(const std::string &ID)             { float t; GetData(ID,&t); return t; }
     const double  GetDouble(const std::string &ID)            { double t; GetData(ID,&t); return t; }
+    const void   *GetPtr(const std::string &ID)               { void *t; GetData(ID,&t); return t; }
+    void   GetString(const std::string &ID,char* str)      { GetData(ID,str); }
 
     void          SetData(const std::string &ID, void *s);
     void          Set(const std::string &ID, const bool& s)     { SetData(ID,(void*)&s); }
@@ -78,8 +84,8 @@ public:
     void          Set(const std::string &ID, const short& s)    { SetData(ID,(void*)&s); }
     void          Set(const std::string &ID, const float& s)    { SetData(ID,(void*)&s); }
     void          Set(const std::string &ID, const double& s)   { SetData(ID,(void*)&s); }
-
-    void          ReplaceData(const std::string &ID, void *pData, int size);
+    void          SetString(const std::string &ID, const char* s);
+    void          SetPtr(const std::string &ID, const void* s)   { SetData(ID,(void*)&s); }
 
 	void          SetCommand(char command);
 
@@ -134,5 +140,5 @@ private:
 	
     pthread_mutex_t* m_Mutex;	
 };
-
+}
 #endif

@@ -1,25 +1,24 @@
-/*  SpiralSound
- *  Copyleft (C) 2002 David Griffiths <dave@pawfal.org>
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+// Copyright (C) 2003 David Griffiths <dave@pawfal.org>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 #include "ChannelHandler.h"
 #include <unistd.h>
 
 using namespace std;
+using namespace spiralcore;
 
 //#define CHANNEL_DEBUG
 
@@ -164,7 +163,7 @@ void ChannelHandler::RegisterData(const string &ID, Type t,void* pData, int size
     //pthread_mutex_lock(m_Mutex);
 
 	#ifdef CHANNEL_DEBUG
-	cerr<<"Registering ["<<ID<<"] "<<hex<<pData<<dec<<" as "<<size<<" bytes big"<<endl;
+	cerr<<"Registering ["<<ID<<"] "<<pData<<" as "<<size<<" bytes big"<<endl;
 	#endif
 
     map<string,Channel*>::iterator i=m_ChannelMap.find(ID);
@@ -174,7 +173,10 @@ void ChannelHandler::RegisterData(const string &ID, Type t,void* pData, int size
     }
 
     Channel *NewCh=new Channel(t);
-    NewCh->data_buf  = malloc(size);
+	NewCh->data_buf  = malloc(size);
+#ifdef CHANNEL_DEBUG
+	cerr<<"Registered ["<<ID<<"] "<<NewCh->data_buf<<" "<<size<<endl;
+#endif
     NewCh->size      = size;
     NewCh->data      = pData;
 	NewCh->requested = false;
@@ -214,24 +216,14 @@ void ChannelHandler::GetData(const string &ID, void *data)
     pthread_mutex_unlock(m_Mutex);
 }
 
-void ChannelHandler::ReplaceData(const std::string &ID, void *pData, int size)
-{
-    map<string,Channel*>::iterator i=m_ChannelMap.find(ID);
-    if (i==m_ChannelMap.end())
-    {
-        cerr<<"ChannelHandler: Channel ["<<ID<<"] does not exist"<<endl;
-        return;
-    }
-
-    pthread_mutex_lock(m_Mutex);
-    i->second->data = pData;
-    i->second->size = size;
-    free(i->second->data_buf);
-    i->second->data_buf = malloc(size);
-    memcpy(i->second->data_buf,i->second->data,size);
-    pthread_mutex_unlock(m_Mutex);
+void ChannelHandler::SetString(const std::string &ID, const char* s)  
+{ 	
+	static char tmp[4096];
+	// copy the string into a buffer of the correct size
+	strcpy(tmp,s);
+	SetData(ID,(void*)tmp); 
 }
-
+        
 void ChannelHandler::SetData(const string &ID, void *s)
 {
     map<string,Channel*>::iterator i=m_ChannelMap.find(ID);
@@ -246,6 +238,9 @@ void ChannelHandler::SetData(const string &ID, void *s)
 //cerr<<"lock 2 ok"<<endl;
     if (i->second->type==INPUT)
     {
+#ifdef CHANNEL_DEBUG
+		cerr<<"setting "<<i->second->data_buf<<" from "<<s<<" "<<i->second->size<<endl;
+#endif
         memcpy(i->second->data_buf,s,i->second->size);
     }
     else
