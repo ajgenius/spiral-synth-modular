@@ -1,5 +1,7 @@
-/*  SpiralPlugin
+/*  LADSPAPluginGUI.h
  *  Copyleft (C) 2000 David Griffiths <dave@pawfal.org>
+ *  LADSPA Plugin by Nicolas Noble <nicolas@nobis-crew.org>
+ *  Modified by Mike Rawes <myk@waxfrenzy.org>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -63,7 +65,7 @@ private:
 	void AddPortInfo(const char *Info);
 	void SetTabIndex(int index);
 	void SetUpdateInputs(bool state);
-	void SetPluginIndex(unsigned long n);
+	void SetUniqueID(unsigned long n);
 	void SetName(const char *s);
 	void SetMaker(const char *s);
 	void SetPortSettings(unsigned long n, float min, float max, bool clamp, float defolt);
@@ -72,8 +74,8 @@ private:
 	void ClearPlugin(void);
 	void SelectPlugin(void);
 
-        Fl_Color m_GUIColour;
-        Fl_Box                        *m_NameLabel;
+	Fl_Color m_GUIColour;
+	Fl_Box                        *m_NameLabel;
 	Fl_Box                        *m_MakerLabel;
 	Fl_Tabs                       *m_Tab;
 	Fl_Group                      *m_ControlGroup;
@@ -82,12 +84,12 @@ private:
 	Fl_Group                      *m_SetupGroup;
 	Fl_Choice                     *m_Browser;
 
-        Fl_Box                        *m_ValueLabel;
-       	Fl_Box                        *m_DefaultLabel;
-       	Fl_Box                        *m_MinLabel;
-       	Fl_Box                        *m_MaxLabel;
-      	Fl_Box                        *m_ClampLabel;
-      	Fl_Box                        *m_PortLabel;
+	Fl_Box                        *m_ValueLabel;
+	Fl_Box                        *m_DefaultLabel;
+	Fl_Box                        *m_MinLabel;
+	Fl_Box                        *m_MaxLabel;
+	Fl_Box                        *m_ClampLabel;
+	Fl_Box                        *m_PortLabel;
 
 	Fl_Scroll                     *m_InputScroll;
 	Fl_Pack                       *m_InputPack;
@@ -101,6 +103,7 @@ private:
 	std::vector<char *>            m_PortDefaultAdjustLabels;
 
 	std::vector<LADSPAInfo::PluginEntry> m_PluginList;
+	std::vector<unsigned long>     m_PluginIDLookup;
 
 	unsigned long                  m_PortIndex;
 	float                          m_Default;
@@ -108,7 +111,7 @@ private:
 	float                          m_Max;
 	bool                           m_Clamp;
 
-	unsigned long                  m_PluginIndex;
+	unsigned long                  m_UniqueID;
 	int                            m_TabIndex;
 	bool                           m_UpdateInputState;
 	char                           m_Name[256];
@@ -120,7 +123,7 @@ private:
 	PortValues                    *m_InputPortValues;
 	float                         *m_InputPortDefaults;
 
-        inline void cb_TabChange_i(Fl_Tabs *o);
+	inline void cb_TabChange_i(Fl_Tabs *o);
 	static void cb_TabChange(Fl_Tabs *o);
 	inline void cb_Select_i(Fl_Choice* o);
 	static void cb_Select(Fl_Choice* o);
@@ -137,7 +140,5 @@ private:
 	inline void cb_DefaultAdjust_i(Fl_Knob *o);
 	static void cb_DefaultAdjust(Fl_Knob *o);
 };
-
-
 
 #endif // __ladspa_plugin_gui_h__

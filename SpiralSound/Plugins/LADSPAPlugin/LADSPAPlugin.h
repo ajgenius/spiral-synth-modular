@@ -1,5 +1,7 @@
-/*  SpiralSound
+/*  LADSPAPlugin.h
  *  Copyleft (C) 2001 David Griffiths <dave@pawfal.org>
+ *  LADSPA Plugin by Nicolas Noble <nicolas@nobis-crew.org>
+ *  Modified by Mike Rawes <myk@waxfrenzy.org>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -40,7 +42,7 @@ struct PortValues
 class LADSPAPlugin : public SpiralPlugin
 {
 public:
- 	LADSPAPlugin();
+	LADSPAPlugin();
 	virtual ~LADSPAPlugin();
 
 	virtual PluginInfo &Initialise(const HostInfo *Host);
@@ -50,7 +52,7 @@ public:
 	virtual void StreamOut(ostream &s);
 	virtual void StreamIn(istream &s);
 
-	unsigned long  GetPluginIndex() { return m_PluginIndex; }
+	unsigned long  GetUniqueID() { return m_UniqueID; }
 	const char    *GetName() { return (const char *)m_Name; }
 	const char    *GetMaker() { return (const char *)m_Maker; }
 	int            GetTabIndex() { return m_TabIndex; }
@@ -130,7 +132,7 @@ private:
 	// Data received from GUI
 	struct InputChannelData
 	{
-		unsigned long PluginIndex;
+		unsigned long UniqueID;
 		int           TabIndex;
 		bool          UpdateInputs;
 		unsigned long InputPortIndex;
@@ -142,6 +144,13 @@ private:
 
 	OutputChannelData     m_OutData;
 	InputChannelData      m_InData;
+
+// SHM stuff - for sharing the LADSPA Plugin database
+	static const char * const m_SHMRefCountPath = "/SpiralSynthModular-LADSPAPlugin-RefCount";
+	static const char * const m_SHMLDBPath = "/SpiralSynthModular-LADSPAPlugin-Database";
+
+	unsigned long *m_SHMRefCount;
+	LADSPAInfo   **m_SHMLDB;
 };
 
 #endif // __ladspa_plugin_h__

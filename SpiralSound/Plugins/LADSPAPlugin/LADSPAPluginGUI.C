@@ -1,6 +1,7 @@
-/*  SpiralPlugin
+/*  LADSPAPluginGUI.C
  *  Copyleft (C) 2000 David Griffiths <dave@pawfal.org>
  *  LADSPA Plugin by Nicolas Noble <nicolas@nobis-crew.org>
+ *  Modified by Mike Rawes <myk@waxfrenzy.org>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -37,8 +38,8 @@ LADSPAPluginGUI::LADSPAPluginGUI(int w, int h,
                                  const vector<LADSPAInfo::PluginEntry> &PVec) :
 SpiralPluginGUI(w,h,o,ch)
 {
-        m_GUIColour = (Fl_Color)Info->GUI_COLOUR;
-        m_PluginList = PVec;
+	m_GUIColour = (Fl_Color)Info->GUI_COLOUR;
+	m_PluginList = PVec;
 
 	int Width=20;
 	int Height=100;
@@ -54,7 +55,7 @@ SpiralPluginGUI(w,h,o,ch)
 
 	if (!(m_InputPortNames && m_InputPortSettings &&
 	      m_InputPortValues && m_InputPortDefaults)) {
-		cerr<<"Memory allocation error\n"<<endl;
+		cerr<<"LADSPA Plugin (GUI): Memory allocation error\n"<<endl;
 	}
 
 // Set up widgets
@@ -76,7 +77,7 @@ SpiralPluginGUI(w,h,o,ch)
 	add(m_Tab);
 
 	m_ControlGroup = new Fl_Group (5, 80, 490, 230, "Control");
-        m_ControlGroup->box (FL_PLASTIC_UP_BOX);
+	m_ControlGroup->box (FL_PLASTIC_UP_BOX);
 	m_ControlGroup->labelsize(12);
 
 	m_ControlScroll = new Fl_Scroll (10, 85, 480, 220, "");
@@ -88,7 +89,7 @@ SpiralPluginGUI(w,h,o,ch)
 	m_ControlScroll->add(m_ControlPack);
 
 	m_SetupGroup = new Fl_Group (5, 80, 490, 230, "Setup");
-        m_SetupGroup->box (FL_PLASTIC_UP_BOX);
+	m_SetupGroup->box (FL_PLASTIC_UP_BOX);
 	m_SetupGroup->labelsize(12);
 
 	m_Browser = new Fl_Choice(50,85,440,22,"Plugin:");
@@ -97,37 +98,32 @@ SpiralPluginGUI(w,h,o,ch)
 	m_Browser->callback((Fl_Callback *)cb_Select);
 
 	m_Browser->add("(None)");
+	m_PluginIDLookup.push_back(0);
 
-    for (vector<LADSPAInfo::PluginEntry>::iterator i=m_PluginList.begin();
+// The plugin list is already formatted for addition to our drop-down,
+// so just add all items as they are
+	unsigned long size = m_Browser->size();
+	int depth = 1;
+
+	for (vector<LADSPAInfo::PluginEntry>::iterator i=m_PluginList.begin();
 	     i!=m_PluginList.end(); i++)
 	{
-        unsigned long len = i->Name.length();
-		unsigned long esc_count = 0;
-		const char *tmp = i->Name.c_str();
-		char *dest;
+		m_Browser->add(i->Name.c_str());
 
-		for (unsigned long c = 0; c < len; c++) {
-			if (tmp[c] == '/') esc_count++;
+		unsigned int dsize = m_Browser->size() - size;
+		int ddepth = i->Depth - depth;
+
+		size = m_Browser->size();
+		depth = i->Depth;
+
+	// Add blanks to ID Lookup vector to account for sub-menus
+		for (unsigned long j = 1; j < (dsize - ddepth); j++) {
+			m_PluginIDLookup.push_back(0);
 		}
+	// Add to ID Lookup vector (this maps Menu Items to Unique IDs)
+		m_PluginIDLookup.push_back(i->UniqueID);
+	}
 
-        dest = (char *)malloc(len + 1 + esc_count);
-
-		if (dest) {
-			unsigned long d = 0;
-			for (unsigned long c = 0; c < len; c++, d++) {
-				if (tmp[c] == '/' || tmp[c] == '|') {
-					dest[d] = '\\';
-					d++;
-					dest[d] = tmp[c];
-                } else {
-					dest[d] = tmp[c];
-				}
-			}
-			dest[len + esc_count] = '\0';
-			m_Browser->add(dest);
-			free(dest);
-		}
-    }
 	m_Browser->value(0);
 
 	m_SetupGroup->add(m_Browser);
@@ -143,29 +139,29 @@ SpiralPluginGUI(w,h,o,ch)
 
 	m_SetupGroup->add(m_InputScroll);
 
-       	m_ValueLabel = new Fl_Box(15,115,60,15,"Value");
+	m_ValueLabel = new Fl_Box(15,115,60,15,"Value");
 	m_ValueLabel->labelsize(12);
-        m_SetupGroup->add(m_ValueLabel);
+	m_SetupGroup->add(m_ValueLabel);
 
-       	m_DefaultLabel = new Fl_Box(77,115,60,15,"Default");
+	m_DefaultLabel = new Fl_Box(77,115,60,15,"Default");
 	m_DefaultLabel->labelsize(12);
-        m_SetupGroup->add(m_DefaultLabel);
+	m_SetupGroup->add(m_DefaultLabel);
 
-       	m_MinLabel = new Fl_Box(139,115,60,15,"Min");
+	m_MinLabel = new Fl_Box(139,115,60,15,"Min");
 	m_MinLabel->labelsize(12);
-        m_SetupGroup->add(m_MinLabel);
+	m_SetupGroup->add(m_MinLabel);
 
-       	m_MaxLabel = new Fl_Box(201,115,60,15,"Max");
+	m_MaxLabel = new Fl_Box(201,115,60,15,"Max");
 	m_MaxLabel->labelsize(12);
-        m_SetupGroup->add(m_MaxLabel);
+	m_SetupGroup->add(m_MaxLabel);
 
-      	m_ClampLabel = new Fl_Box(280,115,10,15,"Clamp?");
+	m_ClampLabel = new Fl_Box(280,115,10,15,"Clamp?");
 	m_ClampLabel->labelsize(12);
-        m_SetupGroup->add(m_ClampLabel);
+	m_SetupGroup->add(m_ClampLabel);
 
-      	m_PortLabel = new Fl_Box(325,115,60,15,"Port Name");
+	m_PortLabel = new Fl_Box(325,115,60,15,"Port Name");
 	m_PortLabel->labelsize(12);
-        m_SetupGroup->add(m_PortLabel);
+	m_SetupGroup->add(m_PortLabel);
 
 	m_UpdateInputs = new Fl_LED_Button (10, 282, 25, 25, "Update input values?");
 	m_UpdateInputs->labelsize(12);
@@ -190,6 +186,9 @@ LADSPAPluginGUI::~LADSPAPluginGUI(void)
 	if (m_InputPortSettings) free(m_InputPortSettings);
 	if (m_InputPortValues) free(m_InputPortValues);
 	if (m_InputPortDefaults) free(m_InputPortDefaults);
+
+	m_PluginIDLookup.clear();
+
 	Fl::check();
 }
 
@@ -243,7 +242,7 @@ void LADSPAPluginGUI::UpdateDefaultAdjustControls(void)
 void LADSPAPluginGUI::UpdateValues(SpiralPlugin *o)
 {
 	LADSPAPlugin* Plugin = (LADSPAPlugin*)o;
-	SetPluginIndex(Plugin->GetPluginIndex());
+	SetUniqueID(Plugin->GetUniqueID());
 	SetName(Plugin->GetName());
 	SetMaker(Plugin->GetMaker());
 	SetTabIndex(Plugin->GetTabIndex());
@@ -336,10 +335,17 @@ void LADSPAPluginGUI::SetUpdateInputs(bool state)
 	m_UpdateInputs->value(m_UpdateInputState);
 }
 
-void LADSPAPluginGUI::SetPluginIndex(unsigned long n)
+void LADSPAPluginGUI::SetUniqueID(unsigned long n)
 {
-	m_PluginIndex = n;
-	m_Browser->value(m_PluginIndex);
+	m_UniqueID = n;
+
+	vector<unsigned long>::iterator i = std::find(m_PluginIDLookup.begin(), m_PluginIDLookup.end(), m_UniqueID);
+
+	if (i != m_PluginIDLookup.end()) {
+		m_Browser->value(i - m_PluginIDLookup.begin());
+	} else {
+		m_Browser->value(0);
+	}
 }
 
 void LADSPAPluginGUI::SetName(const char *s)
@@ -529,7 +535,6 @@ void LADSPAPluginGUI::Update(void)
 
 void LADSPAPluginGUI::ClearPlugin(void)
 {
-	m_PluginIndex = 0;
 	m_InputPortCount = 0;
 	m_PortIndex = 0;
 
@@ -573,22 +578,22 @@ void LADSPAPluginGUI::SelectPlugin(void)
 	m_GUICH->GetData("GetInputPortSettings", m_InputPortSettings);
 	m_GUICH->GetData("GetInputPortDefaults", m_InputPortDefaults);
 
-        SetName((const char *)m_Name);
+	SetName((const char *)m_Name);
 	SetMaker((const char *)m_Maker);
 
 	for (unsigned long p = 0; p < m_InputPortCount; p++) {
 		AddPortInfo((const char *)(m_InputPortNames + p * 256));
 		SetPortSettings(p, m_InputPortSettings[p].Min,
-				   m_InputPortSettings[p].Max,
-				   m_InputPortSettings[p].Clamp,
-				   m_InputPortDefaults[p]);
+		                   m_InputPortSettings[p].Max,
+		                   m_InputPortSettings[p].Clamp,
+		                   m_InputPortDefaults[p]);
 
 		SetDefaultAdjust(p);
 	}
 
 	UpdateDefaultAdjustControls();
 	m_PortIndex = m_InputPortCount;
-	
+
 	redraw();
 }
 
@@ -612,15 +617,15 @@ inline void LADSPAPluginGUI::cb_Select_i(Fl_Choice* o)
 {
 	ClearPlugin();
 
-	m_PluginIndex = o->value();
+    unsigned long m_UniqueID = m_PluginIDLookup[o->value()];
 
-	if (m_PluginIndex != 0) {
-                // Plugin selected
-	        m_GUICH->SetData("SetPluginIndex",&m_PluginIndex);
+	if (m_UniqueID != 0) {
+	// Plugin selected
+	        m_GUICH->SetData("SetUniqueID",&m_UniqueID);
 	        m_GUICH->SetCommand(LADSPAPlugin::SELECTPLUGIN);
-                m_GUICH->Wait();
+            m_GUICH->Wait();
 	}
-        SelectPlugin();
+	SelectPlugin();
 
 //	redraw();
 }
