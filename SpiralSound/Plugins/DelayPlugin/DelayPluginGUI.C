@@ -67,6 +67,6 @@ void DelayPluginGUI::cb_Delay(Fl_Slider* o, void* v)
 { ((DelayPluginGUI*)(o->parent()))->cb_Delay_i(o,v); }
 
 inline void DelayPluginGUI::cb_Mix_i(Fl_Knob* o, void* v) 
-{ m_GUICH->Set("Mix",o->value()); }
+{ m_GUICH->Set("Mix",(float)o->value()); }
 void DelayPluginGUI::cb_Mix(Fl_Knob* o, void* v) 
 { ((DelayPluginGUI*)(o->parent()))->cb_Mix_i(o,v); }

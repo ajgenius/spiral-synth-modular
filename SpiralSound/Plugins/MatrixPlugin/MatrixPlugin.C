@@ -55,7 +55,7 @@ m_Triggered(false),
 m_ClockHigh(false),
 m_CopyPattern(0)
 {
-	m_Version=2;
+	m_Version=3;
 
 	m_PluginInfo.Name="Matrix";
 	m_PluginInfo.Width=555;
@@ -97,12 +97,14 @@ m_CopyPattern(0)
 		for (int y=0; y<MATY; y++)
 		{
 			m_Matrix[n].Matrix[x][y]=false;
+			m_Matrix[n].Volume[x][y]=1;
 		}
 		
 		m_TriggerLevel[n]=0;
 	}
 	
 	m_AudioCH->Register("NoteCut",&m_NoteCut,ChannelHandler::INPUT);
+	m_AudioCH->Register("Volume",&m_GUIArgs.Volume,ChannelHandler::INPUT);
 	m_AudioCH->Register("Current",&m_Current,ChannelHandler::INPUT);
 	m_AudioCH->Register("StepTime",&m_StepTime,ChannelHandler::INPUT);
 	m_AudioCH->Register("Num",&m_GUIArgs.Num,ChannelHandler::INPUT);
@@ -245,8 +247,8 @@ void MatrixPlugin::Execute()
 				{
 				
 					m_CurrentNoteCV=NoteTable[i+m_Matrix[m_Current].Octave*12];
-					m_CurrentTriggerCV=1;
-					m_TriggerLevel[i]=1;
+					m_CurrentTriggerCV=m_Matrix[m_Current].Volume[m_Step][i];
+					m_TriggerLevel[i]=m_Matrix[m_Current].Volume[m_Step][i];
 				}
 			}
 			
@@ -296,6 +298,9 @@ void MatrixPlugin::ExecuteCommands()
 			break;
 			case TDOWN : 
 				if (CanTransposeDown()) TransposeDown(); 
+			break;
+			case MAT_VOLUME : 
+				m_Matrix[m_Current].Volume[m_GUIArgs.X][m_GUIArgs.Y]=m_GUIArgs.Volume; 
 			break;
 		}
 	}
@@ -373,7 +378,7 @@ void MatrixPlugin::StreamOut(ostream &s)
 		{
 			for (int x=0; x<MATX; x++)
 			{
-				if (m_Matrix[n].Matrix[x][y]) s<<x<<" "<<y<<"  ";
+				if (m_Matrix[n].Matrix[x][y]) s<<x<<" "<<y<<"  "<<m_Matrix[n].Volume[x][y]<<" ";
 			}
 		}
 		s<<"-1 ";
@@ -419,6 +424,32 @@ void MatrixPlugin::StreamIn(istream &s)
 					{						
 						s>>y;
 						if (y!=-1) m_Matrix[n].Matrix[x][y]=true;
+					}
+				}
+			}
+		} break;
+		
+		case 3:
+		{
+			s>>m_Current>>m_Time>>m_Step>>m_Loop>>m_NoteCut;
+	
+			for (int n=0; n<NUM_PATTERNS; n++)	
+			{	
+				s>>m_Matrix[n].Length>>m_Matrix[n].Speed>>m_Matrix[n].Octave;
+		
+				int x=0,y=0;
+				float v;
+				while(x!=-1)
+				{
+					s>>x;
+					if (x!=-1)
+					{						
+						s>>y>>v;
+						if (y!=-1) 
+						{
+							m_Matrix[n].Matrix[x][y]=true;
+							m_Matrix[n].Volume[x][y]=v;
+						}
 					}
 				}
 			}

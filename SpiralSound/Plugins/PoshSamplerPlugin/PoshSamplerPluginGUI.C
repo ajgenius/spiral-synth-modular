@@ -114,14 +114,15 @@ void Fl_WaveDisplay::draw()
 				
 		Value = NextValue;
 		
-		// get average
-		NextValue=0;
+		// get max
+		NextValue=(*m_Sample)[n];
 		for (int m=n; m<n+Jump; m++)
 		{	
-			NextValue+=(*m_Sample)[m];
+			if (NextValue<(*m_Sample)[m]) NextValue=(*m_Sample)[m];
 		}
-		NextValue=(NextValue*ho)/Jump;
 		
+		NextValue*=ho;
+				
 		fl_line(x()+pos-2, y()+ho-(int)Value,
 				x()+pos-1, y()+ho-(int)NextValue);				
 		pos++;
@@ -233,38 +234,36 @@ int Fl_WaveDisplay::handle(int event)
 		redraw();		
 	}
 	
-	if (event==FL_KEYBOARD || event==FL_SHORTCUT)
-	{
-		if (Fl::event_key('+'))	
-		{
-			int Zoom=(int)((m_ViewEnd-m_ViewStart)*0.03f);
-			if ((m_ViewEnd-m_ViewStart)/w()>1)
-			{
-				m_ViewStart+=Zoom; 
-				m_ViewEnd-=Zoom;
-			}
-			
-			redraw();
-		}
-		
-		if (Fl::event_key('-'))	
-		{
-			int Zoom=(int)((m_ViewEnd-m_ViewStart)*0.03f);
-			m_ViewStart-=Zoom; 
-			m_ViewEnd+=Zoom;
-			redraw();
-		}					
-	}
-	
 	if (m_EndPos>=m_Sample->GetLength()) m_EndPos=m_Sample->GetLength()-1;
 	
 	return 1;
 }
 
+void Fl_WaveDisplay::ZoomIn()
+{
+	int Zoom=(int)((m_ViewEnd-m_ViewStart)*0.03f);
+	if ((m_ViewEnd-m_ViewStart)/w()>1)
+	{
+		m_ViewStart+=Zoom; 
+		m_ViewEnd-=Zoom;
+	}
+	
+	redraw();
+}
+
+void Fl_WaveDisplay::ZoomOut()
+{
+	int Zoom=(int)((m_ViewEnd-m_ViewStart)*0.03f);
+	m_ViewStart-=Zoom; 
+	m_ViewEnd+=Zoom;
+	redraw();
+}
+
 ////////////////////////////////////////////
 
 PoshSamplerPluginGUI::PoshSamplerPluginGUI(int w, int h,PoshSamplerPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
-SpiralPluginGUI(w,h,o,ch)
+SpiralPluginGUI(w,h,o,ch),
+m_UpdateMe(false)
 {	
 	int n=0; 
 			
@@ -354,7 +353,7 @@ SpiralPluginGUI(w,h,o,ch)
 	m_Display = new Fl_WaveDisplay(5,85,w-10,100,"");
 	m_Display->callback((Fl_Callback*)cb_WaveDisplay);
 	
-	int bx=5,by=190,bw=w/7-2,bh=20,bs=w/7-2;
+	int bx=5,by=190,bw=w/9-2,bh=20,bs=w/9-2;
 	n=0;
 	
 	m_Cut = new Fl_Button(bx+(n++*bs),by,bw,bh,"Cut");
@@ -385,6 +384,14 @@ SpiralPluginGUI(w,h,o,ch)
 	m_Amp->labelsize(10);
 	m_Amp->callback((Fl_Callback*)cb_Amp);
 
+	m_ZoomIn = new Fl_Button(bx+(n++*bs),by,bw,bh,"Zoom +");
+	m_ZoomIn->labelsize(10);
+	m_ZoomIn->callback((Fl_Callback*)cb_ZoomIn);
+
+	m_ZoomOut = new Fl_Button(bx+(n++*bs),by,bw,bh,"Zoom -");
+	m_ZoomOut->labelsize(10);
+	m_ZoomOut->callback((Fl_Callback*)cb_ZoomOut);
+
 	end();
 	
 	redraw();
@@ -396,11 +403,11 @@ void PoshSamplerPluginGUI::UpdateSampleDisplay(int num)
 	m_GUICH->Wait();
 	m_GUICH->RequestChannelAndWait("SampleSize");
 	long SampleSize=m_GUICH->GetLong("SampleSize");
-	
+
 	if (SampleSize)
 	{
 		char *TempBuf = new char[SampleSize];
-		m_GUICH->BulkTransfer("SampleBuffer",(void*)TempBuf,SampleSize);
+		m_GUICH->BulkTransfer("SampleBuffer",(void*)TempBuf,SampleSize);		
 		m_Display->SetSample((float*)TempBuf,SampleSize/sizeof(float));
 		delete[] TempBuf;
 	}
@@ -409,6 +416,13 @@ void PoshSamplerPluginGUI::UpdateSampleDisplay(int num)
 void PoshSamplerPluginGUI::Update()
 {
 	SetPlayPos(m_GUICH->GetLong("PlayPos"));
+	
+	if (m_UpdateMe)
+	{
+		UpdateSampleDisplay((int)m_SampleNum->value());
+		m_Display->redraw();
+		m_UpdateMe=false;
+	}
 	redraw();
 }
 
@@ -420,11 +434,7 @@ void PoshSamplerPluginGUI::UpdateValues(SpiralPlugin *o)
 	m_Pitch->value(Plugin->GetPitch((int)m_SampleNum->value()));
 	m_Note->value(Plugin->GetNote((int)m_SampleNum->value()));	
 	m_Loop->value(Plugin->GetLoop((int)m_SampleNum->value()));	
-	Sample *sample = Plugin->GetSample((int)m_SampleNum->value());
-	if (sample->GetLength())
-	{
-		m_Display->SetSample(sample->GetBuffer(),sample->GetLength());	
-	}
+	m_UpdateMe=true;
 	m_Display->SetPlayStart(Plugin->GetPlayStart((int)m_SampleNum->value()));	
 	m_Display->SetLoopStart(Plugin->GetLoopStart((int)m_SampleNum->value()));	
 	m_Display->SetLoopEnd(Plugin->GetLoopEnd((int)m_SampleNum->value()));	
@@ -646,3 +656,17 @@ inline void PoshSamplerPluginGUI::cb_WaveDisplay_i(Fl_WaveDisplay* o, void* v)
 }
 void PoshSamplerPluginGUI::cb_WaveDisplay(Fl_WaveDisplay* o, void* v)
 { ((PoshSamplerPluginGUI*)(o->parent()))->cb_WaveDisplay_i(o,v);}
+
+inline void PoshSamplerPluginGUI::cb_ZoomIn_i(Fl_Button* o, void* v)
+{
+	m_Display->ZoomIn();
+}
+void PoshSamplerPluginGUI::cb_ZoomIn(Fl_Button* o, void* v)
+{ ((PoshSamplerPluginGUI*)(o->parent()))->cb_ZoomIn_i(o,v);}
+
+inline void PoshSamplerPluginGUI::cb_ZoomOut_i(Fl_Button* o, void* v)
+{
+	m_Display->ZoomOut();
+}
+void PoshSamplerPluginGUI::cb_ZoomOut(Fl_Button* o, void* v)
+{ ((PoshSamplerPluginGUI*)(o->parent()))->cb_ZoomOut_i(o,v);}

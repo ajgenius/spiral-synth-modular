@@ -302,8 +302,8 @@ void OscillatorPluginGUI::cb_FineTune(Fl_Knob* o, void* v)
 inline void OscillatorPluginGUI::cb_PulseWidth_i(Fl_Slider* o, void* v) 
 {
 	char str[10]; 
-	m_GUICH->Set("PulseWidth",o->value());
-	sprintf(str,"%4.0f %%", 100*o->value());
+	m_GUICH->Set("PulseWidth",(float)o->value());
+	sprintf(str,"%4.0f %%",(float)(100*o->value()));
 	m_out_pulseW->value(str); 
 }
 

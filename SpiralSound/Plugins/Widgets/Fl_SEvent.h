@@ -18,8 +18,11 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
-#include <FL/Fl_Button.H>
+#include <FL/Fl_Group.H>
 #include <FL/Fl_Window.H>
+#include <FL/Fl_Menu_Button.H>
+#include <FL/Fl_Menu_Item.H>
+
 #include <iostream>
 #include <map>
 #include <string>
@@ -32,7 +35,7 @@ using namespace std;
 
 class Fl_EventMap;
 
-class Fl_SEvent : public Fl_Button
+class Fl_SEvent : public Fl_Group
 {
 public:
 	enum Type{NO_TYPE,MELODY,PERCUSSION};
@@ -81,6 +84,8 @@ public:
 	
 private:
 
+	Fl_Menu_Button *m_Menu; 
+	
 	Type m_Type;
 	// whether we were active or not last tick
 	bool m_LastState;

@@ -50,6 +50,8 @@ class Fl_WaveDisplay : public Fl_Widget
 		void SetLoopEnd(long s)   { m_LoopEnd=s; }
 		long GetLoopEnd()         { return m_LoopEnd; }
 		void SetPosMarker(bool s) { m_PosMarker=s; }
+		void ZoomIn();
+		void ZoomOut();
 		
 	private:	
 			
@@ -85,6 +87,7 @@ private:
 
 	char m_TextBuf[256];
 	int Numbers[NUM_SAMPLES];
+	bool m_UpdateMe;
 	
 	Fl_Button* m_Load;
 	Fl_Button* m_Save;
@@ -98,6 +101,8 @@ private:
 	Fl_Counter* m_Note;
 	Fl_WaveDisplay* m_Display;
 	Fl_Counter* m_SampleNum;
+	Fl_Button*  m_ZoomIn;
+	Fl_Button*  m_ZoomOut;
 	
 	Fl_Button* m_Cut;
 	Fl_Button* m_Copy;
@@ -145,6 +150,10 @@ private:
 	static void cb_Reverse(Fl_Button* o, void* v); 
 	inline void cb_Amp_i(Fl_Button* o, void* v);
 	static void cb_Amp(Fl_Button* o, void* v); 
+	inline void cb_ZoomIn_i(Fl_Button* o, void* v);
+	static void cb_ZoomIn(Fl_Button* o, void* v); 
+	inline void cb_ZoomOut_i(Fl_Button* o, void* v);
+	static void cb_ZoomOut(Fl_Button* o, void* v); 
 	inline void cb_WaveDisplay_i(Fl_WaveDisplay* o, void* v);
 	static void cb_WaveDisplay(Fl_WaveDisplay* o, void* v); 
 };

@@ -27,12 +27,12 @@ static const int MELODY_WIDGET_COL = 142;
 static const int PERCUSSION_WIDGET_COL = 140;
 
 Fl_SEvent::Fl_SEvent(int x, int y, int w, int h, const char* label) :
-Fl_Button(x,y,w,h,label),
+Fl_Group(x,y,w,h,""),
 m_Type(NO_TYPE),
 m_LastState(false),
 m_FirstUpdate(false),
 m_LastUpdate(false),
-m_Name("No Name"),
+m_Name(""),
 m_ID(-1),
 m_GridX(0),
 m_GridY(0),
@@ -47,11 +47,21 @@ m_SnapGap(0.0f),
 m_CurrentDragMode(NONE),
 m_DelMe(false)
 {
-    Fl_Button::label(m_Name.c_str());		
+    Fl_Group::label(m_Name.c_str());
+	labelsize(8);
+	
+	m_Menu = new Fl_Menu_Button(x,y,w,h,"");
+	m_Menu->type(Fl_Menu_Button::POPUP2);
+	m_Menu->textsize(8);
+	m_Menu->add("copy", 0, NULL);
+	m_Menu->add("instance", 0, NULL);	
+	m_Menu->add("edit", 0, NULL);
+	m_Menu->add("delete", 0, NULL);
+	add(m_Menu);
 }
 
 Fl_SEvent::Fl_SEvent(const Fl_SEvent &Other) :
-Fl_Button(Other.x(),Other.y(),Other.w(),Other.h(),Other.label()),
+Fl_Group(Other.x(),Other.y(),Other.w(),Other.h(),Other.label()),
 m_Type(Other.m_Type),
 m_LastState(Other.m_LastState),
 m_FirstUpdate(Other.m_FirstUpdate),
@@ -95,6 +105,7 @@ bool Fl_SEvent::UpdateState(float Time)
 		
 void Fl_SEvent::draw()
 {
+	Fl_Group::draw();
 	// check if clipped
 	//if (fl_clip()) return;
 
@@ -128,7 +139,7 @@ void Fl_SEvent::draw()
 		fl_line(x()+w(),y()+h(),x()+1,y()+h());
 		
 		fl_push_clip(x()+1,y()+1,w()-1,h()-1);
-		fl_font(fl_font(), 10);
+		fl_font(fl_font(), 8);
 		fl_draw(m_Name.c_str(),x()+2,y()+h()-2);
 		fl_pop_clip();
 	}
@@ -144,8 +155,17 @@ int Fl_SEvent::handle(int  event)
 
 	static int offsx,offsy;
 	
-	switch (event) 
+	if (Fl::event_button()==1 && event==FL_PUSH && Fl::event_clicks()==1) 
 	{
+		// a bit crap I suppose
+		if (((Fl_EventMap*)parent())->cb_EventDoubleClicked!=NULL)
+		{
+			((Fl_EventMap*)parent())->cb_EventDoubleClicked(this,NULL);
+		}
+	}
+	
+	switch (event) 
+	{		
   		case FL_PUSH:
 			LastButtonPushed=Fl::event_button();					
 	
@@ -165,23 +185,17 @@ int Fl_SEvent::handle(int  event)
 				{					
 					// if the last EVENT_RESIZE_GRAB pixels 
 					// have been grabbed, resize.						
-					/*if(!m_LockResize && mx>x()+w()-m_ResizeGrab && mx<x()+w())
-					{
-						m_CurrentDragMode=RESIZING;
-					}
-					else
-					{*/
 						m_CurrentDragMode=MOVING;
 					//}
 					
 				}
 				
-			if (LastButtonPushed==2) 
+			/*if (LastButtonPushed==2) 
 			{
 				// copy to end	
 				Fl_EventMap *p = (Fl_EventMap*)parent();
 				if (p) p->CopyEvent(x()+w(),y(),w(),m_ID,m_LengthTime);
-			}
+			}*/
 			
 			if (LastButtonPushed==3) 
 			{	
@@ -196,6 +210,8 @@ int Fl_SEvent::handle(int  event)
 					if(m_CurrentDragMode==RESIZING)
 					{
 						w(mx-x()+(m_ResizeGrab/2));
+						//m_Menu->size(w(),h());
+						
 						m_LengthTime=w()/(float)m_PixelsPerSec;	
 					}
 					
@@ -203,7 +219,8 @@ int Fl_SEvent::handle(int  event)
 					{
                         x(mx-offsx);
                         y(my-offsy);
-
+						m_Menu->position(x(),y());
+						
 						m_StartTime=(x()-GetParentX())/(float)m_PixelsPerSec;
 					}										
 					
@@ -221,8 +238,10 @@ int Fl_SEvent::handle(int  event)
 			}
 			break;
 	}
-			
-	return event;
+	
+	Fl_Group::handle(event);
+	
+	return 1;
 }
 
 void Fl_SEvent::SetPixelsPerSec(int s, bool FirstTime)

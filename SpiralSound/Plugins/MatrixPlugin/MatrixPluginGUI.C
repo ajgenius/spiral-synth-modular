@@ -26,6 +26,65 @@ static const int GUIBG_COLOUR = 144;
 static const int GUIBG2_COLOUR = 145;
 
 ////////////////////////////////////////////
+Fl_MatrixButton::Fl_MatrixButton(int x, int y, int w, int h, char* n) : 
+Fl_Button(x,y,w,h,n),
+m_Volume(NULL),
+cb_VolChange(NULL),
+cb_context(NULL)
+{
+	m_SliderHidden=true;
+	m_VolVal=255;
+}
+	
+void Fl_MatrixButton::draw()
+{
+	if (m_Volume)
+	{
+		m_VolVal=255-m_Volume->value();
+		fl_color((char)m_VolVal,(char)m_VolVal,255);
+		selection_color(fl_color());
+		
+		if (cb_VolChange) cb_VolChange(this,cb_context);
+	}
+	Fl_Button::draw();
+}
+
+int Fl_MatrixButton::handle(int event)
+{
+	if (value()==true && event==FL_PUSH && Fl::event_button()==3)
+	{
+		if (m_SliderHidden) 
+		{
+			m_Volume = new Fl_Slider(x(),y()+h(),w(),50,"");
+			m_Volume->type(4);
+			m_Volume->selection_color(GUI_COLOUR);
+			m_Volume->maximum(255);
+    		m_Volume->step(1);
+    		m_Volume->value(255-m_VolVal);
+			m_Volume->show();
+			parent()->add(m_Volume);
+			parent()->redraw();
+			m_SliderHidden=false;
+		}
+		else 
+		{
+			m_Volume->hide();
+			m_VolVal=m_Volume->value();
+			parent()->remove(m_Volume);
+			parent()->redraw();
+			m_Volume=NULL;
+			m_SliderHidden=true;
+		}
+		
+		return 1;
+	}
+	
+	if (Fl::event_button()!=3) return Fl_Button::handle(event);
+	
+	return 1;
+}
+
+////////////////////////////////////////////
 
 MatrixPluginGUI::MatrixPluginGUI(int w, int h,MatrixPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
@@ -115,17 +174,22 @@ SpiralPluginGUI(w,h,o,ch)
 	int butsize=7;
 	int n=0;
 	
+	fl_color(150,150,150);
+	int markercol=fl_color();
+	
 	for(int x=0; x<MATX; x++)
 	for(int y=0; y<MATY; y++)
 	{
 		Numbers[n]=n;
-		m_Matrix[x][y] = new Fl_Button(xoff+x*butsize,yoff+y*butsize,butsize+1,butsize+1,"");
+		m_Matrix[x][y] = new Fl_MatrixButton(xoff+x*butsize,yoff+y*butsize,butsize+1,butsize+1,"");
 		m_Matrix[x][y]->type(1);
 		m_Matrix[x][y]->box(FL_BORDER_BOX);
-		if ((x%8)==0) m_Matrix[x][y]->color(FL_WHITE);
+		if ((x%8)==0) m_Matrix[x][y]->color(markercol);
 		else m_Matrix[x][y]->color(FL_GRAY);
-		m_Matrix[x][y]->selection_color(FL_BLACK);
+		
+		m_Matrix[x][y]->selection_color(FL_WHITE);
 		m_Matrix[x][y]->callback((Fl_Callback*)cb_Matrix,(void*)&Numbers[n]);
+		m_Matrix[x][y]->SetVolCallback((Fl_Callback*)cb_MatVol,(void*)&Numbers[n]);
 		add(m_Matrix[x][y]);
 		n++;
 	}
@@ -167,6 +231,7 @@ void MatrixPluginGUI::UpdateValues(SpiralPlugin *o)
 	for(int y=0; y<MATY; y++)
 	{
 		m_Matrix[x][y]->value(Plugin->GetPattern()->Matrix[x][y]);
+		m_Matrix[x][y]->SetVolume(Plugin->GetPattern()->Volume[x][y]);
 	}        
 	
 	//if (Plugin->CanTransposeUp()) m_TransUpBtn->activate(); else m_TransUpBtn->deactivate();
@@ -192,6 +257,7 @@ void MatrixPluginGUI::UpdateMatrix()
 	for(int y=0; y<MATY; y++)
 	{
 		m_Matrix[x][y]->value(m_GUIMatrix[(int)m_Pattern->value()].Matrix[x][y]);
+		m_Matrix[x][y]->SetVolume(m_GUIMatrix[(int)m_Pattern->value()].Volume[x][y]);
 	}        
 
 }
@@ -210,9 +276,21 @@ inline void  MatrixPluginGUI::cb_Matrix_i(Fl_Button* o, void* v)
 
 	if (o->value())	m_GUICH->SetCommand(MatrixPlugin::MAT_ACTIVATE);
 	else m_GUICH->SetCommand(MatrixPlugin::MAT_DEACTIVATE);
+	
+	m_GUICH->Wait();
 }
 void  MatrixPluginGUI::cb_Matrix(Fl_Button* o, void* v)
 { ((MatrixPluginGUI*)(o->parent()))->cb_Matrix_i(o,v);}
+
+inline void  MatrixPluginGUI::cb_MatVol_i(Fl_Button* o, void* v)
+{ 
+	m_GUICH->Set("X",*(int*)v/MATY);
+	m_GUICH->Set("Y",*(int*)v%MATY);
+	m_GUICH->Set("Volume",((Fl_MatrixButton*)o)->GetVolume());
+	m_GUICH->SetCommand(MatrixPlugin::MAT_VOLUME);
+}
+void  MatrixPluginGUI::cb_MatVol(Fl_Button* o, void* v)
+{ ((MatrixPluginGUI*)(o->parent()))->cb_MatVol_i(o,v);}
 
 inline void MatrixPluginGUI::cb_Pattern_i(Fl_Counter* o, void* v)
 { 	
@@ -276,6 +354,7 @@ inline void MatrixPluginGUI::cb_CopyBtn_i (Fl_Button* o, void* v)
 {
        m_PasteBtn->activate();
 	   m_GUICH->SetCommand(MatrixPlugin::COPY);
+	   UpdateMatrix();
 }
 
 void MatrixPluginGUI::cb_CopyBtn (Fl_Button* o, void* v) 

@@ -33,6 +33,33 @@
 #ifndef MatrixGUI
 #define MatrixGUI
 
+class Fl_MatrixButton : public Fl_Button
+{
+public:
+	Fl_MatrixButton(int x, int y, int w, int h, char* n);
+	~Fl_MatrixButton() {}
+	
+	virtual void draw();
+	virtual int handle(int event);
+	
+	float GetVolume() { return m_VolVal/255.0f; }
+	void  SetVolume(float s) 
+	{ 
+		m_VolVal=s*255; 
+		fl_color((char)m_VolVal,(char)m_VolVal,255);
+		selection_color(fl_color());
+	}
+	void  SetVolCallback(Fl_Callback* s, void *c)   { cb_VolChange=s; cb_context=c; }
+
+private:
+	bool       m_SliderHidden;
+	Fl_Slider *m_Volume;
+	float      m_VolVal;
+	
+	void (*cb_VolChange)(Fl_Widget*, void*);
+	void  *cb_context;
+};
+
 class MatrixPluginGUI : public SpiralPluginGUI
 {
 public:
@@ -52,7 +79,7 @@ private:
 	Fl_Counter* m_Pattern;
 	Fl_Counter* m_Length;
 	Fl_Knob*    m_Speed;
-	Fl_Button*  m_Matrix[MATX][MATY];
+	Fl_MatrixButton*  m_Matrix[MATX][MATY];
 	Fl_Counter* m_Octave;
 	Fl_Counter* m_SpeedVal;
 	Fl_LED_Button* m_Flash[MATX];
@@ -66,6 +93,8 @@ private:
 	//// Callbacks ////
 	inline void cb_Matrix_i(Fl_Button* o, void* v);
 	static void cb_Matrix(Fl_Button* o, void* v); 
+	inline void cb_MatVol_i(Fl_Button* o, void* v);
+	static void cb_MatVol(Fl_Button* o, void* v); 
 	inline void cb_Pattern_i(Fl_Counter* o, void* v);
 	static void cb_Pattern(Fl_Counter* o, void* v); 
 	inline void cb_Length_i(Fl_Counter* o, void* v);

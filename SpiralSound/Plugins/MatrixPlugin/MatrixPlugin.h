@@ -31,6 +31,7 @@ struct Pattern
 	int Length;
 	float Speed;
 	int Octave;
+	float Volume[MATX][MATY];
 	bool Matrix[MATX][MATY];
 };
 
@@ -53,7 +54,7 @@ public:
 	Pattern* GetPattern() 			 { return &m_Matrix[m_Current]; }
 		
 	enum GUICommands{NONE,MAT_LENGTH,MAT_SPEED,MAT_ACTIVATE,MAT_DEACTIVATE,
-						MAT_OCTAVE,COPY,PASTE,CLEAR,TUP,TDOWN};
+						MAT_OCTAVE,COPY,PASTE,CLEAR,TUP,TDOWN,MAT_VOLUME};
 	
 	struct GUIArgs
 	{
@@ -62,6 +63,7 @@ public:
 		float Speed;
 		int X,Y;
 		int Octave;
+		float Volume;
 	};
 	
 private:
