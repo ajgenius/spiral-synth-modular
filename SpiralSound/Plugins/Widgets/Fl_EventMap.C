@@ -28,14 +28,14 @@ static const int BUTTON_COLOUR = 10;
 
 static const int EVENT_COLOUR = 0;
 
-static const int BG_COLOUR = 139;
-static const int LINE_COLOUR = 140;
+int BG_COLOUR;// = 139;
+int BLACK_KEY_COL;// = 141;
+int LINE_COLOUR;// = 140;
 
 ////////////////////////////////////////////////////////////////////
 
 Fl_EventMap::Fl_EventMap(int x, int y, int w, int h, const char* label) :
 Fl_Group(x,y,w,h,label),
-m_SeqPointer(NULL),
 m_Type(ARRANGE_MAP),
 m_Update(true),
 m_Zoom(1.0f),
@@ -47,107 +47,145 @@ m_StartLoop(1.0f),
 m_EndLoop(2.0f),
 m_Pos(0),
 m_LastPos(0),
-m_DrawBeats(false),
-m_BarLength(100),
-m_BeatsBar(8),
-cb_NewEvent(NULL),
-cb_RightMouse(NULL),
-cb_CopyEvent(NULL),
+m_DrawBeats(true),
+m_BarLength(1),
+m_BeatsBar(4),
 m_FirstUpdate(true)
 {
+	box(FL_FLAT_BOX);
+
+	fl_color(0,100,161);
+	BG_COLOUR=fl_color();
+	fl_color(0,90,150);
+	BLACK_KEY_COL=fl_color();
+	fl_color(0,80,150);
+	LINE_COLOUR=fl_color();
+	
+	fl_color(200,200,200);
+	int w=fl_color();
+	fl_color(50,50,50);
+	int b=fl_color();
+	
 	// white/black keys for the melody
-	m_KeyColMap[0] = FL_YELLOW;
-	m_KeyColMap[1] = FL_BLUE;
-	m_KeyColMap[2] = FL_YELLOW;
-	m_KeyColMap[3] = FL_BLUE;
-	m_KeyColMap[4] = FL_YELLOW;
-	m_KeyColMap[5] = FL_BLUE;
-	m_KeyColMap[6] = FL_YELLOW;
-	m_KeyColMap[7] = FL_YELLOW;
-	m_KeyColMap[8] = FL_BLUE;
-	m_KeyColMap[9] = FL_YELLOW;
-	m_KeyColMap[10] = FL_BLUE;
-	m_KeyColMap[11] = FL_YELLOW;
+	m_KeyColMap[0] = w;
+	m_KeyColMap[1] = b;
+	m_KeyColMap[2] = w;
+	m_KeyColMap[3] = b;
+	m_KeyColMap[4] = w;
+	m_KeyColMap[5] = w;
+	m_KeyColMap[6] = b;
+	m_KeyColMap[7] = w;
+	m_KeyColMap[8] = b;
+	m_KeyColMap[9] = w;
+	m_KeyColMap[10] = b;
+	m_KeyColMap[11] = w;
 }
 
-
+void Fl_EventMap::SetCallbacks(const EventCallbacks &s)
+{ 
+	m_Callbacks.cb_NewEvent=s.cb_NewEvent;
+	m_Callbacks.cb_EventDoubleClicked=s.cb_EventDoubleClicked;
+	m_Callbacks.cb_CopyEvent=s.cb_CopyEvent;
+	m_Callbacks.cb_CloneEvent=s.cb_CloneEvent;
+	m_Callbacks.cb_InstanceEvent=s.cb_InstanceEvent;
+	m_Callbacks.cb_MoveEvent=s.cb_MoveEvent;
+	m_Callbacks.cb_EditEvent=s.cb_EditEvent;
+	m_Callbacks.cb_DelEvent=s.cb_DelEvent;
+	m_Callbacks.cb_RenameEvent=s.cb_RenameEvent;
+	m_Callbacks.cb_Recolour=s.cb_Recolour;
+}
 
 void Fl_EventMap::CreateWindow()
 {
-	int yoff=0;
-	
-	//m_StartTri = new Fl_TriEvent(90, 5, 20, 10, "");
-	//m_StartTri->LockY();
-	//m_StartTri->SetResizeGrab(0);
-	//m_StartTri->SetPixelsPerSec(m_PixelsPerSec,true);
-	
-	m_PosTri = new Fl_TriEvent(90, 5, 30, 20, "");
-	m_PosTri->LockY();
-	m_PosTri->SetResizeGrab(0);
-	m_PosTri->SetPixelsPerSec(m_PixelsPerSec,true);
-	
-	m_EndTri = new Fl_TriEvent(50, 5, 20, 10, "");
-	m_EndTri->LockY();
-	m_EndTri->SetResizeGrab(0);	
-	m_EndTri->SetPixelsPerSec(m_PixelsPerSec,true);
-	
 	show();
 }
 
 void Fl_EventMap::draw()
 {
-	clear_damage(FL_DAMAGE_ALL);
+	Fl_Widget*const* a = array();
+	if (!(damage() & ~FL_DAMAGE_CHILD)) 
+	{
+		for (int i=children(); i--;) update_child(**a++);
+		return;
+	}
+	
+	draw_box();
+	m_FirstUpdate=true;
 		
 	fl_color(BG_COLOUR);
 	fl_rectf(x(),y(),w(),h());
 	// draw the section markers
-	fl_color(LINE_COLOUR);
 	
 	if (m_GridSizeY)
 	{
+		int c=0;
 		// draw the snap points
 		for (int n=y(); n<y()+h(); n+=m_GridSizeY)
 		{
+			fl_color(LINE_COLOUR);
 			fl_line(x(),n,x()+w(),n);
+			
+			// do black key bg
+			if (m_Type==MELODY_MAP)
+			{
+				int cm = c%12;
+				if (cm==1 || cm==3 || cm==6 || cm==8 || cm==10)
+				{
+					fl_color(BLACK_KEY_COL);
+					fl_rectf(x(),n,w(),m_GridSizeY);
+				}			
+			}
+			c++;	
 		}
 	}
 
 	// draw the bar markers	
-	
 	if (m_DrawBeats)
 	{
-		int BarLengthPixels=(int)(m_BarLength*(float)m_PixelsPerSec);
-		int BeatLengthPixels=(int)(BarLengthPixels/(float)m_BeatsBar);
+		float BarLength=m_BarLength*(float)m_PixelsPerSec;
+		float BeatLength=BarLength/(float)m_BeatsBar;
 		
-		for (int n=x(); n<x()+w(); n+=BarLengthPixels)
+		float n=x();
+		while (n<x()+w())
 		{
-			fl_line(n,y(),n,y()+h());
+			fl_color(LINE_COLOUR);
+			fl_line((int)n,y(),(int)n,y()+h());
+			if (m_Type==MELODY_MAP)
+			{
+				fl_line((int)n-1,y(),(int)n-1,y()+h());
+			}
 			
 			if (m_Type!=ARRANGE_MAP)
 			{
 				// draw the beat markers
-				for (int m=n+1; m<n+BarLengthPixels; m+=BeatLengthPixels)
+				float m=n;
+				while(m<n+BarLength)
 				{
-					fl_line(m,y(),m,y()+h());
+					fl_color(LINE_COLOUR);
+					fl_line((int)m,y(),(int)m,y()+h());
+					m+=BeatLength;
 				}
 			}
+			n+=BarLength;
 		}
 	}
-		
+	
 	if (m_Type==ARRANGE_MAP)
 	{
 		fl_color(FL_BLACK);
-		//m_StartLoop=m_StartTri->GetStartTime();
-		//m_EndLoop=m_EndTri->GetStartTime();
-	
+			
 		int StartPixels=(int)(m_StartLoop*(float)m_PixelsPerSec)+x();
 		int EndPixels=(int)(m_EndLoop*(float)m_PixelsPerSec)+x();
 		
-		fl_line(StartPixels,y()+15,StartPixels,y()+h());
+		//fl_line(StartPixels,y()+15,StartPixels,y()+h());
 		fl_line(EndPixels,y()+15,EndPixels,y()+h());
 	}
 	
-	Fl_Group::draw();
+	for (int i=children(); i--;) {
+      Fl_Widget& o = **a++;
+      draw_child(o);
+      draw_outside_label(o);
+    }
 	
 	SetFirstUpdate();
 }
@@ -166,7 +204,7 @@ int Fl_EventMap::handle(int  event)
 		 i!=m_EventMap.end(); i++)
 	{
 		Fl_SEvent *pEvent = i->second;
-		
+
 		if (pEvent->Killed())
 		{
 			RemoveEvent(i->first);
@@ -187,10 +225,7 @@ void Fl_EventMap::SetZoomLevel(float s)
 	{
 		i->second->SetPixelsPerSec(m_PixelsPerSec);
 	}
-	
-	//m_StartTri->SetPixelsPerSec(m_PixelsPerSec);
-	m_EndTri->SetPixelsPerSec(m_PixelsPerSec);
-	
+		
 	redraw();
 }
 	
@@ -207,32 +242,42 @@ void Fl_EventMap::SetSnapGap(float s)
 	redraw();
 }
 
-vector<EventInfo> Fl_EventMap::GetEvents(float Time)
-{
+void Fl_EventMap::SetTime(float Time)
+{	
 	assert(m_PixelsPerSec!=0);
+	
+	Time -= m_TimeOffset;
+	
 	m_Pos = (int)(Time*m_PixelsPerSec);
 	
 	// line marker update 
 	// all in all, some orrible code...
-	if (m_Update && window()->visible() && m_Pos!=m_LastPos)
+	if (m_Update && window()->visible() && visible_r() && m_Pos!=m_LastPos)
 	{
 		window()->make_current();
 		int DrawPos=m_Pos+x();
 		
-		m_PosTri->resize(DrawPos,m_PosTri->y(),m_PosTri->w(),m_PosTri->h());
-		redraw();
-		
-/*		if (DrawPos>m_ClipX && DrawPos<m_ClipX+m_ClipW)
+		int Left=parent()->x();
+		int Top=parent()->y();
+		int Width=parent()->w();
+		int Depth=parent()->h();
+				
+		if (DrawPos>Left && DrawPos<Left+Width)
 		{		
-			XSetFunction(fl_display,fl_gc,GXxor);
-			if (!m_FirstUpdate) fl_line(m_LastPos,15+m_ClipY,m_LastPos,m_ClipY+m_ClipH);
-			fl_line(DrawPos,15+m_ClipY,DrawPos,m_ClipY+m_ClipH);
+  			XSetFunction(fl_display,fl_gc,GXxor);
+  			XSetForeground(fl_display, fl_gc, 0xff00ffff);
+			if (!m_FirstUpdate) fl_line(m_LastPos,Top,m_LastPos,Depth);
+			fl_line(DrawPos,Top,DrawPos,Depth);
 			XSetFunction(fl_display,fl_gc,GXcopy);
 			m_LastPos=DrawPos;
-		}*/
-		//if (Last!=NULL) Last->make_current();
+		}
 	}
 	m_FirstUpdate=false;
+}
+
+vector<EventInfo> Fl_EventMap::GetEvents(float Time)
+{
+	SetTime(Time);
 	
 	vector<EventInfo> EventVec;
 	for (map<int,Fl_SEvent*>::iterator i=m_EventMap.begin();
@@ -290,6 +335,7 @@ int Fl_EventMap::AddEvent(int x, int y, int w, Fl_SEvent::Type EType, bool CallB
 	NewEvent->color(EVENT_COLOUR);
 	NewEvent->labelsize(10);
 	NewEvent->SetID(m_NextID++);
+	
 	NewEvent->SetType(EType);
 	char Name[256];
 	if (m_Type==ARRANGE_MAP) 
@@ -316,6 +362,11 @@ int Fl_EventMap::AddEvent(int x, int y, int w, Fl_SEvent::Type EType, bool CallB
 	}
 	
 	add(NewEvent);
+
+	// can only build the menus after adding to the parent, as the features in the
+	// menu depend on which callbacks have been filled out by the parent.
+	NewEvent->BuildMenu();
+
 	NewEvent->SnapX();
 	NewEvent->SnapY();
 	
@@ -323,14 +374,14 @@ int Fl_EventMap::AddEvent(int x, int y, int w, Fl_SEvent::Type EType, bool CallB
 	
 	m_EventMap[NewEvent->GetID()]=NewEvent;
 	
-	int ID = NewEvent->GetID();
-	if (cb_NewEvent && CallBack) cb_NewEvent(NewEvent,&ID);
+	int pID = NewEvent->GetID();
+	if (m_Callbacks.cb_NewEvent && CallBack) m_Callbacks.cb_NewEvent(NewEvent,&pID);
 	
 	redraw();
 	return NewEvent->GetID();
 }
 
-void Fl_EventMap::CopyEvent(int x, int y, int w, int ID, float LengthTime)
+int Fl_EventMap::CopyEvent(int x, int y, int w, int ID, float LengthTime)
 {
 	// make the new widget
 	int NewID = AddEvent(x,y,w,m_EventMap[ID]->GetType(),false);
@@ -343,8 +394,10 @@ void Fl_EventMap::CopyEvent(int x, int y, int w, int ID, float LengthTime)
 	//GetEvent(NewID)->SetName(Name);
 	
 	GetEvent(NewID)->SetName(m_EventMap[ID]->GetName());
+	GetEvent(NewID)->SetColour(m_EventMap[ID]->GetColour());
+	GetEvent(NewID)->SetChannel(m_EventMap[ID]->GetChannel());
 	
-	if (cb_CopyEvent) cb_CopyEvent(GetEvent(NewID),&ID);
+	return NewID;
 }
 
 void Fl_EventMap::RemoveAllEvents()
@@ -376,6 +429,8 @@ void Fl_EventMap::RemoveEvent(int ID)
 	remove(e);
 	m_EventMap.erase(i);
 	delete(e);
+	
+	cerr<<"removed "<<ID<<endl;
 }	
 
 Fl_SEvent *Fl_EventMap::GetEvent(int ID)

@@ -48,12 +48,18 @@ public:
 	virtual void draw();
 	virtual int  handle(int event);
 				
+	void BuildMenu();
+				
 	int  GetID()           { return m_ID; }
+	void SetID(int s)      { m_ID=s; }
+	void SetChannel(int s) { m_Channel=s; }
+	int  GetChannel()      { return m_Channel; }
+	int  GetColour()       { return m_Colour; }
+	void SetColour(int s)  { m_Colour=s; }
 	void SnapX()           { if (m_GridX) x(x()-((x()-GetParentX())%m_GridX)); redraw(); }	
 	void SnapY()           { if (m_GridY) y(y()-((y()-GetParentY())%m_GridY)); redraw(); }
 	void SetName(string s) { m_Name=s; }
 	string GetName()       { return m_Name; }
-	void SetID(int s)      { m_ID=s; }
 	void SetGridX(int s)   { m_GridX=s; }
 	void SetGridY(int s)   { m_GridY=s; }
 	void LockX()		   { m_LockX=true; }
@@ -77,6 +83,7 @@ public:
 	bool AtStart()         { return m_FirstUpdate; }
 	bool AtEnd()           { return m_LastUpdate; }
 	bool Killed()          { return m_DelMe; }
+	void KillMe()          { m_DelMe=true; }
 	
 	int GetX() { return x(); }
 	int GetY() { return y(); }
@@ -96,6 +103,7 @@ private:
 
 	string m_Name;
 	int    m_ID;
+	int    m_Colour;
 	int    m_GridX;
 	int    m_GridY;
 	bool   m_LockX;
@@ -103,6 +111,7 @@ private:
 	bool   m_LockResize;
 	int    m_ResizeGrab;
 	int	   m_PixelsPerSec;
+	int    m_Channel;	
 	
 	float  m_StartTime;
 	float  m_LengthTime;	
@@ -113,17 +122,6 @@ private:
 	bool   m_DelMe;
 	
 	int LastButtonPushed;
-};
-
-/////////////////////////////////////////////////////////
-
-class Fl_TriEvent : public Fl_SEvent
-{
-public:
-	Fl_TriEvent(int x, int y, int w, int h, const char* label=0);
-	Fl_TriEvent(const Fl_TriEvent &Other);
-	virtual void draw();
-private:
 };
 
 /////////////////////////////////////////////////////////

@@ -63,6 +63,7 @@ public:
 	
 	vector<EventInfo> GetEvents(float Time);
 	
+	void SetTime(float Time);
 	void SetUpdate(bool s) {m_Update=s;}
 	void SetZoomLevel(float s);
 	void SetGridSizeX(int s)  { m_GridSizeX=s; }
@@ -71,34 +72,55 @@ public:
 	void SetType(ModeType s)       { m_Type=s; }
 	ModeType GetType()             { return m_Type; }
 
-	// Sort this hideaous mess out!!
-	void  SetSeq(void* s)          { m_SeqPointer=s; }
-	void *GetSeq()                 { return m_SeqPointer; }
+	void  SetID(int ID)            { m_ID=ID; }
+	int   GetID()                  { return m_ID; }
 	float GetStartTime()           { return m_StartLoop;}
 	float GetEndTime()             { return m_EndLoop;}
 	void  SetEndTime(float s)      { m_EndLoop=s;}
+	float GetTimeOffset()          { return m_TimeOffset;}
+	void  SetTimeOffset(float s)   { m_TimeOffset=s;}
 	void  SetBeatsBar(int s)       { m_BeatsBar=s; redraw();}
 	void  SetBarLength(float s)    { m_BarLength=s; redraw(); }
 	void  SetSnapGap(float s);
-//	void  SetKeyColMap(int *s)     { m_KeyColMap=s; }
 	int  *GetKeyColMap()           { return m_KeyColMap; }
 	int   GetX()                   { return x(); }
 	int   GetY()                   { return y(); }
-	void  SetUpdateLineClip(int X, int Y, int W, int H) 
-	           			           { m_ClipX=X; m_ClipY=Y; m_ClipW=W; m_ClipH=H; }
     void  DrawBeats(bool s)        { m_DrawBeats=s; redraw(); }   
 	int   AddEventTime(float st, int g, float lt, Fl_SEvent::Type EType, bool CallBack=true);
 	void  SetEventLength(int ID, float l);
 	int   AddEvent(int x, int y, int w, Fl_SEvent::Type EType, bool CallBack=true);
-	void  CopyEvent(int x, int y, int w, int ID, float LengthTime);
+	int   CopyEvent(int x, int y, int w, int ID, float LengthTime);
 	void  RemoveAllEvents();
 	void  RemoveEvent(int ID);
 	Fl_SEvent *GetEvent(int ID);
 	void  CopyFrom(Fl_EventMap *Other);
 	
-	void  SetNewEventCallback(Fl_Callback* s)   { cb_NewEvent=s; }
-	void  SetCopyEventCallback(Fl_Callback* s)  { cb_CopyEvent=s; }
-	void  SetRightMouseCallback(Fl_Callback* s) { cb_RightMouse=s; }
+	// called by the event widgets on the owner of this object
+	// if you're going to hack callbacks - do it in style ;)
+	class EventCallbacks
+	{
+		public:
+		EventCallbacks()
+		{
+			cb_NewEvent=cb_EventDoubleClicked=cb_CopyEvent=cb_CloneEvent=
+			cb_InstanceEvent=cb_MoveEvent=cb_EditEvent=cb_DelEvent=
+			cb_RenameEvent=cb_Recolour=NULL;
+		}
+		
+		void (*cb_NewEvent)(Fl_Widget*, void*);
+		void (*cb_EventDoubleClicked)(Fl_Widget*, void*);
+		void (*cb_CopyEvent)(Fl_Widget*, void*);
+		void (*cb_CloneEvent)(Fl_Widget*, void*);
+		void (*cb_InstanceEvent)(Fl_Widget*, void*);
+		void (*cb_MoveEvent)(Fl_Widget*, void*);
+		void (*cb_EditEvent)(Fl_Widget*, void*);
+		void (*cb_DelEvent)(Fl_Widget*, void*);
+		void (*cb_RenameEvent)(Fl_Widget*, void*);
+		void (*cb_Recolour)(Fl_Widget*, void*);
+	};
+	
+	EventCallbacks m_Callbacks;
+	void  SetCallbacks(const EventCallbacks &s);
 
 	void  TriggerStart();
 	void  TriggerEnd();
@@ -110,13 +132,10 @@ protected:
 	int  GetGroupFromY(int y);
 	
 private:
-
-	void *m_SeqPointer;
-
 	ModeType m_Type;
-
 	bool  m_Update;
 	float m_Zoom;
+	int   m_ID;
 	int   m_GridSizeX;
 	int   m_GridSizeY;
 	int   m_PixelsPerSec;
@@ -124,28 +143,15 @@ private:
 	float m_StartLoop;
 	float m_EndLoop;
 	int   m_Pos;
-	int   m_LastPos;
-	
+	int   m_LastPos;	
 	bool  m_DrawBeats;
 	float m_BarLength;
-	int   m_BeatsBar;
+	float m_TimeOffset;
+	int   m_BeatsBar;	
 	
-	int   m_ClipX,m_ClipY,m_ClipW,m_ClipH;
-	
-	Fl_TriEvent *m_StartTri;
-	Fl_TriEvent *m_PosTri;
-	Fl_TriEvent *m_EndTri;
-
 	int m_KeyColMap[12];
 	
 	map<int,Fl_SEvent*> m_EventMap;
-	
-	void (*cb_NewEvent)(Fl_Widget*, void*);
-public:
-	// needed to be called by the event widgets
-	void (*cb_RightMouse)(Fl_Widget*, void*);
-	void (*cb_CopyEvent)(Fl_Widget*, void*);
-private:
 
 	bool m_FirstUpdate;
 

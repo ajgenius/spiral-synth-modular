@@ -25,6 +25,7 @@
 
 static const int MELODY_WIDGET_COL = 142;
 static const int PERCUSSION_WIDGET_COL = 140;
+static const int EVENT_RESIZE_GRAB = 10;
 
 Fl_SEvent::Fl_SEvent(int x, int y, int w, int h, const char* label) :
 Fl_Group(x,y,w,h,""),
@@ -34,6 +35,7 @@ m_FirstUpdate(false),
 m_LastUpdate(false),
 m_Name(""),
 m_ID(-1),
+m_Colour(PERCUSSION_WIDGET_COL),
 m_GridX(0),
 m_GridY(0),
 m_LockX(false),
@@ -41,6 +43,7 @@ m_LockY(false),
 m_LockResize(true),
 m_ResizeGrab(8),
 m_PixelsPerSec(100),
+m_Channel(0),
 m_StartTime(0.0f),
 m_LengthTime(0.0f),
 m_SnapGap(0.0f),
@@ -49,16 +52,26 @@ m_DelMe(false)
 {
     Fl_Group::label(m_Name.c_str());
 	labelsize(8);
-	
-	m_Menu = new Fl_Menu_Button(x,y,w,h,"");
-	m_Menu->type(Fl_Menu_Button::POPUP2);
+}
+
+void Fl_SEvent::BuildMenu()
+{	
+	Fl_EventMap::EventCallbacks *cb =&((Fl_EventMap*)parent())->m_Callbacks;
+
+	m_Menu = new Fl_Menu_Button(x(),y(),w(),h(),"");
+	m_Menu->type(Fl_Menu_Button::POPUP3);
 	m_Menu->textsize(8);
-	m_Menu->add("copy", 0, NULL);
-	m_Menu->add("instance", 0, NULL);	
-	m_Menu->add("edit", 0, NULL);
-	m_Menu->add("delete", 0, NULL);
+		
+	if (cb->cb_CopyEvent) m_Menu->add("copy", 0, cb->cb_CopyEvent,this);
+	if (cb->cb_CloneEvent) m_Menu->add("clone", 0, cb->cb_CloneEvent,this);
+	if (cb->cb_InstanceEvent) m_Menu->add("instance", 0, cb->cb_InstanceEvent,this);	
+	if (cb->cb_DelEvent) m_Menu->add("delete", 0, cb->cb_DelEvent,this);
+	if (cb->cb_RenameEvent) m_Menu->add("rename", 0, cb->cb_RenameEvent,this);
+	if (cb->cb_Recolour) m_Menu->add("colour", 0, cb->cb_Recolour,this);
+	if (cb->cb_EditEvent) m_Menu->add("edit", 0, cb->cb_EditEvent,this);
 	add(m_Menu);
 }
+
 
 Fl_SEvent::Fl_SEvent(const Fl_SEvent &Other) :
 Fl_Group(Other.x(),Other.y(),Other.w(),Other.h(),Other.label()),
@@ -68,6 +81,7 @@ m_FirstUpdate(Other.m_FirstUpdate),
 m_LastUpdate(Other.m_LastUpdate),
 m_Name(Other.m_Name),
 m_ID(Other.m_ID),
+m_Colour(Other.m_Colour),
 m_GridX(Other.m_GridX),
 m_GridY(Other.m_GridY),
 m_LockX(Other.m_LockX),
@@ -75,6 +89,7 @@ m_LockY(Other.m_LockY),
 m_LockResize(Other.m_LockResize),
 m_ResizeGrab(Other.m_ResizeGrab),
 m_PixelsPerSec(Other.m_PixelsPerSec),
+m_Channel(Other.m_Channel),
 m_StartTime(Other.m_StartTime),
 m_LengthTime(Other.m_LengthTime),
 m_SnapGap(Other.m_SnapGap),
@@ -128,8 +143,7 @@ void Fl_SEvent::draw()
 	}
 	else
 	{	
-		if (m_Type==MELODY) fl_color(MELODY_WIDGET_COL);
-		else fl_color(PERCUSSION_WIDGET_COL);
+		fl_color(m_Colour);
 		
 		fl_rectf(x()+1,y()+1,w()-1,h()-1);
 	
@@ -153,14 +167,17 @@ int Fl_SEvent::handle(int  event)
 	int mx=Fl::event_x();
 	int my=Fl::event_y();				
 
+	m_Menu->resize(x(),y(),w(),h());
+
+	Fl_EventMap::EventCallbacks *cb =&((Fl_EventMap*)parent())->m_Callbacks;
+
 	static int offsx,offsy;
 	
 	if (Fl::event_button()==1 && event==FL_PUSH && Fl::event_clicks()==1) 
 	{
-		// a bit crap I suppose
-		if (((Fl_EventMap*)parent())->cb_EventDoubleClicked!=NULL)
+		if (cb->cb_EventDoubleClicked!=NULL)
 		{
-			((Fl_EventMap*)parent())->cb_EventDoubleClicked(this,NULL);
+			cb->cb_EventDoubleClicked(this,NULL);
 		}
 	}
 	
@@ -172,36 +189,24 @@ int Fl_SEvent::handle(int  event)
 	        offsx=mx-x();
 	        offsy=my-y();
 			
-			if (Fl::event_key(FL_BackSpace)) 
+			/*if (Fl::event_key(FL_BackSpace)) 
 			{				
 				Fl_EventMap *p = (Fl_EventMap*)parent();
 				if (p && p->GetType()!=Fl_EventMap::ARRANGE_MAP) 
 				{
+					if (cb->cb_DelEvent!=NULL) cb->cb_DelEvent(this,NULL);
 					m_DelMe=true;
 				}
-			}		
+			}*/	
 			
 			if (LastButtonPushed==1) 
-				{					
-					// if the last EVENT_RESIZE_GRAB pixels 
-					// have been grabbed, resize.						
-						m_CurrentDragMode=MOVING;
-					//}
-					
-				}
-				
-			/*if (LastButtonPushed==2) 
-			{
-				// copy to end	
-				Fl_EventMap *p = (Fl_EventMap*)parent();
-				if (p) p->CopyEvent(x()+w(),y(),w(),m_ID,m_LengthTime);
-			}*/
-			
-			if (LastButtonPushed==3) 
-			{	
-				m_CurrentDragMode=RESIZING;
-			}	
-			
+			{					
+				// if the last EVENT_RESIZE_GRAB pixels 
+				// have been grabbed, resize.
+				if (offsx>w()-EVENT_RESIZE_GRAB) m_CurrentDragMode=RESIZING;
+				else m_CurrentDragMode=MOVING;
+			}
+						
 			// fall through
 			case FL_DRAG:
     		{				
@@ -227,6 +232,7 @@ int Fl_SEvent::handle(int  event)
 					my=y();
 					SnapY();
 					
+					if (cb->cb_MoveEvent!=NULL) cb->cb_MoveEvent(this,NULL);
 					parent()->redraw();
 				}
 			} 
@@ -292,32 +298,6 @@ int Fl_SEvent::GetParentY()
 	{
 		return 0;
 	}
-}
-
-////////////////////////////////////////////////////////////////////
-
-Fl_TriEvent::Fl_TriEvent(int x, int y, int w, int h, const char* label) :
-Fl_SEvent(x,y,w,h,label)
-{
-}
-
-Fl_TriEvent::Fl_TriEvent(const Fl_TriEvent &Other) :
-Fl_SEvent(Other)
-{
-}
-
-void Fl_TriEvent::draw()
-{
-	// hackish way to override the zoon scale of the width
-	w(10);
-	h(1000);
-	
-	fl_color(FL_BLACK);
-	//fl_line(x(),y(),x()+10,y());
-	//fl_line(x()+10,y(),x(),y()+10);
-	//fl_line(x(),y()+10,x(),y());
-	
-	fl_line(x(),y(),x(),y()+1000);
 }
 
 ////////////////////////////////////////////////////////////////////
