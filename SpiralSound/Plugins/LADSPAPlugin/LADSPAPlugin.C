@@ -48,6 +48,8 @@ int GetID()
 
 LADSPAPlugin::LADSPAPlugin()
 {
+	m_LADSPAInfo = new LADSPAInfo(false, "");
+
 	m_PlugDesc = NULL;
 
 	ClearPlugin();
@@ -61,7 +63,7 @@ LADSPAPlugin::LADSPAPlugin()
 	m_PluginInfo.NumOutputs=1;
 	m_PluginInfo.PortTips.push_back("Nuffink yet");
 
-	m_MaxInputPortCount = m_LADSPAInfo.GetMaxInputPortCount();
+	m_MaxInputPortCount = m_LADSPAInfo->GetMaxInputPortCount();
 
 // For receiving from GUI
 	m_AudioCH->RegisterData("SetPluginIndex", ChannelHandler::INPUT,&(m_InData.PluginIndex), sizeof(m_InData.PluginIndex));
@@ -106,6 +108,8 @@ LADSPAPlugin::~LADSPAPlugin()
 	if (m_OutData.InputPortSettings) free(m_OutData.InputPortSettings);
 	if (m_OutData.InputPortValues) free(m_OutData.InputPortValues);
 	if (m_OutData.InputPortDefaults) free(m_OutData.InputPortDefaults);
+
+	delete m_LADSPAInfo;
 }
 
 PluginInfo &LADSPAPlugin::Initialise(const HostInfo *Host)
@@ -119,7 +123,7 @@ PluginInfo &LADSPAPlugin::Initialise(const HostInfo *Host)
 SpiralGUIType *LADSPAPlugin::CreateGUI()
 {
 	return new LADSPAPluginGUI(m_PluginInfo.Width, m_PluginInfo.Height,
-	                           this, m_AudioCH, m_HostInfo, m_LADSPAInfo.GetPluginList());
+	                           this, m_AudioCH, m_HostInfo, m_LADSPAInfo->GetPluginList());
 }
 
 void LADSPAPlugin::Execute()
@@ -196,7 +200,7 @@ void LADSPAPlugin::ExecuteCommands()
 			break;
 			case (SELECTPLUGIN):
 			{
-				vector<LADSPAInfo::PluginEntry> pe = m_LADSPAInfo.GetPluginList();
+				vector<LADSPAInfo::PluginEntry> pe = m_LADSPAInfo->GetPluginList();
 				UpdatePlugin(pe[m_InData.PluginIndex - 1].UniqueID);
 			}
 			break;
@@ -662,7 +666,7 @@ void LADSPAPlugin::StreamIn(istream &s)
 			if (Filename!="None")
 			{
 			// Get Unique ID from filename and label
-				UniqueID = m_LADSPAInfo.GetIDFromFilenameAndLabel(Filename, Label);
+				UniqueID = m_LADSPAInfo->GetIDFromFilenameAndLabel(Filename, Label);
 			}
 		}
 		break;
@@ -703,7 +707,7 @@ void LADSPAPlugin::StreamIn(istream &s)
 			if (Filename!="None")
 			{
 			// Get Unique ID from filename and label
-				UniqueID = m_LADSPAInfo.GetIDFromFilenameAndLabel(Filename, Label);
+				UniqueID = m_LADSPAInfo->GetIDFromFilenameAndLabel(Filename, Label);
 			}
 		}
 		break;
@@ -719,7 +723,7 @@ void LADSPAPlugin::StreamIn(istream &s)
 			if (Filename!="None")
 			{
 			// Get Unique ID from filename and label
-				UniqueID = m_LADSPAInfo.GetIDFromFilenameAndLabel(Filename, Label);
+				UniqueID = m_LADSPAInfo->GetIDFromFilenameAndLabel(Filename, Label);
 			}
 		}
 		break;
@@ -758,13 +762,13 @@ bool LADSPAPlugin::SelectPlugin(unsigned long UniqueID)
 // Reject trivial case
 	if (UniqueID == 0) return false;
 
-	m_PlugDesc = m_LADSPAInfo.GetDescriptorByID(UniqueID, true);
+	m_PlugDesc = m_LADSPAInfo->GetDescriptorByID(UniqueID, true);
 
 	if (m_PlugDesc) {
 	// Create instance
 		if (!(m_PlugInstHandle = m_PlugDesc->instantiate(m_PlugDesc, m_HostInfo->SAMPLERATE))) {
 			cerr << "WARNING: Could not instantiate plugin " << UniqueID << endl;
-			m_LADSPAInfo.UnloadLibraryByID(UniqueID);
+			m_LADSPAInfo->UnloadLibraryByID(UniqueID);
 			m_PlugDesc = 0;
 			return false;
 		}
@@ -848,7 +852,7 @@ bool LADSPAPlugin::SelectPlugin(unsigned long UniqueID)
 		UpdatePluginInfoWithHost();
 
 		m_UniqueID = m_PlugDesc->UniqueID;
-		m_PluginIndex = m_LADSPAInfo.GetPluginListEntryByID(m_UniqueID) + 1;
+		m_PluginIndex = m_LADSPAInfo->GetPluginListEntryByID(m_UniqueID) + 1;
 		m_InputPortCount = m_PluginInfo.NumInputs;
 
 		int lbl_length;

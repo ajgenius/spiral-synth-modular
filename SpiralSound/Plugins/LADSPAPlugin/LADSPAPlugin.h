@@ -106,7 +106,7 @@ private:
 	int             m_Version;
 
 	// our database of ladspa plugins
-	LADSPAInfo      m_LADSPAInfo;
+	LADSPAInfo     *m_LADSPAInfo;
 
 	unsigned long   m_PluginIndex;
 	unsigned long   m_UniqueID;
