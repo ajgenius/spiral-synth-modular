@@ -16,33 +16,24 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */ 
 
-#include "../SpiralPlugin.h"
-#include <FL/Fl_Pixmap.H>
-
 #ifndef DistributorPLUGIN
 #define DistributorPLUGIN
 
-class DistributorPlugin : public SpiralPlugin
-{
-public:
- 	DistributorPlugin();
-	virtual ~DistributorPlugin();
-	
-	virtual PluginInfo& Initialise(const HostInfo *Host);
-	virtual SpiralGUIType*  CreateGUI();
-	virtual void 		Execute();
-	virtual void	    StreamOut(std::ostream &s) {}
-	virtual void	    StreamIn(std::istream &s) {}
-	
-private:
-bool m_Triggered;
-bool m_Switch;
-bool m_Triggeronce;
-int m_ChannelSelect;
-int m_trigdelay;
-bool m_Defined;
-float m_Previous;
-float m_Now;
+#include "../SpiralPlugin.h"
+#include <FL/Fl_Pixmap.H>
+
+class DistributorPlugin : public SpiralPlugin {
+   public:
+      DistributorPlugin();
+      virtual ~DistributorPlugin();
+      virtual PluginInfo& Initialise (const HostInfo *Host);
+      virtual SpiralGUIType* CreateGUI();
+      virtual void Execute();
+      virtual void StreamOut (std::ostream &s) { }
+      virtual void StreamIn (std::istream &s) { }
+   private:
+      bool m_Triggered;
+      int m_ChannelSelect, m_TrigDelay;
 };
 
 #endif

@@ -23,120 +23,79 @@
 using namespace std;
 
 extern "C" {
-SpiralPlugin* SpiralPlugin_CreateInstance()
-{
-	return new DistributorPlugin;
+
+SpiralPlugin* SpiralPlugin_CreateInstance() {
+      return new DistributorPlugin;
 }
 
-char** SpiralPlugin_GetIcon()
-{
-	return SpiralIcon_xpm;
+char** SpiralPlugin_GetIcon() {
+       return SpiralIcon_xpm;
 }
 
-int SpiralPlugin_GetID()
-{
-	return 0x0056;
+int SpiralPlugin_GetID() {
+    return 0x0056;
 }
 
-string SpiralPlugin_GetGroupName()
-{
-	return "Control";
+string SpiralPlugin_GetGroupName() {
+       return "Control";
 }
+
 }
 
 ///////////////////////////////////////////////////////
 
-DistributorPlugin::DistributorPlugin()
+DistributorPlugin::DistributorPlugin() :
+m_Triggered (false),
+m_ChannelSelect (0),
+m_TrigDelay (0)
 {
-	m_PluginInfo.Name="Distributor";
-	m_PluginInfo.Width=220;
-	m_PluginInfo.Height=250;
-	m_PluginInfo.NumInputs=2;
-	m_PluginInfo.NumOutputs=8;
-	m_PluginInfo.PortTips.push_back("Stream (A)");	
-	m_PluginInfo.PortTips.push_back("Switcher (B)");	
-	m_PluginInfo.PortTips.push_back("Out A1");
-	m_PluginInfo.PortTips.push_back("Out B1");
-	m_PluginInfo.PortTips.push_back("Out A2");
-	m_PluginInfo.PortTips.push_back("Out B2");
-	m_PluginInfo.PortTips.push_back("Out A3");
-	m_PluginInfo.PortTips.push_back("Out B3");
-	m_PluginInfo.PortTips.push_back("Out A4");
-	m_PluginInfo.PortTips.push_back("Out B4");
+	m_PluginInfo.Name = "Distributor";
+	m_PluginInfo.Width = 220;
+	m_PluginInfo.Height = 250;
+	m_PluginInfo.NumInputs = 2;
+	m_PluginInfo.NumOutputs = 8;
+	m_PluginInfo.PortTips.push_back ("Stream");
+	m_PluginInfo.PortTips.push_back ("Switcher");
+	m_PluginInfo.PortTips.push_back ("Stream 1");
+	m_PluginInfo.PortTips.push_back ("Switcher 1");
+	m_PluginInfo.PortTips.push_back ("Stream 2");
+	m_PluginInfo.PortTips.push_back ("Switcher 2");
+	m_PluginInfo.PortTips.push_back ("Stream 3");
+	m_PluginInfo.PortTips.push_back ("Switcher 3");
+	m_PluginInfo.PortTips.push_back ("Stream 4");
+	m_PluginInfo.PortTips.push_back ("Switcher 4");
 }
 
-DistributorPlugin::~DistributorPlugin()
-{
+DistributorPlugin::~DistributorPlugin() {
 }
 
-PluginInfo &DistributorPlugin::Initialise(const HostInfo *Host)
-{	
-	return SpiralPlugin::Initialise(Host);
+PluginInfo &DistributorPlugin::Initialise (const HostInfo *Host) {
+           return SpiralPlugin::Initialise (Host);
 }
 
-SpiralGUIType *DistributorPlugin::CreateGUI()
-{
-	return NULL;
+SpiralGUIType *DistributorPlugin::CreateGUI() {
+              return NULL;
 }
 
-void DistributorPlugin::Execute()
-{
-	if (! m_Defined)
-	{
-		m_Triggeronce=false;
-		m_Previous=0;
-		m_Now=0;
-		m_Defined=true;
-		m_ChannelSelect=0;
-		m_trigdelay=0;
-	}
-	for (int n=0; n<m_HostInfo->BUFSIZE; n++)
-	{
-		// detect the trigger
-		if ((GetInput(1,n))!=0)
-		{
-			if (GetInput(0,n)!=m_Previous)
-			{	
-				GetOutputBuf(m_ChannelSelect+1)->Zero();
-				m_ChannelSelect=m_ChannelSelect+2;
-				if (m_ChannelSelect>6)
-				{
-					m_ChannelSelect=0;
-				}
-				//zero the outputs first...
-				GetOutputBuf(m_ChannelSelect)->Zero();
-				GetOutputBuf(m_ChannelSelect+1)->Zero();
-				//and copy the inputs as well
-				if (InputExists(0)) //unless you want segmentation faults...
-				GetOutputBuf(m_ChannelSelect)->Mix(*GetInput(0),0);
-				GetOutputBuf(m_ChannelSelect+1)->Mix(*GetInput(1),0);
-				//now save the present pitch value, because we'll need it next time around.
-				m_Previous=GetInput(0,n);
-				m_Triggeronce=true;
-			}	
-			else if (m_Triggeronce==false)
-			{
-				//just copy the trigger in this case.
-				GetOutputBuf(m_ChannelSelect+1)->Zero();
-				GetOutputBuf(m_ChannelSelect+1)->Mix(*GetInput(1),0);
-				m_Triggeronce=true;
-			}
-		}
-		else 
-		{
-			m_Triggeronce=false;
-			m_trigdelay++;
-			if (m_trigdelay>=10)
-			{
-				GetOutputBuf(m_ChannelSelect+1)->Zero();
-				m_trigdelay=0;
-			}
-		}
-		
-	}
-
+void DistributorPlugin::Execute() {
+     const int Stream = 0;
+     const int Switch = 1;
+     for (int n=0; n<m_HostInfo->BUFSIZE; n++) {
+         float InpStream = InputExists (Stream) ? GetInput (Stream, n) : 0.0;
+         float InpSwitch = InputExists (Switch) ? GetInput (Switch, n) : 0.0;
+         if (InpSwitch <= 0.0) m_Triggered = false;
+         if (! m_Triggered && (InpSwitch > 0.0)) {
+            m_Triggered = true;
+            SetOutput (m_ChannelSelect+Switch, n, 0);
+            m_ChannelSelect = m_ChannelSelect + 2;
+            if (m_ChannelSelect > 6) m_ChannelSelect = 0;
+            m_TrigDelay = 0;
+         }
+         SetOutput (m_ChannelSelect+Stream, n, InpStream);
+         if (m_TrigDelay < 10) {
+            m_TrigDelay++;
+            SetOutput (m_ChannelSelect+Switch, n, InpSwitch);
+         }
+         else SetOutput (m_ChannelSelect+Switch, n, 0);
+     }
 }
-
-
-
-

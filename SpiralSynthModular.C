@@ -874,7 +874,7 @@ istream &operator>>(istream &s, SynthModular &o)
 	s>>*o.m_Canvas;
 
 	o.ResumeAudio();
-	return s;
+        return s;
 }
 
 //////////////////////////////////////////////////////////
