@@ -205,6 +205,17 @@ LADSPAInfo::GetPluginList(void)
 	return m_OrderedPluginList;
 }
 
+unsigned long
+LADSPAInfo::GetPluginListEntryByID(unsigned long unique_id)
+{
+	unsigned long j = 0;
+	for (vector<PluginEntry>::iterator i = m_OrderedPluginList.begin();
+	     i != m_OrderedPluginList.end(); i++, j++) {
+		if (i->UniqueID == unique_id) return j;
+	}
+	return m_OrderedPluginList.size();
+}
+
 // ****************************************************************************
 // **                     Private Member Functions                           **
 // ****************************************************************************

@@ -62,7 +62,15 @@ public:
 		std::string                 Name;
 	};
 
+	// Get a list of plugins ordered by name
 	const std::vector<PluginEntry>  GetPluginList(void);
+
+	// Get the index in the above list for given Unique ID
+	// If not found, this returns the size of the above list
+	unsigned long                   GetPluginListEntryByID(unsigned long unique_id);
+	
+	// Get the number of input ports for the plugin with the most
+	// input ports
 	unsigned long                   GetMaxInputPortCount(void) { return m_MaxInputPortCount; }
 
 private:

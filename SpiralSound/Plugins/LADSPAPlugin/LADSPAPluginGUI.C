@@ -57,7 +57,7 @@ SpiralPluginGUI(w,h,o,ch)
 	}
 
 // Set up widgets
-	m_Browser = new Fl_Choice(60,20,420,20,"Plugin:");
+	m_Browser = new Fl_Choice(60,20,420,25,"Plugin:");
 	m_Browser->callback((Fl_Callback *)cb_Select);
 
 	m_Browser->add("(None)");
@@ -66,20 +66,21 @@ SpiralPluginGUI(w,h,o,ch)
 	{
 		m_Browser->add(i->Name.c_str());
 	}
+	m_Browser->value(0);
 
-	m_Name = new Fl_Box(10,45,480,20,"None");
+	m_Name = new Fl_Box(10,50,480,20,"None");
 	m_Name->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 	m_Name->labelcolor(GUI_COLOUR);
 	m_Name->labelsize(10);
 	add(m_Name);
 
-	m_Maker = new Fl_Box(10,65,480,20,"None");
+	m_Maker = new Fl_Box(10,70,480,20,"None");
 	m_Maker->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 	m_Maker->labelcolor(GUI_COLOUR);
 	m_Maker->labelsize(10);
 	add(m_Maker);
 
-	m_InputScroll = new Fl_Scroll(10,105,480,150,"   Value            Min               Max                Clamp?    Default             Port Name");
+	m_InputScroll = new Fl_Scroll(10,110,480,150,"   Value            Min               Max                Clamp?    Default             Port Name");
 	m_InputScroll->labelsize(12);
 	m_InputScroll->align(FL_ALIGN_TOP_LEFT);
 	m_InputScroll->type(Fl_Scroll::VERTICAL);
@@ -171,7 +172,7 @@ void LADSPAPluginGUI::ClearPortInfo()
 
 	m_InputScroll->remove(m_InputPack);
 	delete m_InputPack;
-	m_InputPack = new Fl_Pack(x()+5,y()+110,460,20,"");
+	m_InputPack = new Fl_Pack(x()+5,y()+115,460,20,"");
 	m_InputScroll->add(m_InputPack);
 
 	m_PortOutput.clear();
@@ -233,8 +234,6 @@ void LADSPAPluginGUI::AddPortInfo(const char *Info)
 	NewGroup->redraw();
 	m_InputPack->redraw();
 	m_InputScroll->redraw();
-
-	redraw();
 }
 
 void LADSPAPluginGUI::UpdateValues(SpiralPlugin *o)
@@ -259,9 +258,12 @@ void LADSPAPluginGUI::UpdateValues(SpiralPlugin *o)
 
 void LADSPAPluginGUI::Update(void)
 {
+	m_GUICH->GetData("GetPluginIndex", &(m_InData.PluginIndex));
 	m_GUICH->GetData("GetInputPortCount", &(m_InData.InputPortCount));
 	m_GUICH->GetData("GetInputPortValues", m_InData.InputPortValues);
-	
+
+	m_Browser->value(m_InData.PluginIndex);
+
 	for (unsigned long n=0; n < m_InData.InputPortCount; n++) {
 		UpdatePortDisplay(n, m_InData.InputPortValues[n]);
 	}
@@ -278,8 +280,14 @@ void LADSPAPluginGUI::cb_Gain(Fl_Knob* o, void* v)
 
 inline void LADSPAPluginGUI::cb_Select_i(Fl_Choice* o)
 {
-	m_GUICH->Set("SetPluginIndex",o->value()-1);
-	m_GUICH->SetCommand(LADSPAPlugin::SELECTPLUGIN);
+	if (o->value() == 0) {
+	// "(None)" selected
+		m_GUICH->SetCommand(LADSPAPlugin::CLEARPLUGIN);
+	} else {
+	// Plugin selected
+		m_GUICH->Set("SetPluginIndex",o->value());
+		m_GUICH->SetCommand(LADSPAPlugin::SELECTPLUGIN);
+	}
 
 // Wait until next update for plugin to be loaded etc.
 	m_GUICH->Wait();
@@ -300,10 +308,12 @@ inline void LADSPAPluginGUI::cb_Select_i(Fl_Choice* o)
 	for (unsigned long n = 0; n < m_InData.InputPortCount; n++) {
 		AddPortInfo((const char *)(m_InData.InputPortNames + n * 256));
 		SetPortSettings(n, m_InData.InputPortSettings[n].Min,
-		                   m_InData.InputPortSettings[n].Max,
-		                   m_InData.InputPortSettings[n].Clamp,
-		                   m_InData.InputPortSettings[n].Default);
+				m_InData.InputPortSettings[n].Max,
+				m_InData.InputPortSettings[n].Clamp,
+				m_InData.InputPortSettings[n].Default);
 	}
+
+	redraw();
 }
 void LADSPAPluginGUI::cb_Select(Fl_Choice* o)
 {

@@ -100,6 +100,7 @@ private:
 
 	struct InChannelData
 	{
+		unsigned long   PluginIndex;
 		float           Gain;
 		char            Name[256];
 		char            Maker[256];
