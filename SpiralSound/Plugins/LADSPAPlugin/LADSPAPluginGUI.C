@@ -229,12 +229,41 @@ const string LADSPAPluginGUI::GetHelpText(const string &loc)
 //	} else if (loc == "FR") {
 //	} else {
 	// Default to English?
-		return string("LADSPA Plugin\n\n")
-		            + "This plugin allows you to use any LADSPA plugin in SSM.\n\n"
+		return string("LADSPA Plugin\n")
+		            + "\n"
+		            + "This plugin allows you to use any LADSPA plugin in SSM.\n"
+		            + "\n"
 		            + "It grows or shrinks the device GUI to allow you to connect\n"
 		            + "up the ports as any other native SSM plugin, so you can\n"
-		            + "seamlessly use the plugins as part of your layouts.\n\n"
-		            + "";
+		            + "seamlessly use the plugins as part of your layouts.\n"
+		            + "\n"
+		            + "The GUI window has two tabbed sections, Control and Setup.\n"
+		            + "\n"
+		            + "Setup is used to choose which LADSPA plugin to use, and\n"
+		            + "allows you to configure port information.\n"
+		            + "\n"
+		            + "Once you have chosen a plugin, a row will appear for each\n"
+		            + "input port:\n"
+		            + "\n"
+		            + "Value\n"
+		            + "    The value being input to the port from a connection.\n"
+		            + "Default\n"
+		            + "    The value used as input if there is no connection. If"
+		            + "    the port is connected, the default will use the value.\n"
+		            + "    Upon disconnection, it will retain the last value\n"
+		            + "    received.\n"
+		            + "Min, Max\n"
+		            + "    The range of values to scale a connected signal to,\n"
+		            + "    assuming the signal is in the range -1.0 to +1.0.\n"
+		            + "Clamp\n"
+		            + "    Whether to scale inputs - if unchecked, the input is\n"
+		            + "    not scaled."
+		            + "Port Name"
+		            + "    The name of the port, as supplied by the plugin.\n"
+		            + "\n"
+		            + "The Control tab will display a control knob for each port\n"
+		            + "that is not connected. This allows adjustment of input\n"
+		            + "directly.";
 //	}
 }
 
