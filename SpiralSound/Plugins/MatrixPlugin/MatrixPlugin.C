@@ -55,8 +55,6 @@ m_Triggered(false),
 m_ClockHigh(false),
 m_CopyPattern(0)
 {
-cerr<<hex<<this<<dec<<endl;
-
 	m_Version=2;
 
 	m_PluginInfo.Name="Matrix";

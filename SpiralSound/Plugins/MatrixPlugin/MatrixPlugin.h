@@ -57,8 +57,7 @@ public:
 	float GetStepTime()              { return m_StepTime; }
 	Pattern* GetPattern() 			 { return &m_Matrix[m_Current]; }
 	
-	void CopyPattern() { m_CopyPattern = m_Current; cerr<<m_Current<<" "<<m_CopyPattern<<endl;
- }
+	void CopyPattern() { m_CopyPattern = m_Current; }
     void PastePattern();
     void ClearPattern();
     void TransposeUp();

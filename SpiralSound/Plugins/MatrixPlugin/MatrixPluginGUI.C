@@ -68,6 +68,10 @@ SpiralPluginGUI(w,h,o)
 	m_SpeedVal = new Fl_Counter (5, 125, 85, 20, "");
 	m_SpeedVal->labelsize(10);
 	m_SpeedVal->value(10);
+	m_SpeedVal->type(FL_SIMPLE_COUNTER);
+	m_SpeedVal->step(1);
+	m_SpeedVal->callback((Fl_Callback*)cb_Speed);
+	add(m_SpeedVal);
 	
 	m_Octave = new Fl_Counter(5, 90, 40, 20, "Octave");
     m_Octave->labelsize(10);
@@ -142,7 +146,7 @@ void MatrixPluginGUI::UpdateValues()
 {
 	m_Pattern->value(m_Plugin->GetCurrent());
 	m_Length->value(m_Plugin->GetPattern()->Length);
-	m_Speed->value(m_Plugin->GetPattern()->Speed*10);
+	m_Speed->value(m_Plugin->GetPattern()->Speed);
 	m_SpeedVal->value((int)m_Speed->value());
 	m_Octave->value(m_Plugin->GetPattern()->Octave);
 	
