@@ -22,7 +22,7 @@
 #include <cstring>
 #include <cmath>
 
-#ifdef HAVE_POSIX_SHM
+#ifdef USE_POSIX_SHM
 // All this, just for SHM
 #include <unistd.h>          // For ftruncate
 #include <fcntl.h>           // For O_CREAT, O_RDONLY etc
@@ -63,7 +63,7 @@ string SpiralPlugin_GetGroupName()
 
 LADSPAPlugin::LADSPAPlugin()
 {
-#ifdef HAVE_POSIX_SHM
+#ifdef USE_POSIX_SHM
 // Share the LADSPA Database via SHM
 // We keep two things: A reference counter, and a pointer to the
 // database. We can get away with just a pointer as all instances
@@ -183,7 +183,7 @@ LADSPAPlugin::~LADSPAPlugin()
 	if (m_OutData.InputPortValues) free(m_OutData.InputPortValues);
 	if (m_OutData.InputPortDefaults) free(m_OutData.InputPortDefaults);
 
-#ifdef HAVE_POSIX_SHM
+#ifdef USE_POSIX_SHM
 // Clean up SHM things
 	(*m_SHMRefCount)--;
 	if ((*m_SHMRefCount) == 0) {
