@@ -454,7 +454,7 @@ void SynthModular::LoadPlugins(string pluginPath)
 
 	int Width  = 40;
 	int Height = 40;
-	
+
 	int SWidth  = 256;
 	int SHeight = 256;
 		
@@ -479,15 +479,20 @@ void SynthModular::LoadPlugins(string pluginPath)
 	int ID=-1;
 
 	vector<string> PluginVector;
-	
+
 	if (SpiralSynthModularInfo::USEPLUGINLIST)
 	{
 		PluginVector=SpiralSynthModularInfo::PLUGINVEC;
 	}
 	else
 	{
-		if (!pluginPath.empty()) PluginVector=BuildPluginList(pluginPath);
-		else PluginVector=BuildPluginList(SpiralSynthModularInfo::PLUGIN_PATH);
+                if (pluginPath.empty())
+                        PluginVector=BuildPluginList(SpiralSynthModularInfo::PLUGIN_PATH);
+                else {
+                        string::iterator i = pluginPath.end() - 1;
+                        if (*i != '/') pluginPath += '/';
+                        PluginVector=BuildPluginList(pluginPath);
+                }
 	}
 
 	for (vector<string>::iterator i=PluginVector.begin();
@@ -505,21 +510,21 @@ void SynthModular::LoadPlugins(string pluginPath)
 
 		ID=PluginManager::Get()->LoadPlugin(Fullpath.c_str());
 		if (ID!=PluginError)
-		{	
+		{
 			#ifdef DEBUG_PLUGINS
 			cerr<<"Plugin ["<<*i<<"] = "<<ID<<endl;
 			#endif
-					
+
 			Fl_Button *NewButton = new Fl_Button(0,0,Width,Height,"");
 			NewButton->labelsize(10);
-			
+
 			Fl_Pixmap *tPix = new Fl_Pixmap(PluginManager::Get()->GetPlugin(ID)->GetIcon());
-			NewButton->image(tPix->copy(tPix->w(),tPix->h()));		
-			delete tPix;	
-			
+			NewButton->image(tPix->copy(tPix->w(),tPix->h()));
+			delete tPix;
+
 			string GroupName = PluginManager::Get()->GetPlugin(ID)->GetGroupName();
 			ToolBox* Tool=NULL;
-			
+
 			map<string,ToolBox*>::iterator ti=m_PluginGroupMap.find(GroupName);
 			if (ti==m_PluginGroupMap.end())
 			{
