@@ -163,6 +163,7 @@ SpiralSound/Plugins/JoystickPlugin/Makefile
 SpiralSound/Plugins/LFOPlugin/Makefile
 SpiralSound/Plugins/MeterPlugin/Makefile
 SpiralSound/Plugins/KeyboardPlugin/Makefile
+SpiralSound/Plugins/DiskWriterPlugin/Makefile
 Makefile 
 )
 
