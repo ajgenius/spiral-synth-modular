@@ -20,12 +20,6 @@
 #include "../../RiffWav.h"
 #include <FL/Fl_Pixmap.H>
 
-#include "../../../config.h"
-
-#ifdef USE_LIBSNDFILE
-#include <sndfile.h>
-#endif
-
 #ifndef StreamPLUGIN
 #define StreamPLUGIN
 
@@ -45,12 +39,7 @@ class StreamPlugin : public SpiralPlugin {
       float GetVolume (void) { return m_GUIArgs.Volume; }
       float GetPitch (void) { return m_GUIArgs.PitchMod; }
    private:
-#ifdef USE_LIBSNDFILE
-      SNDFILE *m_File;
-      SF_INFO m_FileInfo;
-#else
       WavFile m_File;
-#endif
       Sample m_SampleL, m_SampleR;
       int m_SampleRate, m_SampleSize, m_StreamPos;
       float m_GlobalPos, m_Pitch, m_SamplePos, m_Pos;

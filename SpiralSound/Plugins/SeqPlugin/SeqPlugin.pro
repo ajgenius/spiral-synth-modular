@@ -5,7 +5,6 @@ HEADERS     = ../SpiralPlugin.h \
 			  ../Widgets/Fl_EventMap.h \
 			  ../Widgets/Fl_SEvent.h \
   			  ../../Sample.h \
-			  ../../RiffWav.h \
 			  SeqPlugin.h \
 			  SeqPluginGUI.h
 			  
@@ -16,7 +15,6 @@ SOURCES     = ../SpiralPlugin.C \
 			  ../Widgets/Fl_EventMap.C \
 			  ../Widgets/Fl_SEvent.C \
 			  ../../Sample.C \	
-  			  ../../RiffWav.C \
 			  SeqPlugin.C \
 			  SeqPluginGUI.C
 

@@ -17,7 +17,6 @@
 */ 
 
 #include "../SpiralPlugin.h"
-#include "../../RiffWav.h"
 #include <FL/Fl_Pixmap.H>
 #include <jack/jack.h>
 

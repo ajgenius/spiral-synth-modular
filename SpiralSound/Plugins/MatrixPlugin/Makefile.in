@@ -154,7 +154,6 @@ MatrixPlugin.o: MatrixPlugin.C \
 		../SpiralPlugin.h \
 		../../Sample.h \
 		SpiralIcon.xpm \
-		../../RiffWav.h \
 		../../NoteTable.h
 
 MatrixPluginGUI.o: MatrixPluginGUI.C \

@@ -19,7 +19,6 @@
 #include "SequencerPluginGUI.h"
 #include <FL/Fl_Button.h>
 #include "SpiralIcon.xpm"
-#include "../../RiffWav.h"
 #include "../../NoteTable.h"
 
 using namespace std;

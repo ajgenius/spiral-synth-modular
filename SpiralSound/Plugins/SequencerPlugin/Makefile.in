@@ -44,7 +44,6 @@ HEADERS =	SequencerPlugin.h \
 		../SpiralPluginGUI.h \
 		../../ChannelHandler.h \
 		../../Sample.h \
-		../../RiffWav.h \
 		../Widgets/Fl_Knob.H \
 		../Widgets/Fl_EventMap.h \
 		../Widgets/Fl_SEvent.h \
@@ -55,7 +54,6 @@ SOURCES =	SequencerPlugin.C \
 		../SpiralPluginGUI.C \
 		../../ChannelHandler.C \
 		../../Sample.C \
-		../../RiffWav.C \
 		../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_EventMap.C \
 		../Widgets/Fl_SEvent.C \
@@ -66,7 +64,6 @@ OBJECTS =	SequencerPlugin.o \
 		../SpiralPluginGUI.o \
 		../../ChannelHandler.o \
 		../../Sample.o \
-		../../RiffWav.o \
 		../Widgets/Fl_Knob.o \
 		../Widgets/Fl_EventMap.o \
 		../Widgets/Fl_SEvent.o \
@@ -158,17 +155,12 @@ install:
 ../../Sample.o: ../../Sample.C \
 		../../Sample.h
 
-../../RiffWav.o: ../../RiffWav.C \
-		../../RiffWav.h \
-		../../Sample.h
-
 SequencerPlugin.o: SequencerPlugin.C \
 		SequencerPlugin.h \
 		SequencerPluginGUI.h \
 		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
 		../../Sample.h \
-		../../RiffWav.h \
 		../../NoteTable.h \
 		SpiralIcon.xpm
 

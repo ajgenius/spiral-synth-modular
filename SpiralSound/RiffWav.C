@@ -31,6 +31,7 @@
 
 using namespace std;
 
+#ifndef USE_LIBSNDFILE
 const int HEADERLEN = (4+24+8);
 
 #if __BYTE_ORDER == BIG_ENDIAN
@@ -87,9 +88,59 @@ static void write_float_as_32bit_float(float v, FILE *file)
 	SWAPFLOAT(v);
 	fwrite(((char*) &v),4,1,file);
 }
+#endif
 
 int WavFile::Open(string FileName, Mode mode, Channels channels)
 {
+#ifdef USE_LIBSNDFILE
+	if (m_FileHandle!=NULL)
+	{
+		cerr<<"WavFile: File already open ["<<FileName<<"]"<<endl;
+		return 0;
+	}
+	
+	if (mode==WRITE) {
+		if (channels==STEREO)
+			m_FileInfo.channels = 2;
+		else
+  			m_FileInfo.channels = 1;
+  
+		switch (m_BitsPerSample) {
+			case 8 :
+				m_FileInfo.format = SF_FORMAT_WAV | SF_FORMAT_PCM_S8; 
+				break;
+
+			case 16 :
+				m_FileInfo.format = SF_FORMAT_WAV | SF_FORMAT_PCM_16; 
+				break;
+
+			case 24 :
+				m_FileInfo.format = SF_FORMAT_WAV | SF_FORMAT_PCM_24; 
+				break;
+
+			case 32 :
+				m_FileInfo.format = SF_FORMAT_WAV | SF_FORMAT_FLOAT; 
+				break;
+  
+			default :
+				m_FileInfo.format = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
+		}		
+	} else
+		m_FileInfo.format = 0;
+	
+	m_FileHandle = sf_open (FileName.c_str(), (mode==WRITE)?SFM_WRITE:SFM_READ, &m_FileInfo);
+
+	if (mode==WRITE)//auto-update header on write so everything written before is valid even in case of unexpected crash/close
+		sf_command (m_FileHandle, SFC_SET_UPDATE_HEADER_AUTO, NULL, SF_TRUE) ;
+
+	if (m_FileHandle == NULL)
+	{
+		cerr<<"WavFile: File ["<<FileName<<"] does not exist"<<endl;
+		return 0;
+	}
+
+	return 1;
+#else
 	if (m_Stream!=NULL)
 	{
 		cerr<<"WavFile: File already open ["<<FileName<<"]"<<endl;
@@ -245,10 +296,22 @@ int WavFile::Open(string FileName, Mode mode, Channels channels)
 		return 0;
 	}
 	return 0;
+#endif
 }
 
 int WavFile::Close()
 {
+#ifdef USE_LIBSNDFILE
+	if (m_FileHandle==NULL)
+	{
+		return 0;
+	}
+
+	sf_close(m_FileHandle);
+
+	m_FileHandle=NULL;
+	return 1;
+#else
 	if (m_Stream==NULL)
 	{
 		return 0;
@@ -261,10 +324,25 @@ int WavFile::Close()
 
 	m_Stream=NULL;
 	return 1;
+#endif
 }
 
 int WavFile::Save(Sample &data)
 {
+#ifdef USE_LIBSNDFILE
+	if (m_FileHandle==NULL || data.GetLength()==0)
+	{
+		return 0;
+	}
+	
+	if (sf_writef_float(m_FileHandle, data.GetNonConstBuffer(), data.GetLength()) != data.GetLength())
+	{
+		cerr<<"WavFile: an error occured writing to the file"<<endl;
+		return 0;
+	}	
+
+	return 1;
+#else
 	if (m_Stream==NULL || data.GetLength()==0)
 	{
 		return 0;
@@ -296,10 +374,24 @@ int WavFile::Save(Sample &data)
 	m_DataHeader.DataLengthBytes+=data.GetLength()*(WavFile::m_BitsPerSample/8);
 
 	return 1;
+#endif
 }
 
 int WavFile::Save(short *data, int Bytes)
 {
+#ifdef USE_LIBSNDFILE
+	if (m_FileHandle==NULL || data==NULL)
+	{
+		return 0;
+	}
+	
+	sf_write_short(m_FileHandle, data, Bytes*m_FileInfo.channels/2);
+
+	sf_close(m_FileHandle); 
+	m_FileHandle = NULL;
+
+	return 1;
+#else
 	if (m_Stream==NULL || data==NULL)
 	{
 		return 0;
@@ -308,10 +400,46 @@ int WavFile::Save(short *data, int Bytes)
 	m_DataHeader.DataLengthBytes+=Bytes;
 	fwrite(data,sizeof(data),Bytes/4,m_Stream);
 	return 1;
+#endif
 }
 
 int WavFile::Save(float *left, float *right, int Length)
 {
+#ifdef USE_LIBSNDFILE
+	if (m_FileHandle==NULL || left==NULL || right==NULL)
+	{
+		return 0;
+	}
+
+	if (IsStereo())// Interleave the channels into buffer and write
+	{
+		float *TempBuf = new float[Length*2];
+		for (int n=0; n<Length; n++)
+		{
+			TempBuf[(n*2)] = left[n];
+			TempBuf[(n*2)+1] = right[n];
+		}
+ 
+		sf_write_float(m_FileHandle, TempBuf, Length*2);
+		delete[] TempBuf;
+	}
+	else // mix the channels into a mono buffer and then write
+	{
+		float *TempBuf = new float[Length];
+		for (int n=0; n<Length; n++)
+		{
+			TempBuf[n] = left[n];
+			TempBuf[n] += right[n];
+
+			TempBuf[n]/=2;
+		}
+ 
+		sf_write_float(m_FileHandle, TempBuf, Length);
+		delete[] TempBuf;
+	}
+
+	return 1;
+#else
 	if (m_Stream==NULL || left==NULL || right==NULL)
 	{
 		return 0;
@@ -347,8 +475,10 @@ int WavFile::Save(float *left, float *right, int Length)
 	m_DataHeader.DataLengthBytes+=Length*2*(WavFile::m_BitsPerSample/8);
 
 	return 1;
+#endif
 }
 
+#ifndef USE_LIBSNDFILE
 int WavFile::GetSize()
 {	
         int Bps = m_Header.FmtBitsPerSample/8;
@@ -368,9 +498,55 @@ int WavFile::GetSize()
 	
 	return ret;
 }
+#endif
 
 int WavFile::Load(Sample &data)
 {
+#ifdef USE_LIBSNDFILE
+	if (m_FileInfo.channels>1) // mix the channels into a mono buffer
+	{
+		#ifdef TRACE_OUT
+		cerr<<"WavFile::Load - Channels = "<<m_FileInfo.channels<<
+		" Mixing down to mono..."<<endl;
+		#endif
+
+		float *TempBuf = new float[GetSize()*m_FileInfo.channels];
+		if (GetSize()*m_FileInfo.channels!= sf_read_float(m_FileHandle, TempBuf, GetSize()*m_FileInfo.channels))
+		{
+			cerr<<"WavFile: Read error"<<endl;
+			return 0;
+		}
+
+		for (int n=0; n<GetSize(); n++)
+		{
+			float value=0;
+			for (int i=0; i<m_FileInfo.channels; i++)
+				value += TempBuf[(n*m_FileInfo.channels)+i];
+
+			value/=m_FileInfo.channels;
+
+			data.Set(n,value);
+		}
+
+		delete[] TempBuf;
+	}
+	else // it's mono.
+	{
+	    	float *TempBuf = new float[GetSize()];
+		if (GetSize()!= sf_read_float(m_FileHandle, TempBuf, GetSize()))
+		{
+			cerr<<"WavFile: Read error"<<endl;
+			return 0;
+		}
+		
+		for (int n=0; n<GetSize(); n++)
+			data.Set(n,TempBuf[n]);
+		
+		delete[] TempBuf;
+	}
+	
+	return 1;
+#else
 	if (m_Header.FmtChannels>1) // mix the channels into a mono buffer
 	{
 		#ifdef TRACE_OUT
@@ -425,10 +601,50 @@ int WavFile::Load(Sample &data)
 	}
 	
 	return 1;
+#endif
 }
 
 int WavFile::Load(short *data)
 {
+#ifdef USE_LIBSNDFILE
+	if (m_FileInfo.channels>1) // mix the channels into a mono buffer 
+	{
+		#ifdef TRACE_OUT		
+		cerr<<"WavFile::Load - Channels = "<<m_FileInfo.channels<<
+		" Mixing down to mono..."<<endl;
+		#endif
+		
+		short *TempBuf = new short[GetSize()*m_FileInfo.channels];
+		if (GetSize()*m_FileInfo.channels!= sf_read_short(m_FileHandle, TempBuf, GetSize()*m_FileInfo.channels))
+		{
+			cerr<<"WavFile: Read error"<<endl;
+			return 0;
+		}
+
+		for (int n=0; n<GetSize(); n++)
+		{
+			float value=0;
+			for (int i=0; i<m_FileInfo.channels; i++)
+				value += TempBuf[(n*m_FileInfo.channels)+i];
+
+			value/=m_FileInfo.channels;
+
+			data[n] = (short)value/SHRT_MAX;
+		}
+
+		delete[] TempBuf;
+	}
+	else // we can read the data directly in, it's mono.
+	{
+		if (GetSize()!= sf_read_short(m_FileHandle, data, GetSize()))
+		{
+			cerr<<"WavFile: Read error"<<endl;
+			return 0;
+		}	
+	}	
+
+	return 0;
+#else
 	if (m_Header.FmtChannels>1) // mix the channels into a mono buffer 
 	{
 		#ifdef TRACE_OUT		
@@ -480,10 +696,23 @@ int WavFile::Load(short *data)
 	}
 	
 	return 0;
+#endif
 }
 
 int WavFile::SeekToChunk(int Pos)
 {
+#ifdef USE_LIBSNDFILE
+	if (m_CurSeekPos==Pos) return 0;
+	m_CurSeekPos=Pos;
+
+	if (sf_seek(m_FileHandle, m_CurSeekPos, SEEK_SET)==-1)
+	{
+           cerr<<"WavFile::SeekToChunk: Seek error"<<endl;
+           return 0;
+	}
+
+	return 1;
+#else
 	Pos *= 2 * m_Header.FmtChannels;
 	if (m_CurSeekPos==m_DataStart+Pos) return 1;
 
@@ -498,10 +727,37 @@ int WavFile::SeekToChunk(int Pos)
 	}
 
 	return 1;
+#endif
 }
 
 int WavFile::LoadChunk(int NumSamples, Sample &ldata, Sample &rdata)
 {
+#ifdef USE_LIBSNDFILE
+	float *TempBuf = new float[NumSamples * m_FileInfo.channels];
+	int ChunkSize = 0;
+  	    
+	ChunkSize = (int)sf_read_float(m_FileHandle, TempBuf, NumSamples*m_FileInfo.channels);
+  	    
+	if ((NumSamples*m_FileInfo.channels)!=ChunkSize)
+	{
+		cerr<<"WavFile: Only recieved "<<ChunkSize<<" of "<<NumSamples<<": Read chunk error"<<endl;
+		delete[] TempBuf;
+		return 0;
+	} else {
+		// Extract and scale samples to float range +/-1.0
+		for (int n=0; n<NumSamples; n++)
+		{
+			ldata.Set(n,TempBuf[n*m_FileInfo.channels]);
+  
+			if (m_FileInfo.channels>1)
+				rdata.Set(n,TempBuf[n*m_FileInfo.channels+1]);
+		}
+	}
+
+	delete[] TempBuf;
+
+	return 1;
+#else
 	int c = m_Header.FmtChannels;
 	int SizeBytes = NumSamples * 2 * c; // 2 bytes per sample per channel
 	short *TempBuf = new short[NumSamples * c];
@@ -533,4 +789,5 @@ int WavFile::LoadChunk(int NumSamples, Sample &ldata, Sample &rdata)
 	delete[] TempBuf;
 
 	return 1;
+#endif
 }

@@ -399,56 +399,6 @@ void PoshSamplerPlugin::StreamIn(istream &s)
 
 void PoshSamplerPlugin::LoadSample(int n, const string &Name)
 {
-#ifdef USE_LIBSNDFILE
-	SNDFILE *m_FileHandle = NULL;
-	SF_INFO m_FileInfo;
-
-	m_FileInfo.format = 0;
-	
-	m_FileHandle = sf_open (Name.c_str(), SFM_READ, &m_FileInfo);
-
-	if (m_FileHandle == NULL)
-	{
-		cerr<<"PoshSamplerPlugin: File ["<<Name<<"] does not exist"<<endl;
-		return;
-	}
-
-	m_SampleVec[n]->Allocate(m_FileInfo.frames);
-
-	float *TempBuf = new float[m_FileInfo.frames*m_FileInfo.channels];
-	if (m_FileInfo.frames*m_FileInfo.channels!= sf_read_float(m_FileHandle, TempBuf, m_FileInfo.frames*m_FileInfo.channels))
-	{
-		cerr<<"PoshSamplerPlugin: File ["<<Name<<"] Read error"<<endl;
-		return;
-	}
-
-	for (int i=0; i<m_FileInfo.frames; i++)
-	{
-		float value=0;
-
-		if (m_FileInfo.channels>1) // mix the channels into a mono buffer
-		{
-			for (int j=0; j<m_FileInfo.channels; j++)
-				value += TempBuf[(i*m_FileInfo.channels)+j];
-
-			value/=m_FileInfo.channels;
-
-			m_SampleVec[i]->Set(i,value);
-		} else 
-			m_SampleVec[i]->Set(i,TempBuf[i]);
-	
-	}
-
-	delete[] TempBuf;
-
-	sf_close(m_FileHandle); 
-	m_FileHandle = NULL;
-
-	m_SampleDescVec[n]->SampleRate=m_FileInfo.samplerate;
-	m_SampleDescVec[n]->Stereo=(m_FileInfo.channels > 1);
-	m_SampleDescVec[n]->Pitch *= m_SampleDescVec[n]->SampleRate/(float)m_HostInfo->SAMPLERATE;
-	m_SampleDescVec[n]->LoopEnd=m_SampleVec[n]->GetLength()-1;
-#else
 	WavFile Wav;
 	if (Wav.Open(Name,WavFile::READ))
 	{
@@ -460,7 +410,6 @@ void PoshSamplerPlugin::LoadSample(int n, const string &Name)
 		m_SampleDescVec[n]->Pitch *= m_SampleDescVec[n]->SampleRate/(float)m_HostInfo->SAMPLERATE;
 		m_SampleDescVec[n]->LoopEnd=m_SampleVec[n]->GetLength()-1;
 	}
-#endif
 }
 
 void PoshSamplerPlugin::SaveSample(int n, const string &Name)

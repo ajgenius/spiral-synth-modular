@@ -4,7 +4,6 @@ HEADERS     = ../SpiralPlugin.h \
 			  ../Widgets/Fl_DragBar.H \
 			  ../Widgets/Fl_LED_Button.H \
 			  ../../Sample.h \
-			  ../../RiffWav.h \
 			  JackPlugin.h \
 			  JackPluginGUI.h
 			  
@@ -14,7 +13,6 @@ SOURCES     = ../SpiralPlugin.C \
 			  ../Widgets/Fl_DragBar.cxx \
 			  ../Widgets/Fl_LED_Button.cxx \
 			  ../../Sample.C \
-			  ../../RiffWav.C \
 			  JackPlugin.C \
 			  JackPluginGUI.C
 

@@ -110,9 +110,8 @@ SpiralGUIType *DiskWriterPlugin::CreateGUI()
 
 void DiskWriterPlugin::Execute()
 {  
-    int Bps = m_GUIArgs.BitsPerSample/8;
 	if(m_Recording && m_Wav.IsOpen()) 
-    {	
+	{	
 		int on=0;
 		float LeftBuffer[host->BUFSIZE], RightBuffer[host->BUFSIZE];
 		
@@ -123,9 +122,8 @@ void DiskWriterPlugin::Execute()
 			RightBuffer[n]=GetInput(1,n);
 		}
 		
-		// stereo Bps * bufsize
-        m_Wav.Save(LeftBuffer, RightBuffer, host->BUFSIZE);
-    }
+		m_Wav.Save(LeftBuffer, RightBuffer, host->BUFSIZE);
+	}
 }
 
 void DiskWriterPlugin::ExecuteCommands()
