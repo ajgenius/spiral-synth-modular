@@ -28,7 +28,7 @@ static const int GUIBG2_COLOUR = 145;
 
 SVFilterPluginGUI::SVFilterPluginGUI(int w, int h,SVFilterPlugin *o,ChannelHandler *ch,const HostInfo *Info) :
 SpiralPluginGUI(w,h,o,ch)
-{	
+{
 	Cutoff = new Fl_Slider(15, 20, 20, 70, "Cutoff");
 	Cutoff->type(4);
 	Cutoff->selection_color(GUI_COLOUR);
@@ -53,25 +53,23 @@ SpiralPluginGUI(w,h,o,ch)
 void SVFilterPluginGUI::UpdateValues(SpiralPlugin *o)
 {
 	SVFilterPlugin *Plugin = (SVFilterPlugin*)o;
-//	Cutoff->value(100.0f-sqrt(Plugin->GetCutoff()-10.0f));
 	Cutoff->value (1.0f - Plugin->GetCutoff());
-	Resonance->value(Plugin->GetResonance()-1.0f);
+	Resonance->value(Plugin->GetResonance());
 }
 
 inline void SVFilterPluginGUI::cb_Cutoff_i(Fl_Slider* o, void* v)
 {
 	float value=1.0f-o->value();
-        cerr << value << " " << o->value() << endl;
-//	m_Plugin->SetCutoff((value*value)+10.0f);
 	m_GUICH->Set("Cutoff",value);
 }
+
 void SVFilterPluginGUI::cb_Cutoff(Fl_Slider* o, void* v)
 { ((SVFilterPluginGUI*)(o->parent()))->cb_Cutoff_i(o,v); }
 
 inline void SVFilterPluginGUI::cb_Resonance_i(Fl_Knob* o, void* v)
 { m_GUICH->Set("Resonance",(float)o->value()); }
 
-void SVFilterPluginGUI::cb_Resonance(Fl_Knob* o, void* v) 
+void SVFilterPluginGUI::cb_Resonance(Fl_Knob* o, void* v)
 { ((SVFilterPluginGUI*)(o->parent()))->cb_Resonance_i(o,v); }
 
 const string SVFilterPluginGUI::GetHelpText(const string &loc){

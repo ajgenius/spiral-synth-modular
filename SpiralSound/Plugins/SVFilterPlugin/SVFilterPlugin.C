@@ -18,11 +18,9 @@
 #include <math.h>
 #include "SVFilterPlugin.h"
 #include "SVFilterPluginGUI.h"
-#include <FL/Fl_Button.h>
 #include "SpiralIcon.xpm"
 
-#define PI 3.141592654
-
+static const double PI = 3.141592654;
 static const int GRANULARITY = 10;
 
 extern "C" {
@@ -64,20 +62,20 @@ m_l(0.0f),
 m_p(0.0f),
 m_n(0.0f)
 {
-	m_PluginInfo.Name="SVF";
+        m_Version = 2;
+        m_PluginInfo.Name="SVF";
 	m_PluginInfo.Width=120;
 	m_PluginInfo.Height=110;
 	m_PluginInfo.NumInputs=3;
 	m_PluginInfo.NumOutputs=5;
-	m_PluginInfo.PortTips.push_back("Input");	
-	m_PluginInfo.PortTips.push_back("Cutoff CV");	
-	m_PluginInfo.PortTips.push_back("Emphasis CV");	
+	m_PluginInfo.PortTips.push_back("Input");
+	m_PluginInfo.PortTips.push_back("Cutoff CV");
+	m_PluginInfo.PortTips.push_back("Emphasis CV");
 	m_PluginInfo.PortTips.push_back("LowPass output");
 	m_PluginInfo.PortTips.push_back("BandPass output");
 	m_PluginInfo.PortTips.push_back("HighPass output");
 	m_PluginInfo.PortTips.push_back("Notch output");
-	m_PluginInfo.PortTips.push_back("Peaking output");	
-	
+	m_PluginInfo.PortTips.push_back("Peaking output");
 	m_AudioCH->Register("Cutoff",&Cutoff);
 	m_AudioCH->Register("Resonance",&Resonance);
 }
@@ -87,9 +85,9 @@ SVFilterPlugin::~SVFilterPlugin()
 }
 
 PluginInfo &SVFilterPlugin::Initialise(const HostInfo *Host)
-{	
-	PluginInfo& Info = SpiralPlugin::Initialise(Host);		
-	fs = m_HostInfo->SAMPLERATE;		
+{
+	PluginInfo& Info = SpiralPlugin::Initialise(Host);
+	fs = m_HostInfo->SAMPLERATE;
 	return Info;
 }
 
@@ -103,57 +101,60 @@ SpiralGUIType *SVFilterPlugin::CreateGUI()
 void SVFilterPlugin::Execute()
 {
 	float in;
-					
+
     for (int n=0; n<m_HostInfo->BUFSIZE; n++)
 	{
 		if (n%GRANULARITY==0)
 		{
-			fc = 4000.0f*(Cutoff+GetInput(1,n)); 
-	 		q  = 1-Resonance+GetInput(2,n);  
+			fc = 4000.0f*(Cutoff+GetInput(1,n));
+	 		q  = 1-Resonance+GetInput(2,n);
 			m_f = 2.0f*sin(PI*fc/fs);
 		}
-		
+
 		in = GetInput(0,n);
-		
+
 		float scale=0.5f;
-		
+
 		m_l = m_l + m_f*m_b;
 		m_h = scale*in - m_l - q*m_b;
 		m_b = m_b + m_f*m_h;
 		m_n = m_l + m_h;
 		m_p = m_l - m_h;
-				
-		SetOutput(0,n,m_l);	 
+
+		SetOutput(0,n,m_l);
 		SetOutput(1,n,m_b);
 		SetOutput(2,n,m_h);
 		SetOutput(3,n,m_n);
 		SetOutput(4,n,m_p);
 	}
-		
+
 }
-	
+
 void SVFilterPlugin::Randomise()
 {
 }
 
-// This should be streaming the GUI parameters to make it easier to do UpdateValues()
-void SVFilterPlugin::StreamOut(ostream &s)
-{
-	s<<m_Version<<" "<<fc<<" "<<q<<" ";
+void SVFilterPlugin::StreamOut (ostream &s) {
+     s << m_Version << " " << Cutoff << " " << Resonance << " ";
 }
 
-// This should be streaming the GUI parameters to make it easier to do UpdateValues()
-void SVFilterPlugin::StreamIn(istream &s)
-{	
-	int version;
-	s>>version;
-	s>>fc>>q;
+void SVFilterPlugin::StreamIn (istream &s) {
+     int version;
+     double dummy;
+     s >> version;
+     switch (version) {
+       case 1: // s >> fc >> q;
+               s >> dummy >> dummy;
+               break;
+       case 2: s >> Cutoff >> Resonance;
+               break;
+     }
 }
 
 void SVFilterPlugin::Clear()
 {
 	m_h=0.0f;
-	m_b=0.1f; 
+	m_b=0.1f;
 	m_l=0.0f;
 	m_p=0.0f;
 	m_n=0.0f;
