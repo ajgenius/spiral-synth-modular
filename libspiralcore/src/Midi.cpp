@@ -378,7 +378,6 @@ void MidiDevice::AlsaCollectEvents()
   
 	for(;;)
 	{   
-		cerr<<"poll"<<endl;
 		if (poll (pfds, seq_nfds, 1000) > 0) 
 		{
     		for (l1 = 0; l1 < seq_nfds; l1++) 
@@ -389,7 +388,6 @@ void MidiDevice::AlsaCollectEvents()
     				int l1;
 					MidiEvent::type MessageType=MidiEvent::NONE;
 					int Volume=0,Note=0,EventDevice=0;	
-					cerr<<"found an event!"<<endl;
     				do 
 					{
         				snd_seq_event_input(seq_handle, &ev);
