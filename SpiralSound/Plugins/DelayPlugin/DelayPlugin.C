@@ -85,56 +85,46 @@ SpiralGUIType *DelayPlugin::CreateGUI()
 										this,m_AudioCH,m_HostInfo);
 }
 
-void DelayPlugin::Execute()
-{
-	int Delay;
-
-    for (int n=0; n<m_HostInfo->BUFSIZE; n++)
-	{
-		Delay=(int)((m_Delay+GetInput(1,n)*0.5f)*(float)m_HostInfo->SAMPLERATE);
-
-		if (Delay>=MAX_DELAY*m_HostInfo->SAMPLERATE)
-		{
-			Delay=(int)(MAX_DELAY*m_HostInfo->SAMPLERATE)-1;
-		}
-
-		if (Delay<0) Delay=0;
-
-		if (m_ReadHeadPos<0 || m_ReadHeadPos>=MAX_DELAY*m_HostInfo->SAMPLERATE)
-			cerr<<"read agh! "<<m_ReadHeadPos<<endl;
-		if (m_WriteHeadPos<0 || m_WriteHeadPos>=MAX_DELAY*m_HostInfo->SAMPLERATE)
-			cerr<<"write agh! "<<m_WriteHeadPos<<endl;
-
-		// Read from the buffer
-		SetOutput(0,n,m_Buffer[m_ReadHeadPos]+m_Mix*GetInput(0,n));
-		
-		// Write to the buffer	
-		m_Buffer.Set((int)m_WriteHeadPos,GetInput(0,n));
-		
-		m_WriteHeadPos++;	
-		m_ReadHeadPos=m_WriteHeadPos+GetInput(2,n)*Delay;
-		
-		if (m_ReadHeadPos<0) m_ReadHeadPos=Delay+m_ReadHeadPos;
-		if (m_WriteHeadPos<0) m_WriteHeadPos=Delay+m_WriteHeadPos;
-		
-		if (Delay>0) 
-		{	
-			if (m_ReadHeadPos>=Delay) m_ReadHeadPos=m_ReadHeadPos-Delay;
-			if (m_WriteHeadPos>=Delay) m_WriteHeadPos=m_WriteHeadPos-Delay;	
-		}
-		else
-		{
-			m_ReadHeadPos=0;
-			m_WriteHeadPos=0;
-		}
-	}
-		
+void DelayPlugin::Execute () {
+  int Delay;
+  float max_pos = MAX_DELAY * m_HostInfo->SAMPLERATE;
+  for (int n=0; n<m_HostInfo->BUFSIZE; n++) {
+    Delay = (int)((m_Delay + GetInput(1,n) * 0.5f) * (float)m_HostInfo->SAMPLERATE);
+    if (Delay >= max_pos) Delay = (int)(max_pos) - 1;
+    if (Delay < 0) Delay=0;
+    /* This used to give an error message - but we could get a segfault
+    if (m_ReadHeadPos<0 || m_ReadHeadPos>=MAX_DELAY*m_HostInfo->SAMPLERATE)
+      cerr<<"read agh! "<<m_ReadHeadPos<<endl;
+    if (m_WriteHeadPos<0 || m_WriteHeadPos>=MAX_DELAY*m_HostInfo->SAMPLERATE)
+      cerr<<"write agh! "<<m_WriteHeadPos<<endl;
+    */
+    if (m_ReadHeadPos >= max_pos) m_ReadHeadPos = max_pos - 1;
+    if (m_ReadHeadPos < 0) m_ReadHeadPos = 0;
+    if (m_WriteHeadPos >= max_pos) m_WriteHeadPos = max_pos - 1;
+    if (m_WriteHeadPos < 0) m_WriteHeadPos = 0;
+    // Read from the buffer
+    SetOutput (0, n, m_Buffer[m_ReadHeadPos] + m_Mix * GetInput (0, n));
+    // Write to the buffer
+    m_Buffer.Set ((int)m_WriteHeadPos, GetInput (0, n));
+    m_WriteHeadPos++;
+    m_ReadHeadPos = m_WriteHeadPos + GetInput (2, n) * Delay;
+    if (m_ReadHeadPos < 0) m_ReadHeadPos = Delay + m_ReadHeadPos;
+    if (m_WriteHeadPos < 0) m_WriteHeadPos = Delay + m_WriteHeadPos;
+    if (Delay > 0) {
+      if (m_ReadHeadPos >= Delay) m_ReadHeadPos = m_ReadHeadPos - Delay;
+      if (m_WriteHeadPos >= Delay) m_WriteHeadPos = m_WriteHeadPos - Delay;
+    }
+    else {
+      m_ReadHeadPos = 0;
+      m_WriteHeadPos = 0;
+    }
+  }
 }
-	
+
 void DelayPlugin::Randomise()
 {
 }
-	
+
 void DelayPlugin::StreamOut(ostream &s)
 {
 	s<<m_Version<<" "<<m_Delay<<" "<<m_Mix<<" ";
