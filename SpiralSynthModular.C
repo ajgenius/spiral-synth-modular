@@ -137,9 +137,18 @@ void SynthModular::Update()
 	{
 		if (i->second->m_Device) // if it's not a comment
 		{
+			#ifdef DEBUG_PLUGINS
+			cerr<<"Updating channelhandler of pluin "<<i->second->m_PluginID<<endl;
+			#endif
+			
 			// updates the data from the gui thread, if it's not blocking
  			i->second->m_Device->UpdateChannelHandler();
-	    	// run any commands we've received from the GUI's
+			
+			#ifdef DEBUG_PLUGINS			
+			cerr<<"Finished updating"<<endl;
+			#endif
+	    	
+			// run any commands we've received from the GUI's
 			i->second->m_Device->ExecuteCommands();
 		}
 	}
