@@ -27,6 +27,7 @@
 
 #include <cstdlib>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <dirent.h>
 #include <dlfcn.h>
 
@@ -309,6 +310,7 @@ LADSPAInfo::ExaminePath(const char *path)
 {
 	DIR *dp;
 	struct dirent *ep;
+	struct stat sb;
 	void *handle;
 	LADSPA_Descriptor_Function desc_func;
 	const LADSPA_Descriptor *desc;
@@ -336,111 +338,119 @@ LADSPAInfo::ExaminePath(const char *path)
 				fullpath = path;
 				fullpath.append(ep->d_name);
 
-			// We're not fussed about resolving symbols yet, since we are just
-			// checking libraries.
-				handle = dlopen(fullpath.c_str(), RTLD_LAZY);
+			// Stat file to get type
+				if (!stat(fullpath.c_str(), &sb)) {
+				
+				// We only want regular files
+					if (S_ISREG(sb.st_mode)) {
 
-				if (!handle) {
-					cerr << "WARNING: File " << path << ep->d_name
-					     << " could not be examined" << endl;
-					cerr << "dleror() output:" << endl;
-					cerr << dlerror() << endl;
-				} else {
+					// We're not fussed about resolving symbols yet, since we are just
+					// checking libraries.
+						handle = dlopen(fullpath.c_str(), RTLD_LAZY);
 
-				// It's a DLL, so now see if it's a LADSPA plugin library
-					desc_func = (LADSPA_Descriptor_Function)dlsym(handle,
-					                                              "ladspa_descriptor");
-					if (!desc_func) {
+						if (!handle) {
+							cerr << "WARNING: File " << path << ep->d_name
+								<< " could not be examined" << endl;
+							cerr << "dlerror() output:" << endl;
+							cerr << dlerror() << endl;
+						} else {
 
-					// Is DLL, but not a LADSPA one
-						cerr << "WARNING: DLL " << path << ep->d_name
-						     << " has no ladspa_descriptor function" << endl;
-						cerr << "dleror() output:" << endl;
-						cerr << dlerror() << endl;
-					} else {
+						// It's a DLL, so now see if it's a LADSPA plugin library
+							desc_func = (LADSPA_Descriptor_Function)dlsym(handle,
+																		"ladspa_descriptor");
+							if (!desc_func) {
 
-					// Got ladspa_descriptor, so we can now get plugin info
-						library_added = false;
-						unsigned long i = 0;
-						desc = desc_func(i);
-						while (desc) {
-
-							// First, check that it's not a dupe
-							if (m_IDLookup.find(desc->UniqueID) != m_IDLookup.end()) {
-								unsigned long plugin_index;
-								unsigned long library_index;
-
-								cerr << "WARNING: Duplicated Plugin ID ("
-								     << desc->UniqueID << ") found:" << endl;
-
-								plugin_index = m_IDLookup[desc->UniqueID];
-								library_index = m_Plugins[plugin_index].LibraryIndex;
-								path_index = m_Libraries[library_index].PathIndex;
-
-								cerr << "  Plugin " << m_Plugins[plugin_index].Index
-								     << " in library: " << m_Paths[path_index]
-								     << m_Libraries[library_index].Basename
-									 << " [First instance found]" << endl;
-								cerr << "  Plugin " << i << " in library: " << path << ep->d_name
-								     << " [Duplicate not added]" << endl;
+							// Is DLL, but not a LADSPA one
+								cerr << "WARNING: DLL " << path << ep->d_name
+									<< " has no ladspa_descriptor function" << endl;
+								cerr << "dleror() output:" << endl;
+								cerr << dlerror() << endl;
 							} else {
-								if (CheckPlugin(desc_func)) {
-									if (!path_added) {
 
-									// Add path
-										m_Paths.push_back(path);
-										path_added = true;
-									}
-									if (!library_added) {
+							// Got ladspa_descriptor, so we can now get plugin info
+								library_added = false;
+								unsigned long i = 0;
+								desc = desc_func(i);
+								while (desc) {
 
-									// Add library info
-										LibraryInfo li;
-										li.PathIndex = path_index;
-										li.Basename = ep->d_name;
-										li.Handle = NULL;
-										m_Libraries.push_back(li);
+									// First, check that it's not a dupe
+									if (m_IDLookup.find(desc->UniqueID) != m_IDLookup.end()) {
+										unsigned long plugin_index;
+										unsigned long library_index;
 
-									// Add filename to lookup
-										m_FilenameLookup[fullpath] = m_Libraries.size() - 1;
+										cerr << "WARNING: Duplicated Plugin ID ("
+											<< desc->UniqueID << ") found:" << endl;
 
-										library_added = true;
-									}
+										plugin_index = m_IDLookup[desc->UniqueID];
+										library_index = m_Plugins[plugin_index].LibraryIndex;
+										path_index = m_Libraries[library_index].PathIndex;
 
-									// Add plugin info
-									PluginInfo pi;
-									pi.LibraryIndex = m_Libraries.size() - 1;
-									pi.Index = i;
-									pi.Descriptor = NULL;
-									m_Plugins.push_back(pi);
+										cerr << "  Plugin " << m_Plugins[plugin_index].Index
+											<< " in library: " << m_Paths[path_index]
+											<< m_Libraries[library_index].Basename
+											<< " [First instance found]" << endl;
+										cerr << "  Plugin " << i << " in library: " << path << ep->d_name
+											<< " [Duplicate not added]" << endl;
+									} else {
+										if (CheckPlugin(desc_func)) {
+											if (!path_added) {
 
-									// Add to index
-									m_IDLookup[desc->UniqueID] = m_Plugins.size() - 1;
+											// Add path
+												m_Paths.push_back(path);
+												path_added = true;
+											}
+											if (!library_added) {
 
-									// Add to ordered list
-									PluginEntry pe;
-									pe.UniqueID = desc->UniqueID;
-									pe.Name = desc->Name;
-									m_OrderedPluginList.push_back(pe);
+											// Add library info
+												LibraryInfo li;
+												li.PathIndex = path_index;
+												li.Basename = ep->d_name;
+												li.Handle = NULL;
+												m_Libraries.push_back(li);
 
-									// Find number of input ports
-									unsigned long in_port_count = 0;
-									for (unsigned long p = 0; p < desc->PortCount; p++) {
-										if (LADSPA_IS_PORT_INPUT(desc->PortDescriptors[p])) {
-											in_port_count++;
+											// Add filename to lookup
+												m_FilenameLookup[fullpath] = m_Libraries.size() - 1;
+
+												library_added = true;
+											}
+
+											// Add plugin info
+											PluginInfo pi;
+											pi.LibraryIndex = m_Libraries.size() - 1;
+											pi.Index = i;
+											pi.Descriptor = NULL;
+											m_Plugins.push_back(pi);
+
+											// Add to index
+											m_IDLookup[desc->UniqueID] = m_Plugins.size() - 1;
+
+											// Add to ordered list
+											PluginEntry pe;
+											pe.UniqueID = desc->UniqueID;
+											pe.Name = desc->Name;
+											m_OrderedPluginList.push_back(pe);
+
+											// Find number of input ports
+											unsigned long in_port_count = 0;
+											for (unsigned long p = 0; p < desc->PortCount; p++) {
+												if (LADSPA_IS_PORT_INPUT(desc->PortDescriptors[p])) {
+													in_port_count++;
+												}
+											}
+											if (in_port_count > m_MaxInputPortCount) {
+												m_MaxInputPortCount = in_port_count;
+											}
+										} else {
+											cerr << "WARNING: Plugin " << desc->UniqueID << " not added" << endl;
 										}
 									}
-									if (in_port_count > m_MaxInputPortCount) {
-										m_MaxInputPortCount = in_port_count;
-									}
-								} else {
-									cerr << "WARNING: Plugin " << desc->UniqueID << " not added" << endl;
+
+									desc = desc_func(++i);
 								}
 							}
-
-							desc = desc_func(++i);
+							dlclose(handle);
 						}
 					}
-					dlclose(handle);
 				}
 			}
 		}
