@@ -38,7 +38,7 @@ KeyboardPluginGUI::KeyboardPluginGUI(int w, int h,KeyboardPlugin *o,ChannelHandl
 SpiralPluginGUI(w,h,o,ch),
 m_Last(-1),
 m_Oct(4)
-{		
+{
 	Fl_Scroll *Scroll = new Fl_Scroll(2,20,w-4,h-20);
 	Fl_Group *Group = new Fl_Group(0,20,500,h-40);
 	Group->box(FL_FLAT_BOX);
@@ -50,18 +50,18 @@ m_Oct(4)
 	for (int n=0; n<NUM_KEYS; n++)
 	{
 		m_Num[n]=n;
-		
+
 		Note = n%12;
-		if (Note!=1 && Note!=3 && Note!=6 && Note!=8 && Note!=10) 
+		if (Note!=1 && Note!=3 && Note!=6 && Note!=8 && Note!=10)
 		{
-			Count++;
 			Pos=Count*KeyWidth;
+			Count++;
 			m_Key[n] = new Fl_Button(Pos,20,KeyWidth,50,"");
 			m_Key[n]->box(FL_THIN_UP_BOX);
 			m_Key[n]->labelsize(10);
 			m_Key[n]->when(FL_WHEN_CHANGED);
 
-			if (Note==0) 
+			if (Note==0)
 			{
 				int Num=n/12;
 				sprintf(m_Label[n],"%d",Num);
@@ -72,14 +72,14 @@ m_Oct(4)
 			m_Key[n]->selection_color(FL_WHITE);
 			m_Key[n]->callback((Fl_Callback*)cb_Key, &m_Num[n]);
 			Group->add(m_Key[n]);
-		}	
+		}
 	}
-	
+
 	Count=0;
 	for (int n=0; n<NUM_KEYS; n++)
 	{
 		Note = n%12;
-		if (Note==1 || Note==3 || Note==6 || Note==8 || Note==10) 
+		if (Note==1 || Note==3 || Note==6 || Note==8 || Note==10)
 		{
 			m_Key[n] = new Fl_Button(Pos+5,20,KeyWidth,30,"");
 			m_Key[n]->box(FL_THIN_UP_BOX);
@@ -92,40 +92,40 @@ m_Oct(4)
 		}
 		else
 		{
-			Count++;
 			Pos=Count*KeyWidth;
+			Count++;
 		}
 	}
 	Group->position(-100,20);
 	Group->end();
 	Scroll->end();
 }
-	
+
 void KeyboardPluginGUI::Update()
-{	
+{
 	int Volume=0,Note=0,EventDevice=0;
-	if (Fl::event_key(FL_F+1)) m_Oct=0; 
-	if (Fl::event_key(FL_F+2)) m_Oct=1; 
-	if (Fl::event_key(FL_F+3)) m_Oct=2; 
-	if (Fl::event_key(FL_F+4)) m_Oct=3; 
-	if (Fl::event_key(FL_F+5)) m_Oct=4; 
-	if (Fl::event_key(FL_F+6)) m_Oct=5; 
-	if (Fl::event_key(FL_F+7)) m_Oct=6; 
-	if (Fl::event_key(FL_F+8)) m_Oct=7; 
-	if (Fl::event_key(FL_F+9)) m_Oct=8; 
-	if (Fl::event_key(FL_F+10)) m_Oct=9; 
-	if (Fl::event_key(FL_F+11)) m_Oct=10; 
+	if (Fl::event_key(FL_F+1)) m_Oct=0;
+	if (Fl::event_key(FL_F+2)) m_Oct=1;
+	if (Fl::event_key(FL_F+3)) m_Oct=2;
+	if (Fl::event_key(FL_F+4)) m_Oct=3;
+	if (Fl::event_key(FL_F+5)) m_Oct=4;
+	if (Fl::event_key(FL_F+6)) m_Oct=5;
+	if (Fl::event_key(FL_F+7)) m_Oct=6;
+	if (Fl::event_key(FL_F+8)) m_Oct=7;
+	if (Fl::event_key(FL_F+9)) m_Oct=8;
+	if (Fl::event_key(FL_F+10)) m_Oct=9;
+	if (Fl::event_key(FL_F+11)) m_Oct=10;
 
 	int  note=0;
 	char KeyChar=0;
 	bool KeyPressed=false;
 
 	for (int key=0; key<NKEYS; key++)
-	{	
+	{
 		KeyChar=KEYMAP[key];
-		
+
 		// check if a key's been pressed
-		if (Fl::event_key(KeyChar)) 
+		if (Fl::event_key(KeyChar))
 		{
 			KeyPressed=true;
 
@@ -133,34 +133,34 @@ void KeyboardPluginGUI::Update()
 			Note=(m_Oct*12)+note;
 			if (m_Last!=Note)
 			{
-				if (m_Last!=-1) 
-				{	
+				if (m_Last!=-1)
+				{
 					// turn off the old one
 					m_Key[m_Last]->value(0);
 					m_Key[m_Last]->parent()->redraw();
-					m_GUICH->SetCommand(KeyboardPlugin::NOTE_OFF); 
+					m_GUICH->SetCommand(KeyboardPlugin::NOTE_OFF);
 					m_GUICH->Wait();
 				}
-				
+
 				m_Last = Note;
 				m_GUICH->Set("Note",Note);
-				m_GUICH->SetCommand(KeyboardPlugin::NOTE_ON); 
+				m_GUICH->SetCommand(KeyboardPlugin::NOTE_ON);
 				m_Key[Note]->value(1);
 				m_Key[m_Last]->parent()->redraw();
 			}
 		}
-		else // it's not pressed down 
+		else // it's not pressed down
 		{
-			//see if the note was pressed down last time			
+			//see if the note was pressed down last time
 			Note=(m_Oct*12)+note;
-			
+
 			if (m_Last==Note)
 			{
 				m_Key[m_Last]->value(0);
 				m_Key[m_Last]->parent()->redraw();
-				m_GUICH->SetCommand(KeyboardPlugin::NOTE_OFF); 
+				m_GUICH->SetCommand(KeyboardPlugin::NOTE_OFF);
 				m_Last=-1;
-			} 
+			}
 		}
 		note++;
 	}

@@ -335,10 +335,10 @@ SpiralWindowType *SynthModular::CreateWindow()
 	m_TopWindow->resizable(m_CanvasScroll);
 
 	m_Canvas = new Fl_Canvas(-5000, -5000, 10000, 10000, "");
-    m_Canvas->type(1);
+        m_Canvas->type(1);
 	m_Canvas->box(FL_FLAT_BOX);
-    m_Canvas->labeltype(FL_ENGRAVED_LABEL);
-    m_Canvas->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
+        m_Canvas->labeltype(FL_ENGRAVED_LABEL);
+        m_Canvas->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
 	m_Canvas->color(SpiralSynthModularInfo::GUICOL_Canvas);
 	m_Canvas->user_data((void*)(this));
 	m_Canvas->SetConnectionCallback((Fl_Callback*)cb_Connection);
@@ -472,7 +472,7 @@ void SynthModular::LoadPlugins(string pluginPath)
 		if (ID!=PluginError)
 		{
 			#ifdef DEBUG_PLUGINS
-			cerr<<"Plugin ["<<*i<<"] = "<<ID<<endl;
+			cerr << ID << " = Plugin [" << *i << "]" << endl;
 			#endif
 
 			Fl_Button *NewButton = new Fl_Button(0,0,Width,Height,"");

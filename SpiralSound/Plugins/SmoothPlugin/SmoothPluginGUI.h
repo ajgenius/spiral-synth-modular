@@ -26,8 +26,8 @@
 #include "SmoothPlugin.h"
 #include "../SpiralPluginGUI.h"
 
-#ifndef SplitterGUI
-#define SplitterGUI
+#ifndef SmoothGUI
+#define SmoothGUI
 
 
 class SmoothPluginGUI : public SpiralPluginGUI

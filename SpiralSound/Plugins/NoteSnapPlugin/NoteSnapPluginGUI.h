@@ -21,13 +21,13 @@
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Button.H>
 
-#include "../Widgets/Fl_Knob.H"
+//#include "../Widgets/Fl_Knob.H"
 #include "../Widgets/Fl_DragBar.H"
 #include "NoteSnapPlugin.h"
 #include "../SpiralPluginGUI.h"
 
-#ifndef SplitterGUI
-#define SplitterGUI
+#ifndef NoteSnapGUI
+#define NoteSnapGUI
 
 static const int NUM_KEYS = 12;
 class NoteSnapPluginGUI : public SpiralPluginGUI

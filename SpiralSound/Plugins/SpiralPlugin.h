@@ -122,7 +122,7 @@ protected:
 	void  SetOutputPitch(int n,int p, float s) 
 		{ if (m_Output[n]) m_Output[n]->Set(p,(s/MAX_FREQ*2)-1.0f); }
 		
-	float GetInputPitch(int n,int p)  
+	float GetInputPitch(int n,int p)
 		{ if (m_Input[n]) return ((*m_Input[n])[p]+1.0f)*MAX_FREQ/2; else return 0.0; }
 
 	void  MixOutput(int n,int p, float s) 
