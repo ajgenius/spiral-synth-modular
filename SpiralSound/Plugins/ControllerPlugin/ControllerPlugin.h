@@ -59,9 +59,9 @@ private:
 	void SetNum(int n);
 	void SetAll(int n, char *name, float max, float value, float min)
 		{ m_Names[n]      = name;
-		  m_MaxVal[n]     = min;
+		  m_MaxVal[n]     = max;
 		  m_ChannelVal[n] = value;
-		  m_MinVal[n]     = max;
+		  m_MinVal[n]     = min;
 		};
 	void SetName(int n, char* name)     { m_Names[n]      = name;  };
 	void SetChannel(int n, float value) { m_ChannelVal[n] = value; };
