@@ -378,6 +378,22 @@ LADSPAInfo::DescendGroup(string prefix,
 		}
 		plugins.sort();
 
+	// Deal with duplicates by numbering them
+		for (list<PluginEntry>::iterator i = plugins.begin();
+			i != plugins.end(); ) {
+			string name = i->Name;
+
+			i++;
+			unsigned long n = 2;
+			while ((i != plugins.end()) && (i->Name == name)) {
+				stringstream s;
+				s << n;
+				i->Name = name + " (" + s.str() + ")";
+				n++;
+				i++;
+			}
+		}
+
 	// Add all ordered entries to the Menu List
 	// This ensures that plugins appear after groups
 		for (list<PluginEntry>::iterator p = plugins.begin(); p != plugins.end(); p++) {
