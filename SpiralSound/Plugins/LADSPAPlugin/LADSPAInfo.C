@@ -72,16 +72,15 @@ LADSPAInfo::RescanPlugins(void)
 	if (!m_LADSPAPathOverride) {
 	// Get $LADPSA_PATH, if available
 		char *ladspa_path = getenv("LADSPA_PATH");
-		if (!ladspa_path) {
-
-		// Oops
-			cerr << "WARNING: LADSPA_PATH environment variable not set" << endl;
-			cerr << "         Assuming /usr/lib/ladspa:/usr/local/lib/ladspa" << endl;
-		}
-
-	// Extract path elements and add path
 		if (ladspa_path) {
 			ScanPathList(ladspa_path, &LADSPAInfo::ExaminePluginLibrary);
+
+		} else {
+
+			cerr << "WARNING: LADSPA_PATH environment variable not set" << endl;
+			cerr << "         Assuming /usr/lib/ladspa:/usr/local/lib/ladspa" << endl;
+
+			ScanPathList("/usr/lib/ladspa:/usr/local/lib/ladspa", &LADSPAInfo::ExaminePluginLibrary);
 		}
 	}
 
@@ -102,14 +101,16 @@ LADSPAInfo::RescanPlugins(void)
 
 		char *rdf_path = getenv("LADSPA_RDF_PATH");
 
-		if (!rdf_path) {
+		if (rdf_path) {
+		// Examine rdf info
+			ScanPathList(rdf_path, &LADSPAInfo::ExamineRDFFile);
+
+		} else {
 			cerr << "WARNING: LADSPA_RDF_PATH environment variable not set" << endl;
 			cerr << "         Assuming /usr/share/ladspa/rdf:/usr/local/share/ladspa/rdf" << endl;
 
-		} else {
-
 		// Examine rdf info
-			ScanPathList(rdf_path, &LADSPAInfo::ExamineRDFFile);
+			ScanPathList("/usr/share/ladspa/rdf:/usr/local/share/ladspa/rdf", &LADSPAInfo::ExamineRDFFile);
 		}
 		MetadataRDFDescend(LADSPA_BASE "Plugin", 0);
 
