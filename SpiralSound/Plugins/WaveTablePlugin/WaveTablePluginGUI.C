@@ -233,7 +233,9 @@ pixmap_Tri(image_Tri),
 pixmap_Sine(image_Sine),
 pixmap_Pulse1(image_Pulse1),
 pixmap_Pulse2(image_Pulse2),
-pixmap_InvSine(image_InvSine)
+pixmap_InvSine(image_InvSine),
+m_FineFreq(0),
+m_Octave(0)
 {	
 	ShapeSine = new Fl_Check_Button(5, 15, 55, 30);
     ShapeSine->type(102);
@@ -385,7 +387,9 @@ void WaveTablePluginGUI::UpdateValues(SpiralPlugin *o)
 	
 	char str[10];
 	float fr = 110.0f * Plugin->GetFinefreq();
+	m_FineFreq=Plugin->GetFinefreq();
 	int oc = Plugin->GetOctave();
+	m_Octave = oc;
 	if (oc > 0) fr *= 1 << oc;
 	if (oc < 0) fr /= 1 << (-oc);
   	sprintf(str,"%4.1f Hz", fr);
@@ -401,12 +405,13 @@ inline void WaveTablePluginGUI::cb_Freq_i(Fl_Knob* o, void* v)
 {
 	char str[10]; 
  	m_GUICH->Set("Octave",(int)o->value()-3);
-	//float fr = 110.0f * m_Plugin->GetFineFreq();
-	//int oc = m_Plugin->GetOctave();
-	//if (oc > 0) fr *= 1 << oc;
-	//if (oc < 0) fr /= 1 << (-oc);
-  	//sprintf(str,"%4.1f Hz", fr);
-    //m_out_freq->value(str);
+	m_Octave=(int)o->value()-3;
+	float fr = 110.0f * m_FineFreq;
+	int oc = m_Octave;
+	if (oc > 0) fr *= 1 << oc;
+	if (oc < 0) fr /= 1 << (-oc);
+  	sprintf(str,"%4.1f Hz", fr);
+    m_out_freq->value(str);
 }
 void WaveTablePluginGUI::cb_Freq(Fl_Knob* o, void* v) 
 { ((WaveTablePluginGUI*)(o->parent()))->cb_Freq_i(o,v); }
@@ -415,13 +420,15 @@ inline void WaveTablePluginGUI::cb_FineTune_i(Fl_Knob* o, void* v)
 {
     char str[10];
  	m_GUICH->Set("FineFreq",(float)(o->value()*o->value()));
-	//float fr = 110.0f * m_Plugin->GetFineFreq();
-	//int oc = m_Plugin->GetOctave();
-	//if (oc > 0) fr *= 1 << oc;
-	//if (oc < 0) fr /= 1 << (-oc);
-  	//sprintf(str,"%4.1f Hz", fr);
-	//m_out_freq->value(str);
+	m_FineFreq=(float)(o->value()*o->value());
+	float fr = 110.0f * m_FineFreq;
+	int oc = m_Octave;
+	if (oc > 0) fr *= 1 << oc;
+	if (oc < 0) fr /= 1 << (-oc);
+  	sprintf(str,"%4.1f Hz", fr);
+	m_out_freq->value(str);
 }
+
 void WaveTablePluginGUI::cb_FineTune(Fl_Knob* o, void* v) 
 { ((WaveTablePluginGUI*)(o->parent()))->cb_FineTune_i(o,v); }
 

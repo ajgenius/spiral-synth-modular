@@ -62,6 +62,9 @@ private:
 	Fl_Output		*m_out_freq;
 	Fl_Output		*m_out_mod;
 	
+	float m_FineFreq;
+	int m_Octave;
+	
 	//// Callbacks ////
 	inline void cb_Freq_i(Fl_Knob* o, void* v);
     static void cb_Freq(Fl_Knob*, void*);
