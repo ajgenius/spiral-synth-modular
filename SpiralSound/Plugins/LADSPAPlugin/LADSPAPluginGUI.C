@@ -990,8 +990,6 @@ void LADSPAPluginGUI::SetControlRange(unsigned long p, float min, float max)
 	m_Knobs[p]->maximum(max);
 	m_Sliders[p]->minimum(min);
 	m_Sliders[p]->maximum(max);
-
-	cerr<<"Set Range: "<<min<<" - "<<max<<endl;
 }
 
 // The current value ('Default') can be changed from all three pages
@@ -1072,7 +1070,6 @@ float LADSPAPluginGUI::ConvertControlValue(unsigned long p, float value)
 	float logbase = m_InputPortSettings[p].LogBase;
 	if (logbase > 1.0f) {
 	// Logarithmic control - convert back to actual value
-		cerr<<"Value: "<<value<<"->";
 		if (fabsf(value) > 1.0f) {
 			if (value > 0.0f) {
 				value = powf(logbase, value);
@@ -1082,7 +1079,6 @@ float LADSPAPluginGUI::ConvertControlValue(unsigned long p, float value)
 		} else {
 			value *= logbase;
 		}
-		cerr<<value<<endl;
 	}
 
 	return value;
