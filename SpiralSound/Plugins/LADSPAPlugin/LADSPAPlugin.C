@@ -767,13 +767,13 @@ bool LADSPAPlugin::SelectPlugin(unsigned long UniqueID)
 // Reject trivial case
 	if (UniqueID == 0) return false;
 
-	m_PlugDesc = m_LADSPAInfo->GetDescriptorByID(UniqueID, true);
+	m_PlugDesc = m_LADSPAInfo->GetDescriptorByID(UniqueID);
 
 	if (m_PlugDesc) {
 	// Create instance
 		if (!(m_PlugInstHandle = m_PlugDesc->instantiate(m_PlugDesc, m_HostInfo->SAMPLERATE))) {
 			cerr << "WARNING: Could not instantiate plugin " << UniqueID << endl;
-			m_LADSPAInfo->UnloadLibraryByID(UniqueID);
+			m_LADSPAInfo->DiscardDescriptorByID(UniqueID);
 			m_PlugDesc = 0;
 			return false;
 		}
@@ -884,6 +884,8 @@ void LADSPAPlugin::ClearPlugin(void)
 		if (m_PlugDesc->deactivate) m_PlugDesc->deactivate(m_PlugInstHandle);
 		m_PlugDesc->cleanup(m_PlugInstHandle);
 		m_PlugDesc = NULL;
+
+		m_LADSPAInfo->DiscardDescriptorByID(m_UniqueID);
 	}
 
 	m_TabIndex = 1;

@@ -85,10 +85,6 @@ LADSPAInfo::RescanPlugins(void)
 		cerr << m_Plugins.size() << " plugins found in " << m_Libraries.size() << " libraries" << endl;
 	}
 
-// No last loaded library or plugin
-	m_LastLoadedLibraryIndex = m_Libraries.size();
-	m_LastLoadedPluginIndex = m_Plugins.size();
-
 // Sort list by name
 	sort(m_OrderedPluginList.begin(), m_OrderedPluginList.end(), PluginEntrySortAsc());
 
@@ -115,29 +111,12 @@ LADSPAInfo::UnloadAllLibraries(void)
 	for (vector<LibraryInfo>::iterator i = m_Libraries.begin();
 	     i != m_Libraries.end(); i++) {
 		if (i->Handle) dlclose(i->Handle);
-	}
-
-// No last loaded library or plugin
-	m_LastLoadedLibraryIndex = m_Libraries.size();
-	m_LastLoadedPluginIndex = m_Plugins.size();
-}
-
-void
-LADSPAInfo::UnloadLibraryByID(unsigned long unique_id)
-{
-	if (m_IDLookup.find(unique_id) == m_IDLookup.end()) {
-		cerr << "LADSPA Plugin ID " << unique_id << " not found!" << endl;
-	} else {
-
-	// Get plugin index
-		unsigned long plugin_index = m_IDLookup[unique_id];
-		UnloadLibraryByPlugin(plugin_index);
+		i->RefCount = 0;
 	}
 }
 
 const LADSPA_Descriptor *
-LADSPAInfo::GetDescriptorByID(unsigned long unique_id,
-                              bool unload_previous_library)
+LADSPAInfo::GetDescriptorByID(unsigned long unique_id)
 {
 	if (m_IDLookup.find(unique_id) == m_IDLookup.end()) {
 		cerr << "LADSPA Plugin ID " << unique_id << " not found!" << endl;
@@ -148,20 +127,55 @@ LADSPAInfo::GetDescriptorByID(unsigned long unique_id,
 	unsigned long plugin_index = m_IDLookup[unique_id];
 
 	PluginInfo *pi = &(m_Plugins[plugin_index]);
+	LibraryInfo *li = &(m_Libraries[pi->LibraryIndex]);
+
 	if (!(pi->Descriptor)) {
 		LADSPA_Descriptor_Function desc_func = GetDescriptorFunctionForLibrary(pi->LibraryIndex);
 
-		if (desc_func) {
-			pi->Descriptor = desc_func(pi->Index);
+		if (desc_func) pi->Descriptor = desc_func(pi->Index);
+	}
+	
+	if (pi->Descriptor) {
+	// Success, so increment ref counter for library
+		li->RefCount++;
+	}
 
-		// Unload previously loaded library (if different)
-			if ((m_LastLoadedLibraryIndex != m_Libraries.size()) &&
-				(m_LastLoadedLibraryIndex != pi->LibraryIndex)) {
-				UnloadLibraryByPlugin(plugin_index);
+	return pi->Descriptor;
+}
+
+void
+LADSPAInfo::DiscardDescriptorByID(unsigned long unique_id)
+{
+	if (m_IDLookup.find(unique_id) == m_IDLookup.end()) {
+		cerr << "LADSPA Plugin ID " << unique_id << " not found!" << endl;
+	} else {
+
+	// Get plugin index
+		unsigned long plugin_index = m_IDLookup[unique_id];
+
+		PluginInfo *pi = &(m_Plugins[plugin_index]);
+		LibraryInfo *li = &(m_Libraries[pi->LibraryIndex]);
+
+	// Decrement reference counter for library, and unload if last
+		if (li->RefCount > 0) {
+			li->RefCount--;
+			if (li->RefCount == 0) {
+				dlclose(li->Handle);
+			// Need to unset all plugin descriptors that may have been
+			// set from this library
+			// Plugins in library will be a contiguous block, so we
+			// just check each direction from given plugin
+				unsigned long i = plugin_index - 1;
+				while (m_Plugins[i].LibraryIndex == pi->LibraryIndex) {
+					m_Plugins[i--].Descriptor = NULL;
+				}
+				i = plugin_index + 1;
+				while (m_Plugins[i].LibraryIndex == pi->LibraryIndex) {
+					m_Plugins[i++].Descriptor = NULL;
+				}
 			}
 		}
 	}
-	return pi->Descriptor;
 }
 
 unsigned long
@@ -502,26 +516,4 @@ LADSPAInfo::GetDescriptorFunctionForLibrary(unsigned long library_index)
 	}
 
 	return desc_func;
-}
-
-void
-LADSPAInfo::UnloadLibraryByPlugin(unsigned long plugin_index)
-{
-// Unload library corresponding to given plugin index
-	PluginInfo *pi = &(m_Plugins[plugin_index]);
-	LibraryInfo *li = &(m_Libraries[pi->LibraryIndex]);
-	if (li->Handle) dlclose(li->Handle);
-
-// Need to unset all plugin descriptors that may have been
-// set from this library
-// Plugins in library will be a contiguous block, so we
-// just check each direction from given plugin
-	unsigned long i = plugin_index - 1;
-	while (m_Plugins[i].LibraryIndex == pi->LibraryIndex) {
-		m_Plugins[i--].Descriptor = NULL;
-	}
-	i = plugin_index + 1;
-	while (m_Plugins[i].LibraryIndex == pi->LibraryIndex) {
-		m_Plugins[i++].Descriptor = NULL;
-	}
 }

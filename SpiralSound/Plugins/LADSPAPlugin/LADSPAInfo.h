@@ -38,22 +38,36 @@ public:
 	// Unload all loaded plugins and clean up
 	~LADSPAInfo();
 
-	// Rescan all paths in $LADSPA_PATH, as per constructor
-	// This will also unload all libraries
+	// ************************************************************************
+	// Loading/Unloading plugin libraries
+	//
+	// At first, no library dlls are loaded.
+	//
+	// Each library has an associated reference count, which is initially 0.
+	// As descriptors are requested, using GetDescriptorByID, this count
+	// is incremented. The library dll is loaded on the first request.
+	// At descriptors are discarded, the count is decremented, and when this
+	// reaches 0, the library is unloaded.
+
+	// Rescan all paths in $LADSPA_PATH, as per constructor.
+	// This will also unload all libraries, and make any descriptors that
+	// have not been discarded with DiscardDescriptorByID invalid.
 	void                            RescanPlugins(void);
 
-	// Unload all dlopened libraries
+	// Unload all dlopened libraries. This will make any descriptors that
+	// have not been discarded with DiscardDescriptorByID invalid.
 	void                            UnloadAllLibraries(void);
 
-	// Unload library containing plugin id
-	void                            UnloadLibraryByID(unsigned long unique_id);
+	// Get descriptor of plugin with given ID. This increments the descriptor
+	// count for the corresponding library.
+	const LADSPA_Descriptor        *GetDescriptorByID(unsigned long unique_id);
 
-	// Get descriptor of plugin in list, loading library if necessary
-	// and optionally unloading previously loaded library (if different
-	// from library containing requested plugin. Phew!)
-	const LADSPA_Descriptor        *GetDescriptorByID(unsigned long unique_id,
-	                                                  bool unload_previous_library);
+	// Notify that a descriptor corresponding to the given ID has been
+	// discarded. This decrements the descriptor count for the corresponding
+	// library.
+	void                            DiscardDescriptorByID(unsigned long unique_id);
 
+	// Get unique ID of plugin identified by given library filename and label.
 	unsigned long                   GetIDFromFilenameAndLabel(std::string filename,
 	                                                          std::string label);
 
@@ -81,12 +95,12 @@ private:
 	void                            ExaminePath(const char *path);
 	bool                            CheckPlugin(LADSPA_Descriptor_Function desc_func);
 	LADSPA_Descriptor_Function      GetDescriptorFunctionForLibrary(unsigned long library_index);
-	void                            UnloadLibraryByPlugin(unsigned long plugin_index);
 
 	struct LibraryInfo
 	{
 		unsigned long           PathIndex;  // Index of path in m_Paths
 		std::string             Basename;   // Filename
+		unsigned long           RefCount;   // Count of descriptors requested from library
 		void                   *Handle;     // DLL Handle, NULL
 	};
 
@@ -120,9 +134,6 @@ private:
 	std::vector<std::string>        m_Paths;
 	std::vector<LibraryInfo>        m_Libraries;
 	std::vector<PluginInfo>         m_Plugins;
-
-	unsigned long                   m_LastLoadedLibraryIndex;
-	unsigned long                   m_LastLoadedPluginIndex;
 
 	IDMap                           m_IDLookup;
 	StringMap                       m_FilenameLookup;
