@@ -93,27 +93,30 @@ void ChannelHandler::UpdateDataNow()
 				// one off request type
 				case OUTPUT_REQUEST :
 			    {
-					if (m_BulkPos!=-1 && m_BulkID==i->first)
+					if (m_BulkID==i->first)
 					{
-						// doing a bulk transfer
-						if (m_BulkPos+ch->size>m_BulkSize)
+						if (m_BulkPos!=-1)
 						{
-							// last transfer
-							#ifdef CHANNEL_DEBUG
-							cerr<<"memcpy (last) bulk output channel: ["<<i->first<<"]"<<endl;
-							#endif
-							memcpy(ch->data_buf,((char*)m_BulkSrc)+m_BulkPos,m_BulkSize-m_BulkPos);
-							m_BulkPos=-1;
-						}
-						else
-						{
-							#ifdef CHANNEL_DEBUG
-							cerr<<"memcpy bulk output channel: ["<<i->first<<"]"<<endl;
-							#endif
-							memcpy(ch->data_buf,((char*)m_BulkSrc)+m_BulkPos,ch->size);
-							m_BulkPos+=ch->size;
-						}	
-						ch->updated=true;					
+							// doing a bulk transfer
+							if (m_BulkPos+ch->size>m_BulkSize)
+							{
+								// last transfer
+								#ifdef CHANNEL_DEBUG
+								cerr<<"memcpy (last) bulk output channel: ["<<i->first<<"]"<<endl;
+								#endif
+								memcpy(ch->data_buf,((char*)m_BulkSrc)+m_BulkPos,m_BulkSize-m_BulkPos);
+								m_BulkPos=-1;
+							}
+							else
+							{
+								#ifdef CHANNEL_DEBUG
+								cerr<<"memcpy bulk output channel: ["<<i->first<<"]"<<endl;
+								#endif
+								memcpy(ch->data_buf,((char*)m_BulkSrc)+m_BulkPos,ch->size);
+								m_BulkPos+=ch->size;
+							}							
+							ch->updated=true;
+						}					
 					}
 					else
 					{
@@ -321,8 +324,7 @@ void ChannelHandler::BulkTransfer(const string &ID, void *dest, int size)
 		else
 		{
 			GetData(ID,((char*)dest)+pos);
-		}
-		
+		}		
 		pos+=buffersize;
 	}
 }
