@@ -52,19 +52,10 @@ m_Operator(AND)
         m_Version = 2;
         m_PluginInfo.Name="Logic";
 	m_PluginInfo.Width=75;
-        // Andy Preston - multiple inputs - was 100
 	m_PluginInfo.Height=130;
 
-        // Andy Preston - Multiple Inputs
         CreatePorts ();
-        // m_PluginInfo.NumInputs=2;
-	// m_PluginInfo.NumOutputs=1;
-	// m_PluginInfo.PortTips.push_back("Input 1");
-	// m_PluginInfo.PortTips.push_back("Input 2");
-	// m_PluginInfo.PortTips.push_back("Output");
-
 	m_AudioCH->Register("Operator",(int*)&m_Operator);
-        // Andy Preston - Multiple Inputs
         m_AudioCH->Register ("Inputs", &m_Inputs);
 
 }
@@ -85,7 +76,6 @@ SpiralGUIType *LogicPlugin::CreateGUI()
 							 this,m_AudioCH,m_HostInfo);
 }
 
-// Andy Preston - Multiple Inputs
 void LogicPlugin::Execute (void) {
     float Freq=0, OldFreq=0;
     for (int n=0; n<m_HostInfo->BUFSIZE; n++) {
@@ -126,7 +116,6 @@ void LogicPlugin::Execute (void) {
 
 
 void LogicPlugin::ExecuteCommands() {
-  // Andy Preston - Multiple Inputs
   if (m_AudioCH->IsCommandWaiting ()) {
     switch (m_AudioCH->GetCommand()) {
       case SETINPUTS:
@@ -136,7 +125,6 @@ void LogicPlugin::ExecuteCommands() {
   }
 }
 
-// Andy Preston - Multiple Inputs
 void LogicPlugin::SetInputs (int n) {
   // once to clear the connections with the current info
   // do we need this????
@@ -154,7 +142,6 @@ void LogicPlugin::SetInputs (int n) {
   UpdatePluginInfoWithHost ();
 }
 
-// Andy Preston - Multiple Inputs
 void LogicPlugin::CreatePorts (int n, bool AddPorts) {
   int c;
   m_PluginInfo.NumInputs = n;
@@ -174,19 +161,18 @@ void LogicPlugin::CreatePorts (int n, bool AddPorts) {
 
 void LogicPlugin::StreamOut(ostream &s)
 {
-	s << 1 /*m_Version*/ << endl;
-	s << m_PluginInfo.NumInputs << " " << m_Operator;
+	s << m_Version << " " << m_PluginInfo.NumInputs << " " << m_Operator;
 }
 
 void LogicPlugin::StreamIn(istream &s) {
   int version, datum;
   s >> version;
   switch (version) {
-    case 1: // Original Version
+    case 1:
       s >> datum; // Version 1 saved a constant that is not used now
       SetInputs (2);
       break;
-    case 2: // Andy Preston
+    case 2:
       s >> datum;
       SetInputs (datum);
       s >> datum;
