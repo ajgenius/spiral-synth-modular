@@ -41,12 +41,15 @@ public:
 	{
 		char Name[256];
 		int BitsPerSample;
+		bool Stereo;
+		bool Recording;
+
+		float TimeRecorded;
 	};
 	
 private:
 	GUIArgs m_GUIArgs;
 	WavFile m_Wav;
-	bool m_Recording;
 };
 
 #endif

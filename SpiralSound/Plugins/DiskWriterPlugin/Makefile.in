@@ -46,6 +46,7 @@ HEADERS =	DiskWriterPlugin.h \
 		../../Sample.h \
 		../../RiffWav.h \
 		../Widgets/Fl_LED_Button.H \
+		../Widgets/Fl_SevenSeg.H \
 		../../../GUI/Widgets/SpiralGUI.H
 SOURCES =	DiskWriterPlugin.C \
 		DiskWriterPluginGUI.C \
@@ -55,6 +56,7 @@ SOURCES =	DiskWriterPlugin.C \
 		../../Sample.C \
 		../../RiffWav.C \
 		../Widgets/Fl_LED_Button.cxx \
+		../Widgets/Fl_SevenSeg.cxx \
 		../../../GUI/Widgets/SpiralGUI.C
 OBJECTS =	DiskWriterPlugin.o \
 		DiskWriterPluginGUI.o \
@@ -64,6 +66,7 @@ OBJECTS =	DiskWriterPlugin.o \
 		../../Sample.o \
 		../../RiffWav.o \
 		../Widgets/Fl_LED_Button.o \
+		../Widgets/Fl_SevenSeg.o \
 		../../../GUI/Widgets/SpiralGUI.o
 INTERFACES =
 UICDECLS =
@@ -138,6 +141,9 @@ install:
 
 ../../../GUI/Widgets/SpiralGUI.o: ../../../GUI/Widgets/SpiralGUI.C \
 		../../../GUI/Widgets/SpiralGUI.H
+
+../Widgets/Fl_SevenSeg.o: ../Widgets/Fl_SevenSeg.cxx \
+		../Widgets/Fl_SevenSeg.H
 
 ../../Sample.o: ../../Sample.C \
 		../../Sample.h

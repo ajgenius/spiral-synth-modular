@@ -41,7 +41,23 @@ SpiralPluginGUI(w,h,o,ch)
         m_32bits->labelsize(10);
         m_32bits->callback((Fl_Callback*)cb_32bits);
 
-        Open = new Fl_Button(50, 20, 90, 20, "Open");
+        // 7 seg displays
+        for (int dis=0; dis<4; dis++) {
+            m_Display[dis] = new Fl_SevenSeg (50 + 27*dis, 20, 27, 38);
+            m_Display[dis] -> bar_width (4);
+            m_Display[dis] -> color (Info->SCOPE_FG_COLOUR);
+	    m_Display[dis] -> color2 (Info->SCOPE_BG_COLOUR);
+            if (dis > 0 && dis % 2 == 0) m_Display[dis] -> dp (colon);
+            add (m_Display[dis]);
+        }
+
+        m_Stereo = new Fl_Check_Button (105, 63, 10, 18, "Stereo");
+        m_Stereo->type (1);
+        m_Stereo->value (1);
+        m_Stereo->labelsize(12);
+        m_Stereo->callback((Fl_Callback*)cb_Stereo);
+
+        Open = new Fl_Button(0, 85, 75, 20, "Open");
         Open->type(1);
         Open->box (FL_PLASTIC_UP_BOX);
         Open->color (Info->GUI_COLOUR);
@@ -49,7 +65,7 @@ SpiralPluginGUI(w,h,o,ch)
         Open->labelsize(10);
         Open->callback((Fl_Callback*)cb_Open);
 
-	Record = new Fl_Button(50, 60, 90, 20, "Record");
+	Record = new Fl_Button(85, 85, 75, 20, "Record");
         Record->type(1);
         Record->box (FL_PLASTIC_UP_BOX);
         Record->color (Info->GUI_COLOUR);
@@ -60,8 +76,35 @@ SpiralPluginGUI(w,h,o,ch)
 	end();
 }
 
-void DiskWriterPluginGUI::UpdateValues(SpiralPlugin *o)
+void DiskWriterPluginGUI::Update()
 {
+     float t=m_GUICH->GetFloat ("TimeRecorded");
+     bool recording=m_GUICH->GetBool ("Recording");
+
+     if (recording)
+     {
+	m_16bits->deactivate();
+	m_24bits->deactivate();
+	m_32bits->deactivate();
+	m_Stereo->deactivate();
+     }
+     else
+     {
+	m_16bits->activate();
+	m_24bits->activate();
+	m_32bits->activate();
+	m_Stereo->activate();
+     }
+     
+     m_Display[3]->value ((int)t % 10);
+     m_Display[2]->value ((int)(t/10) % 6);
+     m_Display[1]->value ((int)(t/60) % 10);
+     m_Display[0]->value ((int)(t/600) % 10);
+
+     redraw();
+}
+
+void DiskWriterPluginGUI::UpdateValues (SpiralPlugin *o) {
 }
 	
 //// Callbacks ////
@@ -122,6 +165,13 @@ inline void DiskWriterPluginGUI::cb_32bits_i(Fl_Button* o, void* v)
 }
 void DiskWriterPluginGUI::cb_32bits(Fl_Button* o, void* v)
 { ((DiskWriterPluginGUI*)(o->parent()))->cb_32bits_i(o,v); }
+
+inline void DiskWriterPluginGUI::cb_Stereo_i(Fl_Button* o, void* v)
+{	
+  m_GUICH->Set("Stereo",o->value());
+}
+void DiskWriterPluginGUI::cb_Stereo(Fl_Button* o, void* v)
+{ ((DiskWriterPluginGUI*)(o->parent()))->cb_Stereo_i(o,v); }
 
 const string DiskWriterPluginGUI::GetHelpText(const string &loc){
     return string("")

@@ -16,11 +16,14 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include "DiskWriterPlugin.h"
+
 #include <FL/Fl.H>
 #include <FL/Fl_Button.H>
-#include "DiskWriterPlugin.h"
+#include <FL/Fl_Check_Button.H>
 #include "../SpiralPluginGUI.h"
 #include "../Widgets/Fl_LED_Button.H"
+#include "../Widgets/Fl_SevenSeg.H"
 
 #ifndef DISK_WRITER_GUI_H
 #define DISK_WRITER_GUI_H
@@ -30,7 +33,8 @@ class DiskWriterPluginGUI : public SpiralPluginGUI
 public:
 	DiskWriterPluginGUI(int w, int h, SpiralPlugin *o, ChannelHandler *ch, const HostInfo *Info);
 
-	virtual void UpdateValues(SpiralPlugin *o);
+	virtual void Update ();
+	virtual void UpdateValues (SpiralPlugin *o);
 
 protected:
     const std::string GetHelpText(const std::string &loc);
@@ -43,6 +47,10 @@ private:
 	Fl_LED_Button		*m_16bits;
 	Fl_LED_Button		*m_24bits;
 	Fl_LED_Button		*m_32bits;
+
+	Fl_Check_Button		*m_Stereo;
+
+        Fl_SevenSeg *m_Display[4];
 
 	//// Callbacks ////
 
@@ -57,6 +65,9 @@ private:
 	static void cb_24bits(Fl_Button* o, void* v);
 	inline void cb_32bits_i(Fl_Button* o, void* v);
 	static void cb_32bits(Fl_Button* o, void* v);
+
+	inline void cb_Stereo_i(Fl_Button* o, void* v);
+	static void cb_Stereo(Fl_Button* o, void* v);
 };
 
 #endif

@@ -70,12 +70,11 @@ string SpiralPlugin_GetGroupName()
 
 ///////////////////////////////////////////////////////
 
-DiskWriterPlugin::DiskWriterPlugin() :
-m_Recording(false)
+DiskWriterPlugin::DiskWriterPlugin()
 {		
 	m_PluginInfo.Name="DiskWriter";
-	m_PluginInfo.Width=140;
-	m_PluginInfo.Height=90;
+	m_PluginInfo.Width=160;
+	m_PluginInfo.Height=115;
 	m_PluginInfo.NumInputs=3;
 	m_PluginInfo.NumOutputs=0;
 	m_PluginInfo.PortTips.push_back("Left Out");
@@ -83,9 +82,15 @@ m_Recording(false)
 	m_PluginInfo.PortTips.push_back("Record Controller");
 
         m_GUIArgs.BitsPerSample = 16;
+        m_GUIArgs.Stereo = true;
+	m_GUIArgs.Recording = false;
+	m_GUIArgs.TimeRecorded = 0;
         
 	m_AudioCH->RegisterData("Filename",ChannelHandler::INPUT,m_GUIArgs.Name,256);
 	m_AudioCH->Register("BitsPerSample",&m_GUIArgs.BitsPerSample,ChannelHandler::INPUT);
+	m_AudioCH->Register("Stereo",&m_GUIArgs.Stereo,ChannelHandler::INPUT);
+	m_AudioCH->Register("TimeRecorded",&m_GUIArgs.TimeRecorded,ChannelHandler::OUTPUT);
+	m_AudioCH->Register("Recording",&m_GUIArgs.Recording,ChannelHandler::OUTPUT);
 }
 
 DiskWriterPlugin::~DiskWriterPlugin()
@@ -110,7 +115,7 @@ SpiralGUIType *DiskWriterPlugin::CreateGUI()
 
 void DiskWriterPlugin::Execute()
 {  
-	if(m_Recording && m_Wav.IsOpen()) 
+	if(m_GUIArgs.Recording && m_Wav.IsOpen()) 
 	{	
 		int on=0;
 		float LeftBuffer[host->BUFSIZE], RightBuffer[host->BUFSIZE];
@@ -123,6 +128,7 @@ void DiskWriterPlugin::Execute()
 		}
 		
 		m_Wav.Save(LeftBuffer, RightBuffer, host->BUFSIZE);
+		m_GUIArgs.TimeRecorded = m_Wav.GetSize()/m_Wav.GetSamplerate();
 	}
 }
 
@@ -139,11 +145,12 @@ void DiskWriterPlugin::ExecuteCommands()
 				if (m_Wav.GetBitsPerSample() != m_GUIArgs.BitsPerSample) {
 					m_Wav.SetBitsPerSample(m_GUIArgs.BitsPerSample);
 				}
-				m_Wav.Open(m_GUIArgs.Name,WavFile::WRITE, WavFile::STEREO);
+				m_Wav.Open(m_GUIArgs.Name,WavFile::WRITE, (m_GUIArgs.Stereo)?(WavFile::STEREO):(WavFile::MONO));
+				m_GUIArgs.TimeRecorded = 0;
 			break;
 			case CLOSEWAV : m_Wav.Close(); break;
-			case RECORD : m_Recording=true; break;
-			case STOP : m_Recording=false;	break;
+			case RECORD : m_GUIArgs.Recording=true; break;
+			case STOP : m_GUIArgs.Recording=false;	break;
 			default : break;
 		}
 	}
