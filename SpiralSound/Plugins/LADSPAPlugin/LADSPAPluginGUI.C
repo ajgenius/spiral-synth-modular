@@ -86,7 +86,7 @@ SpiralPluginGUI(w,h,o,ch)
 	m_InputScroll->type(Fl_Scroll::VERTICAL);
 	m_InputScroll->box(FL_DOWN_BOX);
 	add(m_InputScroll);
-	m_InputPack = new Fl_Pack(20,115,460,20,"");
+	m_InputPack = new Fl_Pack(5,115,460,20,"");
 	m_InputScroll->add(m_InputPack);
 
 	m_PowerAmp = new Fl_Button(125,277,100,25,"PowerAmp");

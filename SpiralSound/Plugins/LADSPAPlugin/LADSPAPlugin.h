@@ -70,10 +70,12 @@ public:
 	enum GUICommands{NONE,SETPORTSETTINGS,SELECTPLUGIN,CLEARPLUGIN};
 
 private:
-
-	void UpdatePortRange(void);
+	bool UpdatePlugin(unsigned long UniqueID);
+	bool SelectPlugin(unsigned long UniqueID);
 	void ClearPlugin(void);
-	bool UpdatePlugin(unsigned long UniqueID, bool ResetPortSettings=true);
+	void ResetPortSettings(void);
+	void SetGUIExports(void);
+
 	void SetPortSettings(void);
 
 	void LoadPluginList(void);
