@@ -49,21 +49,21 @@ string GetGroupName()
 ControllerPlugin::ControllerPlugin() :
 m_Num(4)
 {
-	m_Version=4;
-	
+	m_Version=5;
+
 	m_PluginInfo.Name="CV Control";
 	m_PluginInfo.Width=240;
 	m_PluginInfo.Height=224;
 	m_PluginInfo.NumInputs=0;
 	m_PluginInfo.NumOutputs=4;
-	m_PluginInfo.PortTips.push_back("CV 1");	
-	m_PluginInfo.PortTips.push_back("CV 2");	
-	m_PluginInfo.PortTips.push_back("CV 3");	
-	m_PluginInfo.PortTips.push_back("CV 4");	
-	
+	m_PluginInfo.PortTips.push_back("CV 1");
+	m_PluginInfo.PortTips.push_back("CV 2");
+	m_PluginInfo.PortTips.push_back("CV 3");
+	m_PluginInfo.PortTips.push_back("CV 4");
+
 	for (int n=0; n<MAX_CHANNELS; n++)
 	{
-		m_ChannelVal[n]=0.0f;	
+		m_ChannelVal[n]=0.0f;
 		m_MinVal[n]=-1.0f;
 		m_MaxVal[n]=1.0f;
 		m_Names[n]="Name";
@@ -173,6 +173,18 @@ void ControllerPlugin::StreamOut(ostream &s)
 
 	switch (m_Version)
 	{
+		case 5:
+		{
+			s<<m_Num<<endl;
+			for (int n=0; n<m_Num; n++)
+			{
+				s<<m_Names[n].size()<<" ";
+				s<<m_Names[n]<<" ";
+				s<<m_MinVal[n]<<" ";
+				s<<m_MaxVal[n]<<" ";
+				s<<m_ChannelVal[n]<<endl;
+			}
+		} break;
 		case 4:
 		{
 			s<<m_Num<<endl;
@@ -216,6 +228,41 @@ void ControllerPlugin::StreamIn(istream &s)
 
 	switch (version)
 	{
+		case 5:
+		{
+			Clear();
+
+			s>>m_Num;
+			string name;
+			for (int n=0; n<m_Num; n++)
+			{
+				char Buf[4096];
+				int size,dummy;
+				s>>size;
+				s.ignore(1);
+				if (size > 0) {
+					s.get(Buf,size+1);
+					m_Names[n]=Buf;
+				} else {
+					m_Names[n] = "";
+				}
+				s>>m_MinVal[n];
+				s>>m_MaxVal[n];
+				s>>m_ChannelVal[n];
+			}
+
+		// add the channels one by one
+			for (int n=0; n<m_Num; n++)
+			{
+				char t[256];
+				sprintf(t,"CV %d",n);
+				m_PluginInfo.PortTips.push_back(t);
+				AddOutput();
+			}
+
+			m_PluginInfo.NumOutputs=m_Num;
+			UpdatePluginInfoWithHost();
+		} break;
 		case 4:
 		{
 			Clear();
