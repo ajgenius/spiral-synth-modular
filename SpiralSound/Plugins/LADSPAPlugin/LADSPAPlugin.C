@@ -119,7 +119,7 @@ void LADSPAPlugin::Execute()
 {
 	if (PlugDesc)
 	{
-		// convert inputs if exist (zero if not)
+		// convert inputs if exist (use default if not)
 		for (int n=0; n<m_PluginInfo.NumInputs; n++)
 		{
 			if (GetInput(n))
@@ -143,14 +143,14 @@ void LADSPAPlugin::Execute()
 						m_LADSPABufVec[n][i]=GetInput(n,i);
 					}
 				}
-				// Update the GUI outputs with the first value in the buffer
-				//((LADSPAPluginGUI*)m_GUI)->UpdatePortDisplay(n,m_LADSPABufVec[n][0]);
 				// Copy values into OutData value buffer for display in GUI
 				m_OutData.InputPortValues[n] = m_LADSPABufVec[n][0];
 			}
-			else // zero
+			else // Use default
 			{
-				for (int i=0; i<m_HostInfo->BUFSIZE; i++) m_LADSPABufVec[n][i]=0;
+				for (int i=0; i<m_HostInfo->BUFSIZE; i++) {
+					m_LADSPABufVec[n][i]=m_PortDefault[n];
+				}
 			}
 		}
 

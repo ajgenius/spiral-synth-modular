@@ -150,27 +150,6 @@ void LADSPAPluginGUI::SetPortSettings(unsigned long n, float min, float max, boo
 	m_PortDefault[n]->value(temp);
 }
 
-/*
-void LADSPAPluginGUI::SetMinMax(int n, float min, float max, bool clamp)
-{
-	char temp[256];
-	sprintf(temp,"%.4f",min);
-	m_PortMin[n]->value(temp);
-
-	sprintf(temp,"%.4f",max);
-	m_PortMax[n]->value(temp);
-
-	sprintf(temp, "%d",clamp);
-	m_PortClamp[n]->value(atoi(temp));
-}
-
-void LADSPAPluginGUI::GetMinMax(int n, float &min, float &max, bool &clamp)
-{
-	min = atof(m_PortMin[n]->value());
-	max = atof(m_PortMax[n]->value());
-	clamp = m_PortClamp[n]->value();
-}
-*/
 void LADSPAPluginGUI::SetName(const char *s)
 {
 	m_Name->label(s);
