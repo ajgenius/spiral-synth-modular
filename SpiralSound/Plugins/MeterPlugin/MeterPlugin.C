@@ -29,7 +29,7 @@ int GetID() { return 123; }
 
 string GetGroupName()
 {
-	return "SpiralSound";
+	return "Control";
 }
 }
 

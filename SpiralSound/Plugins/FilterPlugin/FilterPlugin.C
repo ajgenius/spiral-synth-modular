@@ -44,16 +44,16 @@ int GetID()
 
 string GetGroupName()
 {
-	return "SpiralSound";
+	return "Filters/FX";
 }
 }
 
 ///////////////////////////////////////////////////////
 
 FilterPlugin::FilterPlugin() :
-fs(0),     			// Sampling frequency 
-fc(100),             // Filter cutoff 
-Q(1),               // Resonance 
+fs(0),     			// Sampling frequency
+fc(100),             // Filter cutoff
+Q(1),               // Resonance
 m_LastFC(0),
 m_LastQ(1),
 k(1.0),              // Set overall filter gain

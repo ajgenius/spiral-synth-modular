@@ -56,8 +56,6 @@ static int Numbers[512];
 static const int MAIN_WIDTH     = 700;
 static const int MAIN_HEIGHT    = 600;
 static const int SLIDER_WIDTH   = 15;
-static const int TOOLBOX_HEIGHT = MAIN_HEIGHT;
-static const int TOOLBOX_WIDTH  = 132+SLIDER_WIDTH;
 static const int ICON_DEPTH     = 3;
 static const int COMMENT_ID     = -1;
 
@@ -70,8 +68,8 @@ bool SynthModular::m_BlockingOutputPluginIsReady = false;
 //////////////////////////////////////////////////////////
 
 DeviceWin::~DeviceWin()
-{	
-} 
+{
+}
 
 //////////////////////////////////////////////////////////
 
@@ -81,25 +79,25 @@ m_NextPluginButton(1),
 m_NextPluginButtonXPos(5),
 m_NextPluginButtonYPos(20),
 m_PauseAudio(false)
-{ 	
+{
 	m_Info.BUFSIZE    = SpiralInfo::BUFSIZE;
 	m_Info.FRAGSIZE   = SpiralInfo::FRAGSIZE;
-	m_Info.FRAGCOUNT  = SpiralInfo::FRAGCOUNT;	
+	m_Info.FRAGCOUNT  = SpiralInfo::FRAGCOUNT;
 	m_Info.SAMPLERATE = SpiralInfo::SAMPLERATE;
 	m_Info.OUTPUTFILE = SpiralInfo::OUTPUTFILE;
-	m_Info.MIDIFILE   = SpiralInfo::MIDIFILE; 
+	m_Info.MIDIFILE   = SpiralInfo::MIDIFILE;
 	m_Info.POLY       = SpiralInfo::POLY;
 	//m_Info.GUI_COLOUR = SpiralInfo::GUI_COLOUR;
-	
-	for (int n=0; n<512; n++) Numbers[n]=n;	
-	
+
+	for (int n=0; n<512; n++) Numbers[n]=n;
+
 	m_CH.Register("PauseAudio",&m_PauseAudio);
 }
 
 //////////////////////////////////////////////////////////
 
 SynthModular::~SynthModular()
-{ 
+{
 	ClearUp();
 	PluginManager::Get()->PackUpAndGoHome();
 }
@@ -109,36 +107,36 @@ SynthModular::~SynthModular()
 void SynthModular::ClearUp()
 {
 	PauseAudio();
-	
+
 	for(map<int,DeviceWin*>::iterator i=m_DeviceWinMap.begin();
 		i!=m_DeviceWinMap.end(); i++)
 	{
 		if (i->second->m_DeviceGUI->GetPluginWindow())
 		{
 			i->second->m_DeviceGUI->GetPluginWindow()->hide();
-			//m_MainWindow->remove(i->second->m_DeviceGUI->GetPluginWindow());			
+			//m_MainWindow->remove(i->second->m_DeviceGUI->GetPluginWindow());
 		}
 		// deleted by Canvas::Remove()? seems to cause random crashes
 		//delete i->second->m_DeviceGUI;
 		delete i->second->m_Device;
 		i->second->m_Device=NULL;
 	}
-	
+
 	m_Canvas->Clear();
 	m_DeviceWinMap.clear();
 	m_NextID=0;
-	
+
 	ResumeAudio();
 }
 
 //////////////////////////////////////////////////////////
 
 void SynthModular::Update()
-{	
+{
 	m_CH.UpdateDataNow();
-		
+
 	if (m_PauseAudio) return;
-		
+
 	// for all the plugins
 	for(map<int,DeviceWin*>::iterator i=m_DeviceWinMap.begin();
 		i!=m_DeviceWinMap.end(); i++)
@@ -148,35 +146,35 @@ void SynthModular::Update()
 			#ifdef DEBUG_PLUGINS
 			cerr<<"Updating channelhandler of plugin "<<i->second->m_PluginID<<endl;
 			#endif
-			
+
 			// updates the data from the gui thread, if it's not blocking
  			i->second->m_Device->UpdateChannelHandler();
-			
-			#ifdef DEBUG_PLUGINS			
+
+			#ifdef DEBUG_PLUGINS
 			cerr<<"Finished updating"<<endl;
 			#endif
-	    	
+
 			// run any commands we've received from the GUI's
 			i->second->m_Device->ExecuteCommands();
 		}
 	}
-	
+
 	// run the plugins (only ones connected to anything)
 	list<int> ExecutionOrder = m_Canvas->GetGraph()->GetSortedList();
-	for (list<int>::reverse_iterator i=ExecutionOrder.rbegin(); 
+	for (list<int>::reverse_iterator i=ExecutionOrder.rbegin();
 		 i!=ExecutionOrder.rend(); i++)
 	{
 		// use the graphsort order to remove internal latency
 		map<int,DeviceWin*>::iterator di=m_DeviceWinMap.find(*i);
-		if (di!=m_DeviceWinMap.end() && di->second->m_Device) 
-		{		
+		if (di!=m_DeviceWinMap.end() && di->second->m_Device)
+		{
 			#ifdef DEBUG_PLUGINS
 			cerr<<"Executing plugin "<<di->second->m_PluginID<<endl;
 			#endif
-			
+
 			di->second->m_Device->Execute();
-			
-			#ifdef DEBUG_PLUGINS			
+
+			#ifdef DEBUG_PLUGINS
 			cerr<<"Finished executing"<<endl;
 			#endif
 		}
@@ -187,42 +185,42 @@ void SynthModular::Update()
 
 void SynthModular::UpdatePluginGUIs()
 {
-	// see if any need deleting		
-	for (map<int,DeviceWin*>::iterator i=m_DeviceWinMap.begin(); 
+	// see if any need deleting
+	for (map<int,DeviceWin*>::iterator i=m_DeviceWinMap.begin();
 		 i!=m_DeviceWinMap.end(); i++)
-	{	
+	{
 		if (i->second->m_DeviceGUI->GetPluginWindow())
 		{
 			SpiralPluginGUI *GUI=(SpiralPluginGUI *)i->second->m_DeviceGUI->GetPluginWindow();
 			GUI->Update();
 		}
-		
+
 		if (i->second->m_DeviceGUI->Killed())
 		{
 			PauseAudio();
-			if (i->second->m_Device) 
+			if (i->second->m_Device)
 			{
 				delete i->second->m_Device;
 				i->second->m_Device=NULL;
 			}
-			
+
 			if (i->second->m_DeviceGUI->GetPluginWindow())
 			{
 				i->second->m_DeviceGUI->GetPluginWindow()->hide();
 				//m_MainWindow->remove(i->second->m_DeviceGUI->GetPluginWindow());
 			}
-			
+
 			i->second->m_DeviceGUI->Clear();
-			m_Canvas->RemoveDevice(i->second->m_DeviceGUI);			
-			// deleted by Canvas::Remove()? seems to cause random crashes 
-			//delete i->second->m_DeviceGUI;			
-			
+			m_Canvas->RemoveDevice(i->second->m_DeviceGUI);
+			// deleted by Canvas::Remove()? seems to cause random crashes
+			//delete i->second->m_DeviceGUI;
+
 			m_DeviceWinMap.erase(i);
 			ResumeAudio();
 			break;
 		}
 	}
-	
+
 	m_Canvas->Poll();
 }
 
@@ -230,111 +228,112 @@ void SynthModular::UpdatePluginGUIs()
 
 SpiralWindowType *SynthModular::CreateWindow()
 {
-	int xoff=0, yoff=10, but=64, gap=MAIN_HEIGHT/5, n=0;
-	
 	m_TopWindow = new SpiralWindowType(MAIN_WIDTH, MAIN_HEIGHT, LABEL.c_str());
-	m_TopWindow->resizable(m_TopWindow);
-		
-	m_MainButtons = new Fl_Group(0, 0, but, MAIN_HEIGHT, "");
-    m_MainButtons->type(1);
-	m_MainButtons->color(SpiralSynthModularInfo::GUICOL_Tool);
-	m_MainButtons->box(FL_FLAT_BOX);
-	m_MainButtons->user_data((void*)(this));
-	m_TopWindow->add(m_MainButtons); 
+	//m_TopWindow->resizable(m_TopWindow);
 
-	m_Load = new Fl_Button(xoff, 5+yoff, but, but, "");
-	m_Load->box(FL_NO_BOX);
+	int but=44;
+        int ToolbarHeight=but+20;
+
+        m_Topbar = new Fl_Pack (0, 0, MAIN_WIDTH, ToolbarHeight, "");
+        m_Topbar->user_data((void*)(this));
+       	m_Topbar->type(FL_HORIZONTAL);
+        m_TopWindow->add(m_Topbar);
+
+        m_ToolbarPanel = new Fl_Pack (0, 0, but*5, ToolbarHeight, "");
+        m_ToolbarPanel->user_data((void*)(this));
+       	m_ToolbarPanel->type(FL_VERTICAL);
+        m_Topbar->add(m_ToolbarPanel);
+
+        m_ToolbarFiller = new Fl_Group (0, 0, but*5, 20, "");
+        m_ToolbarPanel->add(m_ToolbarFiller);
+
+        m_Toolbar = new Fl_Pack (0, 0, but*5, but, "");
+        m_Toolbar->user_data((void*)(this));
+       	m_Toolbar->type(FL_HORIZONTAL);
+        m_Toolbar->color(SpiralSynthModularInfo::GUICOL_Tool);
+        m_ToolbarPanel->add(m_Toolbar);
+
+        m_Load = new Fl_Button(0, 0, but, but, "");
 	Fl_Pixmap *tPix = new Fl_Pixmap(load_xpm);
-	m_Load->image(tPix->copy(tPix->w(),tPix->h()));		
+	m_Load->image(tPix->copy());
+	delete tPix;
+        m_Load->type(0);
+	m_Load->box(FL_PLASTIC_UP_BOX);
+	m_Load->color(SpiralSynthModularInfo::GUICOL_Button);
 	m_Load->selection_color(SpiralSynthModularInfo::GUICOL_Tool);
-    m_Load->tooltip("Load a patch file");		 
+        m_Load->labelsize (1);
+        m_Load->tooltip("Load a patch file");
 	m_Load->callback((Fl_Callback*)cb_Load);
-	m_MainButtons->add(m_Load);
-	n++;
-	
-	m_Save = new Fl_Button(xoff, n*gap+yoff, but, but, "");
-	m_Save->box(FL_NO_BOX);
+	m_Toolbar->add(m_Load);
+
+	m_Save = new Fl_Button(0, 0, but, but, "");
 	tPix = new Fl_Pixmap(save_xpm);
-	m_Save->image(tPix->copy(tPix->w(),tPix->h()));	
-	delete tPix;	
+	m_Save->image(tPix->copy());
+	delete tPix;
+        m_Save->type(0);
+	m_Save->box(FL_PLASTIC_UP_BOX);
+	m_Save->color(SpiralSynthModularInfo::GUICOL_Button);
 	m_Save->selection_color(SpiralSynthModularInfo::GUICOL_Tool);
- 	m_Save->tooltip("Save a patch file");		 
+        m_Save->labelsize (1);
+ 	m_Save->tooltip("Save a patch file");
 	m_Save->callback((Fl_Callback*)cb_Save);
-	m_MainButtons->add(m_Save);
-	n++;
-		
-	m_New = new Fl_Button(xoff, n*gap+yoff, but, but, "");
-	m_New->box(FL_NO_BOX);
+	m_Toolbar->add(m_Save);
+
+	m_New = new Fl_Button(0, 0, but, but, "");
 	tPix = new Fl_Pixmap(new_xpm);
-	m_New->image(tPix->copy(tPix->w(),tPix->h()));	
-	delete tPix;	
+	m_New->image(tPix->copy());
+	delete tPix;
+        m_New->type(0);
+	m_New->box(FL_PLASTIC_UP_BOX);
+	m_New->color(SpiralSynthModularInfo::GUICOL_Button);
 	m_New->selection_color(SpiralSynthModularInfo::GUICOL_Tool);
-  	m_New->tooltip("New patch");		 
+  	m_New->labelsize (1);
+        m_New->tooltip("New patch");
 	m_New->callback((Fl_Callback*)cb_New);
-	m_MainButtons->add(m_New);
-	n++;
-				
-	m_Options = new Fl_Button(xoff, n*gap+yoff, but, but, "");
-	m_Options->box(FL_NO_BOX);
+	m_Toolbar->add(m_New);
+
+	m_Options = new Fl_Button(0, 0, but, but, "");
 	tPix = new Fl_Pixmap(options_xpm);
-	m_Options->image(tPix->copy(tPix->w(),tPix->h()));
-	delete tPix;		
+	m_Options->image(tPix->copy());
+	delete tPix;
+        m_Options->type(0);
+	m_Options->box(FL_PLASTIC_UP_BOX);
+	m_Options->color(SpiralSynthModularInfo::GUICOL_Button);
 	m_Options->selection_color(SpiralSynthModularInfo::GUICOL_Tool);
- 	m_Options->tooltip("Options");			 
+ 	m_Options->labelsize (1);
+        m_Options->tooltip("Options");
 	m_Options->callback((Fl_Callback*)cb_Rload);
-	m_MainButtons->add(m_Options);
-	n++;
-	
-	m_NewComment = new Fl_Button(xoff, n*gap+yoff, but, but, "");
-	m_NewComment->box(FL_NO_BOX);
+	m_Toolbar->add(m_Options);
+
+	m_NewComment = new Fl_Button(0, 0, but, but, "");
 	tPix = new Fl_Pixmap(comment_xpm);
-	m_NewComment->image(tPix->copy(tPix->w(),tPix->h()));
-	delete tPix;		
+	m_NewComment->image(tPix->copy());
+	delete tPix;
+        m_NewComment->type(0);
+	m_NewComment->box(FL_PLASTIC_UP_BOX);
+	m_NewComment->color(SpiralSynthModularInfo::GUICOL_Button);
 	m_NewComment->selection_color(SpiralSynthModularInfo::GUICOL_Tool);
- 	m_NewComment->tooltip("New comment");			 
+        m_NewComment->labelsize (1);
+        m_NewComment->tooltip("New comment");
 	m_NewComment->callback((Fl_Callback*)cb_NewComment);
-	m_MainButtons->add(m_NewComment);
-	n++;
-		
-	/////////////////
+	m_Toolbar->add(m_NewComment);
 
-	int edy = 0;
-	Fl_Group *Left = new Fl_Group(MAIN_WIDTH-TOOLBOX_WIDTH,0,TOOLBOX_WIDTH,MAIN_HEIGHT);
-	Left->box(FL_FLAT_BOX);
-	Left->color(SpiralSynthModularInfo::GUICOL_Tool);
-	Left->user_data((void*)(this));
-	m_TopWindow->add(Left); 
-	
-	m_GroupName = new Fl_Box(MAIN_WIDTH-TOOLBOX_WIDTH,0,TOOLBOX_WIDTH,16,"");
-	m_GroupName->labelsize(12);
-	m_GroupName->color(SpiralSynthModularInfo::GUICOL_Canvas);
-	m_GroupName->align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE);
-	m_GroupName->box(FL_BORDER_BOX);
-	Left->add(m_GroupName);
-	
-	m_PluginGroupLeft = new Fl_Button(MAIN_WIDTH-TOOLBOX_WIDTH, 0, 16, 16, "@<");
-	m_PluginGroupLeft->callback((Fl_Callback*)cb_PluginGroupLeft);
-	Left->add(m_PluginGroupLeft);
+        m_GroupFiller = new Fl_Group (0, 0, 5, ToolbarHeight, "");
+	m_Topbar->add (m_GroupFiller);
 
-	m_PluginGroupRight = new Fl_Button(MAIN_WIDTH-16, 0, 16, 16, "@>");
-	m_PluginGroupRight->callback((Fl_Callback*)cb_PluginGroupRight);
-	Left->add(m_PluginGroupRight);
-	
-	m_ToolBox = new Fl_Scroll(MAIN_WIDTH-TOOLBOX_WIDTH,0+edy+16,TOOLBOX_WIDTH, TOOLBOX_HEIGHT-16, "");
-    m_ToolBox->type(Fl_Scroll::VERTICAL_ALWAYS);
-	m_ToolBox->box(FL_FLAT_BOX);
-    m_ToolBox->labeltype(FL_ENGRAVED_LABEL);
-    m_ToolBox->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
-	m_ToolBox->scrollbar.align(FL_ALIGN_RIGHT);
-	m_ToolBox->color(SpiralSynthModularInfo::GUICOL_Tool);
-	m_ToolBox->user_data((void*)(this));
-	Left->add(m_ToolBox);  
-	m_TopWindow->resizable(m_ToolBox);
-	
-	m_CanvasScroll = new Fl_Scroll(but, 0, MAIN_WIDTH-TOOLBOX_WIDTH-but, MAIN_HEIGHT, "");	
-	m_TopWindow->add(m_CanvasScroll);
+       	m_GroupTab = new Fl_Tabs (0, 0, MAIN_WIDTH-m_GroupFiller->w()-but*5, ToolbarHeight, "");
+        m_GroupTab->user_data ((void*)(this));
+        m_GroupTab->callback((Fl_Callback*)cb_GroupTab);
+	m_Topbar->add (m_GroupTab);
+
+       	m_Topbar->resizable(m_GroupTab);
+
+        /////////////////
+
+	m_CanvasScroll = new Fl_Scroll(0, ToolbarHeight, MAIN_WIDTH, MAIN_HEIGHT-ToolbarHeight, "");
+        m_TopWindow->add(m_CanvasScroll);
 	m_TopWindow->resizable(m_CanvasScroll);
-	
+
 	m_Canvas = new Fl_Canvas(-5000, -5000, 10000, 10000, "");
     m_Canvas->type(1);
 	m_Canvas->box(FL_FLAT_BOX);
@@ -345,54 +344,15 @@ SpiralWindowType *SynthModular::CreateWindow()
 	m_Canvas->SetConnectionCallback((Fl_Callback*)cb_Connection);
 	m_Canvas->SetUnconnectCallback((Fl_Callback*)cb_Unconnect);
 	m_Canvas->SetAddDeviceCallback((Fl_Callback*)cb_NewDeviceFromMenu);
-	m_CanvasScroll->add(m_Canvas);   
+	m_CanvasScroll->add(m_Canvas);
 
 	m_SettingsWindow = new SettingsWindow;
 	m_SettingsWindow->RegisterApp(this);
-	
+
 	return m_TopWindow;
 }
 
 //////////////////////////////////////////////////////////
-
-SynthModular::ToolBox::ToolBox(Fl_Scroll *parent, void* user)
-{
-	int Width  = 40;
-	int Height = 40;
-	m_Icon=0;
-	
-	m_ToolPack = new Fl_Pack(MAIN_WIDTH-TOOLBOX_WIDTH+5,20,TOOLBOX_WIDTH-10, TOOLBOX_HEIGHT-60,"");
-    m_ToolPack->type(FL_VERTICAL);
-	m_ToolPack->box(FL_NO_BOX);
-	m_ToolPack->color(SpiralSynthModularInfo::GUICOL_Tool);
-    m_ToolPack->user_data(user);
-	parent->add(m_ToolPack);  
-	
-	m_IconPack = new Fl_Pack(0,0,TOOLBOX_WIDTH-SLIDER_WIDTH,Height,"");
-    m_IconPack->type(FL_HORIZONTAL);
-	m_IconPack->color(SpiralSynthModularInfo::GUICOL_Tool);
-	m_IconPack->user_data(m_ToolPack->user_data());  
-	m_ToolPack->add(m_IconPack);
-}
-
-void SynthModular::ToolBox::AddIcon(Fl_Button *Icon)
-{	
-	int Width  = 40;
-	int Height = 40;
-	
-	if (m_Icon>=ICON_DEPTH)
-	{
-		m_Icon=0;
-		m_IconPack = new Fl_Pack(0,0,TOOLBOX_WIDTH-SLIDER_WIDTH,Height,"");
-    	m_IconPack->type(FL_HORIZONTAL);
-		m_IconPack->color(SpiralSynthModularInfo::GUICOL_Tool);
-		m_IconPack->user_data(m_ToolPack->user_data());  
-		m_ToolPack->add(m_IconPack);
-	}
-	
-	m_IconPack->add(Icon);
-	m_Icon++;
-}
 
 vector<string> SynthModular::BuildPluginList(const string &Path)
 {
@@ -406,13 +366,13 @@ vector<string> SynthModular::BuildPluginList(const string &Path)
 	vector<string> ret;
 
 	dp = opendir(path);
-	if (!dp) 
+	if (!dp)
 	{
 		cerr << "WARNING: Could not open path " << path << endl;
 	}
-	else 
+	else
 	{
-		while ((ep = readdir(dp))) 
+		while ((ep = readdir(dp)))
 		{
 
 			// Need full path
@@ -420,23 +380,23 @@ vector<string> SynthModular::BuildPluginList(const string &Path)
 			fullpath.append(ep->d_name);
 
 			// Stat file to get type
-			if (!stat(fullpath.c_str(), &sb)) 
+			if (!stat(fullpath.c_str(), &sb))
 			{
 				// We only want regular files
-				if (S_ISREG(sb.st_mode)) 
+				if (S_ISREG(sb.st_mode))
 				{
 
 					// We're not fussed about resolving symbols yet, since we are just
 					// checking if it's a DLL.
 					handle = dlopen(fullpath.c_str(), RTLD_LAZY);
-					if (!handle) 
+					if (!handle)
 					{
 						cerr << "WARNING: File " << path << ep->d_name
 							<< " could not be examined" << endl;
 						cerr << "dlerror() output:" << endl;
 						cerr << dlerror() << endl;
-					} 
-					else 
+					}
+					else
 					{
 						// It's a DLL. Add name to list
 						ret.push_back(ep->d_name);
@@ -445,7 +405,7 @@ vector<string> SynthModular::BuildPluginList(const string &Path)
 			}
 		}
 	}
-	
+
 	return ret;
 }
 
@@ -457,14 +417,14 @@ void SynthModular::LoadPlugins(string pluginPath)
 
 	int SWidth  = 256;
 	int SHeight = 256;
-		
+
 	Fl_Pixmap pic(SSM_xpm);
-	
+
 	Fl_Double_Window* Splash = new Fl_Double_Window((Fl::w()/2)-(SWidth/2),
 									                (Fl::h()/2)-(SHeight/2),
 									                SWidth,SHeight,"SSM");
 	Splash->border(0);
-	
+
 	Fl_Box* pbut = new Fl_Box(0,8,SWidth,SHeight,"");
 	pbut->box(FL_NO_BOX);
 	pic.label(pbut);
@@ -516,37 +476,39 @@ void SynthModular::LoadPlugins(string pluginPath)
 			#endif
 
 			Fl_Button *NewButton = new Fl_Button(0,0,Width,Height,"");
-			NewButton->labelsize(10);
-
+                        NewButton->user_data((void*)(this));
+			NewButton->labelsize(1);
 			Fl_Pixmap *tPix = new Fl_Pixmap(PluginManager::Get()->GetPlugin(ID)->GetIcon());
 			NewButton->image(tPix->copy(tPix->w(),tPix->h()));
 			delete tPix;
 
 			string GroupName = PluginManager::Get()->GetPlugin(ID)->GetGroupName();
-			ToolBox* Tool=NULL;
+                        Fl_Pack* the_group=NULL;
 
-			map<string,ToolBox*>::iterator ti=m_PluginGroupMap.find(GroupName);
-			if (ti==m_PluginGroupMap.end())
+                        // find or create this group, and add an icon
+			map<string,Fl_Pack*>::iterator gi=m_PluginGroupMap.find(GroupName);
+			if (gi==m_PluginGroupMap.end())
 			{
-				if (Tool) Tool->GetToolPack()->hide();
-				Tool = new ToolBox(m_ToolBox,(void*)(this));
-				m_PluginGroupMap[GroupName]=Tool;
-				Tool->GetToolPack()->hide();
+                                the_group = new Fl_Pack (m_GroupTab->x(), 20, m_GroupTab->w(), m_GroupTab->h()-20, GroupName.c_str());
+	                        the_group->type(FL_HORIZONTAL);
+                                the_group->labelsize(8);
+                                the_group->user_data((void*)(this));
+	                        //m_GroupTab->add(the_group);
+                                m_GroupTab->value(the_group);
+				m_PluginGroupMap[GroupName]=the_group;
 			}
 			else
 			{
-				Tool=ti->second;
+				the_group=gi->second;
 			}
-			Tool->AddIcon(NewButton);
-			
-			NewButton->type(0);	
-			NewButton->box(FL_PLASTIC_UP_BOX);				
-			NewButton->align(FL_ALIGN_INSIDE|FL_ALIGN_TOP);
+                        NewButton->type(0);
+			NewButton->box(FL_PLASTIC_UP_BOX);
 			NewButton->color(SpiralSynthModularInfo::GUICOL_Button);
 			NewButton->selection_color(SpiralSynthModularInfo::GUICOL_Tool);
-			
+			the_group->add(NewButton);
+
 			string tooltip=*i;
-            // find the first / if there is one, and get rid of everything before and including it
+            		// find the first / if there is one, and get rid of everything before and including it
 			unsigned int p = tooltip.find ('/');
 			if (p < tooltip.length()) tooltip.erase (0, p);
 			// find last . and get rid of everything after and including it
@@ -557,31 +519,28 @@ void SynthModular::LoadPlugins(string pluginPath)
 			splashtext->label (tooltip.c_str());
                		Splash->redraw();
 			NewButton->tooltip (tooltip.c_str());
-			
-			NewButton->callback((Fl_Callback*)cb_NewDevice,&Numbers[ID]);			
+
+			NewButton->callback((Fl_Callback*)cb_NewDevice,&Numbers[ID]);
 			NewButton->show();
-			m_DeviceVec.push_back(NewButton);			
-		
-			m_ToolBox->redraw();
-		
+			m_DeviceVec.push_back(NewButton);
+
+			the_group->redraw();
+
 			m_NextPluginButton++;
 			Fl::check();
 		}
 	}
-	
+        map<string,Fl_Pack*>::iterator PlugGrp;
+
+        for (PlugGrp = m_PluginGroupMap.begin(); PlugGrp!= m_PluginGroupMap.end(); ++PlugGrp)
+                m_GroupTab->add(PlugGrp->second);
+
 	// try to show the SpiralSound group
-	m_CurrentGroup=m_PluginGroupMap.find("SpiralSound");
-	if (m_CurrentGroup==m_PluginGroupMap.end())
-	{
-		// can't find it - show the first plugin group
-		m_CurrentGroup=m_PluginGroupMap.begin();
-		m_CurrentGroup->second->GetToolPack()->show();
-		m_GroupName->label(m_CurrentGroup->first.c_str());
-	}
-	
-	m_CurrentGroup->second->GetToolPack()->show();
-	m_GroupName->label(m_CurrentGroup->first.c_str());
-	
+        PlugGrp = m_PluginGroupMap.find("SpiralSound");
+	// can't find it - show the first plugin group
+	if (PlugGrp==m_PluginGroupMap.end()) PlugGrp=m_PluginGroupMap.begin();
+        m_GroupTab->value(PlugGrp->second);
+
 	Splash->hide();
 	delete Splash;
 }
@@ -592,7 +551,7 @@ DeviceGUIInfo SynthModular::BuildDeviceGUIInfo(PluginInfo &PInfo)
 {
 	DeviceGUIInfo Info;
 	int Height=50;
-	
+
 	// tweak the size if we have too many ins/outs
 	if (PInfo.NumInputs>4 || PInfo.NumOutputs>4)
 	{
@@ -605,7 +564,7 @@ DeviceGUIInfo SynthModular::BuildDeviceGUIInfo(PluginInfo &PInfo)
 			Height=PInfo.NumInputs*10+5;
 		}
 	}
-	
+
 	// Make the guiinfo struct
 	Info.XPos       = 0;
 	Info.YPos       = 0;
@@ -616,7 +575,7 @@ DeviceGUIInfo SynthModular::BuildDeviceGUIInfo(PluginInfo &PInfo)
 	Info.Name       = PInfo.Name;
 	Info.PortTips   = PInfo.PortTips;
 	Info.PortTypes  = PInfo.PortTypes;
-	
+
 	return Info;
 }
 
@@ -626,9 +585,9 @@ DeviceWin* SynthModular::NewDeviceWin(int n, int x, int y)
 {
 	DeviceWin *nlw = new DeviceWin;
 	const HostsideInfo* Plugin=PluginManager::Get()->GetPlugin(n);
-		
+
 	if (!Plugin) return NULL;
-	
+
 	nlw->m_Device=Plugin->CreateInstance();
 
 	if (!nlw->m_Device)
@@ -639,26 +598,26 @@ DeviceWin* SynthModular::NewDeviceWin(int n, int x, int y)
 	nlw->m_Device->SetUpdateCallback(cb_Update);
 	nlw->m_Device->SetParent((void*)this);
 
-	PluginInfo PInfo    = nlw->m_Device->Initialise(&m_Info);		
+	PluginInfo PInfo    = nlw->m_Device->Initialise(&m_Info);
 	SpiralGUIType *temp = nlw->m_Device->CreateGUI();
 	Fl_Pixmap *Pix      = new Fl_Pixmap(Plugin->GetIcon());
 	nlw->m_PluginID     = n;
 
-	if (temp) 
-	{	
+	if (temp)
+	{
 		temp->position(x+10,y);
 	}
-	
+
 	DeviceGUIInfo Info=BuildDeviceGUIInfo(PInfo);
-	
+
 	Info.XPos       = x; //TOOLBOX_WIDTH+(rand()%400);
 	Info.YPos       = y; //rand()%400;
-	
+
 	nlw->m_DeviceGUI = new Fl_DeviceGUI(Info, temp, Pix, nlw->m_Device->IsTerminal());
 	m_Canvas->add(nlw->m_DeviceGUI);
 	m_Canvas->redraw();
 
-	return nlw;	
+	return nlw;
 }
 
 //////////////////////////////////////////////////////////
@@ -666,11 +625,11 @@ DeviceWin* SynthModular::NewDeviceWin(int n, int x, int y)
 void SynthModular::AddDevice(int n, int x=-1, int y=-1)
 {
 	//cerr<<"Adding "<<m_NextID<<endl;
-	
+
 	if (x==-1)
-	{	
-		x = m_CanvasScroll->x()+50; 
-		y = m_CanvasScroll->y()+50; 
+	{
+		x = m_CanvasScroll->x()+50;
+		y = m_CanvasScroll->y()+50;
 	}
 
 	DeviceWin* temp = NewDeviceWin(n,x,y);
@@ -687,7 +646,7 @@ void SynthModular::AddDevice(int n, int x=-1, int y=-1)
 //////////////////////////////////////////////////////////
 
 DeviceWin* SynthModular::NewComment(int n, int x=-1, int y=-1)
-{	
+{
 	DeviceWin *nlw = new DeviceWin;
 
 	if (x==-1)
@@ -708,7 +667,7 @@ DeviceWin* SynthModular::NewComment(int n, int x=-1, int y=-1)
 	Info.NumInputs  = 0;
 	Info.NumOutputs = 0;
 	Info.Name = "";
-	
+
 	nlw->m_DeviceGUI = new Fl_CommentGUI(Info, NULL, NULL);
 			
 	m_Canvas->add(nlw->m_DeviceGUI);
@@ -760,7 +719,7 @@ void SynthModular::UpdateHostInfo()
 	ifs>>*this;
 	
 	system("rm -f ___temp.ssmtmp");
-	
+
 }
 
 //////////////////////////////////////////////////////////
@@ -804,7 +763,7 @@ istream &operator>>(istream &s, SynthModular &o)
 		s>>EditWinX>>EditWinY>>EditWinW>>EditWinH;
 	
 		//o.m_MainWindow->resize(MainWinX,MainWinY,MainWinW,MainWinH);
-		//o.m_EditorWindow->resize(EditWinX,EditWinY,EditWinW,EditWinH);	
+		//o.m_EditorWindow->resize(EditWinX,EditWinY,EditWinW,EditWinH);
 	}
 	
 	int Num, ID, PluginID, x,y,ps,px,py;
@@ -869,7 +828,7 @@ istream &operator>>(istream &s, SynthModular &o)
 			if (temp)
 			{
 				temp->m_DeviceGUI->SetID(ID);
-				if (ver>3) 
+				if (ver>3)
 				{
 					// set the titlebars
 					temp->m_DeviceGUI->SetName(Name);
@@ -930,7 +889,7 @@ ostream &operator<<(ostream &s, SynthModular &o)
 	o.PauseAudio();
 
 	s<<"SpiralSynthModular File Ver "<<FILE_VERSION<<endl;
-		
+
 	// make external files dir
 	bool ExternalDirUsed=false;
 	string command("mkdir "+o.m_FilePath+"_files");
@@ -960,7 +919,7 @@ ostream &operator<<(ostream &s, SynthModular &o)
 		s<<i->second->m_DeviceGUI->y()<<" ";
 		s<<i->second->m_DeviceGUI->GetName().size()<<" ";
 		s<<i->second->m_DeviceGUI->GetName()<<" ";
-		
+
 		if (i->second->m_DeviceGUI->GetPluginWindow())
 		{
 			s<<i->second->m_DeviceGUI->GetPluginWindow()->visible()<<" ";
@@ -1068,13 +1027,13 @@ inline void SynthModular::cb_Save_i(Fl_Button* o, void* v)
 			if (!Pawfal_YesNo("File [%s] exists, overwrite?",fn))
 			{
 				return;
-			}			
+			}
 		}
 	
 		ofstream of(fn);
-		
+
 		if (of)
-		{	
+		{
 			m_FilePath=fn;
 			
 			of<<*this;
@@ -1098,7 +1057,7 @@ inline void SynthModular::cb_New_i(Fl_Button* o, void* v)
 	if (m_DeviceWinMap.size()>0 && !Pawfal_YesNo("New - Lose changes to current patch?"))
 	{
 		return;
-	}	
+	}
 
 	m_TopWindow->label(TITLEBAR.c_str());
 
@@ -1111,7 +1070,7 @@ void SynthModular::cb_New(Fl_Button* o, void* v)
 
 inline void SynthModular::cb_NewDevice_i(Fl_Button* o, void* v)
 {
-	AddDevice(*((int*)v));
+        AddDevice(*((int*)v));
 }
 void SynthModular::cb_NewDevice(Fl_Button* o, void* v)
 {((SynthModular*)(o->parent()->user_data()))->cb_NewDevice_i(o,v);}
@@ -1136,36 +1095,26 @@ void SynthModular::cb_NewComment(Fl_Button* o, void* v)
 
 //////////////////////////////////////////////////////////
 
-inline void SynthModular::cb_PluginGroupLeft_i(Fl_Button* o, void* v)
+// andy preston
+inline void SynthModular::cb_GroupTab_i(Fl_Tabs* o, void* v)
 {
-	m_CurrentGroup->second->GetToolPack()->hide();
-	m_CurrentGroup++;
-	if (m_CurrentGroup==m_PluginGroupMap.end()) m_CurrentGroup=m_PluginGroupMap.begin();
-	m_CurrentGroup->second->GetToolPack()->show();
-	m_GroupName->label(m_CurrentGroup->first.c_str());
+        m_GroupTab->redraw();
+        //m_CurrentGroup->second->GetToolPack()->hide();
+        //m_CurrentGroup = o->value();
+	// if (m_CurrentGroup==m_PluginGroupMap.end()) m_CurrentGroup=m_PluginGroupMap.begin();
+	// m_CurrentGroup->second->GetToolPack()->show();
+        // m_GroupName->label(m_CurrentGroup->first.c_str());
 }
-void SynthModular::cb_PluginGroupLeft(Fl_Button* o, void* v)
-{((SynthModular*)(o->parent()->user_data()))->cb_PluginGroupLeft_i(o,v);}
 
-//////////////////////////////////////////////////////////
-
-inline void SynthModular::cb_PluginGroupRight_i(Fl_Button* o, void* v)
-{
-	m_CurrentGroup->second->GetToolPack()->hide();
-	m_CurrentGroup++;
-	if (m_CurrentGroup==m_PluginGroupMap.end()) m_CurrentGroup=m_PluginGroupMap.begin();
-	m_CurrentGroup->second->GetToolPack()->show();
-	m_GroupName->label(m_CurrentGroup->first.c_str());
-}
-void SynthModular::cb_PluginGroupRight(Fl_Button* o, void* v)
-{((SynthModular*)(o->parent()->user_data()))->cb_PluginGroupRight_i(o,v);}
+void SynthModular::cb_GroupTab(Fl_Tabs* o, void* v)
+{((SynthModular*)(o->parent()->user_data()))->cb_GroupTab_i(o,v);}
 
 //////////////////////////////////////////////////////////
 
 inline void SynthModular::cb_Rload_i(Fl_Button* o, void* v)
 {
 	m_SettingsWindow->show();
-	
+
 	/*PluginManager::Get()->UnloadAll();
 
 	m_ToolBox->remove(m_ToolPack);
@@ -1176,9 +1125,9 @@ inline void SynthModular::cb_Rload_i(Fl_Button* o, void* v)
 	m_ToolPack->box(FL_NO_BOX);
 	m_ToolPack->color(SpiralSynthModularInfo::GUICOL_Tool);
     m_ToolPack->user_data((void*)(this));
-	m_ToolBox->add(m_ToolPack); 
+	m_ToolBox->add(m_ToolPack);
 	m_ToolBox->redraw();
-	
+
 	LoadPlugins();*/
 }
 void SynthModular::cb_Rload(Fl_Button* o, void* v)
@@ -1190,11 +1139,11 @@ inline void SynthModular::cb_Connection_i(Fl_Canvas* o, void* v)
 {
 	CanvasWire *Wire;
 	Wire=(CanvasWire*)v;
-			
+
 	map<int,DeviceWin*>::iterator si=m_DeviceWinMap.find(Wire->OutputID);
 	if (si==m_DeviceWinMap.end())
 	{
-		char num[32]; 
+		char num[32];
 		sprintf(num,"%d",Wire->OutputID);
 		SpiralInfo::Alert("Warning: Connection problem - can't find source "+string(num));
 		return;
@@ -1225,7 +1174,7 @@ inline void SynthModular::cb_Connection_i(Fl_Canvas* o, void* v)
 		sprintf(num,"%d,%d",Wire->InputID,Wire->InputPort);
 		SpiralInfo::Alert("Warning: Connection problem - can't find source input "+string(num));
 		return;	
-	} 
+	}
 }
 void SynthModular::cb_Connection(Fl_Canvas* o, void* v)
 {((SynthModular*)(o->user_data()))->cb_Connection_i(o,v);}
@@ -1261,7 +1210,7 @@ void SynthModular::cb_UpdatePluginInfo(int ID, void *PInfo)
 	if (i!=m_DeviceWinMap.end())
 	{
 		DeviceGUIInfo Info=BuildDeviceGUIInfo(*((PluginInfo*)PInfo));
-	
+
 		(*i).second->m_DeviceGUI->Setup(Info);
 		(*i).second->m_DeviceGUI->redraw();
 	}

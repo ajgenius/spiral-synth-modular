@@ -35,7 +35,7 @@ int GetID() {
 }
 string GetGroupName()
 {
-	return "SpiralSound";
+	return "Filters/FX";
 }
 }
 

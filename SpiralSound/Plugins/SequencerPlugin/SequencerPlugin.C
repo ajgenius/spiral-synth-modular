@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 #include "SequencerPlugin.h"
 #include "SequencerPluginGUI.h"
 #include <FL/Fl_Button.h>
@@ -39,23 +39,23 @@ Note::Note(float t=0, float l=0.1f, int n=0, float v=1.0f)
 Note::~Note()
 {
 }
-	
+
 istream &operator>>(istream &s, Note &o)
 {
 	int version=1;
 	string dummy;
 	s>>version>>dummy>>o.Time>>o.Length>>o.MidiNote>>o.Vol;
-	
+
 	return s;
 }
 
 ostream &operator<<(ostream &s, Note &o)
-{	
+{
 	int version=1;
 	s<<version<<" note "<<o.Time<<" "<<o.Length<<" "<<o.MidiNote<<" "<<o.Vol<<" ";
-	
+
 	return s;
-}	
+}
 
 /////////////////////////////////////////////////////////////////////////
 
@@ -70,8 +70,8 @@ Pattern::~Pattern()
 void  Pattern::Copy(const Pattern *o)
 {
 	// can't do this as we don't want to preserve the id numbers
-	//m_NoteMap=o->m_NoteMap;	
-	
+	//m_NoteMap=o->m_NoteMap;
+
 	int c=0;
 	for (map<int,Note>::const_iterator i = o->m_NoteMap.begin();
 		 i!=o->m_NoteMap.end(); i++)
@@ -89,7 +89,7 @@ void  Pattern::AddNote(int ID, float t, float l, int n, float v)
 		return;
 	}
 	Note newnote(t,l,n,v);
-		
+
 	m_NoteMap[ID]=newnote;
 }
 
@@ -101,7 +101,7 @@ void  Pattern::RemoveNote(int ID)
 		cerr<<"couldn't find note "<<ID<<" not removed"<<endl;
 		return;
 	}
-	
+
 	m_NoteMap.erase(i);
 }
 
@@ -113,7 +113,7 @@ Note *Pattern::GetNote(int ID)
 		cerr<<"couldn't find note "<<ID<<endl;
 		return NULL;
 	}
-	
+
 	return &i->second;
 }
 
@@ -129,24 +129,24 @@ istream &operator>>(istream &s, Pattern &o)
 		s>>t;
 		o.m_NoteMap[id++]=t;
 	}
-	
+
 	return s;
 }
 
 ostream &operator<<(ostream &s, Pattern &o)
-{	
+{
 	int version=1;
 	s<<version<<" pattern "<<o.m_NoteMap.size()<<" ";
-	
+
 	for (map<int,Note>::iterator i = o.m_NoteMap.begin();
 		 i!=o.m_NoteMap.end(); i++)
 	{
 		s<<i->second;
 	}
 	s<<endl;
-	
+
 	return s;
-}	
+}
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -229,7 +229,7 @@ void Track::CloneSequence(int ID, int nID)
 	s->SetYPos(GetSequence(ID)->GetYPos());	
 	s->SetPatternID(GetSequence(ID)->GetPatternID());
 	s->SetStartTime(GetSequence(ID)->GetStartTime());	
-	s->SetChannel(GetSequence(ID)->GetChannel());	
+	s->SetChannel(GetSequence(ID)->GetChannel());
 }
 
 // duplicate the sequence, and copy the pattern to it's own version
@@ -435,7 +435,7 @@ int GetID()
 
 string GetGroupName()
 {
-	return "SpiralSound";
+	return "Sequencing";
 }
 }
 

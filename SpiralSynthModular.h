@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #ifndef SPIRALSYNTHMODULAR
 #define SPIRALSYNTHMODULAR
@@ -29,6 +29,7 @@
 #include <FL/Fl_Scroll.H>
 #include <FL/Fl_Pack.H>
 #include <FL/Fl_Tile.H>
+#include <FL/Fl_Tabs.H>
 #include <sstream>
 #include <iostream>
 #include <map>
@@ -52,7 +53,7 @@ class DeviceWin
 public:
 	DeviceWin() : m_DeviceGUI(NULL) {}
 	~DeviceWin();
-	
+
 	int 		  m_PluginID;
 	SpiralPlugin* m_Device;
 	Fl_DeviceGUI* m_DeviceGUI;
@@ -63,20 +64,20 @@ class SynthModular
 public:
 	SynthModular();
 	~SynthModular();
-	
+
 	SpiralWindowType * CreateWindow();
 	void LoadPlugins(string pluginPath);
 	void Update();
 	void AddDevice(int n, int x, int y);
 	void AddComment(int n);
-	void ClearUp();	
-	void UpdateHostInfo();	
+	void ClearUp();
+	void UpdateHostInfo();
 	bool CallbackMode() { return m_CallbackUpdateMode; }
 	bool IsBlockingOutputPluginReady() { return m_BlockingOutputPluginIsReady; }
 	void UpdatePluginGUIs();
-	void LoadPatch(const char *fn);	
-	
-	void PauseAudio() 
+	void LoadPatch(const char *fn);
+
+	void PauseAudio()
 	{
 		m_CH.Set("PauseAudio",true);
 		m_CH.Wait();
@@ -86,10 +87,10 @@ public:
 	{
 		m_CH.Set("PauseAudio",false);
 	}
-	
+
 	// only for audio thread
 	bool IsPaused() { return m_PauseAudio; }
-	
+
 private:
 
 	vector<string> BuildPluginList(const string &Path);
@@ -101,66 +102,46 @@ private:
 
 	static DeviceGUIInfo BuildDeviceGUIInfo(PluginInfo &PInfo);
 
-	// currently static, to allow the callback 
-	// cb_UpdatePluginInfo to access the map. 
+	// currently static, to allow the callback
+	// cb_UpdatePluginInfo to access the map.
 	static map<int,DeviceWin*> m_DeviceWinMap;
-	
+
 	int m_NextID;
 	int m_NextPluginButton;
 	int m_NextPluginButtonXPos;
 	int m_NextPluginButtonYPos;
-	
+
 	static bool m_CallbackUpdateMode;
 	static bool m_BlockingOutputPluginIsReady;
 	string m_FilePath;
-	
+
 	// Main GUI stuff
 	void CreateGUI(int xoff=0, int yoff=0, char *name="");
-		
-	Fl_Group 		*m_MainButtons;		
+
+        Fl_Pack 	*m_Topbar, *m_ToolbarPanel, *m_Toolbar;
+        Fl_Group 	*m_ToolbarFiller, *m_GroupFiller;
 	Fl_Button       *m_Load;
 	Fl_Button       *m_Save;
 	Fl_Button       *m_New;
-	Fl_Button       *m_OpenEditor;	
+	Fl_Button       *m_OpenEditor;
 	Fl_Button       *m_Options;
-	
-	Fl_Canvas 		*m_Canvas;	
-	Fl_Scroll		*m_CanvasScroll;
-	Fl_Scroll 		*m_ToolBox;
 	Fl_Button       *m_NewComment;
-		
-	Fl_Box          *m_GroupName;
-	Fl_Button       *m_PluginGroupLeft;
-	Fl_Button       *m_PluginGroupRight;
+        Fl_Tabs         *m_GroupTab;
 
-	class ToolBox
-	{
-	public:
-		ToolBox(Fl_Scroll *parent, void* user);
-		~ToolBox() {}
-		
-		void AddIcon(Fl_Button *Icon);
-		Fl_Pack *GetToolPack() { return m_ToolPack; }
-		
-	private:
-		Fl_Pack *m_ToolPack;
-		Fl_Pack *m_IconPack;
-		int m_Icon;
-	
-	};
-	
-	map<string,ToolBox*> m_PluginGroupMap;
-	map<string,ToolBox*>::iterator m_CurrentGroup;
-	
+	Fl_Canvas 	*m_Canvas;
+	Fl_Scroll	*m_CanvasScroll;
+
+	map<string,Fl_Pack*> m_PluginGroupMap;
+
 	SettingsWindow  *m_SettingsWindow;
-	
+
 	SpiralWindowType* m_TopWindow;
-	
+
 	vector<Fl_Button*> m_DeviceVec;
-	
+
 	ChannelHandler m_CH; // used for threadsafe communication
 	bool m_PauseAudio;
-	
+
 	inline void cb_NewDevice_i(Fl_Button* o, void* v);
     static void cb_NewDevice(Fl_Button* o, void* v);
 	inline void cb_NewDeviceFromMenu_i(Fl_Canvas* o, void* v);
@@ -179,21 +160,20 @@ private:
 	static void cb_Unconnect(Fl_Canvas* o, void* v);
 	inline void cb_Close_i(Fl_Window* o, void* v);
 	static void cb_Close(Fl_Window* o, void* v);
-	inline void cb_PluginGroupLeft_i(Fl_Button* o, void* v);
-    static void cb_PluginGroupLeft(Fl_Button* o, void* v);
-	inline void cb_PluginGroupRight_i(Fl_Button* o, void* v);
-    static void cb_PluginGroupRight(Fl_Button* o, void* v);
+
+	inline void cb_GroupTab_i(Fl_Tabs* o, void* v);
+	static void cb_GroupTab(Fl_Tabs* o, void* v);
 
 	inline void cb_Rload_i(Fl_Button* o, void* v);
     static void cb_Rload(Fl_Button* o, void* v);
-	
-    static void cb_Update(void* o, bool Mode);	
-    static void cb_Blocking(void* o, bool Mode);	
+
+    static void cb_Update(void* o, bool Mode);
+    static void cb_Blocking(void* o, bool Mode);
 	static void cb_UpdatePluginInfo(int ID, void *PluginInfo);
 
-	
+
 	friend istream &operator>>(istream &s, SynthModular &o);
-	friend ostream &operator<<(ostream &s, SynthModular &o);	
+	friend ostream &operator<<(ostream &s, SynthModular &o);
 };
 
 istream &operator>>(istream &s, SynthModular &o);

@@ -48,7 +48,7 @@ int GetID()
 
 string GetGroupName()
 {
-	return "SpiralSound";
+	return "Delay/Sampling";
 }
 }
 
@@ -61,7 +61,7 @@ m_Recording(false)
 	m_PluginInfo.Width=400;
 	m_PluginInfo.Height=215;
 	m_PluginInfo.NumInputs=21;
-	m_PluginInfo.NumOutputs=9;		
+	m_PluginInfo.NumOutputs=9;
 	m_PluginInfo.PortTips.push_back("Sample 1 Pitch");	
 	m_PluginInfo.PortTips.push_back("Sample 1 Trigger");	
 	m_PluginInfo.PortTips.push_back("Sample 2 Pitch");	

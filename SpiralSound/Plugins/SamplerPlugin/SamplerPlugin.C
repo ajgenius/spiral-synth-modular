@@ -42,7 +42,7 @@ int GetID()
 
 string GetGroupName()
 {
-	return "SpiralSound";
+	return "Delay/Sampling";
 }
 }
 
@@ -54,7 +54,7 @@ SamplerPlugin::SamplerPlugin()
 	m_PluginInfo.Width=245;
 	m_PluginInfo.Height=420;
 	m_PluginInfo.NumInputs=18;
-	m_PluginInfo.NumOutputs=9;		
+	m_PluginInfo.NumOutputs=9;
 	m_PluginInfo.PortTips.push_back("Sample 1 Pitch");	
 	m_PluginInfo.PortTips.push_back("Sample 1 Trigger");	
 	m_PluginInfo.PortTips.push_back("Sample 2 Pitch");	

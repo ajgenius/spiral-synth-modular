@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 #include <math.h>
 #include "FormantFilterPlugin.h"
 #include "FormantFilterPluginGUI.h"
@@ -77,7 +77,7 @@ int GetID()
 
 string GetGroupName()
 {
-	return "SpiralSound";
+	return "Filters/FX";
 }
 }
 
@@ -91,7 +91,7 @@ m_Vowel(0)
 	m_PluginInfo.Height=110;
 	m_PluginInfo.NumInputs=2;
 	m_PluginInfo.NumOutputs=1;
-	m_PluginInfo.PortTips.push_back("Input");	
+	m_PluginInfo.PortTips.push_back("Input");
 	m_PluginInfo.PortTips.push_back("Vowel CV");	
 	m_PluginInfo.PortTips.push_back("Output");	
 	

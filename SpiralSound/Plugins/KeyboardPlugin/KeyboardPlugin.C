@@ -39,7 +39,7 @@ int GetID()
 
 string GetGroupName()
 {
-	return "SpiralSound";
+	return "InputOutput";
 }
 }
 
@@ -50,7 +50,7 @@ m_NoteLevel(0),
 m_TriggerLevel(0)
 {
 	m_Version=0;
-	
+
 	m_PluginInfo.Name="Keyboard";
 	m_PluginInfo.Width=300;
 	m_PluginInfo.Height=90;

@@ -100,7 +100,7 @@ void CounterPlugin::Execute()
 				m_Current++;
 			}
 		}
-		
+
 		if (m_Current>=m_Count)
 		{
 			m_CurrentLevel=-m_CurrentLevel;
