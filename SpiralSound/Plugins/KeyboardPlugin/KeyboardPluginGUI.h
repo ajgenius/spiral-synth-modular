@@ -14,22 +14,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-#include <FL/Fl_Group.H>
 #include <FL/Fl_Button.H>
-#include <FL/Fl_Pixmap.H>
-#include <FL/Fl_Counter.H>
-
-#include "../Widgets/Fl_Knob.H"
-#include "../Widgets/Fl_DragBar.H"
 #include "KeyboardPlugin.h"
 #include "../SpiralPluginGUI.h"
 
-#ifndef MIDIGUI
-#define MIDIGUI
+#ifndef KEYBOARD_GUI_H
+#define KEYBOARD_GUI_H
 
 const int NUM_KEYS = 132;
 
@@ -37,13 +30,13 @@ class KeyboardPluginGUI : public SpiralPluginGUI
 {
 public:
 	KeyboardPluginGUI(int w, int h, KeyboardPlugin *o,ChannelHandler *ch,const HostInfo *Info);
-	
+
 	virtual void UpdateValues(SpiralPlugin *o);
 	virtual void Update();
-		
+
 protected:
-    const string GetHelpText(const string &loc);	
-	
+    const string GetHelpText(const string &loc);
+
 private:
 	int         m_Num[NUM_KEYS];
 	Fl_Button*  m_Key[NUM_KEYS];
@@ -53,7 +46,7 @@ private:
 
 	//// Callbacks ////
 	inline void cb_Key_i(Fl_Button* o, void* v);
-	static void cb_Key(Fl_Button* o, void* v); 
+	static void cb_Key(Fl_Button* o, void* v);
 };
 
 #endif

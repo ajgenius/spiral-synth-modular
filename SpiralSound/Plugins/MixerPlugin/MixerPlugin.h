@@ -17,7 +17,7 @@
 */
 
 #include "../SpiralPlugin.h"
-#include <FL/Fl_Pixmap.H>
+//#include <FL/Fl_Pixmap.H>
 
 #ifndef MixerPLUGIN
 #define MixerPLUGIN
@@ -40,6 +40,7 @@ class MixerPlugin : public SpiralPlugin {
       struct GUIArgs {
 	     int Num;
 	     float Value;
+             bool Peak;
       };
       float GetChannel (int n) { return m_ChannelVal[n]; }
       int GetChannels (void) { return m_NumChannels; }
@@ -47,7 +48,6 @@ class MixerPlugin : public SpiralPlugin {
       void CreatePorts (int n = 4, bool AddPorts = false);
       GUIArgs m_GUIArgs;
       int m_NumChannels;
-      void SetChannel (int n, float s) { m_ChannelVal[n]=s; }
       void SetChannels (int n);
       float m_ChannelVal[MAX_CHANNELS];
 };

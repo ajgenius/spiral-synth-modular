@@ -41,7 +41,7 @@ mandir = @mandir@
 HEADERS =	../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
 		../Widgets/Fl_Knob.H \
-		../Widgets/Fl_DragBar.H \
+		../../../GUI/Widgets/SpiralGUI.H \
 		../Widgets/Fl_LED_Button.H \
                 ../GUI/WS_Square.h \
                 ../GUI/WS_Noise.h \
@@ -54,7 +54,7 @@ SOURCES =	../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
 		../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_LED_Button.cxx \
-		../Widgets/Fl_DragBar.cxx \
+		../../../GUI/Widgets/SpiralGUI.C \
 		../../Sample.C \
 		../../ChannelHandler.C \
 		OscillatorPlugin.C \
@@ -62,7 +62,7 @@ SOURCES =	../SpiralPlugin.C \
 OBJECTS =	../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
 		../Widgets/Fl_Knob.o \
-		../Widgets/Fl_DragBar.o \
+		../../../GUI/Widgets/SpiralGUI.o \
 		../Widgets/Fl_LED_Button.o \
 		../../Sample.o \
 		../../ChannelHandler.o \
@@ -133,7 +133,7 @@ install:
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
-		../Widgets/Fl_DragBar.H \
+		../../../GUI/Widgets/SpiralGUI.H \
 		../SpiralPlugin.h \
 		../../Sample.h
 
@@ -143,8 +143,8 @@ install:
 ../Widgets/Fl_LED_Button.o: ../Widgets/Fl_LED_Button.cxx \
 		../Widgets/Fl_LED_Button.H
 
-../Widgets/Fl_DragBar.o: ../Widgets/Fl_DragBar.cxx \
-		../Widgets/Fl_DragBar.H
+../../../GUI/Widgets/SpiralGUI.o: ../../../GUI/Widgets/SpiralGUI.C \
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../../Sample.o: ../../Sample.C \
 		../../Sample.h \
@@ -163,7 +163,7 @@ OscillatorPluginGUI.o: OscillatorPluginGUI.C \
 		OscillatorPluginGUI.h \
 		OscillatorPlugin.h \
 		../Widgets/Fl_Knob.H \
-		../Widgets/Fl_DragBar.H \
+		../../../GUI/Widgets/SpiralGUI.H \
 		../Widgets/Fl_LED_Button.H \
                 ../GUI/WS_Square.h \
                 ../GUI/WS_Noise.h \

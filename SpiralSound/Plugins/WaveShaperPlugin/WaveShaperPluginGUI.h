@@ -19,11 +19,8 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Widget.H>
-#include <FL/Fl_Box.H>
 #include "../Widgets/Fl_Knob.H"
-#include "../Widgets/Fl_DragBar.H"
 #include "../Widgets/Fl_LED_Button.H"
-
 #include "WaveShaperPlugin.h"
 #include "../SpiralPluginGUI.h"
 

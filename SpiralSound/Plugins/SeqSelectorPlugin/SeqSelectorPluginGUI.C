@@ -20,6 +20,7 @@
 #include "SeqSelectorPluginGUI.h"
 #include <FL/fl_draw.h>
 #include <FL/fl_draw.H>
+#include <FL/Fl_Box.H>
 
 ////////////////////////////////////////////
 

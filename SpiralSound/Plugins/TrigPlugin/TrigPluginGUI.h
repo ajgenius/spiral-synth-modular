@@ -14,17 +14,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-#include <FL/Fl_Group.H>
 #include <FL/Fl_Button.H>
-#include <FL/Fl_Button.H>
-#include <FL/Fl_Input.H>
-
-#include "../Widgets/Fl_Knob.H"
-#include "../Widgets/Fl_DragBar.H"
 #include "TrigPlugin.h"
 #include "../SpiralPluginGUI.h"
 
@@ -35,22 +28,22 @@ class TrigPluginGUI : public SpiralPluginGUI
 {
 public:
 	TrigPluginGUI(int w, int h, TrigPlugin *o,ChannelHandler *ch,const HostInfo *Info);
-	
+
 	virtual void UpdateValues(SpiralPlugin *o);
-	
+
 protected:
-    const string GetHelpText(const string &loc);	
+    const string GetHelpText(const string &loc);
 
 private:
 	Fl_Button *m_Sin,*m_Cos,*m_Tan;
-	
+
 	//// Callbacks ////
 	inline void cb_Sin_i(Fl_Button* o, void* v);
-	static void cb_Sin(Fl_Button* o, void* v); 
+	static void cb_Sin(Fl_Button* o, void* v);
 	inline void cb_Cos_i(Fl_Button* o, void* v);
-	static void cb_Cos(Fl_Button* o, void* v); 
+	static void cb_Cos(Fl_Button* o, void* v);
 	inline void cb_Tan_i(Fl_Button* o, void* v);
-	static void cb_Tan(Fl_Button* o, void* v); 
+	static void cb_Tan(Fl_Button* o, void* v);
 };
 
 #endif

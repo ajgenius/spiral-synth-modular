@@ -42,7 +42,7 @@ HEADERS =	../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
 		../../ChannelHandler.h \
 		../Widgets/Fl_Knob.H \
-		../Widgets/Fl_DragBar.H \
+		../../../GUI/Widgets/SpiralGUI.H \
 		../../Sample.h \
 		DelayPlugin.h \
 		DelayPluginGUI.h
@@ -50,7 +50,7 @@ SOURCES =	../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
 		../../ChannelHandler.C \
 		../Widgets/Fl_Knob.cxx \
-		../Widgets/Fl_DragBar.cxx \
+		../../../GUI/Widgets/SpiralGUI.C \
 		../../Sample.C \
 		DelayPlugin.C \
 		DelayPluginGUI.C
@@ -58,16 +58,16 @@ OBJECTS =	../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
 		../../ChannelHandler.o \
 		../Widgets/Fl_Knob.o \
-		../Widgets/Fl_DragBar.o \
+		../../../GUI/Widgets/SpiralGUI.o \
 		../../Sample.o \
 		DelayPlugin.o \
 		DelayPluginGUI.o
-INTERFACES =	
-UICDECLS =	
-UICIMPLS =	
-SRCMOC	=	
-OBJMOC	=	
-DIST	=	
+INTERFACES =
+UICDECLS =
+UICIMPLS =
+SRCMOC	=
+OBJMOC	=
+DIST	=
 TARGET	=	DelayPlugin.so
 
 ####### Implicit rules
@@ -94,7 +94,7 @@ TARGET	=	DelayPlugin.so
 
 all: $(TARGET)
 
-$(TARGET): $(UICDECLS) $(OBJECTS) $(OBJMOC) 
+$(TARGET): $(UICDECLS) $(OBJECTS) $(OBJMOC)
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(OBJMOC) $(LIBS)
 
 moc: $(SRCMOC)
@@ -109,7 +109,7 @@ dist:
 clean:
 	-rm -f $(OBJECTS) $(OBJMOC) $(SRCMOC) $(UICIMPLS) $(UICDECLS) $(TARGET)
 	-rm -f *~ core
-	
+
 install:
 	$(INSTALL) $(TARGET) $(libdir)/SpiralPlugins
 
@@ -127,15 +127,15 @@ install:
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
-		../Widgets/Fl_DragBar.H \
+		../../../GUI/Widgets/SpiralGUI.H \
 		../SpiralPlugin.h \
 		../../Sample.h
 
 ../Widgets/Fl_Knob.o: ../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_Knob.H
 
-../Widgets/Fl_DragBar.o: ../Widgets/Fl_DragBar.cxx \
-		../Widgets/Fl_DragBar.H
+../../../GUI/Widgets/SpiralGUI.o: ../../../GUI/Widgets/SpiralGUI.C \
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../../Sample.o: ../../Sample.C \
 		../../Sample.h \
@@ -143,25 +143,23 @@ install:
 
 DelayPlugin.o: DelayPlugin.C \
 		DelayPlugin.h \
+		DelayPluginGUI.h \
 		../SpiralPlugin.h \
+		../SpiralPluginGUI.h \
 		../../Sample.h \
 		../../SpiralInfo.h \
 		../../Sample.h \
-		DelayPluginGUI.h \
-		../SpiralPluginGUI.h \
-		../Widgets/Fl_DragBar.H \
-		../Widgets/Fl_Knob.H \
 		SpiralIcon.xpm
 
 DelayPluginGUI.o: DelayPluginGUI.C \
 		DelayPluginGUI.h \
 		DelayPlugin.h \
 		../SpiralPlugin.h \
+		../SpiralPluginGUI.h \
 		../../Sample.h \
 		../../SpiralInfo.h \
 		../../Sample.h \
-		../SpiralPluginGUI.h \
-		../Widgets/Fl_DragBar.H \
+		../../../GUI/Widgets/SpiralGUI.H \
 		../Widgets/Fl_Knob.H
 
 ../../ChannelHandler.o: ../../ChannelHandler.C \

@@ -55,6 +55,8 @@ inline void SplitSwitchPluginGUI::cb_Chans_i (Fl_Counter* o, void* v) {
   else {
     m_GUICH->Set ("Chans", int (o->value ()));
     m_GUICH->SetCommand (SplitSwitchPlugin::SETCHANS);
+    m_GUICH->Wait ();
+    needs_resize (true);
   }
 }
 

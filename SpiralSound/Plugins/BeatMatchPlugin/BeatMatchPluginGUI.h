@@ -17,14 +17,7 @@
 */ 
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-#include <FL/Fl_Group.H>
-#include <FL/Fl_Button.H>
-#include <FL/Fl_Button.H>
-#include <FL/Fl_Input.H>
-
 #include "../Widgets/Fl_Knob.H"
-#include "../Widgets/Fl_DragBar.H"
 #include "BeatMatchPlugin.h"
 #include "../SpiralPluginGUI.h"
 

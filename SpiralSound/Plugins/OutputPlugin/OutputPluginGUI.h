@@ -17,18 +17,13 @@
 */
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-#include <FL/Fl_Group.H>
 #include <FL/Fl_Button.H>
-#include <FL/Fl_Pixmap.H>
-
 #include "../Widgets/Fl_Knob.H"
-#include "../Widgets/Fl_DragBar.H"
 #include "OutputPlugin.h"
 #include "../SpiralPluginGUI.h"
 
-#ifndef SCOPEGUI
-#define SCOPEGUI
+#ifndef OUTPUT_GUI_H
+#define OUTPUT_GUI_H
 
 class OutputPluginGUI : public SpiralPluginGUI
 {
@@ -42,10 +37,7 @@ protected:
     const string GetHelpText(const string &loc);
 
 private:
-
-	Fl_Group 		*GUIMixGroup;
 	Fl_Knob 		*Volume;
-
 	Fl_Button		*OpenRead;
 	Fl_Button		*OpenWrite;
 	Fl_Button		*OpenDuplex;

@@ -17,11 +17,9 @@
 */
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-#include <FL/Fl_Group.H>
-#include <FL/Fl_Counter.H>
 #include <FL/Fl_Slider.H>
 #include <FL/Fl_Repeat_Button.H>
+#include <FL/Fl_Button.H>
 #include "StreamPlugin.h"
 #include "../SpiralPluginGUI.h"
 #include "../Widgets/Fl_SevenSeg.H"

@@ -17,14 +17,11 @@
 */ 
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-#include <FL/Fl_Group.H>
 #include <FL/Fl_Scroll.H>
 #include <FL/Fl_Slider.H>
 #include <FL/Fl_Counter.H>
 #include <FL/Fl_Output.H>
 #include <FL/Fl_Box.H>
-
 #include "MatrixPlugin.h"
 #include "../SpiralPluginGUI.h"
 #include "../Widgets/Fl_Knob.H"

@@ -17,18 +17,12 @@
 */ 
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-#include <FL/Fl_Group.H>
 #include <FL/Fl_Slider.H>
-#include <FL/Fl_Output.H>
-#include <FL/Fl_Box.H>
-
 #include "XFadePlugin.h"
 #include "../SpiralPluginGUI.h"
 
-#ifndef AmpGUI
-#define AmpGUI
-
+#ifndef XFADE_GUI_H
+#define XFADE_GUI_H
 
 class XFadePluginGUI : public SpiralPluginGUI
 {
@@ -41,8 +35,6 @@ protected:
 	virtual const string GetHelpText(const string &loc);
 	
 private:
-	
-	Fl_Group 		*GUIFilterGroup;
 	Fl_Slider 		*m_Mix;	
 	
 	//// Callbacks ////

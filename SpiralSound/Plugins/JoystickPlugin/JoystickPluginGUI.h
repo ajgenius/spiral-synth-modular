@@ -17,33 +17,28 @@
 */ 
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-#include <FL/Fl_Group.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Box.H>
-
-#include <stdio.h>
-
 #include "../Widgets/Fl_Knob.H"
-#include "../Widgets/Fl_DragBar.H"
 #include "JoystickPlugin.h"
 #include "../SpiralPluginGUI.h"
+#include <stdio.h>
 
-#ifndef SCOPEGUI
-#define SCOPEGUI
+#ifndef JOY_GUI_H
+#define JOY_GUI_H
 
 class JoystickPluginGUI : public SpiralPluginGUI
 {
 public:
 	JoystickPluginGUI(int w, int h, JoystickPlugin *o,const HostInfo *Info);
-	
+
 	virtual void draw();
 	virtual void UpdateValues();
 	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }
-	
+
 	JoystickPlugin *m_Plugin;
-		
+
 private:
 	Fl_Button *Invertx;
 	Fl_Button *Inverty;

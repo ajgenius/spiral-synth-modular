@@ -139,8 +139,8 @@ inline void MidiPluginGUI::cb_ContinuousNotes_i(Fl_Button* o, void* v)
 void MidiPluginGUI::cb_ContinuousNotes(Fl_Button* o, void* v) 
 { ((MidiPluginGUI*)(o->parent()))->cb_ContinuousNotes_i(o,v);}
 
-inline void MidiPluginGUI::cb_AddControl_i(Fl_Button* o, void* v) 
-{ 
+inline void MidiPluginGUI::cb_AddControl_i(Fl_Button* o, void* v)
+{
 	vector<string> List;
 
 	List.push_back("0   Bank Select");
@@ -250,19 +250,19 @@ inline void MidiPluginGUI::cb_AddControl_i(Fl_Button* o, void* v)
 	List.push_back("104 None");		
 	List.push_back("105 None");		
 	List.push_back("106 None");		
-	List.push_back("107 None");		
-	List.push_back("108 None");		
-	List.push_back("109 None");		
-	List.push_back("110 None");		
-	List.push_back("111 None");		
-	List.push_back("112 None");		
-	List.push_back("113 None");		
-	List.push_back("114 None");		
-	List.push_back("115 None");		
-	List.push_back("116 None");		
-	List.push_back("117 None");		
-	List.push_back("118 None");		
-	List.push_back("119 None");		
+	List.push_back("107 None");
+	List.push_back("108 None");
+	List.push_back("109 None");
+	List.push_back("110 None");
+	List.push_back("111 None");
+	List.push_back("112 None");
+	List.push_back("113 None");
+	List.push_back("114 None");
+	List.push_back("115 None");
+	List.push_back("116 None");
+	List.push_back("117 None");
+	List.push_back("118 None");
+	List.push_back("119 None");
 	List.push_back("120 All Sound Off");
 	List.push_back("121 All Controllers Off");
 	List.push_back("122 Local Keyboard (on/off)");
@@ -271,47 +271,51 @@ inline void MidiPluginGUI::cb_AddControl_i(Fl_Button* o, void* v)
 	List.push_back("125 Omni Mode On");
 	List.push_back("126 Mono Operation");
 	List.push_back("127 Poly Operation");
-		
+
 	int c=OptionsList(List)-1;
-	if (c>-1) 
+	if (c>-1)
 	{
 		m_GUICH->Set("CC",c);
 		char Temp[256];
 		sprintf(Temp,"%s",List[c].c_str());
 		m_GUICH->SetData("Name",Temp);
 		m_GUICH->SetCommand(MidiPlugin::ADDCONTROL);
-		
-		//m_Plugin->AddControl(c,List[c]); 
+                m_GUICH->Wait ();
+                needs_resize (true);
+
+		//m_Plugin->AddControl(c,List[c]);
 	}
 }
-void MidiPluginGUI::cb_AddControl(Fl_Button* o, void* v) 
+void MidiPluginGUI::cb_AddControl(Fl_Button* o, void* v)
 { ((MidiPluginGUI*)(o->parent()))->cb_AddControl_i(o,v);}
 
-inline void MidiPluginGUI::cb_RemoveControl_i(Fl_Button* o, void* v) 
+inline void MidiPluginGUI::cb_RemoveControl_i(Fl_Button* o, void* v)
 {
 	m_GUICH->SetCommand(MidiPlugin::DELCONTROL);
+        m_GUICH->Wait ();
+        needs_resize (true);
 }
-void MidiPluginGUI::cb_RemoveControl(Fl_Button* o, void* v) 
+void MidiPluginGUI::cb_RemoveControl(Fl_Button* o, void* v)
 { ((MidiPluginGUI*)(o->parent()))->cb_RemoveControl_i(o,v);}
 
 const string MidiPluginGUI::GetHelpText(const string &loc){
     return string("")
-    + "A plugin that converts midi signals into SSM's CVs. The midi plugin\n" 
-	+ "outputs a Frequency CV, which comes from the last note pressed and\n" 
-	+ "Trigger CV which lets you know the timing and the velocity of the\n" 
+    + "A plugin that converts midi signals into SSM's CVs. The midi plugin\n"
+	+ "outputs a Frequency CV, which comes from the last note pressed and\n"
+	+ "Trigger CV which lets you know the timing and the velocity of the\n"
 	+ "event.\n"
-    + "It also detects pitchbend, channel pressure and aftertouch information,\n" 
+    + "It also detects pitchbend, channel pressure and aftertouch information,\n"
 	+ "and outputs these as continuous CV data.\n\n"
-    + "You can select the Midi device used with the selector. Devices 0-16 are\n" 
-	+ "valid Midi channels. You can run multiple Midi plugins simultaneously\n" 
-	+ "to get data from different device numbers to make an externally\n" 
+    + "You can select the Midi device used with the selector. Devices 0-16 are\n"
+	+ "valid Midi channels. You can run multiple Midi plugins simultaneously\n"
+	+ "to get data from different device numbers to make an externally\n"
 	+ "controlled song.\n\n"
-    + "The note frequency CV can optionally be switched into \"Note Cut\" mode,\n" 
-	+ "where the frequecy is set to zero when the key is released. This is\n" 
-	+ "useful for a number of things, including retriggering samples from\n" 
+    + "The note frequency CV can optionally be switched into \"Note Cut\" mode,\n"
+	+ "where the frequecy is set to zero when the key is released. This is\n"
+	+ "useful for a number of things, including retriggering samples from\n"
 	+ "frequency information (see sampler).\n"
-	+ "Extra ports can be added to handle the 128 controller messages. Click\n" 
-	+ "add control, and you will get a menu window to pick the controller you\n" 
+	+ "Extra ports can be added to handle the 128 controller messages. Click\n"
+	+ "add control, and you will get a menu window to pick the controller you\n"
 	+ "need.\n"
 	+ "The MidiPlugin also supports midi note output to external devices";
 }

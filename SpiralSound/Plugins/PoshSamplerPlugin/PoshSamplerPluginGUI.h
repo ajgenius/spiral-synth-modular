@@ -14,19 +14,17 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-#include <FL/Fl_Group.H>
+#include <FL/Fl_Button.H>
 #include <FL/Fl_Counter.H>
-
 #include "PoshSamplerPlugin.h"
 #include "../SpiralPluginGUI.h"
 #include "../Widgets/Fl_Knob.H"
 
-#ifndef MixerGUI
-#define MixerGUI
+#ifndef POSH_SAMP_GUI_H
+#define POSH_SAMP_GUI_H
 
 class Fl_WaveDisplay : public Fl_Widget
 {
@@ -65,7 +63,7 @@ class Fl_WaveDisplay : public Fl_Widget
 		long m_ViewStart;
 		long m_ViewEnd;
 		long m_PlayPos;
-		
+
 		long m_PlayStart;
 		long m_LoopStart;
 		long m_LoopEnd;
@@ -77,16 +75,16 @@ class PoshSamplerPluginGUI : public SpiralPluginGUI
 {
 public:
 	PoshSamplerPluginGUI(int w, int h, PoshSamplerPlugin *o,ChannelHandler *ch, const HostInfo *Info);
-	
+
 	virtual void UpdateValues(SpiralPlugin *o);
 	virtual void Update();
-	
+
 	void SetPlayPos(long s) { m_Display->SetPlayPos(s); }
 	int  GetCurrentSample() { return (int)m_SampleNum->value(); }
-	
+
 protected:
-    const string GetHelpText(const string &loc);	
-	
+    const string GetHelpText(const string &loc);
+
 private:
 
 	void UpdateSampleDisplay(int num);
@@ -94,7 +92,7 @@ private:
 	char m_TextBuf[256];
 	int Numbers[NUM_SAMPLES];
 	bool m_UpdateMe;
-	
+
 	Fl_Button* m_Load;
 	Fl_Button* m_Save;
 	Fl_Button* m_PosMarker;
@@ -109,7 +107,7 @@ private:
 	Fl_Counter* m_SampleNum;
 	Fl_Button*  m_ZoomIn;
 	Fl_Button*  m_ZoomOut;
-	
+
 	Fl_Button* m_Cut;
 	Fl_Button* m_Copy;
 	Fl_Button* m_Paste;
@@ -117,28 +115,28 @@ private:
 	Fl_Button* m_Crop;
 	Fl_Button* m_Reverse;
 	Fl_Button* m_Amp;
-	
+
 	//// Callbacks ////
 	inline void cb_Load_i(Fl_Button* o, void* v);
-	static void cb_Load(Fl_Button* o, void* v); 
+	static void cb_Load(Fl_Button* o, void* v);
 	inline void cb_Save_i(Fl_Button* o, void* v);
-	static void cb_Save(Fl_Button* o, void* v); 
+	static void cb_Save(Fl_Button* o, void* v);
 	inline void cb_PosMarker_i(Fl_Button* o, void* v);
-	static void cb_PosMarker(Fl_Button* o, void* v); 
+	static void cb_PosMarker(Fl_Button* o, void* v);
 	inline void cb_Record_i(Fl_Button* o, void* v);
-	static void cb_Record(Fl_Button* o, void* v); 
+	static void cb_Record(Fl_Button* o, void* v);
 	inline void cb_Volume_i(Fl_Knob* o, void* v);
-	static void cb_Volume(Fl_Knob* o, void* v); 
+	static void cb_Volume(Fl_Knob* o, void* v);
 	inline void cb_Pitch_i(Fl_Knob* o, void* v);
-	static void cb_Pitch(Fl_Knob* o, void* v); 
+	static void cb_Pitch(Fl_Knob* o, void* v);
 	inline void cb_Octave_i(Fl_Knob* o, void* v);
-	static void cb_Octave(Fl_Knob* o, void* v); 
+	static void cb_Octave(Fl_Knob* o, void* v);
 	inline void cb_Loop_i(Fl_Button* o, void* v);
-	static void cb_Loop(Fl_Button* o, void* v); 
+	static void cb_Loop(Fl_Button* o, void* v);
 	inline void cb_PingPong_i(Fl_Button* o, void* v);
-	static void cb_PingPong(Fl_Button* o, void* v); 
+	static void cb_PingPong(Fl_Button* o, void* v);
 	inline void cb_Note_i(Fl_Counter* o, void* v);
-	static void cb_Note(Fl_Counter* o, void* v); 
+	static void cb_Note(Fl_Counter* o, void* v);
 	inline void cb_SampleNum_i(Fl_Counter* o, void* v);
 	static void cb_SampleNum(Fl_Counter* o, void* v); 
 

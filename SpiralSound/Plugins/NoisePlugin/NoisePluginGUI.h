@@ -16,8 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <FL/Fl_Box.H>
-
+#include <FL/Fl.H>
 #include "../SpiralPluginGUI.h"
 #include "../Widgets/Fl_LED_Button.H"
 #include "NoisePlugin.h"

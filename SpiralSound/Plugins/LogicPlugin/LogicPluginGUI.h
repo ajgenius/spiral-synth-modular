@@ -17,11 +17,8 @@
 */
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-#include <FL/Fl_Group.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Counter.H>
-#include "../Widgets/Fl_DragBar.H"
 #include "LogicPlugin.h"
 #include "../SpiralPluginGUI.h"
 

@@ -18,21 +18,16 @@
 
 #include "list"
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-#include <FL/Fl_Group.H>
-#include <FL/Fl_Slider.H>
 #include <FL/Fl_Counter.H>
 #include <FL/Fl_Scroll.H>
 #include <FL/Fl_Button.H>
-#include <FL/Fl_Box.H>
 #include <FL/Fl_Pack.H>
 #include "../Widgets/Fl_LED_Button.H"
-
 #include "SeqSelectorPlugin.h"
 #include "../SpiralPluginGUI.h"
 
-#ifndef MixerGUI
-#define MixerGUI
+#ifndef SEQ_SEL_GUI_H
+#define SEQ_SEL_GUI_H
 
 class CountLine : public Fl_Group
 {

@@ -115,9 +115,6 @@ private:
 	static map<int,DeviceWin*> m_DeviceWinMap;
 
         int m_NextID;
-//	int m_NextPluginButton;
-//	int m_NextPluginButtonXPos;
-//	int m_NextPluginButtonYPos;
 
 	static bool m_CallbackUpdateMode;
 	static bool m_BlockingOutputPluginIsReady;

@@ -42,7 +42,7 @@ HEADERS =	../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
 		../../ChannelHandler.h \
 		../Widgets/Fl_Knob.H \
-		../Widgets/Fl_DragBar.H \
+		../../../GUI/Widgets/SpiralGUI.H \
 		../../Sample.h \
 		../../RiffWav.h \
 		PoshSamplerPlugin.h \
@@ -51,7 +51,7 @@ SOURCES =	../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
 		../../ChannelHandler.C \
 		../Widgets/Fl_Knob.cxx \
-		../Widgets/Fl_DragBar.cxx \
+		../../../GUI/Widgets/SpiralGUI.C \
 		../../Sample.C \
 		../../RiffWav.C \
 		PoshSamplerPlugin.C \
@@ -60,7 +60,7 @@ OBJECTS =	../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
 		../../ChannelHandler.o \
 		../Widgets/Fl_Knob.o \
-		../Widgets/Fl_DragBar.o \
+		../../../GUI/Widgets/SpiralGUI.o \
 		../../Sample.o \
 		../../RiffWav.o \
 		PoshSamplerPlugin.o \
@@ -130,15 +130,15 @@ install:
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
-		../Widgets/Fl_DragBar.H \
+		../../../GUI/Widgets/SpiralGUI.H \
 		../SpiralPlugin.h \
 		../../Sample.h
 
 ../Widgets/Fl_Knob.o: ../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_Knob.H
 
-../Widgets/Fl_DragBar.o: ../Widgets/Fl_DragBar.cxx \
-		../Widgets/Fl_DragBar.H
+../../../GUI/Widgets/SpiralGUI.o: ../../../GUI/Widgets/SpiralGUI.C \
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../../Sample.o: ../../Sample.C \
 		../../Sample.h \
@@ -151,13 +151,11 @@ install:
 
 PoshSamplerPlugin.o: PoshSamplerPlugin.C \
 		PoshSamplerPlugin.h \
+		PoshSamplerPluginGUI.h \
+		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
 		../../SpiralInfo.h \
 		../../Sample.h \
-		PoshSamplerPluginGUI.h \
-		../SpiralPluginGUI.h \
-		../Widgets/Fl_DragBar.H \
-		../Widgets/Fl_Knob.H \
 		SpiralIcon.xpm \
 		../../RiffWav.h \
 		../../NoteTable.h
@@ -166,10 +164,10 @@ PoshSamplerPluginGUI.o: PoshSamplerPluginGUI.C \
 		PoshSamplerPluginGUI.h \
 		PoshSamplerPlugin.h \
 		../SpiralPlugin.h \
+		../SpiralPluginGUI.h \
 		../../SpiralInfo.h \
 		../../Sample.h \
-		../SpiralPluginGUI.h \
-		../Widgets/Fl_DragBar.H \
+		../../../GUI/Widgets/SpiralGUI.H \
 		../Widgets/Fl_Knob.H
 
 ../../ChannelHandler.o: ../../ChannelHandler.C \

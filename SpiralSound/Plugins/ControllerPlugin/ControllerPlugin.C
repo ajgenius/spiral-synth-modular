@@ -51,7 +51,7 @@ m_Num(4)
 {
 	m_Version=5;
 
-	m_PluginInfo.Name="CV Control";
+	m_PluginInfo.Name="CV";
 	m_PluginInfo.Width=240;
 	m_PluginInfo.Height=224;
 	m_PluginInfo.NumInputs=0;

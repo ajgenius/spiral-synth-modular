@@ -41,24 +41,21 @@ mandir = @mandir@
 HEADERS =	../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
 		../../ChannelHandler.h \
-		../Widgets/Fl_Knob.H \
-		../Widgets/Fl_DragBar.H \
+		../../../GUI/Widgets/SpiralGUI.H \
 		../../Sample.h \
 		XFadePlugin.h \
 		XFadePluginGUI.h
 SOURCES =	../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
 		../../ChannelHandler.C \
-		../Widgets/Fl_Knob.cxx \
-		../Widgets/Fl_DragBar.cxx \
+		../../../GUI/Widgets/SpiralGUI.C \
 		../../Sample.C \
 		XFadePlugin.C \
 		XFadePluginGUI.C
 OBJECTS =	../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
 		../../ChannelHandler.o \
-		../Widgets/Fl_Knob.o \
-		../Widgets/Fl_DragBar.o \
+		../../../GUI/Widgets/SpiralGUI.o \
 		../../Sample.o \
 		XFadePlugin.o \
 		XFadePluginGUI.o
@@ -126,15 +123,12 @@ install:
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
-		../Widgets/Fl_DragBar.H \
+		../../../GUI/Widgets/SpiralGUI.H \
 		../SpiralPlugin.h \
 		../../Sample.h
 
-../Widgets/Fl_Knob.o: ../Widgets/Fl_Knob.cxx \
-		../Widgets/Fl_Knob.H
-
-../Widgets/Fl_DragBar.o: ../Widgets/Fl_DragBar.cxx \
-		../Widgets/Fl_DragBar.H
+../../../GUI/Widgets/SpiralGUI.o: ../../../GUI/Widgets/SpiralGUI.C \
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../../Sample.o: ../../Sample.C \
 		../../Sample.h \
@@ -142,22 +136,21 @@ install:
 
 XFadePlugin.o: XFadePlugin.C \
 		XFadePlugin.h \
+		XFadePluginGUI.h \
+		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
 		../../SpiralInfo.h \
 		../../Sample.h \
-		XFadePluginGUI.h \
-		../SpiralPluginGUI.h \
-		../Widgets/Fl_DragBar.H \
 		SpiralIcon.xpm
 
 XFadePluginGUI.o: XFadePluginGUI.C \
 		XFadePluginGUI.h \
 		XFadePlugin.h \
 		../SpiralPlugin.h \
+		../SpiralPluginGUI.h \
 		../../SpiralInfo.h \
 		../../Sample.h \
-		../SpiralPluginGUI.h \
-		../Widgets/Fl_DragBar.H
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../../ChannelHandler.o: ../../ChannelHandler.C \
 		../../ChannelHandler.h

@@ -16,32 +16,32 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-#include <FL/Fl_Group.H>
-#include <FL/Fl_Pack.H>
-#include <FL/Fl_Slider.H>
-
-#include "MixerPlugin.h"
-#include "../SpiralPluginGUI.h"
-
 #ifndef MixerGUI
 #define MixerGUI
+
+#include <FL/Fl.H>
+#include <FL/Fl_Pack.H>
+#include <FL/Fl_Slider.H>
+#include "../Widgets/Fl_LED_Button.H"
+#include "MixerPlugin.h"
+#include "../SpiralPluginGUI.h"
 
 static int Numbers[MAX_CHANNELS];
 
 class MixerPluginGUI : public SpiralPluginGUI {
    public:
-      MixerPluginGUI(int w, int h, MixerPlugin *o,ChannelHandler *ch,const HostInfo *Info);
+      MixerPluginGUI (int w, int h, MixerPlugin *o, ChannelHandler *ch, const HostInfo *Info);
       virtual void UpdateValues(SpiralPlugin *o);
+      virtual void Update ();
    protected:
       const string GetHelpText(const string &loc);
    private:
       void AddChan (bool SendData = false, bool ResizeIt = false);
-      void DeleteChan (bool SendData = true, bool DrawIt = true);
+      void DeleteChan (bool SendData = true);
       vector<Fl_Slider*> m_SlidVec;
       Fl_Pack *m_MainPack, *m_Buttons;
       Fl_Button *m_Add, *m_Delete;
+      Fl_LED_Button *m_PeakInd;
       Fl_Color m_GUIColour;
       //// Callbacks ////
       inline void cb_Chan_i (Fl_Slider* o, void* v);

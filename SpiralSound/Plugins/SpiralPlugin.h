@@ -16,6 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#ifndef SPIRALPLUGIN
+#define SPIRALPLUGIN
+
 #include <vector>
 #include <map>
 #include <string>
@@ -25,11 +28,7 @@
 #include <FL/Fl_Group.h>
 #include "../Sample.h"
 #include "../ChannelHandler.h"
-
-#ifndef SPIRALPLUGIN
-#define SPIRALPLUGIN
-
-#define SpiralGUIType Fl_Group
+#include "../../GUI/Widgets/SpiralGUI.H"
 
 static const float MAX_FREQ = 13000;
 
@@ -73,16 +72,16 @@ class SpiralPlugin
 public:
 	SpiralPlugin();
 	virtual ~SpiralPlugin();
-		
+
 	virtual PluginInfo& Initialise(const HostInfo *Host);
-	
+
 	// execute the audio
 	virtual void        Execute()=0;
 	// run the commands from the GUI
 	virtual void        ExecuteCommands() {}
 	// create the GUI, do not store the pointer - it wont be threadsafe to use it
 	virtual SpiralGUIType*  CreateGUI()=0;
-	
+
 	// stream the plugins state
 	virtual void	    StreamOut(ostream &s)=0;
 	virtual void	    StreamIn(istream &s)=0;

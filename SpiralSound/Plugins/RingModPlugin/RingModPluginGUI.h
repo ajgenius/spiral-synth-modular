@@ -17,10 +17,6 @@
 */ 
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-#include <FL/Fl_Group.H>
-#include <FL/Fl_Slider.H>
-
 #include "RingModPlugin.h"
 #include "../SpiralPluginGUI.h"
 #include "../Widgets/Fl_Knob.H"
@@ -33,18 +29,16 @@ class RingModPluginGUI : public SpiralPluginGUI
 {
 public:
 	RingModPluginGUI(int w, int h, RingModPlugin *o,ChannelHandler *ch,const HostInfo *Info);
-	
+
 	virtual void UpdateValues(SpiralPlugin *o);
-	
+
 protected:
-    const string GetHelpText(const string &loc);	
+    const string GetHelpText(const string &loc);
 
 private:
-	
-	Fl_Group 		*GUIFilterGroup;
 	Fl_Knob 		*m_Amount;
-	
-	//// Callbacks ////	
+
+	//// Callbacks ////
 	inline void cb_Amount_i(Fl_Knob* o, void* v);
     static void cb_Amount(Fl_Knob*, void*);
 };

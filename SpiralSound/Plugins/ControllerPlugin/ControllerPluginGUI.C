@@ -146,8 +146,7 @@ void ControllerPluginGUI::UpdateValues(SpiralPlugin *o)
 	Clear();
 
 	c=Plugin->GetNum();
-	for (int n=0; n<c; n++)
-	{
+	for (int n=0; n<c; n++) {
 		AddCV();
 		m_GUIVec[n]->m_Title->value(Plugin->GetName(n).c_str());
 
@@ -158,12 +157,12 @@ void ControllerPluginGUI::UpdateValues(SpiralPlugin *o)
 		sprintf(temp,"%.6f",max);
 		m_GUIVec[n]->m_Max->value(temp);
 
-	// Scale and invert value to match slider range (0->1)
+	        // Scale and invert value to match slider range (0->1)
 		float val = 1.0f - (Plugin->GetVal(n) - min) / (max - min);
 		m_GUIVec[n]->m_Chan->value(val);
 	}
 
-	resize(x(),y(),c*60,h());
+	resize(x(), y(), c*60, h());
 }
 
 inline void ControllerPluginGUI::cb_Title_i(Fl_Input* o, void* v)
@@ -248,13 +247,9 @@ inline void ControllerPluginGUI::cb_Min_i(Fl_Input* o, void* v)
 void ControllerPluginGUI::cb_Min(Fl_Input* o, void* v)
 { ((ControllerPluginGUI*)(o->parent()->user_data()))->cb_Min_i(o,v);}
 
-inline void ControllerPluginGUI::cb_Add_i(Fl_Button* o, void* v)
-{
-        if (m_CVCount<MAX_CHANNELS)
-	{
+inline void ControllerPluginGUI::cb_Add_i(Fl_Button* o, void* v) {
+        if (m_CVCount<MAX_CHANNELS) {
 		AddCV();
-		resize(x(),y(),w()+60,h());
-		redraw();
 		int num   = (int)m_GUIVec.size();
 		float min = atof(m_GUIVec[num - 1]->m_Min->value());
 		float max = atof(m_GUIVec[num - 1]->m_Max->value());
@@ -271,21 +266,20 @@ inline void ControllerPluginGUI::cb_Add_i(Fl_Button* o, void* v)
 		m_GUICH->Set("Value",val);
 		m_GUICH->Set("Min",min);
 		m_GUICH->SetCommand(ControllerPlugin::SETALL);
+		m_GUICH->Wait();
+                resize(x(),y(),w()+60,h());
 	}
 }
 void ControllerPluginGUI::cb_Add(Fl_Button* o, void* v)
 { ((ControllerPluginGUI*)(o->parent()->parent()))->cb_Add_i(o,v);}
 
-inline void ControllerPluginGUI::cb_Delete_i(Fl_Button* o, void* v)
-{
-	if (m_GUIVec.size()>1)
-	{
+inline void ControllerPluginGUI::cb_Delete_i(Fl_Button* o, void* v) {
+	if (m_GUIVec.size()>1) 	{
 		DeleteCV();
-		resize(x(),y(),w()-60,h());
-		redraw();
-
 		m_GUICH->Set("Number",(int)m_GUIVec.size());
 		m_GUICH->SetCommand(ControllerPlugin::SETNUM);
+		m_GUICH->Wait();
+		resize(x(),y(),w()-60,h());
 	}
 }
 void ControllerPluginGUI::cb_Delete(Fl_Button* o, void* v)
@@ -359,7 +353,7 @@ void ControllerPluginGUI::StreamOut(ostream &s)
 		s<<(*i)->m_Title->value()<<" ";
 		s<<(*i)->m_Min->value()<<" ";
 		s<<(*i)->m_Max->value()<<" ";
-		s<<(*i)->m_Chan->value()<<endl;		
+		s<<(*i)->m_Chan->value()<<endl;
 	}
 }
 

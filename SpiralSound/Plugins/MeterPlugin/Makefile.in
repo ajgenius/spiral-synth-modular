@@ -41,7 +41,7 @@ mandir = @mandir@
 HEADERS =	../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
 		../../ChannelHandler.h \
-		../Widgets/Fl_DragBar.H \
+		../../../GUI/Widgets/SpiralGUI.H \
 		../Widgets/Fl_SevenSeg.H \
 		../Widgets/Fl_VU_Meter.h \
 		../../Sample.h \
@@ -50,7 +50,7 @@ HEADERS =	../SpiralPlugin.h \
 SOURCES =	../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
 		../../ChannelHandler.C \
-		../Widgets/Fl_DragBar.cxx \
+		../../../GUI/Widgets/SpiralGUI.C \
 		../Widgets/Fl_SevenSeg.cxx \
 		../Widgets/Fl_VU_Meter.cxx \
 		../../Sample.C \
@@ -59,7 +59,7 @@ SOURCES =	../SpiralPlugin.C \
 OBJECTS =	../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
 		../../ChannelHandler.o \
-		../Widgets/Fl_DragBar.o \
+		../../../GUI/Widgets/SpiralGUI.o \
 		../Widgets/Fl_SevenSeg.o \
 		../Widgets/Fl_VU_Meter.o \
 		../../Sample.o \
@@ -130,12 +130,12 @@ install:
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
-		../Widgets/Fl_DragBar.H \
+		../../../GUI/Widgets/SpiralGUI.H \
 		../SpiralPlugin.h \
 		../../Sample.h
 
-../Widgets/Fl_DragBar.o: ../Widgets/Fl_DragBar.cxx \
-		../Widgets/Fl_DragBar.H
+../../../GUI/Widgets/SpiralGUI.o: ../../../GUI/Widgets/SpiralGUI.C \
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../Widgets/Fl_VU_Meter.o: ../Widgets/Fl_VU_Meter.cxx \
 		../Widgets/Fl_VU_Meter.h
@@ -149,28 +149,23 @@ install:
 
 MeterPlugin.o: MeterPlugin.C \
 		MeterPlugin.h \
+		MeterPluginGUI.h \
+                ../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../Sample.h \
 		../../SpiralInfo.h \
 		../../Sample.h \
-		MeterPluginGUI.h \
-		../Widgets/Fl_DragBar.H \
-		../Widgets/Fl_VU_Meter.h \
-		../Widgets/Fl_SevenSeg.H \
-                ../SpiralPluginGUI.h \
 		SpiralIcon.xpm
 
 MeterPluginGUI.o: MeterPluginGUI.C \
 		MeterPluginGUI.h \
-		../Widgets/Fl_DragBar.H \
+		MeterPlugin.h \
+		../SpiralPluginGUI.h \
+		../SpiralPlugin.h \
+		../../../GUI/Widgets/SpiralGUI.H \
 		../Widgets/Fl_VU_Meter.h \
 		../Widgets/Fl_SevenSeg.H \
-		MeterPlugin.h \
-		../SpiralPlugin.h \
-		../../Sample.h \
 		../../SpiralInfo.h \
-		../../Sample.h \
-		../SpiralPluginGUI.h
+		../../Sample.h
 
 ../../ChannelHandler.o: ../../ChannelHandler.C \
 		../../ChannelHandler.h

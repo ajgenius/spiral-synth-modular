@@ -30,22 +30,22 @@ SpiralPluginGUI* SpiralPluginGUI::Help_owner=NULL;
 
 SpiralPluginGUI::SpiralPluginGUI(int w, int h, SpiralPlugin* o, ChannelHandler *ch) :
 SpiralGUIType(0,0,w,h,"")
-{	
+{
 	Fl::visible_focus(false);
-	
+
 	m_GUICH = ch;
 	box(FL_NO_BOX);
-	
+
 	m_Hide = new Fl_Button(2,2,10,10,"X");
 	m_Hide->labeltype(FL_ENGRAVED_LABEL);
-	m_Hide->labelsize(10);	
+	m_Hide->labelsize(10);
 	m_Hide->box(FL_NO_BOX);
 	m_Hide->callback((Fl_Callback*)cb_Hide);
 	add(m_Hide);
-	
+
   	m_Help = new Fl_Button(w-11,2,10,10,"?");
 	m_Help->labeltype(FL_ENGRAVED_LABEL);
-	m_Help->labelsize(10);	
+	m_Help->labelsize(10);
 	m_Help->box(FL_NO_BOX);
 	m_Help->down_box(FL_NO_BOX);
 	m_Help->callback((Fl_Callback*)cb_Help);
@@ -56,6 +56,11 @@ SpiralPluginGUI::~SpiralPluginGUI()
 {
 	// Needed to properly remove the window.
 	Fl::check();
+}
+
+void SpiralPluginGUI::resize (int x, int y, int w, int h) {
+     if (w != this->w() || h != this->h()) needs_resize (true);
+     SpiralGUIType::resize (x, y, w, h);
 }
 
 void SpiralPluginGUI::Update()
@@ -69,22 +74,22 @@ const string SpiralPluginGUI::GetHelpText(const string &loc)
 
 //// Callbacks ////
 
-inline void SpiralPluginGUI::cb_Hide_i(Fl_Button* o, void* v) 
+inline void SpiralPluginGUI::cb_Hide_i(Fl_Button* o, void* v)
 { hide(); }
-void SpiralPluginGUI::cb_Hide(Fl_Button* o, void* v) 
+void SpiralPluginGUI::cb_Hide(Fl_Button* o, void* v)
 { ((SpiralPluginGUI*)(o->parent()))->cb_Hide_i(o,v); }
 
-// Boo - changed to use one 'global' help win. for all plugins, coz Fl_Text_Display 
+// Boo - changed to use one 'global' help win. for all plugins, coz Fl_Text_Display
 // seems to be too buggy to create and destroy it multiple times.
 // (symptom was - ssm crashes after opening/closing plugin help window 4-7 times)
 // (i use FLTK 1.1.0 rc7)
-inline void SpiralPluginGUI::cb_Help_i(Fl_Button* o, void* v) 
-{ 
+inline void SpiralPluginGUI::cb_Help_i(Fl_Button* o, void* v)
+{
 	//Boo - create 'global' help window
 	if (m_HelpWin==NULL)
 	{
 		int h_w=450,h_h=200;
-		
+
 		m_HelpWin = new Fl_Double_Window(h_w,h_h,"Help");
 
 		m_HelpWin_text = new Fl_Text_Display(0,0,h_w,h_h);

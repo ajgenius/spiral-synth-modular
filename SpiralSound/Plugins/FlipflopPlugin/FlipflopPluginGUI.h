@@ -14,17 +14,11 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-#include <FL/Fl_Group.H>
 #include <FL/Fl_Button.H>
-#include <FL/Fl_Button.H>
-#include <FL/Fl_Input.H>
-
 #include "../Widgets/Fl_Knob.H"
-#include "../Widgets/Fl_DragBar.H"
 #include "FlipflopPlugin.h"
 #include "../SpiralPluginGUI.h"
 
@@ -35,16 +29,16 @@ class FlipflopPluginGUI : public SpiralPluginGUI
 {
 public:
 	FlipflopPluginGUI(int w, int h, FlipflopPlugin *o,ChannelHandler *ch,const HostInfo *Info);
-	
+
 	virtual void UpdateValues(SpiralPlugin *o);
-	
+
 protected:
-    const string GetHelpText(const string &loc);	
+    const string GetHelpText(const string &loc);
 
 private:
 	Fl_Knob *m_TriggerTime;
 	Fl_Button *m_Monostable;
-	
+
 	//// Callbacks ////
 	inline void cb_TriggerTime_i(Fl_Knob* o, void*);
   	static void cb_TriggerTime(Fl_Knob* o, void*);

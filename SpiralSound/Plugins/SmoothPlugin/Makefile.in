@@ -42,7 +42,7 @@ HEADERS =	../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
 		../../ChannelHandler.h \
 		../Widgets/Fl_Knob.H \
-		../Widgets/Fl_DragBar.H \
+		../../../GUI/Widgets/SpiralGUI.H \
 		../../Sample.h \
 		SmoothPlugin.h \
 		SmoothPluginGUI.h
@@ -50,7 +50,7 @@ SOURCES =	../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
 		../../ChannelHandler.C \
 		../Widgets/Fl_Knob.cxx \
-		../Widgets/Fl_DragBar.cxx \
+		../../../GUI/Widgets/SpiralGUI.C \
 		../../Sample.C \
 		SmoothPlugin.C \
 		SmoothPluginGUI.C
@@ -58,15 +58,15 @@ OBJECTS =	../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
 		../../ChannelHandler.o \
 		../Widgets/Fl_Knob.o \
-		../Widgets/Fl_DragBar.o \
+		../../../GUI/Widgets/SpiralGUI.o \
 		../../Sample.o \
 		SmoothPlugin.o \
 		SmoothPluginGUI.o
-INTERFACES =	
-UICDECLS =	
-UICIMPLS =	
-SRCMOC	=	
-OBJMOC	=	
+INTERFACES =
+UICDECLS =
+UICIMPLS =
+SRCMOC	=
+OBJMOC	=
 DIST	=
 TARGET	=	SmoothPlugin.so
 
@@ -127,15 +127,15 @@ install:
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
-		../Widgets/Fl_DragBar.H \
+		../../../GUI/Widgets/SpiralGUI.H \
 		../SpiralPlugin.h \
 		../../Sample.h
 
 ../Widgets/Fl_Knob.o: ../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_Knob.H
 
-../Widgets/Fl_DragBar.o: ../Widgets/Fl_DragBar.cxx \
-		../Widgets/Fl_DragBar.H
+../../../GUI/Widgets/SpiralGUI.o: ../../../GUI/Widgets/SpiralGUI.C \
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../../Sample.o: ../../Sample.C \
 		../../Sample.h \
@@ -143,26 +143,22 @@ install:
 
 SmoothPlugin.o: SmoothPlugin.C \
 		SmoothPlugin.h \
+		SmoothPluginGUI.h \
+		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../Sample.h \
 		../../SpiralInfo.h \
 		../../Sample.h \
-		SmoothPluginGUI.h \
-		../Widgets/Fl_Knob.H \
-		../Widgets/Fl_DragBar.H \
-		../SpiralPluginGUI.h \
 		SpiralIcon.xpm
 
 SmoothPluginGUI.o: SmoothPluginGUI.C \
 		SmoothPluginGUI.h \
-		../Widgets/Fl_Knob.H \
-		../Widgets/Fl_DragBar.H \
 		SmoothPlugin.h \
+		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
 		../../Sample.h \
 		../../SpiralInfo.h \
-		../../Sample.h \
-		../SpiralPluginGUI.h
+		../Widgets/Fl_Knob.H \
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../../ChannelHandler.o: ../../ChannelHandler.C \
 		../../ChannelHandler.h

@@ -17,14 +17,12 @@
 */
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Pack.H>
 #include <FL/Fl_Int_Input.H>
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Slider.H>
-
 #include "ControllerPlugin.h"
 #include "../SpiralPluginGUI.h"
 

@@ -17,40 +17,34 @@
 */ 
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-#include <FL/Fl_Group.H>
 #include <FL/Fl_Slider.H>
-
 #include "MoogFilterPlugin.h"
 #include "../SpiralPluginGUI.h"
 #include "../Widgets/Fl_Knob.H"
 
-#ifndef SVFilterGUI
-#define SVFilterGUI
-
+#ifndef MoogFilterGUI
+#define MoogFilterGUI
 
 class MoogFilterPluginGUI : public SpiralPluginGUI
 {
 public:
 	MoogFilterPluginGUI(int w, int h, MoogFilterPlugin *o,ChannelHandler *ch,const HostInfo *Info);
-	
+
 	virtual void UpdateValues(SpiralPlugin *o);
-	
+
 protected:
-    const string GetHelpText(const string &loc);	
-		
+    const string GetHelpText(const string &loc);
+
 private:
-	
-	Fl_Group 		*GUIFilterGroup;
 	Fl_Slider 		*Cutoff;
 	Fl_Knob 		*Resonance;
-	
+
 	//// Callbacks ////
-	
+
 	inline void cb_Cutoff_i(Fl_Slider* o, void* v);
     static void cb_Cutoff(Fl_Slider*, void*);
 	inline void cb_Resonance_i(Fl_Knob* o, void* v);
-	static void cb_Resonance(Fl_Knob* o, void* v); 
+	static void cb_Resonance(Fl_Knob* o, void* v);
 };
 
 #endif

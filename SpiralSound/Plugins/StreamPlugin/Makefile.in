@@ -42,7 +42,7 @@ HEADERS =	../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
 		../../ChannelHandler.h \
 		../Widgets/Fl_Knob.H \
-		../Widgets/Fl_DragBar.H \
+		../../../GUI/Widgets/SpiralGUI.H \
 		../Widgets/Fl_SevenSeg.H \
 		../../Sample.h \
 		../../RiffWav.h \
@@ -52,7 +52,7 @@ SOURCES =	../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
 		../../ChannelHandler.C \
 		../Widgets/Fl_Knob.cxx \
-		../Widgets/Fl_DragBar.cxx \
+		../../../GUI/Widgets/SpiralGUI.C \
 		../Widgets/Fl_SevenSeg.cxx \
 		../../Sample.C \
 		../../RiffWav.C \
@@ -62,18 +62,18 @@ OBJECTS =	../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
 		../../ChannelHandler.o \
 		../Widgets/Fl_Knob.o \
-		../Widgets/Fl_DragBar.o \
+		../../../GUI/Widgets/SpiralGUI.o \
 		../Widgets/Fl_SevenSeg.o \
 		../../Sample.o \
 		../../RiffWav.o \
 		StreamPlugin.o \
 		StreamPluginGUI.o
-INTERFACES =	
-UICDECLS =	
-UICIMPLS =	
-SRCMOC	=	
-OBJMOC	=	
-DIST	=	
+INTERFACES =
+UICDECLS =
+UICIMPLS =
+SRCMOC	=
+OBJMOC	=
+DIST	=
 TARGET	=	StreamPlugin.so
 
 ####### Implicit rules
@@ -99,7 +99,7 @@ TARGET	=	StreamPlugin.so
 
 all: $(TARGET)
 
-$(TARGET): $(UICDECLS) $(OBJECTS) $(OBJMOC) 
+$(TARGET): $(UICDECLS) $(OBJECTS) $(OBJMOC)
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(OBJMOC) $(LIBS)
 
 moc: $(SRCMOC)
@@ -132,15 +132,15 @@ install:
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
-		../Widgets/Fl_DragBar.H \
+		../../../GUI/Widgets/SpiralGUI.H \
 		../SpiralPlugin.h \
 		../../Sample.h
 
 ../Widgets/Fl_Knob.o: ../Widgets/Fl_Knob.cxx \
 		../Widgets/Fl_Knob.H
 
-../Widgets/Fl_DragBar.o: ../Widgets/Fl_DragBar.cxx \
-		../Widgets/Fl_DragBar.H
+../../../GUI/Widgets/SpiralGUI.o: ../../../GUI/Widgets/SpiralGUI.C \
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../Widgets/Fl_SevenSeg.o: ../Widgets/Fl_SevenSeg.cxx \
 		../Widgets/Fl_SevenSeg.H
@@ -156,15 +156,12 @@ install:
 
 StreamPlugin.o: StreamPlugin.C \
 		StreamPlugin.h \
+		StreamPluginGUI.h \
+		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
 		../../SpiralInfo.h \
 		../../Sample.h \
 		../../RiffWav.h \
-		StreamPluginGUI.h \
-		../SpiralPluginGUI.h \
-		../Widgets/Fl_DragBar.H \
-		../Widgets/Fl_Knob.H \
-		../Widgets/Fl_SevenSeg.H \
 		SpiralIcon.xpm \
 		../../NoteTable.h
 
@@ -172,11 +169,11 @@ StreamPluginGUI.o: StreamPluginGUI.C \
 		StreamPluginGUI.h \
 		StreamPlugin.h \
 		../SpiralPlugin.h \
+		../SpiralPluginGUI.h \
 		../../Sample.h \
 		../../SpiralInfo.h \
 		../../RiffWav.h \
-		../SpiralPluginGUI.h \
-		../Widgets/Fl_DragBar.H \
+		../../../GUI/Widgets/SpiralGUI.H \
 		../Widgets/Fl_Knob.H \
 		../Widgets/Fl_SevenSeg.H
 

@@ -19,7 +19,6 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Counter.H>
-#include "../Widgets/Fl_DragBar.H"
 #include "OperatorPlugin.h"
 #include "../SpiralPluginGUI.h"
 

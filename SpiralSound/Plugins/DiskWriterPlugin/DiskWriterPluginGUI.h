@@ -14,40 +14,33 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-#include <FL/Fl_Group.H>
 #include <FL/Fl_Button.H>
-#include <FL/Fl_Pixmap.H>
-
-#include "../Widgets/Fl_Knob.H"
-#include "../Widgets/Fl_DragBar.H"
 #include "DiskWriterPlugin.h"
 #include "../SpiralPluginGUI.h"
 
-#ifndef SCOPEGUI
-#define SCOPEGUI
+#ifndef DISK_WRITER_GUI_H
+#define DISK_WRITER_GUI_H
 
 class DiskWriterPluginGUI : public SpiralPluginGUI
 {
 public:
 	DiskWriterPluginGUI(int w, int h, SpiralPlugin *o, ChannelHandler *ch, const HostInfo *Info);
-	
+
 	virtual void UpdateValues(SpiralPlugin *o);
 
 protected:
-    const string GetHelpText(const string &loc);	
-	
+    const string GetHelpText(const string &loc);
+
 private:
 
 	Fl_Button		*Open;
 	Fl_Button		*Record;
-	
-		
+
 	//// Callbacks ////
-	
+
 	inline void cb_Record_i(Fl_Button* o, void* v);
 	static void cb_Record(Fl_Button* o, void* v);
 	inline void cb_Open_i(Fl_Button* o, void* v);

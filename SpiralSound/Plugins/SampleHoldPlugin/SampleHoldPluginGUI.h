@@ -14,31 +14,24 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-#include <FL/Fl_Group.H>
-#include <FL/Fl_Button.H>
-
-#include "../Widgets/Fl_Knob.H"
-#include "../Widgets/Fl_DragBar.H"
 #include "SampleHoldPlugin.h"
 #include "../SpiralPluginGUI.h"
 
 #ifndef SampleHoldGUI
 #define SampleHoldGUI
 
-
 class SampleHoldPluginGUI : public SpiralPluginGUI
 {
 public:
 	SampleHoldPluginGUI(int w, int h, SampleHoldPlugin *o,ChannelHandler *ch,const HostInfo *Info);
-	
+
 	virtual void UpdateValues(SpiralPlugin *o);
 
 protected:
-    const string GetHelpText(const string &loc);	
+    const string GetHelpText(const string &loc);
 
 private:
 

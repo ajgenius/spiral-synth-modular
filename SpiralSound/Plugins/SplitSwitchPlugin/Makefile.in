@@ -41,33 +41,30 @@ mandir = @mandir@
 HEADERS =	../SpiralPlugin.h \
 		../SpiralPluginGUI.h \
 		../../ChannelHandler.h \
-		../Widgets/Fl_Knob.H \
-		../Widgets/Fl_DragBar.H \
+		../../../GUI/Widgets/SpiralGUI.H \
 		../../Sample.h \
 		SplitSwitchPlugin.h \
 		SplitSwitchPluginGUI.h
 SOURCES =	../SpiralPlugin.C \
 		../SpiralPluginGUI.C \
 		../../ChannelHandler.C \
-		../Widgets/Fl_Knob.cxx \
-		../Widgets/Fl_DragBar.cxx \
+		../../../GUI/Widgets/SpiralGUI.C \
 		../../Sample.C \
 		SplitSwitchPlugin.C \
 		SplitSwitchPluginGUI.C
 OBJECTS =	../SpiralPlugin.o \
 		../SpiralPluginGUI.o \
 		../../ChannelHandler.o \
-		../Widgets/Fl_Knob.o \
-		../Widgets/Fl_DragBar.o \
+		../../../GUI/Widgets/SpiralGUI.o \
 		../../Sample.o \
 		SplitSwitchPlugin.o \
 		SplitSwitchPluginGUI.o
-INTERFACES =	
-UICDECLS =	
-UICIMPLS =	
-SRCMOC	=	
-OBJMOC	=	
-DIST	=	
+INTERFACES =
+UICDECLS =
+UICIMPLS =
+SRCMOC	=
+OBJMOC	=
+DIST	=
 TARGET	=	SplitSwitchPlugin.so
 
 ####### Implicit rules
@@ -94,7 +91,7 @@ TARGET	=	SplitSwitchPlugin.so
 
 all: $(TARGET)
 
-$(TARGET): $(UICDECLS) $(OBJECTS) $(OBJMOC) 
+$(TARGET): $(UICDECLS) $(OBJECTS) $(OBJMOC)
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(OBJMOC) $(LIBS)
 
 moc: $(SRCMOC)
@@ -109,7 +106,7 @@ dist:
 clean:
 	-rm -f $(OBJECTS) $(OBJMOC) $(SRCMOC) $(UICIMPLS) $(UICDECLS) $(TARGET)
 	-rm -f *~ core
-	
+
 install:
 	$(INSTALL) $(TARGET) $(libdir)/SpiralPlugins
 
@@ -127,15 +124,12 @@ install:
 
 ../SpiralPluginGUI.o: ../SpiralPluginGUI.C \
 		../SpiralPluginGUI.h \
-		../Widgets/Fl_DragBar.H \
+		../../../GUI/Widgets/SpiralGUI.H \
 		../SpiralPlugin.h \
 		../../Sample.h
 
-../Widgets/Fl_Knob.o: ../Widgets/Fl_Knob.cxx \
-		../Widgets/Fl_Knob.H
-
-../Widgets/Fl_DragBar.o: ../Widgets/Fl_DragBar.cxx \
-		../Widgets/Fl_DragBar.H
+../../../GUI/Widgets/SpiralGUI.o: ../../../GUI/Widgets/SpiralGUI.C \
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../../Sample.o: ../../Sample.C \
 		../../Sample.h \
@@ -143,28 +137,21 @@ install:
 
 SplitSwitchPlugin.o: SplitSwitchPlugin.C \
 		SplitSwitchPlugin.h \
+		SplitSwitchPluginGUI.h \
+		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../Sample.h \
 		../../SpiralInfo.h \
 		../../Sample.h \
-		SplitSwitchPluginGUI.h \
-		../Widgets/Fl_Knob.H \
-		../Widgets/Fl_DragBar.H \
-		../SpiralPluginGUI.h \
-		../Widgets/Fl_DragBar.H \
 		SpiralIcon.xpm
 
 SplitSwitchPluginGUI.o: SplitSwitchPluginGUI.C \
 		SplitSwitchPluginGUI.h \
-		../Widgets/Fl_Knob.H \
-		../Widgets/Fl_DragBar.H \
 		SplitSwitchPlugin.h \
+		../SpiralPluginGUI.h \
 		../SpiralPlugin.h \
-		../../Sample.h \
 		../../SpiralInfo.h \
 		../../Sample.h \
-		../SpiralPluginGUI.h \
-		../Widgets/Fl_DragBar.H
+		../../../GUI/Widgets/SpiralGUI.H
 
 ../../ChannelHandler.o: ../../ChannelHandler.C \
 		../../ChannelHandler.h

@@ -20,7 +20,6 @@
 #define W_TABLE_GUI
 
 #include <FL/Fl_Pixmap.H>
-#include <FL/Fl_Box.H>
 #include <FL/Fl_Counter.H>
 #include <FL/Fl_Tabs.h>
 #include <FL/Fl_Group.h>

@@ -14,7 +14,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
+
+#ifndef SPIRALPLUGINGUI
+#define SPIRALPLUGINGUI
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
@@ -22,32 +25,26 @@
 #include <FL/Fl_Text_Display.H>
 #include <iostream>
 #include <math.h>
-
-#include "Widgets/Fl_DragBar.H"
 #include "SpiralPlugin.h" // for the channel handler
+#include "../../GUI/Widgets/SpiralGUI.H"
 
-#ifndef SPIRALPLUGINGUI
-#define SPIRALPLUGINGUI
-
-#define SpiralGUIType Fl_Group
- 
 class SpiralPluginGUI : public SpiralGUIType
 {
 public:
 	SpiralPluginGUI(int w, int h, SpiralPlugin* o, ChannelHandler *ch);
 	~SpiralPluginGUI();
-	
+        virtual void resize (int x, int y, int w, int h);
+
 	virtual void Update();
-	
-	// called while audio thread is suspended, so direct access to the
+
+        // called while audio thread is suspended, so direct access to the
 	// spiralplugin is acceptable
 	virtual void UpdateValues(SpiralPlugin *o)=0;
-
 protected:
 
 	ChannelHandler *m_GUICH;
 	virtual const string GetHelpText(const string &loc);
-	
+
 private:
 	Fl_Button*		 m_Hide;
 	Fl_Button*		 m_Help;
@@ -55,9 +52,9 @@ private:
 	static Fl_Double_Window* m_HelpWin;
 	static Fl_Text_Display* m_HelpWin_text;
 	static SpiralPluginGUI* Help_owner;
-	
+
 	string m_Title;
-	
+
 	//// Callbacks ////
 	inline void cb_Hide_i(Fl_Button* o, void* v);
     static void cb_Hide(Fl_Button*, void*);

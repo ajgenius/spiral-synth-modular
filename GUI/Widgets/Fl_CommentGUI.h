@@ -1,4 +1,4 @@
-/*  DeviceGUI composite Widget
+/*  CommentGUI composite Widget
  *  Copyleft (C) 2002 David Griffiths <dave@pawfal.org>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -16,16 +16,16 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */ 
 
-#include <FL/Fl_Input.h>
-#include "Fl_DeviceGUI.h"
-
 #ifndef COMMENTGUI
 #define COMMENTGUI
+
+#include <FL/Fl_Input.h>
+#include "Fl_DeviceGUI.h"
 
 class Fl_CommentGUI : public Fl_DeviceGUI
 {
 public:
-	Fl_CommentGUI(const DeviceGUIInfo& Info, Fl_Window *PW, Fl_Pixmap *Icon);
+	Fl_CommentGUI(const DeviceGUIInfo& Info, SpiralGUIType *PW, Fl_Pixmap *Icon);
 
 	virtual int  handle(int event);
 	virtual void Setup(const DeviceGUIInfo& Info, bool FirstTime = false); 

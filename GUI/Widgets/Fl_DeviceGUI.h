@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
@@ -22,10 +22,11 @@
 #include <FL/Fl_Pixmap.h>
 #include <FL/Fl_Menu_Button.h>
 #include <FL/Fl_Box.h>
+#include "Fl_DragBar.H"
+#include "SpiralGUI.H"
 #include <iostream>
 #include <vector>
 #include <string>
-#include "Fl_DragBar.H"
 #include <stdio.h>
 
 #ifndef DEVICEGUI
@@ -81,15 +82,15 @@ struct DeviceGUIInfo
 class Fl_DeviceGUI : public Fl_Group
 {
 public:
-	Fl_DeviceGUI(const DeviceGUIInfo& Info, Fl_Group *PW, Fl_Pixmap *Icon, bool Terminal=false);
-	
+	Fl_DeviceGUI(const DeviceGUIInfo& Info, SpiralGUIType *PW, Fl_Pixmap *Icon, bool Terminal=false);
+
 	virtual int handle(int event);
-	
+
 	enum PortType {INPUT,OUTPUT};
-		
-	int           GetID()           			 { return m_ID; }	
-	void          SetID(int s)      			 { m_ID=s; /*DisplayID(s);*/ } 		
-	bool          Killed()          			 { return m_DelMe; }	
+
+	int           GetID()           			 { return m_ID; }
+	void          SetID(int s)      			 { m_ID=s; /*DisplayID(s);*/ }
+	bool          Killed()          			 { return m_DelMe; }
 	int           GetPortX(int n)                { return m_PortVec[n]->x()+PortSize/2; }
 	int           GetPortY(int n)                { return m_PortVec[n]->y()+PortSize/2; }
 	
@@ -100,7 +101,7 @@ public:
 	
 	bool          GetPortValue(int n)            { return m_PortVec[n]->value(); }	
 	const         DeviceGUIInfo* GetInfo()       { return &m_Info; }
-	Fl_Group*     GetPluginWindow()              { return m_PluginWindow; }
+	SpiralGUIType* GetPluginWindow() { return m_PluginWindow; }
 	string        GetName()						 { return m_Name; }
 	void          SetName(const string &s)		 { m_Name=s; m_DragBar->label(m_Name.c_str()); }
 	bool		  IsMinimised()				     { return m_Minimised; }
@@ -121,7 +122,7 @@ protected:
 	DeviceGUIInfo m_Info;
 
 	Fl_DragBar* m_DragBar;
-	Fl_Group*   m_PluginWindow;
+	SpiralGUIType* m_PluginWindow;
 	Fl_Pixmap*  m_Icon;
 	Fl_Button*  m_IconButton;
 	Fl_Menu_Button* m_Menu; 
@@ -146,9 +147,8 @@ private:
 	bool   m_DelMe;
 	bool   m_IsTerminal;
 	bool   m_Minimised;
-	
-	int m_MiniWidth;
-	int m_MiniHeight;
+
+        int m_MiniWidth, m_MiniHeight;
 };
 
 #endif

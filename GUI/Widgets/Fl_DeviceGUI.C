@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include "Fl_DeviceGUI.h"
 #include "Fl_Canvas.h"
@@ -23,9 +23,9 @@
 #include "../../SpiralSynthModularInfo.h"
 
 int Fl_DeviceGUI::Numbers[512];
-		
-Fl_PortButton::Fl_PortButton(int x, int y, int w, int h, char *n) : 
-Fl_Button(x,y,w,h,n) 
+
+Fl_PortButton::Fl_PortButton(int x, int y, int w, int h, char *n) :
+Fl_Button(x,y,w,h,n)
 {
 	m_ConnectionCount=0;
 }
@@ -35,25 +35,25 @@ int Fl_PortButton::handle(int event)
 	if (event==FL_PUSH)
 	{
 		m_LastButton=Fl::event_button();
-	
-		if (m_LastButton == 1) 
+
+		if (m_LastButton == 1)
 		{
 			if (m_Type==INPUT && value()) return 1;
 			do_callback();
 			return 1;
 		}
 
-		if (m_LastButton == 3) 
+		if (m_LastButton == 3)
 		{
 			do_callback();
 			return 1;
 		}
 	}
-		
+
 	return 1;
 }
 
-Fl_DeviceGUI::Fl_DeviceGUI(const DeviceGUIInfo& Info, Fl_Group *PW, Fl_Pixmap *Icon, bool Terminal) :
+Fl_DeviceGUI::Fl_DeviceGUI(const DeviceGUIInfo& Info, SpiralGUIType *PW, Fl_Pixmap *Icon, bool Terminal) :
 Fl_Group(Info.XPos, Info.YPos, Info.Width+(PortGroupWidth*2), Info.Height+TitleBarHeight, ""),
 m_PluginWindow(NULL),
 m_Icon(NULL),
@@ -62,7 +62,7 @@ m_ID(-1),
 m_DelMe(false),
 m_IsTerminal(Terminal),
 m_Minimised(true)
-{	
+{
 	for (int n=0; n<512; n++) Numbers[n]=n;
 
 	type(1);
@@ -70,26 +70,26 @@ m_Minimised(true)
     labeltype(FL_ENGRAVED_LABEL);
     align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
 	color(SpiralSynthModularInfo::GUICOL_Device);
-		
+
 	m_Icon=Icon;
 	m_MiniWidth=w();
 	m_MiniHeight=h();
-	
+
 	m_DragBar = new Fl_DragBar(Info.XPos, Info.YPos, Info.Width+PortGroupWidth*2, TitleBarHeight, m_Name.c_str());
-	m_DragBar->labelsize(10);	
+	m_DragBar->labelsize(10);
 	m_DragBar->type(Fl_DragBar::FLDRAG);
 	m_DragBar->color(SpiralSynthModularInfo::GUICOL_Device);
-	
+
 	m_Menu = new Fl_Menu_Button(x(),y(),w(),h(),"");
 	m_Menu->type(Fl_Menu_Button::POPUP3);
 	m_Menu->textsize(8);
-	
+
 	m_Menu->add("rename", 0, (Fl_Callback*)cb_Rename,this);
 	m_Menu->add("delete", 0, (Fl_Callback*)cb_Delete,this);
-	
+
 	int Centx=x()+w()/2;
 	int Centy=y()+h()/2;
-	
+
 	if (m_Icon)
 	{
 		m_IconButton = new Fl_Button(Centx-m_Icon->w()/2,Centy-m_Icon->h()/2,m_Icon->w(),m_Icon->h());
@@ -100,16 +100,15 @@ m_Minimised(true)
 	{
 		m_IconButton = NULL;
 	}
-	
+
 	m_PluginWindow = PW;
-	if (m_PluginWindow)
-	{
-		m_PluginWindow->hide();
-		add(m_PluginWindow);			
+	if (m_PluginWindow) {
+           m_PluginWindow->hide();
+           add (m_PluginWindow);			
 	}
-	
+
 	resizable(NULL);
-	
+
 	//Add the input/output ports
 	Setup(Info, true);
 }
@@ -119,31 +118,29 @@ void Fl_DeviceGUI::Clear()
 	end();
 }
 
-int  Fl_DeviceGUI::handle(int event)
-{	
-	int t=Fl_Group::handle(event);
-	
-	if (m_IconButton && m_IconButton->value()) 
-	{
-		m_IconButton->value(false);
-		
-		if (m_PluginWindow && !m_DelMe)
-		{					
-			if(!m_PluginWindow->visible()) 
-			{
-				Maximise();
-				m_IconButton->hide();
-			}
-		}
-	}
-	
-	if (m_Minimised==false && !m_PluginWindow->visible()) 
-	{
-		Minimise();
-		if (m_IconButton) m_IconButton->show();
-	}
-	
-	return 1;
+int Fl_DeviceGUI::handle (int event) {
+    int t=Fl_Group::handle(event);
+
+    if (m_IconButton && m_IconButton->value()) {
+       m_IconButton->value (false);
+       if (m_PluginWindow && !m_DelMe) {
+          if (!m_PluginWindow->visible()) Maximise();
+       }
+    }
+
+    if (m_PluginWindow && !m_DelMe) {
+       if (m_PluginWindow->needs_resize()) {
+          Maximise();
+          m_PluginWindow->needs_resize(false);
+       }
+    }
+
+    if (m_Minimised==false && !m_PluginWindow->visible()) {
+       Minimise();
+       if (m_IconButton) m_IconButton->show();
+    }
+
+    return 1;
 }
 
 void  Fl_DeviceGUI::Minimise()
@@ -154,7 +151,7 @@ void  Fl_DeviceGUI::Minimise()
 }
 
 void  Fl_DeviceGUI::Maximise()
-{					
+{
 	m_Minimised=false;
 	if (m_PluginWindow->h()+2>m_MiniHeight)
 	{
@@ -164,7 +161,6 @@ void  Fl_DeviceGUI::Maximise()
 	{
 		Resize(m_PluginWindow->w()+(PortGroupWidth*2)-5,m_MiniHeight);
 	}
-	
 	m_PluginWindow->show();
 	m_IconButton->hide();
 	parent()->redraw();
@@ -177,15 +173,15 @@ void  Fl_DeviceGUI::Resize(int width, int height)
 	int oldh = h();
 	size(width,height);
 	m_DragBar->size(width,m_DragBar->h());
-	
+
 	for (int n=m_Info.NumInputs; n<(int)m_PortVec.size(); n++)
 	{
 		m_PortVec[n]->position(x()+width-8,m_PortVec[n]->y());
 	}
-	
-	position(x()+(oldw-w())/2,y()+(oldh-h())/2);	
+
+	position(x()+(oldw-w())/2,y()+(oldh-h())/2);
 	m_Menu->resize(x(),y(),width,height);
-	
+
 	int Centx=x()+w()/2;
 	int Centy=y()+h()/2;
 	m_IconButton->position(Centx-m_Icon->w()/2,Centy-m_Icon->h()/2);
@@ -194,9 +190,9 @@ void  Fl_DeviceGUI::Resize(int width, int height)
 void Fl_DeviceGUI::Setup(const DeviceGUIInfo& Info, bool FirstTime)
 {
 	m_Info=Info;
-	
+
 	// Remove all current connections - it's the safest thing to do.
-	if (parent() && !FirstTime) 
+	if (parent() && !FirstTime)
 	{
 		((Fl_Canvas*)(parent()))->ClearConnections(this);
 	}

@@ -1,5 +1,4 @@
-/*  SpiralPlugin
- *  Copyleft (C) 2000 David Griffiths <dave@pawfal.org>
+/*  Copyleft (C) 2000 David Griffiths <dave@pawfal.org>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,32 +15,19 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <FL/Fl.H>
-#include <FL/Fl_Button.H>
-#include "NoteSnapPlugin.h"
-#include "../SpiralPluginGUI.h"
+#ifndef GUI_TYPE_H
+#define GUI_TYPE_H
 
-#ifndef NoteSnapGUI
-#define NoteSnapGUI
+#include <FL/Fl_Group.H>
 
-static const int NUM_KEYS = 12;
-class NoteSnapPluginGUI : public SpiralPluginGUI
-{
-public:
-	NoteSnapPluginGUI(int w, int h, NoteSnapPlugin *o,ChannelHandler *ch,const HostInfo *Info);
-	
-	virtual void UpdateValues(SpiralPlugin *o);
-	
-protected:
-    const string GetHelpText(const string &loc);	
-
-private:
-	int         m_Num[NUM_KEYS];
-	Fl_Button*  m_Key[NUM_KEYS];
-	
-	//// Callbacks ////
-	inline void cb_Key_i(Fl_Button* o, void* v);
-	static void cb_Key(Fl_Button* o, void* v); 
+class SpiralGUIType : public Fl_Group {
+   public:
+      SpiralGUIType (int x, int y, int w, int h, const char *label = 0);
+      ~SpiralGUIType ();
+      bool needs_resize (void) { return m_NeedsResize; }
+      void needs_resize (bool nr) { m_NeedsResize = nr; }
+   private:
+      bool m_NeedsResize;
 };
 
 #endif
