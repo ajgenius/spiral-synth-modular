@@ -56,6 +56,30 @@ string SpiralPlugin_GetGroupName()
 
 ///////////////////////////////////////////////////////
 
+static void 
+InitializeSampleDescription(SampleDesc* NewDesc, const string &Pathname, int Note)
+{
+	  if (NewDesc) {
+		NewDesc->Pathname   = Pathname; 
+		NewDesc->Volume     = 1.0f;
+		NewDesc->Velocity   = 1.0f;
+		NewDesc->Pitch      = 1.0f;
+		NewDesc->PitchMod   = 1.0f;
+		NewDesc->SamplePos  = -1;
+		NewDesc->Loop       = false;
+		NewDesc->PingPong   = false;
+		NewDesc->Note       = Note;	
+		NewDesc->Octave     = 0;
+		NewDesc->TriggerUp  = true;
+		NewDesc->SamplePos  = -1;
+		NewDesc->SampleRate = 44100;
+		NewDesc->Stereo     = false;
+		NewDesc->PlayStart  = 0;
+		NewDesc->LoopStart  = 0;
+		NewDesc->LoopEnd    = INT_MAX;
+	}
+}
+
 PoshSamplerPlugin::PoshSamplerPlugin() :
 m_Recording(false)
 {
@@ -102,27 +126,8 @@ m_Recording(false)
 
 		SampleDesc* NewDesc = new SampleDesc;
 		char temp[256];
-                // Andy's fix for bug 766594
-		// sprintf (temp, "PoshSampler%d_%d", SpiralPlugin_GetID(), n);
 		sprintf (temp, "PoshSampler%d_%d", GetID(), n);
-		NewDesc->Pathname   = temp;
-		NewDesc->Volume     = 1.0f;
-		NewDesc->Velocity   = 1.0f;
-		NewDesc->Pitch      = 1.0f;
-		NewDesc->PitchMod   = 1.0f;
-		NewDesc->SamplePos  = -1;
-		NewDesc->Loop       = false;
-		NewDesc->PingPong   = false;
-		NewDesc->Note       = n;
-		NewDesc->Octave     = 0;
-		NewDesc->TriggerUp  = true;
-		NewDesc->SamplePos  = -1;
-		NewDesc->SampleRate = 44100;
-		NewDesc->Stereo     = false;
-		NewDesc->PlayStart  = 0;
-		NewDesc->LoopStart  = 0;
-		NewDesc->LoopEnd    = INT_MAX;
-
+ 		InitializeSampleDescription(NewDesc, temp, n);
 		m_SampleDescVec.push_back(NewDesc);
 	}
 
@@ -398,7 +403,7 @@ void PoshSamplerPlugin::LoadSample(int n, const string &Name)
 	{
 		m_SampleVec[n]->Allocate(Wav.GetSize());
 		Wav.Load(*m_SampleVec[n]);
-		m_SampleDescVec[n]->Pathname=Name;
+		InitializeSampleDescription(m_SampleDescVec[n], Name, n);
 		m_SampleDescVec[n]->SampleRate=Wav.GetSamplerate();
 		m_SampleDescVec[n]->Stereo=Wav.IsStereo();
 		m_SampleDescVec[n]->Pitch *= m_SampleDescVec[n]->SampleRate/(float)m_HostInfo->SAMPLERATE;
