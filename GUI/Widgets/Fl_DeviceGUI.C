@@ -176,6 +176,7 @@ void  Fl_DeviceGUI::Resize(int width, int height)
 	}
 	
 	position(x()+(oldw-w())/2,y()+(oldh-h())/2);	
+	m_Menu->resize(x(),y(),width,height);
 	
 	int Centx=x()+w()/2;
 	int Centy=y()+h()/2;

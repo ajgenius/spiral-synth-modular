@@ -147,6 +147,19 @@ void  JackPluginGUI::cb_Attach(Fl_Button* o, void* v)
 inline void  JackPluginGUI::cb_Detach_i(Fl_Button* o, void* v)
 { 
 	//m_GUICH->SetCommand(JackPlugin::DETACH);
+	
+	for (int n=0; n<NUM_OUTPUTS; n++)
+	{		
+		m_OutputButton[n]->value(false);
+		m_OutputButton[n]->label("None");
+	}
+	
+	for (int n=0; n<NUM_INPUTS; n++)
+	{		
+		m_InputButton[n]->value(false);
+		m_InputButton[n]->label("None");
+	}
+	
 	JackClient::Get()->Detach();
 }
 void  JackPluginGUI::cb_Detach(Fl_Button* o, void* v)

@@ -321,7 +321,7 @@ int Fl_Canvas::handle(int event)
 		redraw();
 	}
 	
-	if (Fl::event_button()==3)
+	if (Fl::event_button()==2)
 	{
 		if (event==FL_PUSH) 
 		{	
@@ -333,7 +333,7 @@ int Fl_Canvas::handle(int event)
 		
 		if (event==FL_DRAG)	redraw();
 		
-		if (event==FL_RELEASE && Fl::event_button()==3) 
+		if (event==FL_RELEASE) 
 		{
 			m_ToolMenu=false;
 			if (m_Selected!=-1 && cb_AddDevice) 

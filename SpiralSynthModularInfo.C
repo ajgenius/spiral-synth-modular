@@ -34,14 +34,16 @@ string SpiralInfo::MIDIFILE    = "/dev/midi";
 int    SpiralInfo::POLY        = 1;
 bool   SpiralInfo::USEPLUGINLIST = false;
 
-//int SpiralInfo::GUI_COLOUR = 139;
-//int SpiralInfo::GUIBG_COLOUR = 0;
-//int SpiralInfo::GUIBG2_COLOUR = 49;//45;
-
-int SpiralSynthModularInfo::GUICOL_Tool=179;
+/*int SpiralSynthModularInfo::GUICOL_Tool=179;
 int SpiralSynthModularInfo::GUICOL_Button=181;
 int SpiralSynthModularInfo::GUICOL_Canvas=181;
 int SpiralSynthModularInfo::GUICOL_Device=181;
+int SpiralSynthModularInfo::GUIDEVICE_Box=30;*/
+
+int SpiralSynthModularInfo::GUICOL_Tool=48;
+int SpiralSynthModularInfo::GUICOL_Button=42;
+int SpiralSynthModularInfo::GUICOL_Canvas=50;
+int SpiralSynthModularInfo::GUICOL_Device=52;
 int SpiralSynthModularInfo::GUIDEVICE_Box=30;
 
 vector<string> SpiralSynthModularInfo::PLUGINVEC;

@@ -222,7 +222,7 @@ void SpiralLoopPlugin::ExecuteCommands()
 
 void SpiralLoopPlugin::StreamOut(ostream &s)
 {
-	s<<m_Version; 
+	s<<m_Version<<" "; 
 	s<<m_LoopPoint<<" "<<m_Speed<<" "<<m_Volume<<" "<<m_TicksPerLoop<<" ";
 	s<<m_TriggerVec.size()<<" ";
 	for (vector<TriggerInfo>::iterator i=m_TriggerVec.begin();
@@ -269,7 +269,7 @@ void SpiralLoopPlugin::LoadWav(const char *Filename)
 	WavFile wav;
 	if (wav.Open(Filename, WavFile::READ))
 	{
-		Clear();
+		//Clear();
 		AllocateMem(wav.GetSize());		
 		wav.Load(m_StoreBuffer);	
 	}
@@ -323,7 +323,7 @@ bool SpiralLoopPlugin::GetOutput(Sample &data)
 		// brute force fix
 		if (Pos>0 && Pos<m_LoopPoint)
 		{
-			data.Set(n,m_StoreBuffer[m_Pos]+m_DubBuffer[m_Pos]*m_Volume);
+			data.Set(n,(m_StoreBuffer[m_Pos]+m_DubBuffer[m_Pos])*m_Volume);
 		}
 		else data.Set(n,0);
 		

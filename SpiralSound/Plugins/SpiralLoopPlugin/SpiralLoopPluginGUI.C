@@ -230,6 +230,7 @@ void SpiralLoopPluginGUI::UpdateValues(SpiralPlugin *o)
 	m_Volume->value(Plugin->GetVolume());
 	m_Speed->value(Plugin->GetSpeed());
 	m_Length->value(Plugin->GetLoopLength()/m_SampleSize);
+	m_LoopGUI->SetLength(Plugin->GetLoopLength());
 }
 
 void SpiralLoopPluginGUI::Update()
