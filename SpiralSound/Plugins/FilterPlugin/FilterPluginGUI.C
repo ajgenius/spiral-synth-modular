@@ -33,7 +33,7 @@ SpiralPluginGUI(w,h,o,ch)
         Cutoff->labelsize(10);
 	Cutoff->maximum(100);
         Cutoff->step(0.01);
-        Cutoff->value(10);
+        Cutoff->value(90.51);
         Cutoff->callback((Fl_Callback*)cb_Cutoff);
 
 	Resonance = new Fl_Knob(58, 18, 45, 45, "");
@@ -68,36 +68,36 @@ void FilterPluginGUI::UpdateValues(SpiralPlugin *o)
 {
 	FilterPlugin *Plugin = (FilterPlugin*)o;
 
-	Cutoff->value(100.0f-sqrt(Plugin->GetCutoff()-10.0f));
+	Cutoff->value(100.0f-sqrt(Plugin->GetCutoff())-10.0f);
 	Resonance->value(Plugin->GetResonance()-1.0f);
 
 	RevCutoff->value(0);
 	RevResonance->value(0);
-	
+
 	if (Plugin->GetRevCutoffMod()) RevCutoff->value(1);
 	if (Plugin->GetRevResonanceMod()) RevResonance->value(1);
 }
 
-inline void FilterPluginGUI::cb_Cutoff_i(Fl_Slider* o, void* v) 
-{ 
+inline void FilterPluginGUI::cb_Cutoff_i(Fl_Slider* o, void* v)
+{
 	float value=100.0f-o->value();
-	m_GUICH->Set("Cutoff",(float)(value*value)+10.0f); 
+	m_GUICH->Set("Cutoff",(float)(value*value)+10.0f);
 }
 
-void FilterPluginGUI::cb_Cutoff(Fl_Slider* o, void* v) 
+void FilterPluginGUI::cb_Cutoff(Fl_Slider* o, void* v)
 { ((FilterPluginGUI*)(o->parent()))->cb_Cutoff_i(o,v); }
 
-inline void FilterPluginGUI::cb_Resonance_i(Fl_Knob* o, void* v) 
+inline void FilterPluginGUI::cb_Resonance_i(Fl_Knob* o, void* v)
 { m_GUICH->Set("Resonance",(float)(o->value()+1.0f)); }
-void FilterPluginGUI::cb_Resonance(Fl_Knob* o, void* v) 
+void FilterPluginGUI::cb_Resonance(Fl_Knob* o, void* v)
 { ((FilterPluginGUI*)(o->parent()))->cb_Resonance_i(o,v); }
 
-inline void FilterPluginGUI::cb_RevCutoff_i(Fl_Button* o, void* v) 
+inline void FilterPluginGUI::cb_RevCutoff_i(Fl_Button* o, void* v)
 { m_GUICH->Set("RevC",(bool)o->value()); }
-void FilterPluginGUI::cb_RevCutoff(Fl_Button* o, void* v) 
+void FilterPluginGUI::cb_RevCutoff(Fl_Button* o, void* v)
 { ((FilterPluginGUI*)(o->parent()))->cb_RevCutoff_i(o,v); }
 
-inline void FilterPluginGUI::cb_RevResonance_i(Fl_Button* o, void* v) 
+inline void FilterPluginGUI::cb_RevResonance_i(Fl_Button* o, void* v)
 { m_GUICH->Set("RevR",(bool)o->value()); }
 void FilterPluginGUI::cb_RevResonance(Fl_Button* o, void* v) 
 { ((FilterPluginGUI*)(o->parent()))->cb_RevResonance_i(o,v); }

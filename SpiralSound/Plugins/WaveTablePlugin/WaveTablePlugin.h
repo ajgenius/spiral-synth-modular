@@ -48,7 +48,7 @@ public:
 	
 	Type GetType()      { return m_Type; }
 	int  GetOctave()    { return m_Octave; }
-	float GetFinefreq() { return m_FineFreq; } 
+	float GetFineFreq() { return m_FineFreq; } 
 	float GetModAmount(){ return m_ModAmount; }
 	
 private:

@@ -112,7 +112,7 @@ void FilterPlugin::Execute()
 {
 	float Cutoff;
     float Resonance;
-   
+
     if (fc<0) return;
    
     for (int n=0; n<m_HostInfo->BUFSIZE; n++)

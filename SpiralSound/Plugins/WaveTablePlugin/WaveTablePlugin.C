@@ -62,8 +62,8 @@ m_TableLength(DEFAULT_TABLE_LEN)
 	m_Note=0;
 	
 	m_PluginInfo.Name="WaveTable";
-	m_PluginInfo.Width=245;
-	m_PluginInfo.Height=110;
+	m_PluginInfo.Width=210;
+	m_PluginInfo.Height=140;
 	m_PluginInfo.NumInputs=1;
 	m_PluginInfo.NumOutputs=1;
 	m_PluginInfo.PortTips.push_back("Frequency CV");

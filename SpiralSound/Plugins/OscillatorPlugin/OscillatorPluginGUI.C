@@ -222,13 +222,13 @@ void OscillatorPluginGUI::UpdateValues (SpiralPlugin *o) {
      m_PulseWidth->value (val);
      m_NumPulseWidth->value (val * 100);
 
-     val = Plugin->GetModAmount();
-     m_ModAmount->value (val);
-     m_NumModAmount->value (val * 100);
-
      val = 0.2f - Plugin->GetSHLen();
      m_SHLen->value (val);
      m_NumSHLen->value (val);
+
+     val = Plugin->GetModAmount();
+     m_ModAmount->value (val);
+     m_NumModAmount->value (val * 100);
 
      m_NumOctave->value (Plugin->GetOctave());
      m_Octave->value ((int)m_NumOctave->value() + 3);

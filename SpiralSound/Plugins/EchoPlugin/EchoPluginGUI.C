@@ -148,7 +148,7 @@ void EchoPluginGUI::cb_Feedback(Fl_Knob* o, void* v)
 inline void EchoPluginGUI::cb_NumDelay_i (Fl_Counter* o, void* v)
 {
         float value = o->value();
-        m_NumDelay->value (value);
+        m_Delay->value (value);
 	m_GUICH->Set ("Delay", value);
 }
 
