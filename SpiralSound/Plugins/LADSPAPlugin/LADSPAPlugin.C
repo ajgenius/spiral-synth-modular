@@ -545,7 +545,7 @@ bool LADSPAPlugin::UpdatePlugin(unsigned long UniqueID, bool PortClampReset)
 
 			for (int n=0; n<m_PluginInfo.NumInputs; n++)
 			{
-				float Max=1.0f, Min=-1.0f;
+				float Max=1.0f, Min=-1.0f, defolt=0.0f;
 				int Port=m_PortID[n];
 
 				// Get the bounding hints for the port
@@ -567,10 +567,22 @@ bool LADSPAPlugin::UpdatePlugin(unsigned long UniqueID, bool PortClampReset)
 					}
 				}
 
+#ifdef LADSPA_VERSION
+// We've got a version of the header that supports port defaults
+
+#else
+#warning ************************************
+#warning Your LADSPA header is out of date!
+#warning Please get the latest sdk from
+#warning     www.ladspa.org
+#warning Defaults will not be used.
+#warning ************************************
+#endif
+
 				m_PortMin.push_back(Min);
 				m_PortMax.push_back(Max);
 				m_PortClamp.push_back(true);
-				m_PortDefault.push_back(0.0f);
+				m_PortDefault.push_back(defolt);
 			}
 		}
 
