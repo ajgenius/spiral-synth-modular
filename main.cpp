@@ -35,22 +35,18 @@ int pthread_create_realtime (pthread_t *new_thread,
 			 void *(*start)(void *), void *arg,
 			 int priority);
 
-char flashy[] = {'|','/','-','\\'};
-
 void audioloop(void* o)
 {
-	int counter=0,flashy_counter=0;
 	while(1)
 	{
-		synth->Update();
-		
-		if (counter==10000)
+		if (!synth->CallbackMode()) 
 		{
-			cerr<<"\b"<<flashy[flashy_counter%4];
-			counter=0;
-			flashy_counter++;
+			synth->Update();
 		}
-		counter++;
+		else
+		{
+			usleep(1000000);
+		}
 	}
 }
 
@@ -69,13 +65,15 @@ int main(int argc, char **argv)
 	// parse the args
     if (argc>1) 
 	{
-        cmd_filename = argv[1];
-        cmd_specd = true;
-		
-		for (int a=2; a<argc; a++)
+		for (int a=1; a<argc; a++)
 		{
 			if (!strcmp(argv[a],"--NoGUI")) GUI = false;
-			if (!strcmp(argv[a],"--SHED_FIFO")) FIFO = true;
+			else if (!strcmp(argv[a],"--SHED_FIFO")) FIFO = true;
+			else 
+			{
+				cmd_filename = argv[1];
+				cmd_specd = true;
+			}
 		}
     }	
 	
@@ -95,7 +93,7 @@ int main(int argc, char **argv)
 			
 	// spawn the audio thread
 	int ret;
-	if (FIFO) ret=pthread_create_realtime(&loopthread,(void*(*)(void*))audioloop,NULL,50);
+	if (FIFO) ret=pthread_create_realtime(&loopthread,(void*(*)(void*))audioloop,NULL,10);
 	else ret=pthread_create(&loopthread,NULL,(void*(*)(void*))audioloop,NULL);
 
 	// do we need to load a patch on startup? 
@@ -110,11 +108,8 @@ int main(int argc, char **argv)
 	
     for (;;)
 	{
-    	if (!Fl::check()) break;
-    	
-		//if (!synth->CallbackMode()) synth->Update();
+    	if (!Fl::check()) break;    	
 		synth->UpdatePluginGUIs(); // deletes any if necc
-		//else Fl::wait();
 		usleep(10000);
   	}
 	
