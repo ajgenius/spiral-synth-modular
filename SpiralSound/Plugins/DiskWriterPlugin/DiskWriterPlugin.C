@@ -122,7 +122,7 @@ void DiskWriterPlugin::Execute()
 			if (t<-1) t=-1;
 			Buffer[on]=lrintf(t*SHRT_MAX);
 			on++;
-			
+
 			t=GetInput(1,n);
 			if (t>1) t=1;
 			if (t<-1) t=-1;
@@ -141,12 +141,15 @@ void DiskWriterPlugin::ExecuteCommands()
 	{
 		switch(m_AudioCH->GetCommand())
 		{
-			case OPENWAV : 
+			case OPENWAV :
+				if (m_Wav.GetSamplerate() != GetHostInfo()->SAMPLERATE) {
+					m_Wav.SetSamplerate(GetHostInfo()->SAMPLERATE);
+				}
 				m_Wav.Open(m_GUIArgs.Name,WavFile::WRITE, WavFile::STEREO);
 			break;
 			case CLOSEWAV : m_Wav.Close(); break;
 			case RECORD : m_Recording=true; break;
-			case STOP : m_Recording=false;	break;	
+			case STOP : m_Recording=false;	break;
 			default : break;
 		}
 	}

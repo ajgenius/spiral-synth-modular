@@ -27,7 +27,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-//#define TRACE_OUT
+#define TRACE_OUT
 
 using namespace std;
 
@@ -66,36 +66,48 @@ int WavFile::Open(string FileName, Mode mode, Channels channels)
 		m_Header.RiffName[1]='I';
 		m_Header.RiffName[2]='F';
 		m_Header.RiffName[3]='F';
-	
+
 		m_Header.RiffFileLength=HEADERLEN; // bzzt - wrong
-	
+
 		m_Header.RiffTypeName[0]='W';
 		m_Header.RiffTypeName[1]='A';
 		m_Header.RiffTypeName[2]='V';
 		m_Header.RiffTypeName[3]='E';
-			
+
 		m_Header.FmtName[0]='f';
 		m_Header.FmtName[1]='m';
 		m_Header.FmtName[2]='t';
 		m_Header.FmtName[3]=' ';
-		
+
 		m_Header.FmtLength=0x00000010; // length of fmt data (16 bytes)
 		m_Header.FmtTag=0x0001;        // Format tag: 1 = PCM
-		if (channels==STEREO) m_Header.FmtChannels=2;     
-		else m_Header.FmtChannels=1;     
+		if (channels==STEREO) m_Header.FmtChannels=2;
+		else m_Header.FmtChannels=1;
 		m_Header.FmtSamplerate=WavFile::m_Samplerate;
-	
-		m_Header.FmtBitsPerSample=16;
-		m_Header.FmtBytesPerSec=m_Header.FmtSamplerate*m_Header.FmtBlockAlign;
-		m_Header.FmtBlockAlign=m_Header.FmtChannels*m_Header.FmtBitsPerSample/8;	
 
-		m_DataHeader.DataName[0]='d';	
+		m_Header.FmtBitsPerSample=16;
+		m_Header.FmtBlockAlign=m_Header.FmtChannels*m_Header.FmtBitsPerSample/8;
+		m_Header.FmtBytesPerSec=m_Header.FmtSamplerate*m_Header.FmtBlockAlign;
+
+		m_DataHeader.DataName[0]='d';
 		m_DataHeader.DataName[1]='a';
 		m_DataHeader.DataName[2]='t';
 		m_DataHeader.DataName[3]='a';
-		
+
 		m_DataHeader.DataLengthBytes=0;
-			
+
+		#ifdef TRACE_OUT
+		cerr<<FileName<<endl;
+		cerr<<"RiffFileLength "<<m_Header.RiffFileLength<<endl;
+		cerr<<"FmtLength "<<m_Header.FmtLength<<endl;
+		cerr<<"FmtTag "<<m_Header.FmtTag<<endl;
+		cerr<<"FmtChannels "<<m_Header.FmtChannels<<endl;
+		cerr<<"FmtSamplerate "<<m_Header.FmtSamplerate<<endl;
+		cerr<<"FmtBytesPerSec "<<m_Header.FmtBytesPerSec<<endl;
+		cerr<<"FmtBlockAlign "<<m_Header.FmtBlockAlign<<endl;
+		cerr<<"FmtBitsPerSample "<<m_Header.FmtBitsPerSample<<endl;
+		#endif
+
 		SWAPINT(m_Header.RiffFileLength);
 		SWAPINT(m_Header.FmtLength);
 		SWAPSHORT(m_Header.FmtTag);
@@ -105,10 +117,10 @@ int WavFile::Open(string FileName, Mode mode, Channels channels)
 		SWAPSHORT(m_Header.FmtBlockAlign);
 		SWAPSHORT(m_Header.FmtBitsPerSample);
 		SWAPINT(m_DataHeader.DataLengthBytes);
-			
-		fwrite(&m_Header,1,sizeof(CanonicalWavHeader),m_Stream);		
-		fwrite(&m_DataHeader,1,sizeof(DataHeader),m_Stream);		
-	
+
+		fwrite(&m_Header,1,sizeof(CanonicalWavHeader),m_Stream);
+		fwrite(&m_DataHeader,1,sizeof(DataHeader),m_Stream);
+
 		return 1;
 	}
 	else
@@ -125,7 +137,7 @@ int WavFile::Open(string FileName, Mode mode, Channels channels)
 		SWAPSHORT(m_Header.FmtBlockAlign);
 		SWAPSHORT(m_Header.FmtBitsPerSample);
 
-		#ifdef TRACE_OUT		
+		#ifdef TRACE_OUT
 		cerr<<FileName<<endl;
 		cerr<<"RiffFileLength "<<m_Header.RiffFileLength<<endl;
 		cerr<<"FmtLength "<<m_Header.FmtLength<<endl;
@@ -136,42 +148,42 @@ int WavFile::Open(string FileName, Mode mode, Channels channels)
 		cerr<<"FmtBlockAlign "<<m_Header.FmtBlockAlign<<endl;
 		cerr<<"FmtBitsPerSample "<<m_Header.FmtBitsPerSample<<endl;
 		#endif
-		
+
 		// skip the rest of the fmt header if necissary
 		if (m_Header.FmtLength>16)
 		{
 			fseek(m_Stream,m_Header.FmtLength-16,SEEK_CUR);
 		}
-		
+
 		fread(&m_DataHeader,sizeof(DataHeader),1,m_Stream);
 
 		SWAPINT(m_DataHeader.DataLengthBytes);
 
-		while (m_DataHeader.DataName[0]!='d' || 
-			   m_DataHeader.DataName[1]!='a' || 
-			   m_DataHeader.DataName[2]!='t' || 
+		while (m_DataHeader.DataName[0]!='d' ||
+			   m_DataHeader.DataName[1]!='a' ||
+			   m_DataHeader.DataName[2]!='t' ||
 			   m_DataHeader.DataName[3]!='a')
 		{
 			// crawl through the rest of the propriatory headers
 			// if we need to to try and get to the data header
 			if (feof(m_Stream) || fseek(m_Stream,-(sizeof(DataHeader)-1),SEEK_CUR)==-1)
-			{	
-				cerr<<"WavFile: File open error, wrong format ["<<FileName<<"]"<<endl;		
+			{
+				cerr<<"WavFile: File open error, wrong format ["<<FileName<<"]"<<endl;
 				return 0;
 			}
-			
+
 			fread(&m_DataHeader,sizeof(DataHeader),1,m_Stream);
 		}
-		
+
 		fgetpos(m_Stream,(fpos_t*)&m_DataStart);
 		m_CurSeekPos=m_DataStart;
-		
-		#ifdef TRACE_OUT		
+
+		#ifdef TRACE_OUT
 		cerr<<m_DataHeader.DataName[0]<<m_DataHeader.DataName[1]<<
 		      m_DataHeader.DataName[2]<<m_DataHeader.DataName[3]<<endl;
 		cerr<<"DataLengthBytes "<<m_DataHeader.DataLengthBytes<<endl;
-		#endif	
-			
+		#endif
+
 		// check we have a wav file here
 		if (m_Header.RiffName[0]=='R' &&
 			m_Header.RiffName[1]=='I' &&
@@ -180,7 +192,7 @@ int WavFile::Open(string FileName, Mode mode, Channels channels)
 		{
 			return 1;
 		}
-		
+
 		fclose(m_Stream);
 		cerr<<"WavFile: File open error, wrong format ["<<FileName<<"]"<<endl;
 		return 0;
@@ -190,18 +202,18 @@ int WavFile::Open(string FileName, Mode mode, Channels channels)
 
 int WavFile::Close()
 {
-	if (m_Stream==NULL) 
+	if (m_Stream==NULL)
 	{
 		return 0;
 	}
 
-	// write the total length in	
+	// write the total length in
 	fseek(m_Stream, 40, SEEK_SET);
 	fwrite(&m_DataHeader.DataLengthBytes,4,1,m_Stream);
-	fclose(m_Stream); 
+	fclose(m_Stream);
 
 	m_Stream=NULL;
-	return 1;	
+	return 1;
 }
 
 int WavFile::Save(Sample &data)
