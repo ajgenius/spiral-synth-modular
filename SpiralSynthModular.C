@@ -256,8 +256,11 @@ SpiralWindowType *SynthModular::CreateWindow()
 	m_TopTile->add(m_EditorWindow);
 	
 	int edy = MAIN_HEIGHT;
+	Fl_Group *Left = new Fl_Group(0,MAIN_HEIGHT,TOOLBOX_WIDTH,MAIN_HEIGHT);
+	m_EditorWindow->add(Left); 
+	m_EditorWindow->resizable(Left);
 	
-	m_ToolBox = new Fl_Scroll(0,0+edy,TOOLBOX_WIDTH, MAIN_HEIGHT, "");
+	m_ToolBox = new Fl_Scroll(0,0+edy,TOOLBOX_WIDTH, TOOLBOX_HEIGHT, "");
     m_ToolBox->type(Fl_Scroll::VERTICAL_ALWAYS);
 	m_ToolBox->box(FL_FLAT_BOX);
     m_ToolBox->labeltype(FL_ENGRAVED_LABEL);
@@ -265,25 +268,25 @@ SpiralWindowType *SynthModular::CreateWindow()
 	m_ToolBox->scrollbar.align(FL_ALIGN_LEFT);
 	m_ToolBox->color(SpiralSynthModularInfo::GUICOL_Tool);
 	m_ToolBox->user_data((void*)(this));
-	m_EditorWindow->add(m_ToolBox);  
+	Left->add(m_ToolBox);  
 //	m_EditorWindow->resizable(m_ToolBox);
-	
-	Fl_Box *Label = new Fl_Box(5,3+edy,100,20,"");
-	Label->box(FL_FLAT_BOX);
-	Label->color(SpiralSynthModularInfo::GUICOL_Tool);
-	Label->labeltype(FL_ENGRAVED_LABEL);
-	Label->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
-	m_ToolBox->add(Label);
-	
+		
 	m_ToolPack = new Fl_Pack(SLIDER_WIDTH+5,5+edy,TOOLBOX_WIDTH-10, TOOLBOX_HEIGHT-40,"");
     m_ToolPack->type(FL_VERTICAL);
 	m_ToolPack->box(FL_NO_BOX);
 	m_ToolPack->color(SpiralSynthModularInfo::GUICOL_Tool);
     m_ToolPack->user_data((void*)(this));
 	m_ToolBox->add(m_ToolPack);  
+	//m_EditorWindow->resizable(m_ToolBox); 
 	
-	xoff=0; yoff=TOOLBOX_HEIGHT;
-	
+	xoff=0; yoff=MAIN_HEIGHT+TOOLBOX_HEIGHT;
+	m_Buttons = new Fl_Group(xoff, yoff, TOOLBOX_WIDTH, MAIN_HEIGHT*2-TOOLBOX_HEIGHT, "");
+    m_Buttons->type(1);
+	m_Buttons->color(SpiralSynthModularInfo::GUICOL_Tool);
+	m_Buttons->box(FL_FLAT_BOX);
+	m_Buttons->user_data((void*)(this));
+	Left->add(m_Buttons); 
+
 	m_CanvasScroll = new Fl_Scroll(TOOLBOX_WIDTH, 0+edy, MAIN_WIDTH-TOOLBOX_WIDTH, MAIN_HEIGHT, "");	
 	m_EditorWindow->add(m_CanvasScroll);
 	
@@ -299,7 +302,7 @@ SpiralWindowType *SynthModular::CreateWindow()
 	m_Canvas->SetAddDeviceCallback((Fl_Callback*)cb_NewDeviceFromMenu);
 	m_CanvasScroll->add(m_Canvas);   
 
-	/*m_NewComment = new Fl_Button(MAIN_WIDTH-15, MAIN_HEIGHT*2-15, 15, 30, "");
+	m_NewComment = new Fl_Button(TOOLBOX_WIDTH/2-16, MAIN_HEIGHT*2-25, 32, 20, "");
 	m_NewComment->box(FL_NO_BOX);
 	m_Canvas->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
 	tPix = new Fl_Pixmap(comment_xpm);
@@ -312,7 +315,7 @@ SpiralWindowType *SynthModular::CreateWindow()
 	m_NewComment->tooltip("New comment in editor");		 
 	m_NewComment->user_data((void*)(this));
 	m_NewComment->callback((Fl_Callback*)cb_NewComment);
-	m_EditorWindow->add(m_NewComment);*/
+	m_EditorWindow->add(m_NewComment);
 
 	m_SettingsWindow = new SettingsWindow;
 	m_SettingsWindow->RegisterApp(this);
