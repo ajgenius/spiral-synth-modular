@@ -521,6 +521,8 @@ void LADSPAPluginGUI::SelectPlugin(void)
 
 	UpdateDefaultAdjustControls();
 	m_PortIndex = m_InputPortCount;
+	
+	redraw();
 }
 
 // ****************************************************************************
