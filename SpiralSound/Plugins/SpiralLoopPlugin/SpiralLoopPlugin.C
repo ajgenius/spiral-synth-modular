@@ -19,8 +19,15 @@
 #include "SpiralLoopPluginGUI.h"
 #include <FL/Fl_Button.h>
 #include "SpiralIcon.xpm"
-#include "../../RiffWav.h"
 #include "../../NoteTable.h"
+
+#include "../../../config.h"
+
+#ifdef USE_LIBSNDFILE
+#include <sndfile.h>
+#endif
+
+#include "../../RiffWav.h"
 
 using namespace std;
 
@@ -268,6 +275,51 @@ void SpiralLoopPlugin::LoadExternalFiles(const string &Dir)
 
 void SpiralLoopPlugin::LoadWav(const char *Filename)
 {
+#ifdef USE_LIBSNDFILE
+	SNDFILE *m_FileHandle = NULL;
+	SF_INFO m_FileInfo;
+
+	m_FileInfo.format = 0;
+	
+	m_FileHandle = sf_open (Filename, SFM_READ, &m_FileInfo);
+
+	if (m_FileHandle == NULL)
+	{
+		cerr<<"SpiralLoopPlugin: File ["<<Filename<<"] does not exist"<<endl;
+		return;
+	}
+
+        AllocateMem(m_FileInfo.frames);
+        
+	float *TempBuf = new float[m_FileInfo.frames*m_FileInfo.channels];
+	if (m_FileInfo.frames*m_FileInfo.channels!= sf_read_float(m_FileHandle, TempBuf, m_FileInfo.frames*m_FileInfo.channels))
+	{
+		cerr<<"SpiralLoopPlugin: File ["<<Filename<<"] Read error"<<endl;
+		return;
+	}
+
+	for (int i=0; i<m_FileInfo.frames; i++)
+	{
+		float value=0;
+
+		if (m_FileInfo.channels>1) // mix the channels into a mono buffer
+		{
+			for (int j=0; j<m_FileInfo.channels; j++)
+				value += TempBuf[(i*m_FileInfo.channels)+j];
+
+			value/=m_FileInfo.channels;
+
+			m_StoreBuffer.Set(i,value);
+		} else 
+			m_StoreBuffer.Set(i,TempBuf[i]);
+	
+	}
+
+	delete[] TempBuf;
+
+	sf_close(m_FileHandle); 
+	m_FileHandle = NULL;
+#else
 	WavFile wav;
 	if (wav.Open(Filename, WavFile::READ))
 	{
@@ -275,6 +327,7 @@ void SpiralLoopPlugin::LoadWav(const char *Filename)
 		AllocateMem(wav.GetSize());		
 		wav.Load(m_StoreBuffer);	
 	}
+#endif
 }
 
 void SpiralLoopPlugin::SaveWav(const char *Filename)
