@@ -61,7 +61,9 @@ bool SynthModular::m_CallbackUpdateMode = false;
 
 DeviceWin::~DeviceWin()
 {	
+	what happens now?
 	this is a test for merging
+	ah I see!
 } 
 
 //////////////////////////////////////////////////////////
