@@ -1,4 +1,4 @@
-/*  WaveShaper Plugin Copyleft (C) 2001 Yves Usson 
+/*  WaveShaper Plugin Copyleft (C) 2001 Yves Usson
  *  for SpiralSynthModular
  *  Copyleft (C) 2001 David Griffiths <dave@pawfal.org>
  *
@@ -15,7 +15,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include "../SpiralPlugin.h"
 #include <FL/Fl_Pixmap.H>
@@ -23,37 +23,34 @@
 #ifndef WaveShaperPLUGIN
 #define WaveShaperPLUGIN
 
-class WaveShaperPlugin : public SpiralPlugin
-{
-public:
- 	WaveShaperPlugin();
-	virtual ~WaveShaperPlugin();
-	
-	virtual PluginInfo& Initialise(const HostInfo *Host);
-	virtual SpiralGUIType*  CreateGUI();
-	virtual void 		Execute();
-	virtual void	    StreamOut(ostream &s);
-	virtual void	    StreamIn(istream &s);
-		
-	// has to be defined in the plugin	
-	virtual void UpdateGUI() { Fl::check(); }
-
-	void Calc(void);
-	float Get(int);
-	void SetCoef(int,float);
-	void SetWaveType(int);
-	float GetCoef(int);
-	int GetWaveType(void);
-private:
-	float *wt;
-	float m_Coefs[6];
-	int m_Wave;
-	void set(int,float);
-	friend istream &operator>>(istream &s, WaveShaperPlugin &o);
-	friend ostream &operator<<(ostream &s, WaveShaperPlugin &o);
+class WaveShaperPlugin : public SpiralPlugin {
+  public:
+    WaveShaperPlugin();
+    virtual ~WaveShaperPlugin ();
+    virtual PluginInfo& Initialise (const HostInfo *Host);
+    virtual SpiralGUIType* CreateGUI();
+    virtual void Execute();
+    virtual void ExecuteCommands();
+    virtual void StreamOut(ostream &s);
+    virtual void StreamIn(istream &s);
+    float GetCoef(int);
+    int GetWaveType(void);
+    enum GUICommands { NONE, SETWAVETYPE, SETCOEF };
+    struct GUIArgs {
+      int WaveType, CoefNum;
+      float CoefVal, *FuncPlot;
+    };
+  private:
+    GUIArgs m_GUIArgs;
+    float *m_wt, m_Coefs[6];
+    int m_Wave;
+    void calc (void);
+    void set (int index, float v);
+    friend istream &operator>> (istream &s, WaveShaperPlugin &o);
+    friend ostream &operator<< (ostream &s, WaveShaperPlugin &o);
 };
 
-istream &operator>>(istream &s, WaveShaperPlugin &o);
-ostream &operator<<(ostream &s, WaveShaperPlugin &o);
+istream &operator>> (istream &s, WaveShaperPlugin &o);
+ostream &operator<< (ostream &s, WaveShaperPlugin &o);
 
 #endif

@@ -1,4 +1,4 @@
-/*  WaveShaper Plugin Copyleft (C) 2001 Yves Usson 
+/*  WaveShaper Plugin Copyleft (C) 2001 Yves Usson
  *  for SpiralSynthModular
  *  Copyleft (C) 2000 David Griffiths <dave@pawfal.org>
  *
@@ -15,7 +15,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+*/
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -33,39 +33,35 @@
 #define WaveShaperGUI
 
 class FunctionPlot :  public Fl_Widget {
-public:
-  FunctionPlot(int ox,int oy,int ww,int hh);
-  ~FunctionPlot();
-private:
-  float *fval;
-  void draw();
-  int handle(int event);
-public:
-  void set(const int index,const float v);
-  float get(const int index) const;
+  public:
+    FunctionPlot (int ox, int oy, int ww, int hh);
+    ~FunctionPlot ();
+  private:
+    float *fval;
+    void draw ();
+    int handle (int event);
+  public:
+    void set (const int index, const float v);
+    float get (const int index) const;
 };
 
-class WaveShaperPluginGUI : public SpiralPluginGUI
-{
-public:
-	WaveShaperPluginGUI(int w, int h, WaveShaperPlugin *o,const HostInfo *Info);
-	
-	virtual void UpdateValues();
-	virtual SpiralPlugin* GetPlugin() { return m_Plugin; }
-	
-	WaveShaperPlugin *m_Plugin;	
-private:
-  FunctionPlot *fplot;
-  Fl_Round_Button *radio_polynomial;
-  Fl_Round_Button *radio_sines;
-  Fl_Knob *knob[6];
-  
-	//// Callbacks ////
-  inline void cb_radio_i(Fl_Round_Button*, void*);
-  static void cb_radio(Fl_Round_Button* o, void* v);
-  inline void cb_knob_i(Fl_Knob*, void*);
-  static void cb_knob(Fl_Knob* o, void* v);
-  void knobCB();
+class WaveShaperPluginGUI : public SpiralPluginGUI {
+  public:
+    WaveShaperPluginGUI (int w, int h, WaveShaperPlugin *o, ChannelHandler *ch, const HostInfo *Info);
+    virtual void UpdateValues (SpiralPlugin *o);
+    virtual void Update ();
+  protected:
+    const string GetHelpText (const string &loc);
+  private:
+    FunctionPlot *fplot;
+    Fl_Round_Button *radio_polynomial;
+    Fl_Round_Button *radio_sines;
+    Fl_Knob *knob[6];
+    //// Callbacks ////
+    inline void cb_radio_i (Fl_Round_Button*, void*);
+    static void cb_radio (Fl_Round_Button* o, void* v);
+    inline void cb_knob_i (Fl_Knob*, void*);
+    static void cb_knob (Fl_Knob* o, void* v);
 };
 
 #endif
