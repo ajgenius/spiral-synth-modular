@@ -114,27 +114,17 @@ void DiskWriterPlugin::Execute()
 	if(m_Recording && m_Wav.IsOpen()) 
     {	
 		int on=0;
-		float t;
-		short Buffer[host->BUFSIZE*Bps];
+		float LeftBuffer[host->BUFSIZE], RightBuffer[host->BUFSIZE];
 		
 		for (int n=0; n<host->BUFSIZE; n++)
 		{
 			// stereo channels - interleave	
-			t=GetInput(0,n);
-			if (t>1) t=1;
-			if (t<-1) t=-1;
-			Buffer[on]=lrintf(t*SHRT_MAX);
-			on++;
-
-			t=GetInput(1,n);
-			if (t>1) t=1;
-			if (t<-1) t=-1;
-			Buffer[on]=lrintf(t*SHRT_MAX);
-			on++;
+			LeftBuffer[n]=GetInput(0,n);
+			RightBuffer[n]=GetInput(1,n);
 		}
 		
 		// stereo Bps * bufsize
-        m_Wav.Save(Buffer,host->BUFSIZE*2*Bps);
+        m_Wav.Save(LeftBuffer, RightBuffer, host->BUFSIZE);
     }
 }
 
