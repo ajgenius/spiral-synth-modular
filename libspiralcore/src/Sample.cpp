@@ -1,31 +1,32 @@
-/*  SpiralLoops
- *  Copyleft (C) 2000 David Griffiths <dave@pawfal.org>
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/ 
+// Copyright (C) 2003 David Griffiths <dave@pawfal.org>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 #include <string.h>
+#include "NETypes.h"
 #include "Sample.h"
 #include <iostream>
 
+using namespace spiralcore;
+
+Allocator *Sample::m_Allocator = new MallocAllocator();
+
 Sample::Sample(int Len) :
-m_IsEmpty(true),
-m_DataGranularity(1),//512),
 m_Data(NULL),
 m_Length(0)
-{
+{	
 	if (Len) 
 	{
 		Allocate(Len);
@@ -34,8 +35,6 @@ m_Length(0)
 
 
 Sample::Sample(const Sample &rhs):
-m_IsEmpty(true),
-m_DataGranularity(512),
 m_Data(NULL),
 m_Length(0)
 {
@@ -43,9 +42,7 @@ m_Length(0)
 }
 
 
-Sample::Sample(const float *S, int Len):
-m_IsEmpty(false),
-m_DataGranularity(512),
+Sample::Sample(const AudioType *S, int Len):
 m_Data(NULL),
 m_Length(0)
 {
@@ -65,7 +62,8 @@ Sample::~Sample()
 bool Sample::Allocate(int Size)
 {
 	Clear();
-	m_Data = new float[Size];
+	
+	m_Data = (AudioType*) m_Allocator->New(Size*sizeof(AudioType));
 	m_Length=Size;
 	
 	memset(m_Data,0,GetLengthInBytes());
@@ -75,11 +73,9 @@ bool Sample::Allocate(int Size)
 
 void Sample::Clear()
 {
-	m_IsEmpty=true;
-
 	if (m_Data)
 	{
-		delete[] m_Data;
+		m_Allocator->Delete((char*)m_Data);
 		m_Length=0;
 		m_Data=NULL;
 	}
@@ -87,14 +83,11 @@ void Sample::Clear()
 
 void Sample::Zero()
 {
-	m_IsEmpty=true;
 	memset(m_Data,0,GetLengthInBytes());
 }
 
-void Sample::Set(float Val)
+void Sample::Set(AudioType Val)
 {
-	m_IsEmpty=false;
-
 	for (int n=0; n<m_Length; n++)
 	{
 		m_Data[n]=Val;
@@ -107,7 +100,7 @@ void Sample::Insert(const Sample &S, int Pos)
 	assert(Pos<=GetLength());
 
 	int NewLen = GetLength()+S.GetLength();
-	float *NewBuf = new float [NewLen];
+	AudioType *NewBuf = (AudioType*) m_Allocator->New(NewLen*sizeof(AudioType));
 	int FromPos=0, ToPos=0, TempBufPos=0;
 	
 	while (FromPos<=GetLength())
@@ -122,10 +115,10 @@ void Sample::Insert(const Sample &S, int Pos)
 		}
 		else
 		{
-			// this test is needed so the loop can deal 
-			// with samples being "inserted" on to the 
+			// this test is needed so the loop can deal
+			// with samples being "inserted" on to the
 			// very end of the buffer
-			if (FromPos<GetLength()) 
+			if (FromPos<GetLength())
 			{
 				NewBuf[ToPos]=m_Data[FromPos];
 			}
@@ -173,11 +166,11 @@ void Sample::Remove(int Start, int End)
 	// calc lengths and allocate memory
 	int CutLen = End - Start;
 	// has to be granulated by the buffer size
-	CutLen-=CutLen % m_DataGranularity;
 	
 	int NewLen = GetLength()-CutLen;
-	float *TempBuf = new float[NewLen];
-	
+
+	AudioType *TempBuf = (AudioType*) m_Allocator->New(NewLen*sizeof(AudioType));
+		
 	int ToPos=0;
 	
 	for (int FromPos=0; FromPos<GetLength(); FromPos++)
@@ -207,7 +200,7 @@ void Sample::Reverse(int Start, int End)
 	if (End>GetLength()) End=GetLength();
 	
 	int NewLen = End-Start;
-	float *TempBuf = new float[NewLen];
+	AudioType *TempBuf = (AudioType*) m_Allocator->New(NewLen*sizeof(AudioType));
 	int ToPos=0;
 	int FromPos=0;
 	
@@ -233,7 +226,7 @@ void Sample::Reverse(int Start, int End)
 void Sample::Move(int Dist)
 {
 	int Length=GetLength();
-	float *TempBuf = new float[Length];
+	AudioType *TempBuf = (AudioType*) m_Allocator->New(Length*sizeof(AudioType));
 	int ToPos=0;
 	int FromPos=Dist;
 	
@@ -260,7 +253,6 @@ void Sample::GetRegion(Sample &S, int Start, int End) const
 	assert(Start<=End);
 	
 	int Length=End-Start;
-	Length-=Length % m_DataGranularity;
 	S.Allocate(Length);
 	
 	int FromPos=Start;
@@ -276,7 +268,7 @@ void Sample::CropTo(int NewLength)
 {
 	assert (NewLength<GetLength());
 	
-	float *temp = new float[NewLength];
+	AudioType *temp = (AudioType*) m_Allocator->New(NewLength*sizeof(AudioType));
 		
 	for(int n=0; n<NewLength; n++)
 	{
@@ -303,7 +295,7 @@ void Sample::Shrink(int Length)
 	int NewLength=GetLength()-Length;
 	assert(NewLength>0 && NewLength<=GetLength());
 	
-	float *temp = new float[NewLength];
+	AudioType *temp = (AudioType*) m_Allocator->New(NewLength*sizeof(AudioType));
 	
 	for(int n=0; n<NewLength; n++)
 	{
