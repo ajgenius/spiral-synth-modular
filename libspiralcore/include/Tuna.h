@@ -38,12 +38,6 @@ public:
     float GetQuantised(float frequency);
     void Print();
     void SetRoot(float s) { if (s>0) m_Root=s; CalculateNoteLUT(); }
-
-    // the note filter allows notes in a scale to be turned on or off
-    void FilterClosest(float frequency);
-    void UnfilterClosest(float frequency);
-    void ClearFilter();
-    void FillFilter();
     float GetNote(unsigned int index);
 	               
 private:
@@ -60,7 +54,6 @@ private:
     string m_Description;
     unsigned int m_NumNotes;
     vector<float> m_Scale;
-    vector<bool> m_Filter;
     float m_Root;
     vector<float> m_NoteLUT;
 	float m_Highest;

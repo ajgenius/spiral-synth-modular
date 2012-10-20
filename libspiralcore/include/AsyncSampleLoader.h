@@ -17,6 +17,7 @@
 #include <string>
 #include <pthread.h>
 #include <deque>
+#include <map>
 #include "Types.h"
 #include "Sample.h"
 
@@ -28,15 +29,25 @@ using namespace std;
 namespace spiralcore
 {
 
+// a sample loader that does it's loading in another thread. should be suitable
+// for realtime use. caches samples (forever) and seems to work, but needs a 
+// little fixing up to be safer
 class AsyncSampleLoader
 {
 public:
 	static AsyncSampleLoader* Get();
 	static void Shutdown();
 	
-	bool AddToQueue(Sample *s, const string &Filename);
+	// this sample will be filled later. *should* be ok to play it, as
+	// it will be allocated on one chunk, and the size updated after
+	// might get some noise though - and you probably shouldnt - need to
+	// have some info on whether it's loaded or not :)
+	// ownership of the sample remains in control of this class - do not
+	// delete!
+	Sample *AddToQueue(const string &Filename);
+	// batches em up to save time
 	void LoadQueue();
-			
+	
 private:
 	AsyncSampleLoader();
 	~AsyncSampleLoader();
@@ -51,6 +62,8 @@ private:
 		string Name;
 		Sample *SamplePtr;
 	};
+	
+	static map<string,Sample*> m_Cache;
 	
 	// two loaderstacks, so we can get a lock on at least one of them at any time
 	static deque<LoadItem> m_LoadQueue;

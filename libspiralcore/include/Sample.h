@@ -50,6 +50,7 @@ public:
 	~Sample();
 
 	static void SetAllocator(Allocator *s) { m_Allocator=s; }
+	static Allocator *GetAllocator() { return m_Allocator; }
 
 	bool Allocate(int Size);
 	void Clear();
@@ -70,7 +71,7 @@ public:
 	void Shrink(int Length);
 	void CropTo(int NewLength);
 
-	inline AudioType &Sample::operator[](unsigned int i) const
+	AudioType &operator[](unsigned int i) const
 	{		
 		#ifdef DEBUG
 			assert(i>=0 && i<m_Length);
@@ -78,14 +79,14 @@ public:
 		return m_Data[i];
 	}
 	
-	inline AudioType &Sample::operator[](int i) const
+	AudioType &operator[](int i) const
 	{
 		//return (*this)[(int)i];
 		return m_Data[i];
 	}
 	
 	// Linear interpolated
-	inline AudioType Sample::operator[](float i) const
+	inline AudioType operator[](float i) const
 	{		
 		int ii=(int)i;
 		
@@ -99,7 +100,7 @@ public:
 	}
 
 
-	inline void Sample::Set(int i, AudioType v)
+	void Set(int i, AudioType v)
 	{	
 		#ifdef DEBUG
 			assert(i>=0 && i<m_Length);
@@ -107,7 +108,7 @@ public:
 		m_Data[i]=v;
 	}	
 	
-	inline Sample &Sample::operator=(const Sample &rhs)
+	Sample &operator=(const Sample &rhs)
 	{
 		if (GetLength()!=rhs.GetLength()) Allocate(rhs.GetLength());		
 		memcpy(m_Data,rhs.GetBuffer(),GetLengthInBytes());

@@ -16,6 +16,7 @@
 
 #include <stdio.h>
 #include <limits.h>
+#include <memory.h>
 
 #include "JackClient.h"
 #include "NETypes.h"
@@ -74,9 +75,7 @@ bool JackClient::Attach(const string &ClientName)
 	}
 
 	m_Attached=true;
-	
-	cerr<<"connected to jack..."<<endl;
-		
+			
 	return true;
 }
 
@@ -229,7 +228,7 @@ void JackClient::ConnectInput(int n, const string &JackPort)
 {
 	if (!IsAttached()) return;
 
-	cerr<<"JackClient::ConnectInput: connecting source ["<<JackPort<<"] to dest ["<<m_InputPortMap[n]->Name<<"]"<<endl;
+	//cerr<<"JackClient::ConnectInput: connecting source ["<<JackPort<<"] to dest ["<<m_InputPortMap[n]->Name<<"]"<<endl;
 
 	if (m_InputPortMap[n]->ConnectedTo!="")
 	{
@@ -252,7 +251,7 @@ void JackClient::ConnectInput(int n, const string &JackPort)
 void JackClient::ConnectOutput(int n, const string &JackPort)
 {
 	if (!IsAttached()) return;
-	cerr<<"JackClient::ConnectOutput: connecting source ["<<m_OutputPortMap[n]->Name<<"] to dest ["<<JackPort<<"]"<<endl;
+	//cerr<<"JackClient::ConnectOutput: connecting source ["<<m_OutputPortMap[n]->Name<<"] to dest ["<<JackPort<<"]"<<endl;
 
 	if (m_OutputPortMap[n]->ConnectedTo!="")
 	{
@@ -273,7 +272,7 @@ void JackClient::ConnectOutput(int n, const string &JackPort)
 void JackClient::DisconnectInput(int n)
 {
 	if (!IsAttached()) return;
-	cerr<<"JackClient::DisconnectInput: Disconnecting input "<<n<<endl;
+	//cerr<<"JackClient::DisconnectInput: Disconnecting input "<<n<<endl;
 
 	if (m_InputPortMap[n]->ConnectedTo!="")
 	{
@@ -290,7 +289,7 @@ void JackClient::DisconnectInput(int n)
 void JackClient::DisconnectOutput(int n)
 {
 	if (!IsAttached()) return;
-	cerr<<"JackClient::DisconnectInput: Disconnecting input "<<n<<endl;
+	//cerr<<"JackClient::DisconnectInput: Disconnecting input "<<n<<endl;
 
 	if (m_OutputPortMap[n]->ConnectedTo!="")
 	{

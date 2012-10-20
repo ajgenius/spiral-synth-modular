@@ -20,6 +20,9 @@
 #include <cstdlib>
 #include <cstring>
 
+#ifndef SPIRALCORE_TRACE
+#define SPIRALCORE_TRACE
+
 using namespace std;
 
 #define BLACK           0
@@ -46,10 +49,13 @@ inline void Trace(int FGColour, int BGColour, const char *msg, ...)
     }
     va_end(ap);
  
-    char command[13];               
-    sprintf(command, "%c[%d;%d;%dm", 0x1B, 2, FGColour + 30, BGColour + 40);        
-    cerr<<command<<buffer;
-    sprintf(command, "%c[%d;%d;%dm", 0x1B, 2, WHITE + 30, BLACK + 40);      
-  	
-    cerr<<command<<endl;
+    //char command[13];               
+    //sprintf(command, "%c[%d;%d;%dm", 0x1B, 2, FGColour + 30, BGColour + 40);        
+    //cerr<<command<<buffer;
+    //sprintf(command, "%c[%d;%d;%dm", 0x1B, 2, WHITE + 30, BLACK + 40);      
+    //cerr<<command<<endl;
+	
+    cerr<<buffer<<endl;
 }
+
+#endif

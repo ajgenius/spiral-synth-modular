@@ -18,6 +18,8 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <iostream>
+#include <stdlib.h>
+#include <memory.h>
 
 #include "OSCServer.h"
 
@@ -28,7 +30,7 @@ m_Port(Port),
 m_Exit(false),
 m_CommandRingBuffer(262144)
 {
-	cerr<<"Using port: ["<<Port<<"]"<<endl;
+	//cerr<<"Using port: ["<<Port<<"]"<<endl;
     m_Server = lo_server_thread_new(Port.c_str(), ErrorHandler);
     lo_server_thread_add_method(m_Server, NULL, NULL, DefaultHandler, this);
 }

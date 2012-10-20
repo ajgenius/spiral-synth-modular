@@ -18,6 +18,7 @@
 #include <math.h>
 #include <float.h>
 #include <iostream>
+#include <stdlib.h>
 #include "Tuna.h"
 
 static const float MAX_LUT_FREQ = 24000.0; // (maximum audible freq (apparently))
@@ -27,6 +28,22 @@ m_Buffer(NULL),
 m_Root(440.0),
 m_Highest(0)
 {
+	// start off with boring equal temp
+	m_NumNotes=12;
+	m_Scale.push_back(1+100/1200.0);
+	m_Scale.push_back(1+200/1200.0);
+	m_Scale.push_back(1+300/1200.0);
+	m_Scale.push_back(1+400/1200.0);
+	m_Scale.push_back(1+500/1200.0);
+	m_Scale.push_back(1+600/1200.0);
+	m_Scale.push_back(1+700/1200.0);
+	m_Scale.push_back(1+800/1200.0);
+	m_Scale.push_back(1+900/1200.0);
+	m_Scale.push_back(1+1000/1200.0);
+	m_Scale.push_back(1+1100/1200.0);
+	m_Scale.push_back(2);
+	
+	CalculateNoteLUT();
 }
 
 Tuna::~Tuna() 
@@ -118,12 +135,10 @@ void Tuna::Parse()
     			else
     			{
             		// we got an integer
-            		float result = atof(noteinfo.c_str())/1.0f;                                     
+            		float result = atof(noteinfo.c_str());                                     
             		if (finite(result)) m_Scale.push_back(result);                  
             		else cerr<<"Tuna::Parse: error in scala file ["<<noteinfo<<"]"<<endl;
     			}
-
-    			m_Filter.push_back(true); // add a filter entry for this note
 			}
     	}
 	}       
@@ -165,38 +180,6 @@ float Tuna::GetQuantised(float frequency)
     float result = 0;
     SnapFrequency(frequency, result);
     return result;
-}
-
-void Tuna::FilterClosest(float frequency)
-{
-    float result = 0;
-    int note = SnapFrequency(frequency, result, false)%m_NumNotes;
-
-    m_Filter[note]=true;
-}
-
-void Tuna::UnfilterClosest(float frequency)
-{
-	float result = 0;
-	int note = SnapFrequency(frequency, result, false)%m_NumNotes;
-
-	m_Filter[note]=false;
-}
-
-void Tuna::ClearFilter()
-{
-	for (unsigned int i=0; i<=m_Filter.size()-1; i++)
-	{
-    	m_Filter[i]=false;
-	}
-}
-
-void Tuna::FillFilter()
-{       
-	for (unsigned int i=0; i<=m_Filter.size()-1; i++)
-	{
-    	m_Filter[i]=true;
-	}
 }
 
 int Tuna::SnapFrequency(float in, float &out, bool usefilter)
@@ -241,19 +224,16 @@ int Tuna::FindClosest(float in, unsigned int low, int unsigned high, float &out,
     	unsigned int halfoctave = m_NumNotes/2;
     	for (unsigned int n=mid-halfoctave; n<mid+halfoctave; n++)
     	{
-			if (!usefilter || m_Filter[n%m_NumNotes])
-			{
-    			if (n>=0 && n<m_NoteLUT.size())
-    			{
-            		float dist = fabs(m_NoteLUT[n]-in);
-            		if (dist<closest)
-            		{
-                    	closest=dist;
-                    	out=m_NoteLUT[n];
-                    	index=n;
-            		}
-    			}
-			}
+			if (n>=0 && n<m_NoteLUT.size())
+    		{
+            	float dist = fabs(m_NoteLUT[n]-in);
+            	if (dist<closest)
+            	{
+                    closest=dist;
+                    out=m_NoteLUT[n];
+                    index=n;
+            	}
+    		}			
     	}               
     	// return closest
     	return index;           
@@ -297,12 +277,12 @@ void Tuna::CalculateNoteLUT()
 
 	float freq=m_Root;
 	
-	while (freq<MAX_LUT_FREQ)
+	while (freq/16<MAX_LUT_FREQ)
 	{               
     	for (vector<float>::iterator i=m_Scale.begin(); i!=m_Scale.end(); i++)
     	{
 			m_Highest = pow(2.0f,*i)*freq;
-			m_NoteLUT.push_back(m_Highest/8.0f);
+			m_NoteLUT.push_back(m_Highest/16.0f);
     	}
     	freq*=2;
 	}
@@ -336,16 +316,14 @@ int Tuna::SnapFrequency(float in, float &out, bool usefilter)
         int note=-1;
         for (int i=0; i<=m_Scale.size(); i++)
         {
-                if (!usefilter || m_Filter[i]==true)
+                float distance = fabs(scaletarget-m_Scale[i]);
+                if (distance<closest)
                 {
-                        float distance = fabs(scaletarget-m_Scale[i]);
-                        if (distance<closest)
-                        {
-                                closest=distance;
-                                out=m_Scale[i];
-                                note=i;
-                        }
+                        closest=distance;
+                        out=m_Scale[i];
+                        note=i;
                 }
+                
         }
         
         // remove scale octave thing (scales go from 1->2)

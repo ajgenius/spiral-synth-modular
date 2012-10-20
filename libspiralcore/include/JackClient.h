@@ -67,7 +67,7 @@ private:
 	class JackPort
 	{		
 		public:
-		JackPort::JackPort() :
+		JackPort() :
 			Connected(false),Buf(NULL),Port(NULL) {}
 		
 		string         Name;

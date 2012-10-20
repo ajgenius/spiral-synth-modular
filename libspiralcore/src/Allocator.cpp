@@ -19,9 +19,14 @@ m_Size(size)
 	m_Buffer = new char[m_Size];
 }
 
+void RealtimeAllocator::Reset()
+{
+	m_Position=0;
+}
+
 char *RealtimeAllocator::New(unsigned int size)
 {
-	cerr<<"new "<<size<<endl;
+	//cerr<<"new "<<size<<endl;
 	char *ret = m_Buffer+m_Position;
 	m_Position+=size;
 	
@@ -38,6 +43,6 @@ char *RealtimeAllocator::New(unsigned int size)
 
 void RealtimeAllocator::Delete(char *mem)
 {
-	cerr<<"delete"<<endl;
+	//cerr<<"delete"<<endl;
 	// we don't need no stinking delete!
 }

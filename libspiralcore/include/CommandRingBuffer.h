@@ -37,12 +37,14 @@ public:
 		// unlike the string - ownership of the blob is yours
 		// you must delete it when you're done...
 		char *GetBlob(unsigned int index);
+		unsigned int Size() { return m_NumArgs; }
 		char Name[256];
 		char Types[64];
 		
 	private:
 		char Data[COMMAND_DATA_SIZE];
-		int m_Offsets[64];  
+		int m_Offsets[64]; 
+		unsigned int m_NumArgs; 
 		
 	};	
 	

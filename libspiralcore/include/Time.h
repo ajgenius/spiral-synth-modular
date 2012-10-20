@@ -48,8 +48,8 @@ public:
 	bool IsEmpty() { return (!Seconds && !Fraction); }
 	double GetDifference(const Time& other);
 	
-	unsigned int Seconds;
-	unsigned int Fraction;
+	unsigned long int Seconds;
+	unsigned long int Fraction;
 };
 
 }

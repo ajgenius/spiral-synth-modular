@@ -16,6 +16,8 @@
 
 #include "ChannelHandler.h"
 #include <unistd.h>
+#include <stdlib.h>
+#include <memory.h>
 
 using namespace std;
 using namespace spiralcore;

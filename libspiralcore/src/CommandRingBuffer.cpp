@@ -26,9 +26,11 @@ CommandRingBuffer::Command::Command(const char *name, const char *types, const c
 	strcpy(Types,types);
 	memcpy(Data,data,datasize);
 	
+	m_NumArgs=strlen(Types);
+	
 	// figure out the offsets into the data to use later
 	int pos=0;
-	for(unsigned int i=0; i<strlen(Types); i++)
+	for(unsigned int i=0; i<m_NumArgs; i++)
 	{
 		m_Offsets[i]=pos;
 		switch(Types[i])

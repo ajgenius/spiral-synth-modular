@@ -17,12 +17,14 @@
 #include <unistd.h>
 #include <sndfile.h>
 #include "AsyncSampleLoader.h"
+#include "SearchPaths.h"
 
 using namespace spiralcore;
 
 AsyncSampleLoader *AsyncSampleLoader::m_Singleton=NULL;
 deque<AsyncSampleLoader::LoadItem> AsyncSampleLoader::m_LoadQueue;
 pthread_mutex_t* AsyncSampleLoader::m_Mutex;
+map<string,Sample*> AsyncSampleLoader::m_Cache;
 
 AsyncSampleLoader* AsyncSampleLoader::Get()
 {
@@ -43,32 +45,50 @@ AsyncSampleLoader::AsyncSampleLoader()
 
 AsyncSampleLoader::~AsyncSampleLoader()
 {
+	for (map<string,Sample*>::iterator i=m_Cache.begin(); i!=m_Cache.end(); i++)
+	{
+		cerr<<"deleting cache "<<i->first<<endl;
+		delete i->second;
+	}
+	
 	Shutdown();
 }
 
-bool AsyncSampleLoader::AddToQueue(Sample *s, const string &Filename)
+Sample *AsyncSampleLoader::AddToQueue(const string &Filename)
 {
+	map<string,Sample*>::iterator i=m_Cache.find(Filename);
+	if (i!=m_Cache.end())
+	{
+		return i->second; // already loaded this one
+	}
+	
 	LoadItem NewItem;
 	NewItem.Name=Filename;
-	NewItem.SamplePtr=s;
+	NewItem.SamplePtr=new Sample;
 	
+	// add to the cache
+	m_Cache[Filename]=NewItem.SamplePtr;
+
 	// spinlock
-	for (int n=0; n<5; n++)
+	for (int n=0; n<5; n++) // why?
 	{
 		if (pthread_mutex_trylock(m_Mutex))
 		{
 			m_LoadQueue.push_back(NewItem);
 			pthread_mutex_unlock(m_Mutex);
-			return true;
+			return NewItem.SamplePtr;
 		}
 	}
 	cerr<<"Could not get a lock on the loaderqueue, not loading ["<<Filename<<"]"<<endl;
-	return false;
+	return NewItem.SamplePtr;
 }
 
 void AsyncSampleLoader::LoadQueue()
 {
-	pthread_create(&m_LoaderThread,NULL,(void*(*)(void*))LoadLoop,NULL);
+	if (m_LoadQueue.size()>0)
+	{
+		pthread_create(&m_LoaderThread,NULL,(void*(*)(void*))LoadLoop,NULL);
+	}
 }
 
 void AsyncSampleLoader::LoadLoop()
@@ -82,7 +102,9 @@ void AsyncSampleLoader::LoadLoop()
 			
 		SF_INFO info;
 		info.format=0;
-		SNDFILE* file = sf_open (Item.Name.c_str(), SFM_READ, &info) ;
+		string filename=SearchPaths::Get()->GetFullPath(Item.Name);
+cerr<<"async loading: "<<filename<<endl;
+		SNDFILE* file = sf_open (filename.c_str(), SFM_READ, &info) ;
 		if (!file)
 		{
 			cerr<<"Error opening ["<<Item.Name<<"] : "<<sf_strerror (file)<<endl;
@@ -109,8 +131,11 @@ void AsyncSampleLoader::LoadLoop()
 			sf_readf_float(file, Item.SamplePtr->GetNonConstBuffer(), info.frames);	
 		}
 		sf_close(file);
+		
+		sleep(1);
 	}
-	pthread_mutex_unlock(m_Mutex);
+	pthread_mutex_unlock(m_Mutex);	
+
 }
 
 
