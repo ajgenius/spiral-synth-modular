@@ -3,9 +3,11 @@
 #define SSM_PLUGIN_MANIFEST_H
 #include <string>
 #include <vector>
+#include "../GUI/Widgets/PluginClass.h"
 
 struct PluginManifest {
 	int id;
+	std::vector<SSMPlugins::PluginID> dependencies;
 	std::string name, type, category, version, hostVersion, hostABI;
 	std::string module, registration, guiName, guiABI, guiVersion;
 	std::vector<std::string> authors;
