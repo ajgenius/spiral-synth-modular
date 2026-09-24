@@ -125,3 +125,31 @@ void ScopePlugin::ExecuteCommands()
 		}	
 	}		
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new ScopePlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &ScopePlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Input", true, true},
+		{"Output", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(1, "ScopePlugin", "Scope", "InputOutput",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(ScopePlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return ScopePlugin::StaticClass().Identity();
+}

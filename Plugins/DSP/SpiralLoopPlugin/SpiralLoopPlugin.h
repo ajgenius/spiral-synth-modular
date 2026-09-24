@@ -41,6 +41,8 @@ struct SampleDesc
 class SpiralLoopPlugin : public SpiralPlugin
 {
 public:
+	static const SSMPlugins::DeviceDefinition &StaticClass();
+	virtual const SSMPlugins::PluginDefinition &ClassInfo() const { return StaticClass(); }
  	SpiralLoopPlugin();
 	virtual ~SpiralLoopPlugin();
 	

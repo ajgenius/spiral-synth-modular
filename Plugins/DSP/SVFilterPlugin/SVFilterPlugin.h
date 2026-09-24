@@ -27,6 +27,8 @@ static const int NUM_CHANNELS = 4;
 class SVFilterPlugin : public SpiralPlugin
 {
 public:
+	static const SSMPlugins::DeviceDefinition &StaticClass();
+	virtual const SSMPlugins::PluginDefinition &ClassInfo() const { return StaticClass(); }
  	SVFilterPlugin();
 	virtual ~SVFilterPlugin();
 	

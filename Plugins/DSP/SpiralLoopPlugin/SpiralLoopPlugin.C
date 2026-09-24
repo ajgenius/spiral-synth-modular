@@ -623,3 +623,41 @@ void SpiralLoopPlugin::Move(int Start)
 {
 	m_StoreBuffer.Move(Start);
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new SpiralLoopPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &SpiralLoopPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Input", true, true},
+		{"Play Trigger", true, true},
+		{"Output", false, true},
+		{"Clock", false, true},
+		{"LoopTrigger 0", false, true},
+		{"LoopTrigger 1", false, true},
+		{"LoopTrigger 2", false, true},
+		{"LoopTrigger 3", false, true},
+		{"LoopTrigger 4", false, true},
+		{"LoopTrigger 5", false, true},
+		{"LoopTrigger 6", false, true},
+		{"LoopTrigger 7", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(26, "SpiralLoopPlugin", "SpiralLoop", "Delay/Sampling",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(SpiralLoopPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return SpiralLoopPlugin::StaticClass().Identity();
+}

@@ -118,3 +118,32 @@ void RingModPlugin::StreamIn(istream &s)
 	s>>m_Amount;
 }
 
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new RingModPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &RingModPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Input 1", true, true},
+		{"Input 2", true, true},
+		{"Output", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(10, "RingModPlugin", "RingMod", "Filters/FX",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(RingModPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return RingModPlugin::StaticClass().Identity();
+}

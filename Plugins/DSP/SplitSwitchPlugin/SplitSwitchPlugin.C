@@ -178,3 +178,35 @@ void SplitSwitchPlugin::StreamIn (istream &s) {
   SetChans (Chans);
   m_SwitchPos = SwitchPos;
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new SplitSwitchPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &SplitSwitchPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"CV", true, true},
+		{"Clock", true, true},
+		{"In", true, true},
+		{"CV", false, true},
+		{"Out 1", false, false},
+		{"Out 2", false, false}
+	};
+	static const SSMPlugins::DeviceDefinition definition(125, "SplitSwitchPlugin", "SplitSwitch", "Maths/Logic",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(SplitSwitchPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return SplitSwitchPlugin::StaticClass().Identity();
+}
