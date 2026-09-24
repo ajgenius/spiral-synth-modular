@@ -64,7 +64,7 @@ libSpiralWidgets_la_LIBADD = 				\
 				 -lm -ldl -lpthread	\
                 $(top_builddir)/libspiralcore/libspiralcore.la
 
-libSpiralPlugin_la_SOURCES = SpiralPlugin.C SpiralPlugin.h
+libSpiralPlugin_la_SOURCES = SpiralPlugin.C SpiralPlugin.h PluginClass.cpp PluginClass.h PluginDefinitions.cpp PluginDefinitions.h
 libSpiralPlugin_la_LIBADD = $(top_builddir)/libspiralcore/libspiralcore.la
 libSpiralPlugin_la_LDFLAGS = -shared -no-undefined -version-info $(LT_VERSION_INFO)
 libSpiralWidgets_la_LIBADD += libSpiralPlugin.la
