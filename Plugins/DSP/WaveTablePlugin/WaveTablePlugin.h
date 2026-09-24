@@ -27,6 +27,8 @@ static const int DEFAULT_TABLE_LEN = 1024;
 class WaveTablePlugin : public SpiralPlugin
 {
 public:
+	static const SSMPlugins::DeviceDefinition &StaticClass();
+	virtual const SSMPlugins::PluginDefinition &ClassInfo() const { return StaticClass(); }
  	WaveTablePlugin();
 	virtual ~WaveTablePlugin();
 

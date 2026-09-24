@@ -127,3 +127,36 @@ void XFadePlugin::StreamIn(istream &s)
 	s>>version;
 	s>>m_Mix;
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new XFadePlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &XFadePlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"XFade CV", true, true},
+		{"A Left", true, true},
+		{"A Right", true, true},
+		{"B Left", true, true},
+		{"B Right", true, true},
+		{"Left", false, true},
+		{"Right", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(27, "XFadePlugin", "XFade", "Amps/Mixers",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(XFadePlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return XFadePlugin::StaticClass().Identity();
+}
