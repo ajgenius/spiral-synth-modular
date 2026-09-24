@@ -154,3 +154,31 @@ void CounterPlugin::StreamIn(istream &s)
 	s>>version;
 	s>>m_Count>>m_Current;
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new CounterPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &CounterPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Input", true, true},
+		{"Output", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(45, "CounterPlugin", "Counter", "Maths/Logic",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(CounterPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return CounterPlugin::StaticClass().Identity();
+}

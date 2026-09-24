@@ -250,3 +250,36 @@ void DistributorPlugin::StreamIn (istream &s)
 		break;
 	}	
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new DistributorPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &DistributorPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Stream", true, true},
+		{"Switcher", true, true},
+		{"Reset CV", true, true},
+		{"Stream 1", false, false},
+		{"Switcher 1", false, false},
+		{"Stream 2", false, false},
+		{"Switcher 2", false, false}
+	};
+	static const SSMPlugins::DeviceDefinition definition(86, "DistributorPlugin", "Distributor", "Control",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(DistributorPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return DistributorPlugin::StaticClass().Identity();
+}

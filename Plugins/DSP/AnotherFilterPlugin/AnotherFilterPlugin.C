@@ -158,3 +158,33 @@ void AnotherFilterPlugin::StreamIn(istream &s)
 	s>>Cutoff>>Resonance;
 }
 
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new AnotherFilterPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &AnotherFilterPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Input", true, true},
+		{"Cutoff CV", true, true},
+		{"Emphasis CV", true, true},
+		{"LowPass output", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(43, "AnotherFilterPlugin", "AnotherFilter", "Filters/FX",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(AnotherFilterPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return AnotherFilterPlugin::StaticClass().Identity();
+}

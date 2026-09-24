@@ -161,3 +161,33 @@ void DelayPlugin::StreamIn(istream &s)
 	s>>version;
 	s>>m_Delay>>m_Mix;
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new DelayPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &DelayPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Input", true, true},
+		{"Delay CV", true, true},
+		{"ReadHead CV", true, true},
+		{"Output", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(15, "DelayPlugin", "Delay", "Delay/Sampling",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(DelayPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return DelayPlugin::StaticClass().Identity();
+}

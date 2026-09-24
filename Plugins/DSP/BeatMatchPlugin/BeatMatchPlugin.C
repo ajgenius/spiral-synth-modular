@@ -172,3 +172,31 @@ void BeatMatchPlugin::StreamIn(istream &s)
 	s>>version;
 	s>>m_Sensitivity;
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new BeatMatchPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &BeatMatchPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Input", true, true},
+		{"Output", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(48, "BeatMatchPlugin", "BeatMatch", "Maths/Logic",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(BeatMatchPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return BeatMatchPlugin::StaticClass().Identity();
+}

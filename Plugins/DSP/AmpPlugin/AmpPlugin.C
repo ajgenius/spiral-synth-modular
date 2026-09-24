@@ -77,12 +77,7 @@ m_DC(0.0f)
 	m_PluginInfo.Name="Amp";
 	m_PluginInfo.Width = 120;
 	m_PluginInfo.Height = 140;
-	m_PluginInfo.NumInputs=3;
-	m_PluginInfo.NumOutputs=1;
-	m_PluginInfo.PortTips.push_back("Input");
-	m_PluginInfo.PortTips.push_back("Gain CV");
-	m_PluginInfo.PortTips.push_back("DC Offset CV");
-	m_PluginInfo.PortTips.push_back("Output");
+	CreateDefaultPorts();
 	m_AudioCH->Register("Gain",&m_Gain);
 	m_AudioCH->Register("DC",&m_DC);
 }
@@ -126,4 +121,34 @@ void AmpPlugin::StreamIn(istream &s)
 	int version;
 	s>>version;
 	s>>m_Gain>>m_DC;
+}
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new AmpPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &AmpPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Input", true, true},
+		{"Gain CV", true, true},
+		{"DC Offset CV", true, true},
+		{"Output", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(9, "AmpPlugin", "Amp", "Amps/Mixers",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(AmpPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return AmpPlugin::StaticClass().Identity();
 }
