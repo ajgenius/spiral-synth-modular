@@ -740,3 +740,26 @@ void JackPlugin::StreamIn (istream &s)
 		break;
 	}	
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new JackPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &JackPlugin::StaticClass()
+{
+	static const SSMPlugins::DeviceDefinition definition(31, "JackPlugin", "Jack", "InputOutput",
+		CreateClassInstance, NULL, 0);
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(JackPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return JackPlugin::StaticClass().Identity();
+}

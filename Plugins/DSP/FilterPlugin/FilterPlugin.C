@@ -231,3 +231,33 @@ void FilterPlugin::SetupCoeffs()
 	ProtoCoef[1].b1 = 1.847759; 
 	ProtoCoef[1].b2 = 1.0; 
 } 
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new FilterPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &FilterPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Input", true, true},
+		{"Cutoff CV", true, true},
+		{"Emphasis CV", true, true},
+		{"Output", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(11, "FilterPlugin", "Filter", "Filters/FX",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(FilterPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return FilterPlugin::StaticClass().Identity();
+}

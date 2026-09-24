@@ -128,3 +128,31 @@ void KeyboardPlugin::StreamIn(istream &s)
 	s>>version;
 }
 
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new KeyboardPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &KeyboardPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Note CV", false, true},
+		{"Trigger CV", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(40, "KeyboardPlugin", "Keyboard", "InputOutput",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(KeyboardPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return KeyboardPlugin::StaticClass().Identity();
+}

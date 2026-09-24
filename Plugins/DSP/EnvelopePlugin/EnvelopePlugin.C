@@ -230,3 +230,33 @@ void EnvelopePlugin::StreamIn(istream &s)
 	s>>version;
 	s>>m_Attack>>m_Decay>>m_Sustain>>m_Release>>m_Volume>>m_TrigThresh;
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new EnvelopePlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &EnvelopePlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Trigger CV", true, true},
+		{"Input", true, true},
+		{"CV", false, true},
+		{"Output", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(5, "EnvelopePlugin", "Envelope", "Control",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(EnvelopePlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return EnvelopePlugin::StaticClass().Identity();
+}

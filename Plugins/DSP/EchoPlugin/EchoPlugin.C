@@ -163,3 +163,34 @@ void EchoPlugin::StreamIn(istream &s)
         if (version>1) s >> m_Bounce; else m_Bounce = false;
 }
 
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new EchoPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &EchoPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Input", true, true},
+		{"Delay CV", true, true},
+		{"Feedback CV", true, true},
+		{"Left/Mono Out", false, true},
+		{"Right Out", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(14, "EchoPlugin", "Echo", "Delay/Sampling",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(EchoPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return EchoPlugin::StaticClass().Identity();
+}

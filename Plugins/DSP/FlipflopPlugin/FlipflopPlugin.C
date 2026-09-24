@@ -185,3 +185,31 @@ void FlipflopPlugin::StreamIn(istream &s)
 		s>>m_TriggerTime>>m_Monostable;
 	}
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new FlipflopPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &FlipflopPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Input", true, true},
+		{"Output", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(46, "FlipflopPlugin", "Flipflop", "Maths/Logic",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(FlipflopPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return FlipflopPlugin::StaticClass().Identity();
+}
