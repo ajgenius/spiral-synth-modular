@@ -19,6 +19,7 @@
 #ifndef SPIRALPLUGIN
 #define SPIRALPLUGIN
 
+#include "PluginDefinitions.h"
 #include <vector>
 #include <map>
 #include <string>
@@ -82,10 +83,13 @@ struct HostInfo
 
 class ChannelHandler;
 
-class SpiralPlugin
+class SpiralPlugin: public SSMPlugins::Plugin
 {
 public:
 	SpiralPlugin();
+	static const SSMPlugins::DeviceDefinition &StaticClass();
+	virtual const SSMPlugins::PluginDefinition &ClassInfo() const { return StaticClass(); }
+	virtual void CreateDefaultPorts();
 	virtual ~SpiralPlugin();
 
 	virtual PluginInfo& Initialise(const HostInfo *Host);

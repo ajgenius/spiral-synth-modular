@@ -67,10 +67,7 @@ m_NumChannels(4)
             m_GUIArgs.inPeak[c] = false;
         }
         m_GUIArgs.Peak = false;
-        m_PluginInfo.NumInputs = m_NumChannels;
-        m_PluginInfo.NumOutputs = 1;
-        for (c=1; c<=m_NumChannels; c++) AddInputTip (c);
-        m_PluginInfo.PortTips.push_back ("Output");
+	CreateDefaultPorts();
 	m_AudioCH->Register ("Value", &m_GUIArgs.Value);
 	m_AudioCH->Register ("Num", &m_GUIArgs.Num);
 	m_AudioCH->Register ("Peak", &m_GUIArgs.Peak, ChannelHandler::OUTPUT);
@@ -178,4 +175,35 @@ void MixerPlugin::StreamIn (istream &s) {
                break;
      }
      for (int n=0; n<m_NumChannels; n++) s >> m_ChannelVal[n];
+}
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new MixerPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &MixerPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Input 1", true, true},
+		{"Input 2", true, true},
+		{"Input 3", true, false},
+		{"Input 4", true, false},
+		{"Output", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(7, "MixerPlugin", "Mixer", "Amps/Mixers",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(MixerPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return MixerPlugin::StaticClass().Identity();
 }

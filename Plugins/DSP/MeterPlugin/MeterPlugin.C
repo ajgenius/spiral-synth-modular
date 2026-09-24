@@ -137,3 +137,31 @@ void MeterPlugin::StreamIn (istream &s) {
   s >> Version;
   s >> m_VUMode;
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new MeterPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &MeterPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Input", true, true},
+		{"Output", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(123, "MeterPlugin", "Meter", "InputOutput",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(MeterPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return MeterPlugin::StaticClass().Identity();
+}

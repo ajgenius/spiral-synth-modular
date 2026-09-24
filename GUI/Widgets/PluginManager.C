@@ -20,6 +20,10 @@
 #include <cstring>
 #include <dlfcn.h>
 #include <stdio.h>
+#include <set>
+#include <algorithm>
+#include <sys/stat.h>
+#include "../../JSON/PluginManifest.h"
 #include "SpiralInfo.h"
 #include "PluginManager.h"
 #include "SpiralGUI.H"
@@ -39,16 +43,15 @@ PluginManager::~PluginManager()
 
 static void ClearDSP(HostsideInfo *p)
 {
+	p->DSPClass = NULL;
 	p->dsp.Handle = NULL;
-	p->dsp.CreateInstance = NULL;
 	p->dsp.GetIcon = NULL;
-	p->dsp.GetGroupName = NULL;
 }
 
 static void ClearGUI(HostsideInfo *p)
 {
+	p->GUIClass = NULL;
 	p->gui.Handle = NULL;
-	p->gui.CreateGUI = NULL;
 	p->gui.GetIcon = NULL;
 }
 
@@ -60,6 +63,8 @@ static void UpdatePairedType(HostsideInfo *p)
 		p->type = SPIRAL_PLUGIN_TYPE_DSP;
 	else if (p->gui.Handle)
 		p->type = SPIRAL_PLUGIN_TYPE_GUI;
+	else
+		p->type = -1;
 }
 
 HostsideInfo *PluginManager::NewSlot(int ID)
@@ -73,161 +78,205 @@ HostsideInfo *PluginManager::NewSlot(int ID)
 	return p;
 }
 
-PluginID PluginManager::LoadPlugin(const char *PluginName)
+PluginID PluginManager::TryLoad(const string &path, const PluginManifest *manifest)
 {
-	// DSP modules load first so GUI methods resolve immediately.
-	void *handle = dlopen(PluginName, RTLD_NOW | RTLD_GLOBAL);
-	if (handle == NULL)
+	m_LoadError.clear();
+	m_Waiting = false;
+	// Public GUI modules import native DSP methods. Preserve their global
+	// symbol visibility; typed registration still precedes instance creation.
+	void *handle = dlopen(path.c_str(), RTLD_NOW | RTLD_GLOBAL);
+	if (!handle)
 	{
-		SpiralInfo::Alert("Error loading ["+string(PluginName)+"]: \n"+string(dlerror()));
+		m_LoadError = dlerror();
+		m_Waiting = true; // A bare native dependency may be discovered later.
 		return PluginError;
 	}
-
 	typedef const char *(*TextFn)();
-	TextFn GetHostABI = (TextFn)dlsym(handle, "SpiralPlugin_GetHostABI");
-	const char *abi = GetHostABI ? GetHostABI() : NULL;
-
-	if (!abi || strcmp(abi, SSM_HOST_ABI) != 0)
+	TextFn abi = (TextFn)dlsym(handle, "SpiralPlugin_GetHostABI");
+	const char *hostABI = abi ? abi() : NULL;
+	SSMPlugins::InitializePlugin initialize =
+		(SSMPlugins::InitializePlugin)dlsym(handle, "SpiralPlugin_Initialize");
+	if (!hostABI || strcmp(hostABI, SSM_HOST_ABI) || !initialize)
 	{
-		SpiralInfo::Alert("Missing or incompatible plugin ABI: " + string(PluginName));
+		m_LoadError = "Missing or incompatible plugin ABI/initializer";
 		dlclose(handle);
 		return PluginError;
 	}
-
-	char *error = NULL;
-	dlerror();
-
-	int (*GetID)(void) = (int(*)()) dlsym(handle, "SpiralPlugin_GetID");
-	if ((error = dlerror()) != NULL)
+	SSMPlugins::PluginID id = initialize(&m_Registry);
+	const SSMPlugins::PluginClass *type = m_Registry.Find(id);
+	if (id.id < 0 || !type)
 	{
-		SpiralInfo::Alert("Error linking to plugin "+string(PluginName)+"\n"+string(error));
+		m_LoadError = m_Registry.Error();
+		if (m_LoadError.empty()) m_LoadError = "Initializer did not register a concrete class";
+		m_Waiting = m_Registry.WaitingForDependencies();
 		dlclose(handle);
 		return PluginError;
 	}
-	int ID = GetID();
-	if (ID < 0)
+	const SSMPlugins::PluginDefinition &info = type->Info();
+	const SSMPlugins::DeviceDefinition *dsp = dynamic_cast<const SSMPlugins::DeviceDefinition *>(&info);
+	const SSMPlugins::PluginUIDefinition *gui = dynamic_cast<const SSMPlugins::PluginUIDefinition *>(&info);
+	bool valid = (id.type == SSMPlugins::PluginTypes::DSP && dsp && dsp->create) ||
+		(id.type == SSMPlugins::PluginTypes::GUI && gui && gui->createUI);
+	if (manifest)
 	{
+		valid = valid && manifest->id == id.id && manifest->type == SSMPlugins::PluginTypeName(id.type) &&
+			manifest->name == info.name && manifest->category == info.category &&
+			manifest->dependencies.size() == info.dependencyCount;
+		for (size_t d = 0; valid && d < info.dependencyCount; ++d)
+			valid = find(manifest->dependencies.begin(), manifest->dependencies.end(), info.dependencies[d]) != manifest->dependencies.end();
+	}
+	bool owned = false;
+	for (size_t i = 0; i < m_Modules.size(); ++i)
+		if (m_Modules[i].handle && m_Modules[i].id == id) owned = true;
+	if (!valid)
+	{
+		m_LoadError = "Class definition does not match plugin family or manifest";
+		if (!owned) m_Registry.Discard(id);
 		dlclose(handle);
 		return PluginError;
 	}
-
-	int type = 0;
-	int (*GetType)(void) = (int(*)()) dlsym(handle, "SpiralPlugin_GetType");
-	if (dlerror() == NULL && GetType)
-		type = GetType();
-
-	if (type != SPIRAL_PLUGIN_TYPE_DSP && type != SPIRAL_PLUGIN_TYPE_GUI)
+	HostsideInfo *slot = GetPlugin_i(id.id);
+	if (!slot) slot = NewSlot(id.id);
+	if ((dsp && slot->dsp.Handle) || (gui && slot->gui.Handle))
 	{
-		SpiralInfo::Alert("Obsolete or invalid plugin module: "+string(PluginName));
 		dlclose(handle);
-		return PluginError;
+		return id.id;
 	}
-
-	HostsideInfo *slot = GetPlugin_i(ID);
-	if (!slot)
-		slot = NewSlot(ID);
-
-	if (type == SPIRAL_PLUGIN_TYPE_GUI)
+	const char **(*icon)() = (const char **(*)())dlsym(handle, "SpiralPlugin_GetIcon");
+	if (dsp)
 	{
-		if (slot->gui.Handle)
-		{
-			dlclose(handle);
-			return ID;
-		}
-
-		SpiralGUIType *(*CreateGUI)(SpiralPlugin *) =
-			(SpiralGUIType *(*)(SpiralPlugin *)) dlsym(handle, "SpiralPlugin_CreateGUI");
-		if ((error = dlerror()) != NULL)
-		{
-			SpiralInfo::Alert("Error linking GUI in "+string(PluginName)+"\n"+string(error));
-			dlclose(handle);
-			return PluginError;
-		}
-
-		const char **(*GetIcon)(void) = (const char **(*)()) dlsym(handle, "SpiralPlugin_GetIcon");
-		if (dlerror() != NULL)
-			GetIcon = NULL;
-
+		slot->dsp.Handle = handle;
+		slot->dsp.GetIcon = icon;
+		slot->DSPClass = type;
+		slot->Name = info.name;
+		slot->Category = info.category;
+	}
+	else
+	{
 		slot->gui.Handle = handle;
-		slot->gui.CreateGUI = CreateGUI;
-		slot->gui.GetIcon = GetIcon;
-		UpdatePairedType(slot);
-		return ID;
+		slot->gui.GetIcon = icon;
+		slot->GUIClass = gui;
 	}
-
-	// Resolve the DSP factory and its metadata.
-	if (slot->dsp.Handle)
-	{
-		dlclose(handle);
-		return ID;
-	}
-
-	SpiralPlugin *(*CreateInstance)(void) =
-		(SpiralPlugin *(*)()) dlsym(handle, "SpiralPlugin_CreateInstance");
-	if ((error = dlerror()) != NULL)
-	{
-		SpiralInfo::Alert("Error linking to plugin "+string(PluginName)+"\n"+string(error));
-		dlclose(handle);
-		return PluginError;
-	}
-
-	const char **(*GetIcon)(void) = (const char **(*)()) dlsym(handle, "SpiralPlugin_GetIcon");
-	if ((error = dlerror()) != NULL)
-	{
-		SpiralInfo::Alert("Error linking to plugin "+string(PluginName)+"\n"+string(error));
-		dlclose(handle);
-		return PluginError;
-	}
-
-	std::string (*GetGroupName)(void) =
-		(std::string(*)()) dlsym(handle, "SpiralPlugin_GetGroupName");
-	if ((error = dlerror()) != NULL)
-	{
-		SpiralInfo::Alert("Error linking to plugin "+string(PluginName)+"\n"+string(error));
-		dlclose(handle);
-		return PluginError;
-	}
-
-	std::string (*GetName)(void) = (std::string(*)()) dlsym(handle, "SpiralPlugin_GetName");
-	std::string name = GetName ? GetName() : std::string();
-	if (name.empty())
-	{
-		SpiralInfo::Alert("Missing plugin name: " + string(PluginName));
-		dlclose(handle);
-		return PluginError;
-	}
-
-	slot->Name = name;
-
-	slot->dsp.Handle = handle;
-	slot->dsp.CreateInstance = CreateInstance;
-	slot->dsp.GetIcon = GetIcon;
-	slot->dsp.GetGroupName = GetGroupName;
+	m_Modules.push_back(Module(handle, id));
 	UpdatePairedType(slot);
-	return ID;
+	return id.id;
+}
+
+PluginID PluginManager::LoadPlugin(const char *path)
+{
+	int id = TryLoad(path, NULL);
+	if (id == PluginError) SpiralInfo::Alert(string(path) + ": " + m_LoadError);
+	return id;
+}
+
+std::vector<int> PluginManager::LoadPlugins(const string &root, const vector<string> &modules)
+{
+	vector<int> result;
+	vector<PluginManifest> manifests(modules.size());
+	vector<bool> described(modules.size(), false), done(modules.size(), false);
+	vector<string> errors(modules.size());
+	string prefix = root;
+	if (!prefix.empty() && prefix[prefix.size()-1] != '/') prefix += '/';
+	for (size_t i = 0; i < modules.size(); ++i)
+	{
+		string path = prefix + modules[i];
+		string::size_type slash = path.find_last_of('/');
+		string directory = slash == string::npos ? "" : path.substr(0, slash + 1);
+		string filename = slash == string::npos ? path : path.substr(slash + 1);
+		string manifestPath = directory + "info.json";
+		struct stat status;
+		if (stat(manifestPath.c_str(), &status)) continue;
+		described[i] = true;
+#ifdef HAVE_YAJL
+		if (!manifests[i].Read(manifestPath, errors[i]) ||
+			!manifests[i].Compatible(PACKAGE_VERSION, SSM_HOST_ABI, "FLTK", "1", errors[i]) ||
+			manifests[i].registration != "module" || manifests[i].module != filename)
+#else
+		errors[i] = "Manifest found, but this build has no YAJL support";
+#endif
+		{
+			done[i] = true;
+			if (errors[i].empty()) errors[i] = "Manifest module does not match binary";
+			SpiralInfo::Alert(path + ": " + errors[i]);
+		}
+	}
+	// Complete the manifest phase before attempting unmanifested binaries.
+	for (int phase = 0; phase < 2; ++phase)
+	{
+		bool progress;
+		do
+		{
+			progress = false;
+			for (size_t i = 0; i < modules.size(); ++i)
+			{
+				if (done[i] || described[i] != (phase == 0)) continue;
+				bool ready = true;
+				for (size_t d = 0; described[i] && d < manifests[i].dependencies.size(); ++d)
+					if (!m_Registry.Find(manifests[i].dependencies[d])) ready = false;
+				if (!ready)
+				{
+					errors[i] = "Missing or cyclic manifest dependency";
+					continue;
+				}
+				int id = TryLoad(prefix + modules[i], described[i] ? &manifests[i] : NULL);
+				if (id != PluginError)
+				{
+					done[i] = true;
+					progress = true;
+					if (find(result.begin(), result.end(), id) == result.end()) result.push_back(id);
+				}
+				else
+				{
+					errors[i] = m_LoadError;
+					if (!m_Waiting)
+					{
+						done[i] = true;
+						SpiralInfo::Alert(prefix + modules[i] + ": " + errors[i]);
+					}
+				}
+			}
+		} while (progress);
+		for (size_t i = 0; i < modules.size(); ++i)
+			if (!done[i] && described[i] == (phase == 0))
+			{
+				done[i] = true;
+				SpiralInfo::Alert(prefix + modules[i] + ": " + errors[i]);
+			}
+	}
+	return result;
 }
 
 void PluginManager::UnLoadPlugin(PluginID ID)
 {
-	HostsideInfo *p = GetPlugin_i(ID);
-	if (!p) return;
-	if (p->gui.Handle) { dlclose(p->gui.Handle); ClearGUI(p); }
-	if (p->dsp.Handle) { dlclose(p->dsp.Handle); ClearDSP(p); }
-	p->type = 0;
-	char *error;
-	if ((error = dlerror()) != NULL)
-		SpiralInfo::Alert("Error unlinking plugin: \n"+string(error));
+	// Callers must have destroyed all instances. Refuse dependency consumers.
+	HostsideInfo *slot = GetPlugin_i(ID);
+	if (!slot) return;
+	for (vector<Module>::reverse_iterator i = m_Modules.rbegin(); i != m_Modules.rend(); ++i)
+	{
+		if (i->id.id != ID || !i->handle) continue;
+		if (!m_Registry.Discard(i->id))
+		{
+			SpiralInfo::Alert("Plugin still has registered dependents");
+			return;
+		}
+		if (i->id.type == SSMPlugins::PluginTypes::GUI) ClearGUI(slot);
+		else ClearDSP(slot);
+		UpdatePairedType(slot);
+		dlclose(i->handle);
+		i->handle = NULL;
+	}
+	UpdatePairedType(slot);
 }
 
 void PluginManager::UnloadAll()
 {
-	for (vector<HostsideInfo*>::iterator i=m_PluginVec.begin();
-	     i!=m_PluginVec.end(); i++)
-	{
-		if ((*i)->gui.Handle) dlclose((*i)->gui.Handle);
-		if ((*i)->dsp.Handle) dlclose((*i)->dsp.Handle);
-		delete *i;
-	}
+	// Registry views must disappear while their definitions are still mapped.
+	m_Registry.Clear();
+	for (vector<Module>::reverse_iterator i = m_Modules.rbegin(); i != m_Modules.rend(); ++i)
+		if (i->handle) dlclose(i->handle);
+	m_Modules.clear();
+	m_Registry.Reset();
+	for (size_t i = 0; i < m_PluginVec.size(); ++i) delete m_PluginVec[i];
 	m_PluginVec.clear();
 }
 

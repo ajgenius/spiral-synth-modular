@@ -402,7 +402,7 @@ const char **SpiralPlugin_GetIcon()
 	return SpiralIcon_xpm;
 }
 
-SpiralGUIType *SpiralPlugin_CreateGUI(SpiralPlugin *plugin)
+static SpiralGUIType *CreatePluginUI(SpiralPlugin *plugin)
 {
 	EnvelopePlugin *p = (EnvelopePlugin *)plugin;
 	if (!p) return 0;
@@ -412,3 +412,7 @@ SpiralGUIType *SpiralPlugin_CreateGUI(SpiralPlugin *plugin)
 }
 
 }
+
+#include "PluginGUIExports.h"
+
+SSM_EXPORT_GUI_CLASS(5, "EnvelopePluginGUI", "Envelope", "Control", CreatePluginUI)

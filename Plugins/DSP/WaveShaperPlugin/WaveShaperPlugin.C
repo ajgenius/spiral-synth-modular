@@ -219,3 +219,31 @@ void WaveShaperPlugin::StreamIn (istream &s) {
   calc ();
 }
 
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new WaveShaperPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &WaveShaperPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Input", true, true},
+		{"Out", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(50, "WaveShaperPlugin", "WaveShaper", "Filters/FX",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(WaveShaperPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return WaveShaperPlugin::StaticClass().Identity();
+}

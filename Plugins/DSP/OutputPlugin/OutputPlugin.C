@@ -193,3 +193,33 @@ void OutputPlugin::ProcessAudio()
 		if (cb_Blocking) cb_Blocking(m_Parent,false);
 	}
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new OutputPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &OutputPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Left Out", true, true},
+		{"Right Out", true, true},
+		{"Left In", false, true},
+		{"Right In", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(0, "OutputPlugin", "Output", "InputOutput",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(OutputPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return OutputPlugin::StaticClass().Identity();
+}

@@ -351,3 +351,33 @@ void ControllerPlugin::StreamIn(istream &s)
 		break;
 	}
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new ControllerPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &ControllerPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"CV 1", false, false},
+		{"CV 2", false, false},
+		{"CV 3", false, false},
+		{"CV 4", false, false}
+	};
+	static const SSMPlugins::DeviceDefinition definition(3, "ControllerPlugin", "CV", "Control",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(ControllerPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return ControllerPlugin::StaticClass().Identity();
+}

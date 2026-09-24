@@ -13,7 +13,7 @@
   "host": {
     "name": "SpiralSynthModular",
     "version": "0.3.1",
-    "abi": "0.3.1"
+    "abi": "ssm-fltk-channel-class-1"
   },
   "registration": "module",
   "module": "WaveShaperPlugin_GUI.so",
@@ -21,5 +21,11 @@
     "name": "FLTK",
     "abi": "1",
     "version": "1.x"
-  }
+  },
+  "dependencies": [
+    {
+      "type": "dsp",
+      "id": 50
+    }
+  ]
 }

@@ -192,3 +192,35 @@ void MixSwitchPlugin::StreamIn (istream &s) {
   SetChans (Chans);
   m_SwitchPos = SwitchPos;
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new MixSwitchPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &MixSwitchPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"CV", true, true},
+		{"Clock", true, true},
+		{"In 1", true, false},
+		{"In 2", true, false},
+		{"CV", false, true},
+		{"Out", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(126, "MixSwitchPlugin", "MixSwitch", "Maths/Logic",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(MixSwitchPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return MixSwitchPlugin::StaticClass().Identity();
+}

@@ -235,3 +235,33 @@ ostream &operator<<(ostream &s, OscillatorPlugin &o)
 	dummy<<" "<<o.m_SHLen<<" "<<o.m_ModAmount<<" ";
 	return s;
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new OscillatorPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &OscillatorPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Frequency CV", true, true},
+		{"PulseWidth CV", true, true},
+		{"Sample & Hold length CV", true, true},
+		{"Output", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(4, "OscillatorPlugin", "Oscillator", "Oscillators",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(OscillatorPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return OscillatorPlugin::StaticClass().Identity();
+}

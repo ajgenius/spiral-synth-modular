@@ -167,3 +167,39 @@ void StereoMixerPlugin::StreamIn(istream &s)
 }
 
 
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new StereoMixerPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &StereoMixerPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Input one", true, true},
+		{"Input two", true, true},
+		{"Input three", true, true},
+		{"Input four", true, true},
+		{"Pan CV one", true, true},
+		{"Pan CV two", true, true},
+		{"Pan CV three", true, true},
+		{"Pan CV four", true, true},
+		{"Output left", false, true},
+		{"Output right", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(8, "StereoMixerPlugin", "Stereo Mixer", "Amps/Mixers",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(StereoMixerPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return StereoMixerPlugin::StaticClass().Identity();
+}

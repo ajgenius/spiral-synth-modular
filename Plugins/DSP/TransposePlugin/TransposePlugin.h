@@ -23,6 +23,8 @@
 
 class TransposePlugin : public SpiralPlugin {
 public:
+	static const SSMPlugins::DeviceDefinition &StaticClass();
+	virtual const SSMPlugins::PluginDefinition &ClassInfo() const { return StaticClass(); }
 	TransposePlugin();
 	virtual ~TransposePlugin ();
 	virtual PluginInfo& Initialise (const HostInfo *Host);

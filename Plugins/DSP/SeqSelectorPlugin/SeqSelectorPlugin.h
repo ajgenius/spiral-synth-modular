@@ -26,6 +26,8 @@ static const int NUM_VALUES = 8;
 class SeqSelectorPlugin : public SpiralPlugin
 {
 public:
+	static const SSMPlugins::DeviceDefinition &StaticClass();
+	virtual const SSMPlugins::PluginDefinition &ClassInfo() const { return StaticClass(); }
  	SeqSelectorPlugin();
 	virtual ~SeqSelectorPlugin();
 	

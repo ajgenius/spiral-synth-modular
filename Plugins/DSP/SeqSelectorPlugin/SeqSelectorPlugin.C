@@ -230,3 +230,38 @@ void SeqSelectorPlugin::StreamIn(istream &s)
 		m_Lines.push_back(NewLine);
 	}	
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new SeqSelectorPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &SeqSelectorPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Trigger", true, true},
+		{"CV One", false, true},
+		{"CV Two", false, true},
+		{"CV Three", false, true},
+		{"CV Four", false, true},
+		{"CV Five", false, true},
+		{"CV Six", false, true},
+		{"CV Seven", false, true},
+		{"CV Eight", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(21, "SeqSelectorPlugin", "SeqSelector", "Sequencing",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(SeqSelectorPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return SeqSelectorPlugin::StaticClass().Identity();
+}

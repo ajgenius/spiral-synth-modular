@@ -215,3 +215,33 @@ void MasherPlugin::StreamIn(istream &s)
 	s>>version;
 	s>>m_GrainStoreSize>>m_Density>>m_Randomness>>m_GrainPitch;
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new MasherPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &MasherPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Input", true, true},
+		{"GrainPitch", true, true},
+		{"Density", true, true},
+		{"Output", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(54, "MasherPlugin", "Masher", "Filters/FX",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(MasherPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return MasherPlugin::StaticClass().Identity();
+}

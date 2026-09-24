@@ -253,3 +253,31 @@ ostream &operator<<(ostream &s, WaveTablePlugin &o)
 	s<<(int)o.m_Type<<" "<<o.m_Octave<<" "<<o.m_FineFreq<<" "<<o.m_ModAmount<<" ";
 	return s;
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new WaveTablePlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &WaveTablePlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Frequency CV", true, true},
+		{"Output", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(23, "WaveTablePlugin", "WaveTable", "Oscillators",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(WaveTablePlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return WaveTablePlugin::StaticClass().Identity();
+}

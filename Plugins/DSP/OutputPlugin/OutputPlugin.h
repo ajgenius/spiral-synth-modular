@@ -25,6 +25,8 @@
 class OutputPlugin : public AudioDriver
 {
 public:
+	static const SSMPlugins::DeviceDefinition &StaticClass();
+	virtual const SSMPlugins::PluginDefinition &ClassInfo() const { return StaticClass(); }
 	enum Mode {NO_MODE,INPUT,OUTPUT,DUPLEX,CLOSED};
 
 	OutputPlugin();

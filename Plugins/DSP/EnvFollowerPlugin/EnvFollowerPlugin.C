@@ -126,3 +126,31 @@ void EnvFollowerPlugin::StreamIn(istream &s)
 	s>>m_Version;
 	s>>m_Attack>>m_Decay;
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new EnvFollowerPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &EnvFollowerPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Input", true, true},
+		{"Output", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(19, "EnvFollowerPlugin", "EnvFollower", "Control",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(EnvFollowerPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return EnvFollowerPlugin::StaticClass().Identity();
+}

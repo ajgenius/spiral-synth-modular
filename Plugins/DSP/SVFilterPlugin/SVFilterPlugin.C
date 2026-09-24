@@ -190,3 +190,37 @@ void SVFilterPlugin::Clear()
 	m_p=0.0f;
 	m_n=0.0f;
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new SVFilterPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &SVFilterPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Input", true, true},
+		{"Cutoff CV", true, true},
+		{"Emphasis CV", true, true},
+		{"LowPass output", false, true},
+		{"BandPass output", false, true},
+		{"HighPass output", false, true},
+		{"Notch output", false, true},
+		{"Peaking output", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(12, "SVFilterPlugin", "SVF", "Filters/FX",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(SVFilterPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return SVFilterPlugin::StaticClass().Identity();
+}

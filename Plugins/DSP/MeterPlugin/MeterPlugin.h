@@ -23,6 +23,8 @@
 
 class MeterPlugin : public SpiralPlugin {
   public:
+	static const SSMPlugins::DeviceDefinition &StaticClass();
+	virtual const SSMPlugins::PluginDefinition &ClassInfo() const { return StaticClass(); }
     MeterPlugin();
     virtual ~MeterPlugin();
     virtual PluginInfo& Initialise (const HostInfo *Host);

@@ -208,3 +208,32 @@ void DiskWriterPlugin::StreamIn (istream &s)
 		break;
 	}
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new DiskWriterPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &DiskWriterPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Left Out", true, true},
+		{"Right Out", true, true},
+		{"Record Controller", true, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(41, "DiskWriterPlugin", "DiskWriter", "InputOutput",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(DiskWriterPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return DiskWriterPlugin::StaticClass().Identity();
+}

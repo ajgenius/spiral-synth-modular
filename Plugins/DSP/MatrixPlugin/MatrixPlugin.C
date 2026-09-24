@@ -494,3 +494,53 @@ void MatrixPlugin::StreamIn (istream &s) {
         }
      }
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new MatrixPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &MatrixPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Play Trigger", true, true},
+		{"StepTime CV", true, true},
+		{"Input Pitch CV", true, true},
+		{"Input Trigger CV", true, true},
+		{"External Clock", true, true},
+		{"Output Pitch", false, true},
+		{"Output Trigger", false, true},
+		{"Trigger 1", false, true},
+		{"Trigger 2", false, true},
+		{"Trigger 3", false, true},
+		{"Trigger 4", false, true},
+		{"Trigger 5", false, true},
+		{"Trigger 6", false, true},
+		{"Trigger 7", false, true},
+		{"Trigger 8", false, true},
+		{"Trigger 9", false, true},
+		{"Trigger 10", false, true},
+		{"Trigger 11", false, true},
+		{"Trigger 12", false, true},
+		{"Trigger 13", false, true},
+		{"Trigger 14", false, true},
+		{"Trigger 15", false, true},
+		{"Trigger 16", false, true},
+		{"Reset Trigger", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(18, "MatrixPlugin", "Matrix", "Sequencing",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(MatrixPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return MatrixPlugin::StaticClass().Identity();
+}

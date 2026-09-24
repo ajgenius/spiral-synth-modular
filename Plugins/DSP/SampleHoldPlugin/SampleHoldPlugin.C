@@ -130,3 +130,32 @@ void SampleHoldPlugin::Execute()
 		}
 	}
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new SampleHoldPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &SampleHoldPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Input", true, true},
+		{"Clock", true, true},
+		{"Out", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(51, "SampleHoldPlugin", "SampleHold", "Control",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(SampleHoldPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return SampleHoldPlugin::StaticClass().Identity();
+}

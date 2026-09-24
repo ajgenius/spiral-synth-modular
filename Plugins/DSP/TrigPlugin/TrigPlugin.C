@@ -145,3 +145,31 @@ void TrigPlugin::StreamIn(istream &s)
 	s>>t;
 	m_Operator=(OperatorType)t;
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new TrigPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &TrigPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Input", true, true},
+		{"Output", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(53, "TrigPlugin", "Trig", "Maths/Logic",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(TrigPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return TrigPlugin::StaticClass().Identity();
+}

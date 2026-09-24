@@ -198,3 +198,32 @@ void LogicPlugin::StreamIn(istream &s) {
       break;
   }
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new LogicPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &LogicPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Input 1", true, false},
+		{"Input 2", true, false},
+		{"Output", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(52, "LogicPlugin", "Logic", "Maths/Logic",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(LogicPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return LogicPlugin::StaticClass().Identity();
+}

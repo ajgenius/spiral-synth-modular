@@ -489,3 +489,59 @@ void PoshSamplerPlugin::LoadExternalFiles(const string &Dir, int withID) {
          LoadSample (n, temp);
      }
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new PoshSamplerPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &PoshSamplerPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Sample 1 Pitch", true, true},
+		{"Sample 1 Trigger", true, true},
+		{"Sample 2 Pitch", true, true},
+		{"Sample 2 Trigger", true, true},
+		{"Sample 3 Pitch", true, true},
+		{"Sample 3 Trigger", true, true},
+		{"Sample 4 Pitch", true, true},
+		{"Sample 4 Trigger", true, true},
+		{"Sample 5 Pitch", true, true},
+		{"Sample 5 Trigger", true, true},
+		{"Sample 6 Pitch", true, true},
+		{"Sample 6 Trigger", true, true},
+		{"Sample 7 Pitch", true, true},
+		{"Sample 7 Trigger", true, true},
+		{"Sample 8 Pitch", true, true},
+		{"Sample 8 Trigger", true, true},
+		{"Input", true, true},
+		{"Sample trigger pitch", true, true},
+		{"Sample 1 Start Pos", true, true},
+		{"Sample 2 Start Pos", true, true},
+		{"Sample 3 Start Pos", true, true},
+		{"Mixed Output", false, true},
+		{"Sample 1 Output", false, true},
+		{"Sample 2 Output", false, true},
+		{"Sample 3 Output", false, true},
+		{"Sample 4 Output", false, true},
+		{"Sample 5 Output", false, true},
+		{"Sample 6 Output", false, true},
+		{"Sample 7 Output", false, true},
+		{"Sample 8 Output", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(32, "PoshSamplerPlugin", "PoshSampler", "Delay/Sampling",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(PoshSamplerPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return PoshSamplerPlugin::StaticClass().Identity();
+}

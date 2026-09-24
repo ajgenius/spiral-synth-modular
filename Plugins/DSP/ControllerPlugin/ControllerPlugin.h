@@ -26,6 +26,8 @@ static const int MAX_CHANNELS = 99;
 class ControllerPlugin : public SpiralPlugin
 {
 public:
+	static const SSMPlugins::DeviceDefinition &StaticClass();
+	virtual const SSMPlugins::PluginDefinition &ClassInfo() const { return StaticClass(); }
  	ControllerPlugin();
 	virtual ~ControllerPlugin();
 	

@@ -23,6 +23,8 @@
 
 class SplitSwitchPlugin : public SpiralPlugin {
   public:
+	static const SSMPlugins::DeviceDefinition &StaticClass();
+	virtual const SSMPlugins::PluginDefinition &ClassInfo() const { return StaticClass(); }
     SplitSwitchPlugin ();
     virtual ~SplitSwitchPlugin ();
     virtual PluginInfo& Initialise (const HostInfo *Host);

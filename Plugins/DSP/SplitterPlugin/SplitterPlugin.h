@@ -24,6 +24,8 @@
 class SplitterPlugin : public SpiralPlugin
 {
 public:
+	static const SSMPlugins::DeviceDefinition &StaticClass();
+	virtual const SSMPlugins::PluginDefinition &ClassInfo() const { return StaticClass(); }
  	SplitterPlugin();
 	virtual ~SplitterPlugin();
 	

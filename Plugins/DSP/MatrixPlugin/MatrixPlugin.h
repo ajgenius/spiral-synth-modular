@@ -38,6 +38,8 @@ struct Pattern
 class MatrixPlugin : public SpiralPlugin
 {
 public:
+	static const SSMPlugins::DeviceDefinition &StaticClass();
+	virtual const SSMPlugins::PluginDefinition &ClassInfo() const { return StaticClass(); }
  	MatrixPlugin();
 	virtual ~MatrixPlugin();
 	

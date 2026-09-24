@@ -3,6 +3,7 @@
 #include "PluginManifest.h"
 #include "JSONParser.h"
 #include <climits>
+#include <set>
 using SpiralJSON::JSONValue;
 
 namespace {
@@ -67,6 +68,32 @@ bool PluginManifest::Read(const std::string &path, std::string &error)
 		ok = ok && text(root, "module", module) && basename(module);
 	else
 		ok = ok && !root->Get("module");
+	const JSONValue *deps = root->Get("dependencies");
+	std::set<SSMPlugins::PluginID> seen;
+	if (deps && deps->GetType() != JSONValue::Array) ok = false;
+	if (ok && deps)
+		for (size_t d = 0; d < deps->Size(); ++d)
+		{
+			const JSONValue *dep = deps->At(d);
+			std::string kind;
+			long number = -1;
+			const JSONValue *value = dep ? dep->Get("id") : NULL;
+			SSMPlugins::PluginType depType = SSMPlugins::PluginTypes::Root;
+			bool valid = text(dep, "type", kind) && value && value->Integer(number) && number >= 0 && number <= INT_MAX;
+			if (kind == "dsp") depType = SSMPlugins::PluginTypes::DSP;
+			else if (kind == "gui") depType = SSMPlugins::PluginTypes::GUI;
+			else if (kind == "audio") depType = SSMPlugins::PluginTypes::Audio;
+			else if (kind == "midi") depType = SSMPlugins::PluginTypes::MIDI;
+			else if (kind == "host") depType = SSMPlugins::PluginTypes::Host;
+			else valid = false;
+			SSMPlugins::PluginID identity(depType, static_cast<int>(number));
+			if (!valid || (kind == type && number == id) || !seen.insert(identity).second)
+			{
+				ok = false;
+				break;
+			}
+			dependencies.push_back(identity);
+		}
 	delete root;
 	if (!ok)
 		error = "Invalid plugin manifest: required fields, types, or schema_version";

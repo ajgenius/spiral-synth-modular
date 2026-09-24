@@ -58,6 +58,8 @@ class TranslateVoltToNote : public TranslateClass {
 
 class TranslatePlugin : public SpiralPlugin {
    public:
+	static const SSMPlugins::DeviceDefinition &StaticClass();
+	virtual const SSMPlugins::PluginDefinition &ClassInfo() const { return StaticClass(); }
       TranslatePlugin();
       virtual ~TranslatePlugin ();
       virtual PluginInfo& Initialise (const HostInfo *Host);

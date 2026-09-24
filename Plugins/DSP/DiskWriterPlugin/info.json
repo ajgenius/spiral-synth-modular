@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": 41,
   "name": "DiskWriter",
-  "type": "audio-driver",
+  "type": "dsp",
   "category": "InputOutput",
   "authors": [
     "David Griffiths"
@@ -11,8 +11,9 @@
   "host": {
     "name": "SpiralSynthModular",
     "version": "0.3.1",
-    "abi": "0.3.1"
+    "abi": "ssm-fltk-channel-class-1"
   },
   "registration": "module",
-  "module": "DiskWriterPlugin_DSP.so"
+  "module": "DiskWriterPlugin_DSP.so",
+  "dependencies": []
 }

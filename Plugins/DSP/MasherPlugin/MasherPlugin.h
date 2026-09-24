@@ -26,6 +26,8 @@ static const int MAX_GRAINSTORE_SIZE = 1000;
 class MasherPlugin : public SpiralPlugin
 {
 public:
+	static const SSMPlugins::DeviceDefinition &StaticClass();
+	virtual const SSMPlugins::PluginDefinition &ClassInfo() const { return StaticClass(); }
  	MasherPlugin();
 	virtual ~MasherPlugin();
 	

@@ -30,3 +30,14 @@ SpiralSynthModular_SOURCES = \
 		GraphSort.h \
 		GraphSort.C \
 		main.cpp
+
+check_PROGRAMS = plugin-registry-test plugin-class-host
+TESTS = plugin-registry-test
+plugin_registry_test_SOURCES = tests/plugin-registry.cpp GUI/Widgets/PluginClass.cpp
+plugin_registry_test_CPPFLAGS = -I$(top_srcdir)
+plugin_registry_test_LDADD =
+plugin_class_host_SOURCES = tests/plugin-class-host.cpp SpiralInfo.C GraphSort.C
+plugin_class_host_CPPFLAGS = $(INCLUDES) -I$(top_srcdir)
+plugin_class_host_LDADD = $(LIBS)
+
+EXTRA_DIST += tests/run-plugin-loading.py tests/rejected-plugin.cpp docs/plugin-registry.md
