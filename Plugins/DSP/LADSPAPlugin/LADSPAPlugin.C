@@ -1090,3 +1090,26 @@ void LADSPAPlugin::SetGUIExports(void)
 		m_OutData.InputPortDefaults[p] = m_InputPortDefault[p];
 	}
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new LADSPAPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &LADSPAPlugin::StaticClass()
+{
+	static const SSMPlugins::DeviceDefinition definition(22, "LADSPAPlugin", "LADSPA", "Filters/FX",
+		CreateClassInstance, NULL, 0);
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(LADSPAPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return LADSPAPlugin::StaticClass().Identity();
+}

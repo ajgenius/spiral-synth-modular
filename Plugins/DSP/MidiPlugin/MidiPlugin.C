@@ -344,3 +344,37 @@ void MidiPlugin::StreamIn(istream &s)
 		}
 	}
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new MidiPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &MidiPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Note CV", true, true},
+		{"Trigger CV", true, true},
+		{"Note CV", false, true},
+		{"Trigger CV", false, true},
+		{"PitchBend CV", false, true},
+		{"ChannelPressure CV", false, true},
+		{"Aftertouch CV", false, true},
+		{"Clock CV", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(2, "MidiPlugin", "Midi", "InputOutput",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(MidiPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return MidiPlugin::StaticClass().Identity();
+}

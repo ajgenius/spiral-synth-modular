@@ -24,6 +24,8 @@
 class MidiPlugin : public SpiralPlugin
 {
 public:
+	static const SSMPlugins::DeviceDefinition &StaticClass();
+	virtual const SSMPlugins::PluginDefinition &ClassInfo() const { return StaticClass(); }
  	MidiPlugin();
 	virtual ~MidiPlugin();
 

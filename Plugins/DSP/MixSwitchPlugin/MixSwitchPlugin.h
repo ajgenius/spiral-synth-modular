@@ -23,6 +23,8 @@
 
 class MixSwitchPlugin : public SpiralPlugin {
   public:
+	static const SSMPlugins::DeviceDefinition &StaticClass();
+	virtual const SSMPlugins::PluginDefinition &ClassInfo() const { return StaticClass(); }
     MixSwitchPlugin ();
     virtual ~MixSwitchPlugin ();
     virtual PluginInfo& Initialise (const HostInfo *Host);

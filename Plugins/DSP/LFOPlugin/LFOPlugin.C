@@ -159,3 +159,32 @@ void LFOPlugin::StreamIn(istream &s) {
      s >> m_Freq;
 }
 
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new LFOPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &LFOPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Output", false, true},
+		{"'Cosine' Output", false, true},
+		{"Inverted Output", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(124, "LFOPlugin", "LFO", "Oscillators",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(LFOPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return LFOPlugin::StaticClass().Identity();
+}
