@@ -64,7 +64,13 @@ libSpiralWidgets_la_LIBADD = 				\
 				 -lm -ldl -lpthread	\
                 $(top_builddir)/libspiralcore/libspiralcore.la
 
-libSpiralPlugin_la_SOURCES = SpiralPlugin.C SpiralPlugin.h PluginClass.cpp PluginClass.h PluginDefinitions.cpp PluginDefinitions.h
+libSpiralPlugin_la_SOURCES = SpiralPlugin.C SpiralPlugin.h PluginClass.cpp PluginClass.h PluginDefinitions.cpp PluginDefinitions.h PluginGUIExports.h
 libSpiralPlugin_la_LIBADD = $(top_builddir)/libspiralcore/libspiralcore.la
 libSpiralPlugin_la_LDFLAGS = -shared -no-undefined -version-info $(LT_VERSION_INFO)
 libSpiralWidgets_la_LIBADD += libSpiralPlugin.la
+
+if HAVE_YAJL
+libSpiralWidgets_la_SOURCES += ../../JSON/PluginManifest.cpp ../../JSON/PluginManifest.h ../../JSON/JSONParser.cpp ../../JSON/JSONParser.h
+INCLUDES += $(YAJL_CFLAGS)
+libSpiralWidgets_la_LIBADD += $(YAJL_LIBS)
+endif

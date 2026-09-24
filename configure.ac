@@ -8,7 +8,7 @@ dnl Process this file with autoconf to produce a configure script.
 AC_INIT([SpiralSynthModular], [0.3.1])
 AC_CONFIG_SRCDIR([SpiralSynthModular.C])
 
-AC_DEFINE([SSM_HOST_ABI], ["ssm-fltk-channel-1"], [SSM plugin host ABI])
+AC_DEFINE([SSM_HOST_ABI], ["ssm-fltk-channel-class-1"], [SSM plugin host ABI])
 
 AM_INIT_AUTOMAKE
 
@@ -28,7 +28,7 @@ AM_PROG_LIBTOOL
 
 AC_PATH_TOOL([PKG_CONFIG], [pkg-config], [no])
 
-dnl JSON reader. Skip it when YAJL 2 is not installed.
+dnl JSON reader for manifest-aware plugin loading.
 AC_ARG_VAR([YAJL_CFLAGS], [C preprocessor flags for YAJL 2])
 AC_ARG_VAR([YAJL_LIBS], [Linker flags for YAJL 2])
 have_yajl=no
@@ -51,7 +51,10 @@ if test "$have_yajl" = no; then
     CPPFLAGS="$ssm_saved_CPPFLAGS"
     LIBS="$ssm_saved_LIBS"
 fi
+AS_IF([test "$have_yajl" != yes],
+    [AC_MSG_ERROR([YAJL 2 is required for plugin manifest loading])])
 AM_CONDITIONAL([HAVE_YAJL], [test "$have_yajl" = yes])
+AS_IF([test "$have_yajl" = yes], [AC_DEFINE([HAVE_YAJL], [1], [Build manifest-aware loading])])
 
 dnl ---- OutputPlugin audio backends (in libspiralcore) ----
 dnl Blocking device-paced I/O: PortAudio Pa_WriteStream, ALSA writei, OSS

@@ -493,8 +493,22 @@ SpiralWindowType *SynthModular::CreateWindow()
 
 //////////////////////////////////////////////////////////
 
+#include "JSON/PluginManifest.h"
+
 static void CollectSo(const string &dir, const string &rel, vector<string> &ret)
 {
+#ifdef HAVE_YAJL
+	struct stat manifestStatus;
+	if (!stat((dir + "/info.json").c_str(), &manifestStatus))
+	{
+		PluginManifest manifest;
+		string error;
+		if (manifest.Read(dir + "/info.json", error) && manifest.registration == "module")
+			ret.push_back(rel.empty() ? manifest.module : rel + "/" + manifest.module);
+		else
+			SpiralInfo::Alert(dir + "/info.json: " + error);
+	}
+#endif
 	DIR *directory = opendir(dir.c_str());
 	if (!directory) return;
 	struct dirent *entry;
@@ -543,7 +557,6 @@ vector<string> SynthModular::BuildPluginList (const string &Path)
 	CollectSo(root, "", ret);
 	CollectPluginDirs(root, "dsp", ret);
 	CollectPluginDirs(root, "gui", ret);
-	sort(ret.begin(), ret.end());
 	return ret;
 }
 
@@ -580,8 +593,7 @@ void SynthModular::LoadPlugins (string pluginPath) {
      }
      string PluginRoot = pluginPath.empty() ? SpiralInfo::PLUGIN_PATH : pluginPath;
      if (!PluginRoot.empty() && PluginRoot[PluginRoot.size()-1] != '/') PluginRoot += '/';
-     vector<string> DSPNames;
-     vector<string> GUINames;
+     vector<string> ModuleNames;
      set<string> SeenModules;
      for (vector<string>::const_iterator i = PluginVector.begin(); i != PluginVector.end(); ++i)
      {
@@ -591,24 +603,20 @@ void SynthModular::LoadPlugins (string pluginPath) {
          {
              // Preferences written before the split name the combined module.
              string stem = name.substr(0, name.size()-3);
-             name = stem + "_DSP.so";
+             struct stat legacy;
+             if (!stat((PluginRoot + stem + "_DSP.so").c_str(), &legacy))
+                 name = stem + "_DSP.so";
              string gui = stem + "_GUI.so";
              struct stat info;
              if (!stat((PluginRoot+gui).c_str(), &info) && SeenModules.insert(gui).second)
-                 GUINames.push_back(gui);
+                 ModuleNames.push_back(gui);
          }
          if (!SeenModules.insert(name).second) continue;
-         if (name.size() >= 7 && name.substr(name.size()-7) == "_GUI.so")
-             GUINames.push_back(name);
-         else
-             DSPNames.push_back(name);
+         ModuleNames.push_back(name);
      }
-     PluginVector = DSPNames;
-     PluginVector.insert(PluginVector.end(), GUINames.begin(), GUINames.end());
-     for (vector<string>::iterator i=PluginVector.begin(); i!=PluginVector.end(); i++) {
-         string Fullpath;
-         Fullpath = PluginRoot + *i;
-         ID = PluginManager::Get()->LoadPlugin (Fullpath.c_str());
+     vector<int> Loaded = PluginManager::Get()->LoadPlugins(PluginRoot, ModuleNames);
+     for (vector<int>::iterator i=Loaded.begin(); i!=Loaded.end(); ++i) {
+         ID = *i;
          const HostsideInfo *info = (ID!=PluginError) ? PluginManager::Get()->GetPlugin(ID) : NULL;
          if (info && info->HasDSP() && ShownDSP.insert(ID).second) {
             #ifdef DEBUG_PLUGINS

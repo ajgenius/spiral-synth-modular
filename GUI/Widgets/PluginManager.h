@@ -35,28 +35,28 @@ struct HostsideInfo
 	int   ID;
 	int   type;
 	std::string Name;
+	std::string Category;
+	const SSMPlugins::PluginClass *DSPClass;
+	const SSMPlugins::PluginUIDefinition *GUIClass;
 
 	struct {
 		void *Handle;
-		SpiralPlugin *(*CreateInstance)(void);
 		const char **(*GetIcon)(void);
-		std::string (*GetGroupName)(void);
 	} dsp;
 
 	struct {
 		void *Handle;
-		SpiralGUIType *(*CreateGUI)(SpiralPlugin *);
 		const char **(*GetIcon)(void);
 	} gui;
 
 	SpiralPlugin *CreateDSPInstance() const
 	{
-		return (dsp.CreateInstance) ? dsp.CreateInstance() : NULL;
+		return DSPClass ? dynamic_cast<SpiralPlugin *>(DSPClass->Create()) : NULL;
 	}
 
 	SpiralGUIType *CreateGUI(SpiralPlugin *plugin) const
 	{
-		return (gui.CreateGUI && plugin) ? gui.CreateGUI(plugin) : NULL;
+		return (GUIClass && GUIClass->createUI && plugin) ? GUIClass->createUI(plugin) : NULL;
 	}
 
 	const char **Icon() const
@@ -68,10 +68,10 @@ struct HostsideInfo
 
 	std::string GroupName() const
 	{
-		return dsp.GetGroupName ? dsp.GetGroupName() : std::string();
+		return Category;
 	}
 
-	bool HasDSP() const { return dsp.Handle != NULL && dsp.CreateInstance != NULL; }
+	bool HasDSP() const { return dsp.Handle != NULL && DSPClass != NULL; }
 };
 
 //////////////////////////////////////////////////////////
@@ -86,6 +86,8 @@ public:
 	static void         PackUpAndGoHome() { if(m_Singleton) delete m_Singleton; }
 
 	PluginID            LoadPlugin(const char *PluginName);
+	std::vector<int>     LoadPlugins(const std::string &root, const std::vector<std::string> &modules);
+	const SSMPlugins::PluginRegistry &Registry() const { return m_Registry; }
 	void                UnLoadPlugin(PluginID ID);
 	void                UnloadAll();
 	const HostsideInfo* GetPlugin(PluginID ID);
@@ -100,6 +102,17 @@ private:
 	HostsideInfo *NewSlot(int ID);
 
 	std::vector<HostsideInfo*> m_PluginVec;
+	SSMPlugins::PluginRegistry m_Registry;
+	struct Module
+	{
+		void *handle;
+		SSMPlugins::PluginID id;
+		Module(void *h, SSMPlugins::PluginID i): handle(h), id(i) {}
+	};
+	std::vector<Module> m_Modules;
+	std::string m_LoadError;
+	bool m_Waiting;
+	PluginID TryLoad(const std::string &path, const struct PluginManifest *manifest);
 	static PluginManager *m_Singleton;
 };
 
