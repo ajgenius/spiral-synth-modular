@@ -11,8 +11,9 @@
   "host": {
     "name": "SpiralSynthModular",
     "version": "0.3.1",
-    "abi": "0.3.1"
+    "abi": "ssm-fltk-channel-class-1"
   },
   "registration": "module",
-  "module": "PoshSamplerPlugin_DSP.so"
+  "module": "PoshSamplerPlugin_DSP.so",
+  "dependencies": []
 }

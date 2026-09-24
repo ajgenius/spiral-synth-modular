@@ -175,3 +175,32 @@ void NoteSnapPlugin::StreamIn(istream &s)
 		}
 	}
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new NoteSnapPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &NoteSnapPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Input", true, true},
+		{"Output", false, true},
+		{"Changed Trigger", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(24, "NoteSnapPlugin", "NoteSnap", "Control",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(NoteSnapPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return NoteSnapPlugin::StaticClass().Identity();
+}

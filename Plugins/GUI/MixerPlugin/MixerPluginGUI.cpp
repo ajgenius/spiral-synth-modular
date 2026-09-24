@@ -207,7 +207,7 @@ const char **SpiralPlugin_GetIcon()
 	return SpiralIcon_xpm;
 }
 
-SpiralGUIType *SpiralPlugin_CreateGUI(SpiralPlugin *plugin)
+static SpiralGUIType *CreatePluginUI(SpiralPlugin *plugin)
 {
 	MixerPlugin *p = (MixerPlugin *)plugin;
 	if (!p) return 0;
@@ -215,3 +215,7 @@ SpiralGUIType *SpiralPlugin_CreateGUI(SpiralPlugin *plugin)
 }
 
 }
+
+#include "PluginGUIExports.h"
+
+SSM_EXPORT_GUI_CLASS(7, "MixerPluginGUI", "Mixer", "Amps/Mixers", CreatePluginUI)

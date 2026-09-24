@@ -137,3 +137,30 @@ void NoisePlugin::StreamIn(istream &s)
 	s>>version>>t;
 	m_Type=(Type)t;
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new NoisePlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &NoisePlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Output", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(49, "NoisePlugin", "Noise", "Oscillators",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(NoisePlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return NoisePlugin::StaticClass().Identity();
+}
