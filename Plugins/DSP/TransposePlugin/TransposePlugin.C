@@ -139,3 +139,32 @@ void TransposePlugin::StreamIn (istream &s) {
      s >> version;
      s >> m_Amount;
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new TransposePlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &TransposePlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Input", true, true},
+		{"Transpose CV", true, true},
+		{"Output", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(122, "TransposePlugin", "Transpose", "Control",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(TransposePlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return TransposePlugin::StaticClass().Identity();
+}

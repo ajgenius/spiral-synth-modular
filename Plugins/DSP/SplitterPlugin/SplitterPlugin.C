@@ -212,3 +212,34 @@ void SplitterPlugin::StreamIn (istream &s)
 		break;
 	}	
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new SplitterPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &SplitterPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Input", true, true},
+		{"Out 1", false, false},
+		{"Out 2", false, false},
+		{"Out 3", false, false},
+		{"Out 4", false, false}
+	};
+	static const SSMPlugins::DeviceDefinition definition(6, "SplitterPlugin", "Splitter", "Control",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(SplitterPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return SplitterPlugin::StaticClass().Identity();
+}

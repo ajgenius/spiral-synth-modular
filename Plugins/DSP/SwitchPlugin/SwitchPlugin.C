@@ -133,3 +133,33 @@ void SwitchPlugin::StreamIn(istream &s)
 	s>>version;
 	s>>m_Mix;
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new SwitchPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &SwitchPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Input 1", true, true},
+		{"Input 2", true, true},
+		{"CV", true, true},
+		{"Output", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(47, "SwitchPlugin", "Switch", "Maths/Logic",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(SwitchPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return SwitchPlugin::StaticClass().Identity();
+}

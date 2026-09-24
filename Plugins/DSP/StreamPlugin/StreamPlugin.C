@@ -283,3 +283,37 @@ void StreamPlugin::StreamIn(istream &s) {
      s >> m_GlobalPos;
      s >> m_Pitch;
 }
+
+namespace
+{
+	SSMPlugins::Plugin *CreateClassInstance(const SSMPlugins::PluginContext *)
+	{
+		return new StreamPlugin;
+	}
+}
+
+const SSMPlugins::DeviceDefinition &StreamPlugin::StaticClass()
+{
+	static const SSMPlugins::PortDefinition ports[] =
+	{
+		{"Pitch CV", true, true},
+		{"Play Trigger", true, true},
+		{"Stop Trigger", true, true},
+		{"Left Out", false, true},
+		{"Right Out", false, true},
+		{"Finish Trigger", false, true},
+		{"Playing Trigger", false, true},
+		{"Position CV", false, true}
+	};
+	static const SSMPlugins::DeviceDefinition definition(281, "StreamPlugin", "Stream", "Delay/Sampling",
+		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
+	return definition;
+}
+
+extern "C" SSMPlugins::PluginID SpiralPlugin_Initialize(SSMPlugins::PluginRegistry *registry)
+{
+	if (!registry || registry->Register(SpiralPlugin::StaticClass()) == -1 ||
+		registry->Register(StreamPlugin::StaticClass()) == -1)
+		return SSMPlugins::PluginID();
+	return StreamPlugin::StaticClass().Identity();
+}
