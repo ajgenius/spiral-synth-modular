@@ -123,4 +123,4 @@ static SpiralGUIType *CreatePluginUI(SpiralPlugin *plugin)
 
 #include "PluginGUIExports.h"
 
-SSM_EXPORT_GUI_CLASS(43, "AnotherFilterPluginGUI", "AnotherFilter", "Filters/FX", CreatePluginUI)
+SSM_EXPORT_GUI_CLASS(43, "AnotherFilterPluginGUI", "AnotherLPF", "Filters/FX", CreatePluginUI)

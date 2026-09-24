@@ -107,4 +107,4 @@ static SpiralGUIType *CreatePluginUI(SpiralPlugin *plugin)
 
 #include "PluginGUIExports.h"
 
-SSM_EXPORT_GUI_CLASS(10, "RingModPluginGUI", "RingMod", "Filters/FX", CreatePluginUI)
+SSM_EXPORT_GUI_CLASS(10, "RingModPluginGUI", "Ring Mod", "Filters/FX", CreatePluginUI)

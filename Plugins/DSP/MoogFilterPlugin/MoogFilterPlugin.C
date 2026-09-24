@@ -234,7 +234,7 @@ const SSMPlugins::DeviceDefinition &MoogFilterPlugin::StaticClass()
 		{"BandPass output", false, true},
 		{"HighPass output", false, true}
 	};
-	static const SSMPlugins::DeviceDefinition definition(13, "MoogFilterPlugin", "MoogFilter", "Filters/FX",
+	static const SSMPlugins::DeviceDefinition definition(13, "MoogFilterPlugin", "Moog Filter", "Filters/FX",
 		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
 	return definition;
 }

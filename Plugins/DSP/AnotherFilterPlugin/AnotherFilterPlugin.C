@@ -176,7 +176,7 @@ const SSMPlugins::DeviceDefinition &AnotherFilterPlugin::StaticClass()
 		{"Emphasis CV", true, true},
 		{"LowPass output", false, true}
 	};
-	static const SSMPlugins::DeviceDefinition definition(43, "AnotherFilterPlugin", "AnotherFilter", "Filters/FX",
+	static const SSMPlugins::DeviceDefinition definition(43, "AnotherFilterPlugin", "AnotherLPF", "Filters/FX",
 		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
 	return definition;
 }

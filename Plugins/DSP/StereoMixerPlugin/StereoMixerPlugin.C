@@ -191,7 +191,7 @@ const SSMPlugins::DeviceDefinition &StereoMixerPlugin::StaticClass()
 		{"Output left", false, true},
 		{"Output right", false, true}
 	};
-	static const SSMPlugins::DeviceDefinition definition(8, "StereoMixerPlugin", "StereoMixer", "Amps/Mixers",
+	static const SSMPlugins::DeviceDefinition definition(8, "StereoMixerPlugin", "Stereo Mixer", "Amps/Mixers",
 		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
 	return definition;
 }

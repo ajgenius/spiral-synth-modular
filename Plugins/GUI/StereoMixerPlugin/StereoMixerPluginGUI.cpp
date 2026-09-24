@@ -141,4 +141,4 @@ static SpiralGUIType *CreatePluginUI(SpiralPlugin *plugin)
 
 #include "PluginGUIExports.h"
 
-SSM_EXPORT_GUI_CLASS(8, "StereoMixerPluginGUI", "StereoMixer", "Amps/Mixers", CreatePluginUI)
+SSM_EXPORT_GUI_CLASS(8, "StereoMixerPluginGUI", "Stereo Mixer", "Amps/Mixers", CreatePluginUI)

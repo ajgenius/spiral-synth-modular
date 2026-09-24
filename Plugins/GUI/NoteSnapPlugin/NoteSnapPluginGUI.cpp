@@ -160,4 +160,4 @@ static SpiralGUIType *CreatePluginUI(SpiralPlugin *plugin)
 
 #include "PluginGUIExports.h"
 
-SSM_EXPORT_GUI_CLASS(24, "NoteSnapPluginGUI", "NoteSnap", "Control", CreatePluginUI)
+SSM_EXPORT_GUI_CLASS(24, "NoteSnapPluginGUI", "Note Snap", "Control", CreatePluginUI)

@@ -406,4 +406,4 @@ static SpiralGUIType *CreatePluginUI(SpiralPlugin *plugin)
 
 #include "PluginGUIExports.h"
 
-SSM_EXPORT_GUI_CLASS(3, "ControllerPluginGUI", "Controller", "Control", CreatePluginUI)
+SSM_EXPORT_GUI_CLASS(3, "ControllerPluginGUI", "CV", "Control", CreatePluginUI)

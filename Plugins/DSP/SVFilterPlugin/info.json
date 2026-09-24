@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": 12,
-  "name": "SVFilter",
+  "name": "SVF",
   "type": "dsp",
   "category": "Filters/FX",
   "authors": [

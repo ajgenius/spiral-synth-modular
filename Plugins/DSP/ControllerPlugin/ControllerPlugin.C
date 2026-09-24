@@ -369,7 +369,7 @@ const SSMPlugins::DeviceDefinition &ControllerPlugin::StaticClass()
 		{"CV 3", false, false},
 		{"CV 4", false, false}
 	};
-	static const SSMPlugins::DeviceDefinition definition(3, "ControllerPlugin", "Controller", "Control",
+	static const SSMPlugins::DeviceDefinition definition(3, "ControllerPlugin", "CV", "Control",
 		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
 	return definition;
 }

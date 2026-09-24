@@ -135,7 +135,7 @@ const SSMPlugins::DeviceDefinition &RingModPlugin::StaticClass()
 		{"Input 2", true, true},
 		{"Output", false, true}
 	};
-	static const SSMPlugins::DeviceDefinition definition(10, "RingModPlugin", "RingMod", "Filters/FX",
+	static const SSMPlugins::DeviceDefinition definition(10, "RingModPlugin", "Ring Mod", "Filters/FX",
 		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
 	return definition;
 }

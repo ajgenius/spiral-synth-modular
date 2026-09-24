@@ -212,7 +212,7 @@ const SSMPlugins::DeviceDefinition &SVFilterPlugin::StaticClass()
 		{"Notch output", false, true},
 		{"Peaking output", false, true}
 	};
-	static const SSMPlugins::DeviceDefinition definition(12, "SVFilterPlugin", "SVFilter", "Filters/FX",
+	static const SSMPlugins::DeviceDefinition definition(12, "SVFilterPlugin", "SVF", "Filters/FX",
 		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
 	return definition;
 }

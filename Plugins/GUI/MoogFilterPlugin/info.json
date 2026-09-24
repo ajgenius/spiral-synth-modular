@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": 13,
-  "name": "MoogFilter",
+  "name": "Moog Filter",
   "type": "gui",
   "category": "Filters/FX",
   "authors": [

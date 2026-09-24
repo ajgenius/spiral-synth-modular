@@ -192,7 +192,7 @@ const SSMPlugins::DeviceDefinition &NoteSnapPlugin::StaticClass()
 		{"Output", false, true},
 		{"Changed Trigger", false, true}
 	};
-	static const SSMPlugins::DeviceDefinition definition(24, "NoteSnapPlugin", "NoteSnap", "Control",
+	static const SSMPlugins::DeviceDefinition definition(24, "NoteSnapPlugin", "Note Snap", "Control",
 		CreateClassInstance, ports, sizeof(ports) / sizeof(ports[0]));
 	return definition;
 }
