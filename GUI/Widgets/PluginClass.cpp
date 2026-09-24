@@ -48,6 +48,12 @@ namespace SSMPlugins
 		Clear();
 	}
 
+	void PluginRegistry::Reset()
+	{
+		Clear();
+		classes[Plugin::StaticClass().Identity()] = new PluginClass(Plugin::StaticClass(), NULL);
+	}
+
 	void PluginRegistry::Clear()
 	{
 		for (Classes::iterator i = classes.begin(); i != classes.end(); ++i)

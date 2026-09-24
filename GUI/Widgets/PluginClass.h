@@ -93,6 +93,7 @@ namespace SSMPlugins
 		PluginRegistry();
 		~PluginRegistry();
 		void Clear();
+		void Reset();
 		int Register(const PluginDefinition &definition);
 		// Startup rollback only: the caller must not have created instances.
 		bool Discard(PluginID id);
